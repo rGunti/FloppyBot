@@ -3,14 +3,9 @@
 <!-- TODO: Logo -->
 
 [![MIT License](https://img.shields.io/github/license/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/blob/master/LICENSEs)
-[![Issues](https://img.shields.io/github/issues-raw/rGunti/FloppyBot.svg?maxAge=25000)](https://github.com/rGunti/FloppyBot/issues)
+[![GitHub issues](https://img.shields.io/github/issues/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/rGunti/FloppyBot.svg?style=flat)](https://github.com/rGunti/FloppyBot/pulls)
-
-<!--
-TODO:
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rGunti/FloppyBot/:workflow/:brnahc)
--->
-
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rGunti/FloppyBot/Build%20&%20Test/main)](https://github.com/rGunti/FloppyBot/actions/workflows/build-test.yml)
 [![GitHub stars](https://img.shields.io/github/stars/rGunti/FloppyBot.svg?style=social&label=Stars&style=plastic)]()
 [![GitHub watchers](https://img.shields.io/github/watchers/rGunti/FloppyBot.svg?style=social&label=Watch&style=plastic)]()
 [![GitHub forks](https://img.shields.io/github/forks/rGunti/FloppyBot.svg?style=social&label=Fork&style=plastic)]()
