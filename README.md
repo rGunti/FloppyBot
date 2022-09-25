@@ -4,7 +4,7 @@
 
 [![MIT License](https://img.shields.io/github/license/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/blob/master/LICENSEs)
 [![Issues](https://img.shields.io/github/issues-raw/rGunti/FloppyBot.svg?maxAge=25000)](https://github.com/rGunti/FloppyBot/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/rGunti/FloppyBot.svg?style=flat)]()
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/rGunti/FloppyBot.svg?style=flat)](https://github.com/rGunti/FloppyBot/pulls)
 
 <!--
 TODO:
