@@ -1,8 +1,30 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executables", "Executables", "{22EC64E4-B206-4C7D-A4C0-60034F07772E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{B8C74CEC-A7E2-4D9D-8DD1-43EC66AA9B50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Sample.Executable", "FloppyBot.Sample.Executable\FloppyBot.Sample.Executable.csproj", "{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Sample.Library", "FloppyBot.Sample.Library\FloppyBot.Sample.Library.csproj", "{75AE857E-6BBF-4981-9235-3BE2914742CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66} = {22EC64E4-B206-4C7D-A4C0-60034F07772E}
+		{75AE857E-6BBF-4981-9235-3BE2914742CE} = {B8C74CEC-A7E2-4D9D-8DD1-43EC66AA9B50}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18D6C9ED-6E5F-47ED-A863-D85FC23BAD66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75AE857E-6BBF-4981-9235-3BE2914742CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75AE857E-6BBF-4981-9235-3BE2914742CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75AE857E-6BBF-4981-9235-3BE2914742CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75AE857E-6BBF-4981-9235-3BE2914742CE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
