@@ -25,11 +25,39 @@ public class IdentifierTests
 
     [DataTestMethod]
     [DataRow("Twitch")]
+    [DataRow("Twitch/pinsrltrex/1234")]
     public void ConvertStringToChannelIdThrowsException(string inputChannelId)
     {
         Assert.ThrowsException<ArgumentException>(() =>
         {
             ChannelIdentifier _ = inputChannelId;
+        });
+    }
+
+    [DataTestMethod]
+    [DataRow("Twitch/pinsrltrex/1234", "Twitch", "pinsrltrex", "1234")]
+    public void ConvertStringToExtendedChannelId(
+        string inputChannelId,
+        string expectedInterface,
+        string expectedChannel,
+        params string[] expectedAdditionalInfo)
+    {
+        ExtendedChannelIdentifier channelId = inputChannelId;
+        var expectedChannelId = new ExtendedChannelIdentifier(
+            expectedInterface,
+            expectedChannel,
+            expectedAdditionalInfo);
+        Assert.AreEqual(expectedChannelId, channelId);
+        Assert.AreEqual(inputChannelId, (string)channelId);
+    }
+
+    [DataTestMethod]
+    [DataRow("Twitch")]
+    public void ConvertStringToExtendedChannelIdThrowsException(string inputChannelId)
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+        {
+            ExtendedChannelIdentifier _ = inputChannelId;
         });
     }
 
@@ -60,5 +88,15 @@ public class IdentifierTests
         {
             ChatMessageIdentifier _ = inputMessageId;
         });
+    }
+
+    [DataTestMethod]
+    [DataRow("Twitch/pinsrltrex/1234", "Twitch/pinsrltrex")]
+    public void GetChannelOfMessageIdentifier(
+        string inputMessageId,
+        string expectedChannelId)
+    {
+        ChatMessageIdentifier messageId = inputMessageId;
+        Assert.AreEqual((ChannelIdentifier)expectedChannelId, messageId.GetChannel());
     }
 }

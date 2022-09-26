@@ -6,8 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj" />
-    </ItemGroup>
-
 </Project>

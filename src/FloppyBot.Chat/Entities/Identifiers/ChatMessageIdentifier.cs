@@ -6,7 +6,6 @@ namespace FloppyBot.Chat.Entities.Identifiers;
 /// <param name="Interface"></param>
 /// <param name="Channel"></param>
 /// <param name="MessageId"></param>
-/// <param name="AdditionalInformation"></param>
 public record ChatMessageIdentifier(
     string Interface,
     string Channel,
