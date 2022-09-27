@@ -4,4 +4,5 @@ namespace FloppyBot.Chat.Entities;
 
 public record ChatUser(
     ChannelIdentifier Identifier,
-    string DisplayName);
+    string DisplayName,
+    PrivilegeLevel PrivilegeLevel);

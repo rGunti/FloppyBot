@@ -6,4 +6,4 @@ public record ChatMessage(
     ChatMessageIdentifier Identifier,
     ChatUser Author,
     string Content,
-    string Context);
+    string? Context = null);
