@@ -7,6 +7,8 @@ public class MockMessageInterface : IChatInterface
 {
     private const string IF_NAME = "Mock";
 
+    public const string EVENT_CHAT = "ChatMessage";
+
     private readonly Stack<ChatMessage> _receivedMessages = new();
     private readonly Stack<string> _sentMessages = new();
     private readonly string _channelName;
@@ -54,6 +56,7 @@ public class MockMessageInterface : IChatInterface
                 new ChannelIdentifier(IF_NAME, username),
                 username,
                 privilegeLevel),
+            EVENT_CHAT,
             message);
         MessageReceived?.Invoke(msg, this);
     }
