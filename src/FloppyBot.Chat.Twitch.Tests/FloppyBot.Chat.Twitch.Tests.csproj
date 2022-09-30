@@ -15,8 +15,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj" />
       <ProjectReference Include="..\FloppyBot.Base.Testing\FloppyBot.Base.Testing.csproj" />
+      <ProjectReference Include="..\FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj" />
     </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ namespace FloppyBot.Chat.Twitch;
 
 public class TwitchChatInterface : IChatInterface
 {
-    private const string IF_NAME = "Twitch";
+    public const string IF_NAME = "Twitch";
 
     public const string EVENT_MESSAGE = "ChatMessage";
 
@@ -78,7 +78,7 @@ public class TwitchChatInterface : IChatInterface
 
     public void SendMessage(string message)
     {
-        SendMessage(_configuration.Channel, message);
+        SendMessage(_channelIdentifier, message);
     }
 
     public void SendMessage(ChannelIdentifier channel, string message)
@@ -153,7 +153,7 @@ public class TwitchChatInterface : IChatInterface
             EVENT_MESSAGE,
             chatMessage.Message);
 
-        MessageReceived?.Invoke(message, this);
+        MessageReceived?.Invoke(this, message);
     }
 
     private static PrivilegeLevel DeterminePrivilegeLevel(TwitchLib.Client.Models.ChatMessage chatMessage)

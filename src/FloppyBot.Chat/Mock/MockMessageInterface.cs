@@ -58,7 +58,7 @@ public class MockMessageInterface : IChatInterface
                 privilegeLevel),
             EVENT_CHAT,
             message);
-        MessageReceived?.Invoke(msg, this);
+        MessageReceived?.Invoke(this, msg);
     }
 
     public void SendMessage(string message)
@@ -73,7 +73,7 @@ public class MockMessageInterface : IChatInterface
 
     public event ChatMessageReceivedDelegate? MessageReceived;
 
-    private void OnMessageReceived(ChatMessage chatMessage, IChatInterface _)
+    private void OnMessageReceived(IChatInterface _, ChatMessage chatMessage)
     {
         _receivedMessages.Push(chatMessage);
     }

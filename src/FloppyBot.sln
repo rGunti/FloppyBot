@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Tests", "Flo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch", "FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj", "{3B4E2962-1152-4A10-A320-591690CB61DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch.Tests", "FloppyBot.Chat.Twitch.Tests\FloppyBot.Chat.Twitch.Tests.csproj", "{61FF8262-384B-4898-A219-1A068DA18BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Testing", "FloppyBot.Base.Testing\FloppyBot.Base.Testing.csproj", "{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,8 @@ Global
 		{EF4C031C-53F5-4EFA-B843-C3E04D15DFFC} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{86A73693-A198-4878-9DFC-304F1BB26C55} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{3B4E2962-1152-4A10-A320-591690CB61DE} = {CF76941F-AA27-49CA-B273-EDBD93F28F03}
+		{61FF8262-384B-4898-A219-1A068DA18BA9} = {CF76941F-AA27-49CA-B273-EDBD93F28F03}
+		{1404EDC1-5BAF-4A98-A122-CB08B017B8DD} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -47,5 +53,13 @@ Global
 		{3B4E2962-1152-4A10-A320-591690CB61DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B4E2962-1152-4A10-A320-591690CB61DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B4E2962-1152-4A10-A320-591690CB61DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61FF8262-384B-4898-A219-1A068DA18BA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61FF8262-384B-4898-A219-1A068DA18BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61FF8262-384B-4898-A219-1A068DA18BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61FF8262-384B-4898-A219-1A068DA18BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
