@@ -87,11 +87,7 @@ public class DiscordChatInterface : IChatInterface
     {
         _logger.LogInformation("Connected!");
         await _discordClient.SetStatusAsync(UserStatus.Online);
-        await _discordClient.SetActivityAsync(
-            new Game(
-                "FloppyBot 2",
-                ActivityType.CustomStatus,
-                details: "Building the future"));
+        await _discordClient.SetGameAsync("FloppyBot v2");
     }
 
     private Task DiscordClientOnLog(LogMessage arg)
