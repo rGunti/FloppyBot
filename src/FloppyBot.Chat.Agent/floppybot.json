@@ -1,0 +1,30 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+
+  // Configure Chat Interface
+  "InterfaceType": "Mock",
+
+  // Discord only
+  "Discord": {
+    "ClientId": "~~clientId~~",
+    "ClientSecret": "~~clientSecret~~",
+    "Token": "~~token~~",
+    "Privileges": 339008
+  },
+
+  // Twitch only
+  "Twitch": {
+    "Username": "",
+    "Token": "",
+    "Channel": "",
+    "ClientId": "",
+    "AccessToken": "",
+    "DisableWhenChannelIsOffline": true,
+    "MonitorInterface": 30
+  }
+}

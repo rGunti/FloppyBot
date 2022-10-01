@@ -29,6 +29,7 @@ public static class Registration
                     config.Username,
                     config.Token);
             })
+            .AddSingleton<ClientOptions>(p => new ClientOptions())
             // - Twitch Client
             .AddSingleton<IClient>(p => new WebSocketClient(
                 p.GetRequiredService<ClientOptions>()))

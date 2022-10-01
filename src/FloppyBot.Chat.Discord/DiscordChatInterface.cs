@@ -110,15 +110,15 @@ public class DiscordChatInterface : IChatInterface
         return Task.CompletedTask;
     }
 
-    private async Task DiscordClientOnMessageReceived(SocketMessage socketMessage)
+    private Task DiscordClientOnMessageReceived(SocketMessage socketMessage)
     {
         if (socketMessage.Author.IsBot)
         {
             _logger.LogTrace("Received message from a bot, ignoring");
-            return;
+            return Task.CompletedTask;
         }
 
-        _logger.LogTrace("Received message from {username}@{channel} {message}",
+        _logger.LogTrace("Received message from {Username}@{Channel}: {Message}",
             socketMessage.Author.ToString(),
             socketMessage.Channel.Name,
             socketMessage.Content);
@@ -135,6 +135,7 @@ public class DiscordChatInterface : IChatInterface
             socketMessage.Content);
         
         MessageReceived?.Invoke(this, message);
+        return Task.CompletedTask;
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(

@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,7 +15,10 @@ public static class Registration
                 .GetSection("Discord")
                 .Get<DiscordConfiguration>())
             // - Discord Client
-            .AddSingleton<DiscordSocketClient>(_ => new DiscordSocketClient())
+            .AddSingleton<DiscordSocketClient>(_ => new DiscordSocketClient(new()
+            {
+                GatewayIntents = (GatewayIntents.AllUnprivileged & ~ GatewayIntents.GuildScheduledEvents & ~ GatewayIntents.GuildInvites) | GatewayIntents.MessageContent
+            }))
             // - Chat Interface
             .AddSingleton<IChatInterface, DiscordChatInterface>();
     }

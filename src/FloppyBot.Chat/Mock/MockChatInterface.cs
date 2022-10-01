@@ -3,9 +3,9 @@ using FloppyBot.Chat.Entities.Identifiers;
 
 namespace FloppyBot.Chat.Mock;
 
-public class MockMessageInterface : IChatInterface
+public class MockChatInterface : IChatInterface
 {
-    private const string IF_NAME = "Mock";
+    public const string IF_NAME = "Mock";
 
     public const string EVENT_CHAT = "ChatMessage";
 
@@ -13,7 +13,7 @@ public class MockMessageInterface : IChatInterface
     private readonly Stack<string> _sentMessages = new();
     private readonly string _channelName;
 
-    public MockMessageInterface(
+    public MockChatInterface(
         ChatInterfaceFeatures features = ChatInterfaceFeatures.None,
         string channelName = "MyChannel")
     {
