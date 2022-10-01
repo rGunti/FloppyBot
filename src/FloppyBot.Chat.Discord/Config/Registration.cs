@@ -16,7 +16,7 @@ public static class Registration
                 .GetSection("Discord")
                 .Get<DiscordConfiguration>())
             // - Discord Client
-            .AddSingleton<BaseDiscordClient, DiscordSocketClient>(_ => new DiscordSocketClient())
+            .AddSingleton<DiscordSocketClient>(_ => new DiscordSocketClient())
             // - Chat Interface
             .AddSingleton<IChatInterface, DiscordChatInterface>();
     }

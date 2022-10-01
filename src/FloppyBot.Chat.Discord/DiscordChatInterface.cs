@@ -17,13 +17,14 @@ public class DiscordChatInterface : IChatInterface
     private readonly ILogger<DiscordChatInterface> _logger;
     private readonly ILogger<DiscordSocketClient> _clientLogger;
     private readonly DiscordConfiguration _configuration;
-    private readonly BaseSocketClient _discordClient;
+    private readonly DiscordSocketClient _discordClient;
 
     public DiscordChatInterface(
         ILogger<DiscordChatInterface> logger,
+        // ReSharper disable once ContextualLoggerProblem
         ILogger<DiscordSocketClient> clientLogger,
         DiscordConfiguration configuration,
-        BaseSocketClient discordClient)
+        DiscordSocketClient discordClient)
     {
         _logger = logger;
         _clientLogger = clientLogger;
@@ -31,6 +32,7 @@ public class DiscordChatInterface : IChatInterface
         _discordClient = discordClient;
         
         _discordClient.Log += DiscordClientOnLog;
+        _discordClient.Ready += DiscordClientOnReady;
         _discordClient.MessageReceived += DiscordClientOnMessageReceived;
     }
 
@@ -81,14 +83,27 @@ public class DiscordChatInterface : IChatInterface
 
     public event ChatMessageReceivedDelegate? MessageReceived;
 
+    private async Task DiscordClientOnReady()
+    {
+        _logger.LogInformation("Connected!");
+        await _discordClient.SetStatusAsync(UserStatus.Online);
+        await _discordClient.SetActivityAsync(
+            new Game(
+                "FloppyBot 2",
+                ActivityType.CustomStatus,
+                details: "Building the future"));
+    }
+
     private Task DiscordClientOnLog(LogMessage arg)
     {
         if (arg.Exception != null)
         {
+            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
             _clientLogger.Log(TranslateLogLevel(arg.Severity), arg.Exception, arg.Message);
         }
         else
         {
+            // ReSharper disable once TemplateIsNotCompileTimeConstantProblem
             _clientLogger.Log(TranslateLogLevel(arg.Severity), arg.Message);
         }
 
