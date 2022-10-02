@@ -15,7 +15,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Sample.Library\FloppyBot.Sample.Library.csproj" />
+      <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Mock" />
     </ItemGroup>
 
 </Project>
