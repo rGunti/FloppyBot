@@ -1,5 +1,6 @@
 using FloppyBot.Base.Configuration;
 using FloppyBot.Chat.Agent;
+using FloppyBot.Communication.Redis.Config;
 using Serilog;
 
 IConfiguration config = AppConfigurationUtils.BuildCommonConfig();
@@ -24,6 +25,7 @@ IHost host = builder
     {
         services
             .RegisterChatInterface(config.GetValue<string>("InterfaceType"))
+            .AddRedisCommunication()
             .AddHostedService<ChatAgent>();
     })
     .Build();

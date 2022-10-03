@@ -1,4 +1,6 @@
+using FloppyBot.Base.Configuration;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Communication;
 
 namespace FloppyBot.Chat.Agent;
 
@@ -6,12 +8,20 @@ public class ChatAgent : BackgroundService
 {
     private readonly ILogger<ChatAgent> _logger;
     private readonly IChatInterface _chatInterface;
+    private readonly INotificationSender _notificationSender;
 
-    public ChatAgent(ILogger<ChatAgent> logger, IChatInterface chatInterface)
+    public ChatAgent(
+        ILogger<ChatAgent> logger,
+        IChatInterface chatInterface,
+        INotificationSenderFactory senderFactory,
+        IConfiguration configuration)
     {
         _logger = logger;
         _chatInterface = chatInterface;
         _chatInterface.MessageReceived += OnMessageReceived;
+
+        _notificationSender = senderFactory.GetNewSender(
+            configuration.GetParsedConnectionString("MessageOutput"));
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -33,6 +43,7 @@ public class ChatAgent : BackgroundService
             sourceInterface,
             chatMessage);
         #endif
+        _notificationSender.Send(chatMessage);
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
