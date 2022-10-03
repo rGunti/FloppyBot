@@ -14,6 +14,8 @@ public class RedisNotificationSender : INotificationSender
         _channel = channel;
     }
 
+    public string Channel => _channel;
+
     public void Send(object obj)
     {
         _subscriber.Publish(_channel, JsonSerializer.Serialize(obj));
