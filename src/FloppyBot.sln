@@ -44,6 +44,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Configuratio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Communication.Redis.Tests", "FloppyBot.Communication.Redis.Tests\FloppyBot.Communication.Redis.Tests.csproj", "{8A414818-A949-416A-A2DD-45D19D8D687A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser", "FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj", "{ACEE1691-04EC-4471-BB20-0B37B106F3BE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser.Tests", "FloppyBot.Commands.Parser.Tests\FloppyBot.Commands.Parser.Tests.csproj", "{7E445B00-6021-4FDB-A681-FC855DA39D78}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +75,8 @@ Global
 		{07366644-BB6B-4F22-8D6D-36A27ADFAC52} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{F57AE64E-1A31-4C61-BB7D-05D27F0CEECC} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{8A414818-A949-416A-A2DD-45D19D8D687A} = {8A108F9D-F458-4DA5-A986-60521EC60BF7}
+		{ACEE1691-04EC-4471-BB20-0B37B106F3BE} = {6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}
+		{7E445B00-6021-4FDB-A681-FC855DA39D78} = {6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -139,5 +147,13 @@ Global
 		{8A414818-A949-416A-A2DD-45D19D8D687A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A414818-A949-416A-A2DD-45D19D8D687A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A414818-A949-416A-A2DD-45D19D8D687A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACEE1691-04EC-4471-BB20-0B37B106F3BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACEE1691-04EC-4471-BB20-0B37B106F3BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACEE1691-04EC-4471-BB20-0B37B106F3BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACEE1691-04EC-4471-BB20-0B37B106F3BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E445B00-6021-4FDB-A681-FC855DA39D78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E445B00-6021-4FDB-A681-FC855DA39D78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E445B00-6021-4FDB-A681-FC855DA39D78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E445B00-6021-4FDB-A681-FC855DA39D78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
