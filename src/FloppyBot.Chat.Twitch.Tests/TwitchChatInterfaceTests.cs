@@ -123,7 +123,7 @@ public class TwitchChatInterfaceTests
                         messageReceivedArgs.ChatMessage.Username),
                     messageReceivedArgs.ChatMessage.Username,
                     expectedPrivilegeLevel),
-                TwitchChatInterface.EVENT_MESSAGE,
+                SharedEventTypes.CHAT_MESSAGE,
                 messageReceivedArgs.ChatMessage.Message),
             messages.First());
     }

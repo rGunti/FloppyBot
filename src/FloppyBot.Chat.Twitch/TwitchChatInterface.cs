@@ -14,8 +14,6 @@ public class TwitchChatInterface : IChatInterface
 {
     public const string IF_NAME = "Twitch";
 
-    public const string EVENT_MESSAGE = "ChatMessage";
-
     private readonly ILogger<TwitchChatInterface> _logger;
     private readonly ILogger<TwitchClient> _clientLogger;
     private readonly ITwitchClient _client;
@@ -150,7 +148,7 @@ public class TwitchChatInterface : IChatInterface
                     chatMessage.Username),
                 chatMessage.DisplayName,
                 DeterminePrivilegeLevel(chatMessage)),
-            EVENT_MESSAGE,
+            SharedEventTypes.CHAT_MESSAGE,
             chatMessage.Message);
 
         MessageReceived?.Invoke(this, message);

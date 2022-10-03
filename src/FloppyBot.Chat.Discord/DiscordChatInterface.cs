@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Rest;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
@@ -11,8 +10,6 @@ namespace FloppyBot.Chat.Discord;
 public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
-
-    public const string EVENT_MESSAGE = "ChatMessage";
 
     private readonly ILogger<DiscordChatInterface> _logger;
     private readonly ILogger<DiscordSocketClient> _clientLogger;
@@ -127,7 +124,7 @@ public class DiscordChatInterface : IChatInterface
                     $"{socketMessage.Author.Id}"),
                 socketMessage.Author.Username,
                 PrivilegeLevel.Unknown),
-            EVENT_MESSAGE,
+            SharedEventTypes.CHAT_MESSAGE,
             socketMessage.Content);
         
         MessageReceived?.Invoke(this, message);
