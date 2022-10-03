@@ -1,0 +1,18 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  
+  "ConnectionStrings": {
+    "Redis": "localhost",
+    "MessageOutput": "{Redis}|Message.Received"
+  },
+  
+  "UserConfig": {
+    "Username": "ConsoleUser",
+    "PrivilegeLevel": "Superuser"
+  }
+}
