@@ -9,13 +9,15 @@ namespace FloppyBot.Chat.Console.Agent;
 
 internal class ConsoleChatAgent : BackgroundService
 {
-    private readonly ILogger<ConsoleChatAgent> _logger;
-    private readonly INotificationSender _sender;
     private readonly ConsoleChatInterface _chatInterface;
+    private readonly ILogger<ConsoleChatAgent> _logger;
+    private readonly INotificationReceiver<ChatMessage> _receiver;
+    private readonly INotificationSender _sender;
 
     public ConsoleChatAgent(
         ILogger<ConsoleChatAgent> logger,
         INotificationSenderFactory senderFactory,
+        INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
         ConsoleChatInterface chatInterface)
     {
@@ -25,6 +27,18 @@ internal class ConsoleChatAgent : BackgroundService
 
         _sender = senderFactory.GetNewSender(
             configuration.GetParsedConnectionString("MessageOutput"));
+        _receiver = receiverFactory.GetNewReceiver<ChatMessage>(
+            configuration.GetParsedConnectionString("MessageInput"));
+        _receiver.NotificationReceived += OnMessageReceived;
+    }
+
+    private void OnMessageReceived(ChatMessage notification)
+    {
+        if (notification.Identifier.Interface == _chatInterface.Name)
+        {
+            _chatInterface.SendMessage(
+                notification.Content);
+        }
     }
 
     private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
@@ -40,6 +54,7 @@ internal class ConsoleChatAgent : BackgroundService
             "Please note that this is a development tool and not meant to be run in production environments!");
         _logger.LogInformation("Starting Console Agent ...");
         _chatInterface.Connect();
+        _receiver.StartListening();
         return base.StartAsync(cancellationToken);
     }
 
