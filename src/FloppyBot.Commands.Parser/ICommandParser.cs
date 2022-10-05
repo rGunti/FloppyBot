@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using FloppyBot.Commands.Parser.Entities;
 
 namespace FloppyBot.Commands.Parser;
 

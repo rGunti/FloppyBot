@@ -1,15 +1,16 @@
 using FloppyBot.Base.Configuration;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
 
 namespace FloppyBot.Commands.Parser.Agent;
 
 public class CommandParsingAgent : BackgroundService
 {
-    private readonly ILogger<CommandParsingAgent> _logger;
     private readonly INotificationReceiver<ChatMessage> _chatMessageReceiver;
     private readonly INotificationSender _commandMessageSender;
     private readonly ICommandParser _commandParser;
+    private readonly ILogger<CommandParsingAgent> _logger;
 
     public CommandParsingAgent(
         ILogger<CommandParsingAgent> logger,
@@ -37,24 +38,24 @@ public class CommandParsingAgent : BackgroundService
         _logger.LogInformation("Starting up Command Parsing Agent ...");
         _logger.LogInformation("Starting receiver ...");
         _chatMessageReceiver.StartListening();
-        
+
         _logger.LogInformation("Awaiting new messages to receive");
         return Task.CompletedTask;
     }
 
     private void OnNotificationReceived(ChatMessage notification)
     {
-        #if DEBUG
+#if DEBUG
         _logger.LogInformation(
             "Received chat message to parse: {@ChatMessage}",
             notification);
-        #endif
+#endif
 
         CommandInstruction? instruction = _commandParser.ParseCommandFromString(notification.Content);
         if (instruction != null)
         {
             _logger.LogInformation("Message was parsed to a command successfully, sending to output");
-            _commandMessageSender.Send(instruction);
+            _commandMessageSender.Send(instruction with { Context = new CommandContext(notification) });
         }
     }
 

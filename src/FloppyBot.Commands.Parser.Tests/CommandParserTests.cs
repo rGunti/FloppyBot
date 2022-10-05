@@ -1,4 +1,5 @@
 using FloppyBot.Base.EquatableCollections;
+using FloppyBot.Commands.Parser.Entities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FloppyBot.Commands.Parser.Tests;
@@ -7,7 +8,7 @@ namespace FloppyBot.Commands.Parser.Tests;
 public class CommandParserTests
 {
     private readonly CommandParser _parser = new("!");
-    
+
     [DataTestMethod]
     [DataRow("!ping", "ping")]
     [DataRow("!say Hello World", "say", "Hello", "World")]
@@ -19,7 +20,7 @@ public class CommandParserTests
         var expected = new CommandInstruction(
             expectedCommand,
             arguments.ToImmutableListWithValueSemantics());
-        
+
         Assert.AreEqual(
             expected,
             _parser.ParseCommandFromString(input));
