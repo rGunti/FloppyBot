@@ -13,12 +13,12 @@ namespace FloppyBot.Chat.Twitch;
 public class TwitchChatInterface : IChatInterface
 {
     public const string IF_NAME = "Twitch";
+    private readonly ChannelIdentifier _channelIdentifier;
+    private readonly ITwitchClient _client;
+    private readonly ILogger<TwitchClient> _clientLogger;
+    private readonly TwitchConfiguration _configuration;
 
     private readonly ILogger<TwitchChatInterface> _logger;
-    private readonly ILogger<TwitchClient> _clientLogger;
-    private readonly ITwitchClient _client;
-    private readonly TwitchConfiguration _configuration;
-    private readonly ChannelIdentifier _channelIdentifier;
     private readonly ITwitchChannelOnlineMonitor _onlineMonitor;
 
     public TwitchChatInterface(
@@ -47,14 +47,6 @@ public class TwitchChatInterface : IChatInterface
 
     public string Name => _channelIdentifier;
     public ChatInterfaceFeatures SupportedFeatures => ChatInterfaceFeatures.None;
-
-    private ChatMessageIdentifier NewChatMessageIdentifier()
-    {
-        return new ChatMessageIdentifier(
-            IF_NAME,
-            _configuration.Channel,
-            Guid.NewGuid().ToString());
-    }
 
     public void Connect()
     {
@@ -88,12 +80,28 @@ public class TwitchChatInterface : IChatInterface
         }
     }
 
+    public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
+    {
+        _client.SendReply(
+            referenceMessage.Channel,
+            referenceMessage.MessageId,
+            message);
+    }
+
     public event ChatMessageReceivedDelegate? MessageReceived;
 
     public void Dispose()
     {
         _logger.LogTrace("Disposing interface ...");
         Disconnect();
+    }
+
+    private ChatMessageIdentifier NewChatMessageIdentifier(string? messageId)
+    {
+        return new ChatMessageIdentifier(
+            IF_NAME,
+            _configuration.Channel,
+            messageId ?? Guid.NewGuid().ToString());
     }
 
     private void Client_OnLog(object? _, OnLogArgs e)
@@ -141,7 +149,7 @@ public class TwitchChatInterface : IChatInterface
         }
 
         var message = new ChatMessage(
-            NewChatMessageIdentifier(),
+            NewChatMessageIdentifier(e.ChatMessage.Id),
             new ChatUser(
                 new ChannelIdentifier(
                     IF_NAME,

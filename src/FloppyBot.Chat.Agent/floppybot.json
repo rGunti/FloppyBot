@@ -8,7 +8,8 @@
   
   "ConnectionStrings": {
     "Redis": "localhost",
-    "MessageOutput": "{Redis}|Message.Received"
+    "MessageOutput": "{Redis}|Message.Received",
+    "MessageInput": "{Redis}|Message.Responded.\\{InterfaceType\\}"
   },
 
   // Configure Chat Interface

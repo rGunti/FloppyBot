@@ -8,10 +8,12 @@ internal class ConsoleChatInterface : IChatInterface
 {
     private const string IF_NAME = "Console";
 
+    private readonly Thread _consoleInputThread;
+
     private readonly ILogger<ConsoleChatInterface> _logger;
     private readonly ConsoleAgentUserConfiguration _userConfig;
 
-    private readonly Thread _consoleInputThread;
+    private bool _active;
 
     public ConsoleChatInterface(
         ILogger<ConsoleChatInterface> logger,
@@ -23,8 +25,6 @@ internal class ConsoleChatInterface : IChatInterface
         _consoleInputThread = new Thread(ConsoleLoop);
     }
 
-    private bool _active;
-
     public string Name => IF_NAME;
     public ChatInterfaceFeatures SupportedFeatures => ChatInterfaceFeatures.None;
 
@@ -35,6 +35,39 @@ internal class ConsoleChatInterface : IChatInterface
 
         var task = new Task(ConsoleLoop);
         task.Start();
+    }
+
+    public void Disconnect()
+    {
+        _logger.LogInformation("Disconnecting ...");
+        _active = false;
+
+        _consoleInputThread.Join(TimeSpan.FromSeconds(1));
+        _logger.LogInformation("Disconnected");
+    }
+
+    public void SendMessage(string message)
+    {
+        _logger.LogInformation("Message: {Message}", message);
+    }
+
+    public void SendMessage(ChannelIdentifier channel, string message)
+    {
+        SendMessage(message);
+    }
+
+    public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
+    {
+        SendMessage(message);
+    }
+
+    public event ChatMessageReceivedDelegate? MessageReceived;
+
+    public void Dispose()
+    {
+        if (_consoleInputThread.IsAlive)
+        {
+        }
     }
 
     private void ConsoleLoop()
@@ -71,33 +104,5 @@ internal class ConsoleChatInterface : IChatInterface
                 _userConfig.PrivilegeLevel),
             SharedEventTypes.CHAT_MESSAGE,
             message);
-    } 
-
-    public void Disconnect()
-    {
-        _logger.LogInformation("Disconnecting ...");
-        _active = false;
-
-        _consoleInputThread.Join(TimeSpan.FromSeconds(1));
-        _logger.LogInformation("Disconnected");
-    }
-
-    public void SendMessage(string message)
-    {
-        _logger.LogInformation("Message: {Message}", message);
-    }
-
-    public void SendMessage(ChannelIdentifier channel, string message)
-    {
-        SendMessage(message);
-    }
-
-    public event ChatMessageReceivedDelegate? MessageReceived;
-    
-    public void Dispose()
-    {
-        if (_consoleInputThread.IsAlive)
-        {
-        }
     }
 }
