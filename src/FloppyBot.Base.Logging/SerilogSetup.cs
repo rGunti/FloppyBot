@@ -22,6 +22,11 @@ public static class SerilogSetup
                 .Console(
                     outputTemplate:
                     "{Timestamp:HH:mm:ss.fff} | {SourceContext,-75} | {Level:u3} | {Message:lj}{NewLine}{Exception}"))
+#if DEBUG
+            .MinimumLevel.Verbose()
+#else
+            .MinimumLevel.Information()
+#endif
             // - Configurable via JSON file
             .ReadFrom.Configuration(hostConfig);
     }
