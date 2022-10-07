@@ -79,7 +79,7 @@ public class ExecutorAgent : BackgroundService
                 responses.Count);
 
             var senderMessageCombination = responses
-                .GroupBy(m => m.Identifier.Channel)
+                .GroupBy(m => m.Identifier.Interface)
                 .SelectMany(g =>
                 {
                     var sender = _senderFactory.GetNewSender(
