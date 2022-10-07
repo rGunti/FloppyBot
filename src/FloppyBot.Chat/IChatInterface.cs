@@ -10,8 +10,6 @@ public interface IChatInterface : IDisposable
     void Connect();
     void Disconnect();
 
-    void SendMessage(string message);
-    void SendMessage(ChannelIdentifier channel, string message);
     void SendMessage(ChatMessageIdentifier referenceMessage, string message);
 
     event ChatMessageReceivedDelegate MessageReceived;
