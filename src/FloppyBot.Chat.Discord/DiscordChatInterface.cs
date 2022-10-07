@@ -11,6 +11,9 @@ namespace FloppyBot.Chat.Discord;
 public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
+
+    private static readonly IEmote ReadEmote = new Emoji("✅");
+
     private readonly ILogger<DiscordSocketClient> _clientLogger;
     private readonly DiscordConfiguration _configuration;
     private readonly DiscordSocketClient _discordClient;
@@ -160,6 +163,7 @@ public class DiscordChatInterface : IChatInterface
             SharedEventTypes.CHAT_MESSAGE,
             socketMessage.Content);
 
+        socketMessage.AddReactionAsync(ReadEmote);
         _discordMessageRef.AddOrUpdate(message.Identifier, socketMessage, (_, _) => socketMessage);
 
         MessageReceived?.Invoke(this, message);
