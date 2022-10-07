@@ -18,8 +18,6 @@ public class DiscordChatInterface : IChatInterface
     private readonly DiscordConfiguration _configuration;
     private readonly DiscordSocketClient _discordClient;
 
-    private readonly ConcurrentDictionary<ChatMessageIdentifier, SocketMessage> _discordMessageRef = new();
-
     private readonly ILogger<DiscordChatInterface> _logger;
 
     public DiscordChatInterface(
@@ -62,32 +60,24 @@ public class DiscordChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
-        if (!_discordMessageRef.ContainsKey(referenceMessage))
+        var channel = _discordClient.GetChannel(referenceMessage);
+        if (channel == null)
         {
-            // TODO: Check what to do in this case
+            _logger.LogWarning("Could not find channel with ID {ChannelId}", referenceMessage.Channel);
             return;
         }
 
-        if (!_discordMessageRef.Remove(referenceMessage, out var msg))
+        if (channel is ITextChannel textChannel)
         {
-            _logger.LogWarning(
-                "Did not find a reference message {ChatMessageId}",
-                referenceMessage);
-            return;
-        }
-
-        ;
-
-        if (msg is IUserMessage userMessage)
-        {
-            userMessage.ReplyAsync(message);
+            textChannel.SendMessageAsync(
+                message,
+                messageReference: referenceMessage.ToMessageReference());
         }
         else
         {
             _logger.LogWarning(
-                "Didn't know what to do with {ChatMessageId}, message type was {MessageType}",
-                referenceMessage,
-                msg.GetType());
+                "Channel found is not a text channel, cannot send message (was {ChannelType})",
+                channel.GetType());
         }
     }
 
@@ -163,10 +153,11 @@ public class DiscordChatInterface : IChatInterface
             SharedEventTypes.CHAT_MESSAGE,
             socketMessage.Content);
 
-        socketMessage.AddReactionAsync(ReadEmote);
-        _discordMessageRef.AddOrUpdate(message.Identifier, socketMessage, (_, _) => socketMessage);
-
         MessageReceived?.Invoke(this, message);
+
+        // Mark message as read
+        socketMessage.AddReactionAsync(ReadEmote);
+
         return Task.CompletedTask;
     }
 
