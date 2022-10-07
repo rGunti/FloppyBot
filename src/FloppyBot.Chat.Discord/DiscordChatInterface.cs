@@ -57,17 +57,6 @@ public class DiscordChatInterface : IChatInterface
         DisconnectAsync();
     }
 
-    public void SendMessage(string message)
-    {
-        _logger.LogCritical("Cannot send message without a target!");
-        throw new InvalidOperationException("Cannot send message without a target!");
-    }
-
-    public void SendMessage(ChannelIdentifier channel, string message)
-    {
-        throw new NotImplementedException();
-    }
-
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
         if (!_discordMessageRef.ContainsKey(referenceMessage))
@@ -128,6 +117,7 @@ public class DiscordChatInterface : IChatInterface
         _logger.LogInformation("Connected!");
         await _discordClient.SetStatusAsync(UserStatus.Online);
         await _discordClient.SetGameAsync("FloppyBot v2");
+        _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
     }
 
     private Task DiscordClientOnLog(LogMessage arg)
@@ -160,7 +150,7 @@ public class DiscordChatInterface : IChatInterface
             socketMessage.Content);
 
         var message = new ChatMessage(
-            NewChatMessageIdentifier(socketMessage.Channel.Id),
+            NewChatMessageIdentifier(socketMessage.Channel.Id, socketMessage.Id),
             new ChatUser(
                 new ChannelIdentifier(
                     IF_NAME,
@@ -194,12 +184,13 @@ public class DiscordChatInterface : IChatInterface
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(
-        ulong channelId)
+        ulong channelId,
+        ulong messageId)
     {
         return new ChatMessageIdentifier(
             IF_NAME,
             $"{channelId}",
-            Guid.NewGuid().ToString());
+            $"{messageId}");
     }
 
     private static LogLevel TranslateLogLevel(LogSeverity severity)
