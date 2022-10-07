@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SmartFormat;
 
 namespace FloppyBot.Commands.Executor.Agent;
 
@@ -14,7 +15,9 @@ public class ExecutorAgent : BackgroundService
 {
     private readonly INotificationReceiver<CommandInstruction> _instructionReceiver;
     private readonly ILogger<ExecutorAgent> _logger;
-    private readonly INotificationSender _responseSender;
+
+    private readonly string _senderConnectionString;
+    private readonly INotificationSenderFactory _senderFactory;
     private readonly IServiceProvider _serviceProvider;
 
     public ExecutorAgent(
@@ -31,8 +34,8 @@ public class ExecutorAgent : BackgroundService
 
         _instructionReceiver.NotificationReceived += OmCommandReceived;
 
-        _responseSender = senderFactory.GetNewSender(
-            configuration.GetParsedConnectionString("ResponseOutput"));
+        _senderFactory = senderFactory;
+        _senderConnectionString = configuration.GetParsedConnectionString("ResponseOutput");
     }
 
     private void OmCommandReceived(CommandInstruction commandInstruction)
@@ -51,21 +54,51 @@ public class ExecutorAgent : BackgroundService
             .Where(c => c.CanExecute(commandInstruction))
             .ToImmutableList();
 
+        IImmutableList<ChatMessage> responses = Enumerable.Empty<ChatMessage>()
+            .ToImmutableList();
+
         if (commands.Any())
         {
             _logger.LogDebug("Executing matching commands ...");
-            ImmutableList<ChatMessage> responses = commands
+            responses = commands
                 .Select(cmd => cmd.Execute(commandInstruction))
                 .Where(resp => resp != null)
                 .ToImmutableList()!;
-
-            responses.ForEach(resp => { _responseSender.Send(resp); });
         }
         else
         {
             _logger.LogDebug(
                 "Could not find a command that can handle {CommandName}",
                 commandInstruction.CommandName);
+        }
+
+        if (responses.Any())
+        {
+            _logger.LogInformation(
+                "Sending {ResponseCount} messages",
+                responses.Count);
+
+            var senderMessageCombination = responses
+                .GroupBy(m => m.Identifier.Channel)
+                .SelectMany(g =>
+                {
+                    var sender = _senderFactory.GetNewSender(
+                        _senderConnectionString.FormatSmart(new
+                        {
+                            Interface = g.Key
+                        }));
+                    return g
+                        .Select(m => new
+                        {
+                            Sender = sender,
+                            Message = m
+                        });
+                });
+
+            foreach (var i in senderMessageCombination)
+            {
+                i.Sender.Send(i.Message);
+            }
         }
     }
 

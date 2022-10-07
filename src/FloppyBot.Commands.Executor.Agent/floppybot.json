@@ -8,6 +8,6 @@
   "ConnectionStrings": {
     "Redis": "localhost",
     "CommandInput": "{Redis}|Command.Received",
-    "ResponseOutput": "{Redis}|Message.Responded"
+    "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}"
   }
 }
