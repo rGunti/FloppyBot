@@ -22,7 +22,7 @@ on:
 
 jobs:
   build-docker-image:
-    name: Build Docker Image
+    name: Build ${{ inputs.image_name }}
     runs-on: ubuntu-latest
     steps:
       # Setup Environment
