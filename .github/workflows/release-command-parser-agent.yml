@@ -1,3 +1,5 @@
+name: Publish Command Parser Agent
+
 on:
   push:
     tags:
