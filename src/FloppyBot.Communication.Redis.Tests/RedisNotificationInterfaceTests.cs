@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using FloppyBot.Base.Testing;
 using FloppyBot.Communication.Redis.Config;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using StackExchange.Redis;
@@ -10,8 +12,8 @@ namespace FloppyBot.Communication.Redis.Tests;
 [TestClass]
 public class RedisNotificationInterfaceTests
 {
-    private readonly Mock<ISubscriber> _subscriberMock;
     private readonly RedisNotificationInterfaceFactory _interfaceFactory;
+    private readonly Mock<ISubscriber> _subscriberMock;
 
     public RedisNotificationInterfaceTests()
     {
@@ -28,6 +30,7 @@ public class RedisNotificationInterfaceTests
             .Returns(() => connectionMultiplexerMock.Object);
 
         _interfaceFactory = new RedisNotificationInterfaceFactory(
+            LoggingUtils.GetLogger<RedisNotificationInterfaceFactory>(),
             factory.Object);
     }
 
@@ -57,7 +60,7 @@ public class RedisNotificationInterfaceTests
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
             "redis.host.invalid|SomeChannel");
         receiver.StartListening();
-        
+
         Assert.IsTrue(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         // Verify subscription has happened
@@ -86,7 +89,7 @@ public class RedisNotificationInterfaceTests
             "redis.host.invalid|SomeChannel");
         receiver.StartListening();
         receiver.StartListening();
-        
+
         _subscriberMock.Verify(s => s.Subscribe(
                 It.Is<RedisChannel>(c => c == "SomeChannel"),
                 It.IsAny<Action<RedisChannel, RedisValue>>(),
@@ -116,7 +119,7 @@ public class RedisNotificationInterfaceTests
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
             "redis.host.invalid|SomeChannel");
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
-        
+
         receiver.StopListening();
         _subscriberMock.Verify(s => s.Subscribe(
                 It.Is<RedisChannel>(c => c == "SomeChannel"),

@@ -5,6 +5,12 @@
       "Microsoft.Hosting.Lifetime": "Information"
     }
   },
+  
+  "ConnectionStrings": {
+    "Redis": "localhost",
+    "MessageOutput": "{Redis}|Message.Received",
+    "MessageInput": "{Redis}|Message.Responded.\\{InterfaceType\\}"
+  },
 
   // Configure Chat Interface
   "InterfaceType": "Mock",

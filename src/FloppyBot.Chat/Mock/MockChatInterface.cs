@@ -6,12 +6,10 @@ namespace FloppyBot.Chat.Mock;
 public class MockChatInterface : IChatInterface
 {
     public const string IF_NAME = "Mock";
-
-    public const string EVENT_CHAT = "ChatMessage";
+    private readonly string _channelName;
 
     private readonly Stack<ChatMessage> _receivedMessages = new();
     private readonly Stack<string> _sentMessages = new();
-    private readonly string _channelName;
 
     public MockChatInterface(
         ChatInterfaceFeatures features = ChatInterfaceFeatures.None,
@@ -25,18 +23,10 @@ public class MockChatInterface : IChatInterface
     public IEnumerable<ChatMessage> ReceivedMessages => _receivedMessages;
     public Stack<string> SentMessages => _sentMessages;
 
-    public string Name => IF_NAME;
-    public ChatInterfaceFeatures SupportedFeatures { get; }
-
     private ChannelIdentifier ChannelIdentifier => new(Name, _channelName);
 
-    private ChatMessageIdentifier CreateNewIdentifier()
-    {
-        return new ChatMessageIdentifier(
-            Name,
-            _channelName,
-            Guid.NewGuid().ToString());
-    }
+    public string Name => IF_NAME;
+    public ChatInterfaceFeatures SupportedFeatures { get; }
 
     public void Connect()
     {
@@ -46,19 +36,6 @@ public class MockChatInterface : IChatInterface
     public void Disconnect()
     {
         // but nothing happened
-    }
-
-    public void InvokeReceivedMessage(string username, string message, PrivilegeLevel privilegeLevel)
-    {
-        var msg = new ChatMessage(
-            CreateNewIdentifier(),
-            new ChatUser(
-                new ChannelIdentifier(IF_NAME, username),
-                username,
-                privilegeLevel),
-            EVENT_CHAT,
-            message);
-        MessageReceived?.Invoke(this, msg);
     }
 
     public void SendMessage(string message)
@@ -71,15 +48,41 @@ public class MockChatInterface : IChatInterface
         SendMessage(message);
     }
 
-    public event ChatMessageReceivedDelegate? MessageReceived;
-
-    private void OnMessageReceived(IChatInterface _, ChatMessage chatMessage)
+    public void SendMessage(ChatMessageIdentifier _, string message)
     {
-        _receivedMessages.Push(chatMessage);
+        SendMessage(message);
     }
+
+    public event ChatMessageReceivedDelegate? MessageReceived;
 
     public void Dispose()
     {
         // but nothing happened
+    }
+
+    private ChatMessageIdentifier CreateNewIdentifier()
+    {
+        return new ChatMessageIdentifier(
+            Name,
+            _channelName,
+            Guid.NewGuid().ToString());
+    }
+
+    public void InvokeReceivedMessage(string username, string message, PrivilegeLevel privilegeLevel)
+    {
+        var msg = new ChatMessage(
+            CreateNewIdentifier(),
+            new ChatUser(
+                new ChannelIdentifier(IF_NAME, username),
+                username,
+                privilegeLevel),
+            SharedEventTypes.CHAT_MESSAGE,
+            message);
+        MessageReceived?.Invoke(this, msg);
+    }
+
+    private void OnMessageReceived(IChatInterface _, ChatMessage chatMessage)
+    {
+        _receivedMessages.Push(chatMessage);
     }
 }

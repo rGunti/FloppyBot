@@ -14,24 +14,27 @@ public class AppConfigurationTests
             .AddInMemoryCollection(new Dictionary<string, string>
             {
                 { "ConnectionStrings:A", "aConnectionString" },
-                { "ConnectionStrings:B", "{A}WithB" }
+                { "ConnectionStrings:B", "{A}WithB" },
+                { "ConnectionStrings:C", "{A}With\\{SomeValue\\}" },
+                { "SomeValue", "CValue" },
+                { "SomeOtherValue", "{ConnectionStrings__A}OnRoot" }
             })
             .Build();
     }
-    
+
     [TestMethod]
     public void ConnectionStringsListedCorrectly()
     {
         IConfiguration config = BuildTestConfig();
         IReadOnlyDictionary<string, string> configStrings = config.GetConnectionStrings();
         CollectionAssert.AreEquivalent(
-            new [] { "A", "B" },
+            new[] { "A", "B", "C" },
             configStrings.Keys.ToArray());
         CollectionAssert.AreEquivalent(
-            new [] { "aConnectionString", "{A}WithB" },
+            new[] { "aConnectionString", "{A}WithB", "{A}With\\{SomeValue\\}" },
             configStrings.Values.ToArray());
     }
-    
+
     [TestMethod]
     public void ConnectionStringsParsedCorrectly()
     {
@@ -39,5 +42,20 @@ public class AppConfigurationTests
         Assert.AreEqual(
             "aConnectionStringWithB",
             config.GetParsedConnectionString("B"));
+        Assert.AreEqual(
+            "aConnectionStringWith{SomeValue}",
+            config.GetParsedConnectionString("C"));
+        Assert.AreEqual(
+            "aConnectionStringWithCValue",
+            config.GetParsedConnectionString("C", true));
+    }
+
+    [TestMethod]
+    public void ConfigValuesParsedCorrectly()
+    {
+        IConfiguration config = BuildTestConfig();
+        Assert.AreEqual(
+            "aConnectionStringOnRoot",
+            config.GetParsedConfigString("SomeOtherValue"));
     }
 }

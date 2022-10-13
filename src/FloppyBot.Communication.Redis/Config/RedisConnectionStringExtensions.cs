@@ -10,7 +10,7 @@ public static class RedisConnectionStringExtensions
         if (split.Length != 2)
         {
             throw new ArgumentException(
-                "Provided connection string does not contain all parts required to be parsed",
+                $"Provided connection string does not contain all parts required to be parsed: {connectionString}",
                 nameof(connectionString));
         }
         return new RedisConnectionConfig(

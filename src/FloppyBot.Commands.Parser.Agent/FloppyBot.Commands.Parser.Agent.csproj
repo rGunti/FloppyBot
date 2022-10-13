@@ -4,7 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-FloppyBot.Chat.Agent-F99453DC-434C-44B7-8C26-7BC571C7F1D4</UserSecretsId>
+        <UserSecretsId>dotnet-FloppyBot.Commands.Parser.Agent-BEBA2852-9E90-4CFE-82E6-49EA8C490C41</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,8 +14,8 @@
     <ItemGroup>
       <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
       <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
-      <ProjectReference Include="..\FloppyBot.Chat.Discord\FloppyBot.Chat.Discord.csproj" />
-      <ProjectReference Include="..\FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj" />
+      <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+      <ProjectReference Include="..\FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj" />
       <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
     </ItemGroup>
 </Project>

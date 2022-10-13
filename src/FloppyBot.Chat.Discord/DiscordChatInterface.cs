@@ -1,5 +1,5 @@
-﻿using Discord;
-using Discord.Rest;
+﻿using System.Collections.Concurrent;
+using Discord;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
@@ -12,12 +12,13 @@ public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
 
-    public const string EVENT_MESSAGE = "ChatMessage";
+    private static readonly IEmote ReadEmote = new Emoji("✅");
 
-    private readonly ILogger<DiscordChatInterface> _logger;
     private readonly ILogger<DiscordSocketClient> _clientLogger;
     private readonly DiscordConfiguration _configuration;
     private readonly DiscordSocketClient _discordClient;
+
+    private readonly ILogger<DiscordChatInterface> _logger;
 
     public DiscordChatInterface(
         ILogger<DiscordChatInterface> logger,
@@ -30,24 +31,63 @@ public class DiscordChatInterface : IChatInterface
         _clientLogger = clientLogger;
         _configuration = configuration;
         _discordClient = discordClient;
-        
+
         _discordClient.Log += DiscordClientOnLog;
         _discordClient.Ready += DiscordClientOnReady;
         _discordClient.MessageReceived += DiscordClientOnMessageReceived;
     }
 
+    public string ConnectUrl
+        =>
+            $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
+
     public string Name => IF_NAME;
 
     public ChatInterfaceFeatures SupportedFeatures =>
         ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
-    
-    public string ConnectUrl
-        => $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public void Connect()
     {
         _logger.LogInformation("Connecting to Discord ...");
         ConnectAsync();
+    }
+
+    public void Disconnect()
+    {
+        _logger.LogInformation("Disconnecting from Discord ...");
+        DisconnectAsync();
+    }
+
+    public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
+    {
+        var channel = _discordClient.GetChannel(referenceMessage);
+        if (channel == null)
+        {
+            _logger.LogWarning("Could not find channel with ID {ChannelId}", referenceMessage.Channel);
+            return;
+        }
+
+        if (channel is ITextChannel textChannel)
+        {
+            textChannel.SendMessageAsync(
+                message,
+                messageReference: referenceMessage.ToMessageReference());
+        }
+        else
+        {
+            _logger.LogWarning(
+                "Channel found is not a text channel, cannot send message (was {ChannelType})",
+                channel.GetType());
+        }
+    }
+
+    public event ChatMessageReceivedDelegate? MessageReceived;
+
+    public void Dispose()
+    {
+        _logger.LogTrace("Disposing interface ...");
+
+        _discordClient.MessageReceived -= DiscordClientOnMessageReceived;
     }
 
     private async void ConnectAsync()
@@ -59,35 +99,18 @@ public class DiscordChatInterface : IChatInterface
         await _discordClient.StartAsync();
     }
 
-    public void Disconnect()
-    {
-        _logger.LogInformation("Disconnecting from Discord ...");
-        DisconnectAsync();
-    }
-
     private async void DisconnectAsync()
     {
         await _discordClient.SetStatusAsync(UserStatus.Offline);
         await _discordClient.LogoutAsync();
     }
 
-    public void SendMessage(string message)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SendMessage(ChannelIdentifier channel, string message)
-    {
-        throw new NotImplementedException();
-    }
-
-    public event ChatMessageReceivedDelegate? MessageReceived;
-
     private async Task DiscordClientOnReady()
     {
         _logger.LogInformation("Connected!");
         await _discordClient.SetStatusAsync(UserStatus.Online);
         await _discordClient.SetGameAsync("FloppyBot v2");
+        _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
     }
 
     private Task DiscordClientOnLog(LogMessage arg)
@@ -120,27 +143,49 @@ public class DiscordChatInterface : IChatInterface
             socketMessage.Content);
 
         var message = new ChatMessage(
-            NewChatMessageIdentifier(socketMessage.Channel.Id),
+            NewChatMessageIdentifier(socketMessage.Channel.Id, socketMessage.Id),
             new ChatUser(
                 new ChannelIdentifier(
                     IF_NAME,
                     $"{socketMessage.Author.Id}"),
                 socketMessage.Author.Username,
-                PrivilegeLevel.Unknown),
-            EVENT_MESSAGE,
+                DeterminePrivilegeLevel(socketMessage.Author)),
+            SharedEventTypes.CHAT_MESSAGE,
             socketMessage.Content);
-        
+
         MessageReceived?.Invoke(this, message);
+
+        // Mark message as read
+        socketMessage.AddReactionAsync(ReadEmote);
+
         return Task.CompletedTask;
     }
 
+    private PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
+    {
+        if (user.IsBot || user.IsWebhook)
+            return PrivilegeLevel.Unknown;
+        if (user is SocketGuildUser guildUser)
+        {
+            var guildPermissions = guildUser.GuildPermissions;
+            if (guildPermissions.Administrator)
+                return PrivilegeLevel.Administrator;
+            if (guildPermissions.ManageChannels)
+                return PrivilegeLevel.Moderator;
+            return PrivilegeLevel.Viewer;
+        }
+
+        return PrivilegeLevel.Unknown;
+    }
+
     private ChatMessageIdentifier NewChatMessageIdentifier(
-        ulong channelId)
+        ulong channelId,
+        ulong messageId)
     {
         return new ChatMessageIdentifier(
             IF_NAME,
             $"{channelId}",
-            Guid.NewGuid().ToString());
+            $"{messageId}");
     }
 
     private static LogLevel TranslateLogLevel(LogSeverity severity)
@@ -162,12 +207,5 @@ public class DiscordChatInterface : IChatInterface
             default:
                 return LogLevel.Trace;
         }
-    }
-
-    public void Dispose()
-    {
-        _logger.LogTrace("Disposing interface ...");
-
-        _discordClient.MessageReceived -= DiscordClientOnMessageReceived;
     }
 }

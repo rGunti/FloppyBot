@@ -40,10 +40,33 @@ public static class AppConfigurationUtils
             .ToImmutableDictionary(i => i.Key, i => i.Value);
     }
 
+    public static IReadOnlyDictionary<string, string> GetConfigValues(this IConfiguration configuration)
+    {
+        return configuration
+            .AsEnumerable()
+            .ToImmutableDictionary(
+                c => c.Key.Replace(":", "__"),
+                c => c.Value);
+    }
+
     public static string GetParsedConnectionString(
+        this IConfiguration configuration,
+        string name,
+        bool rootLevelPass = false)
+    {
+        var s = configuration.GetConnectionString(name).FormatSmart(configuration.GetConnectionStrings());
+        if (rootLevelPass)
+        {
+            s = s.FormatSmart(configuration.GetConfigValues());
+        }
+
+        return s;
+    }
+
+    public static string GetParsedConfigString(
         this IConfiguration configuration,
         string name)
     {
-        return configuration.GetConnectionString(name).FormatSmart(configuration.GetConnectionStrings());
+        return configuration[name].FormatSmart(configuration.GetConfigValues());
     }
 }
