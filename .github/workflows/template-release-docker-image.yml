@@ -25,6 +25,7 @@ jobs:
     name: Build Docker Image
     runs-on: ubuntu-latest
     steps:
+      # Setup Environment
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -34,8 +35,10 @@ jobs:
         with:
           username: ${{ secrets.docker_hub_username }}
           password: ${{ secrets.docker_hub_token }}
+      # Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
+      # Build
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -44,3 +47,5 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
