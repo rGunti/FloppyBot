@@ -34,6 +34,8 @@ jobs:
         with:
           username: ${{ secrets.docker_hub_username }}
           password: ${{ secrets.docker_hub_token }}
+      - name: Debug List Folder Structure
+        run: ls -laR .
       - name: Build and push
         uses: docker/build-push-action@v3
         with:

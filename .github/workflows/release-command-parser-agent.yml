@@ -2,6 +2,8 @@ on:
   push:
     tags:
       - "*"
+    branches:
+      - "10-have-an-automated-deployment-setup"
 
 jobs:
   release-docker-image:
