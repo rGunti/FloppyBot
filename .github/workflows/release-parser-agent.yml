@@ -1,0 +1,16 @@
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  release-docker-image:
+    name: Publish Command Parser Agent
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@10-have-an-automated-deployment-setup
+    with:
+      dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
+      image_name: floppybot/command-parser
+      image_tag: ${{ env.GITHUB_REF_NAME }}
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}

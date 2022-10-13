@@ -1,10 +1,17 @@
 on:
   workflow_call:
     inputs:
-      dockerfile_context:
+      dockerfile_path:
         required: true
         type: string
+      dockerfile_context:
+        required: false
+        type: string
+        default: "."
       image_name:
+        required: true
+        type: string
+      image_tag:
         required: true
         type: string
     secrets:
@@ -31,6 +38,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: ${{ inputs.dockerfile_context }}
+          file: ${{ inputs.dockerfile_path }}
           push: false
           platforms: linux/amd64,linux/arm64
-          tags: ${{ inputs.image_name }}
+          tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
