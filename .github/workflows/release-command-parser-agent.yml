@@ -10,7 +10,7 @@ jobs:
     with:
       dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
       image_name: floppybot/command-parser
-      image_tag: ${{ env.GITHUB_REF_NAME }}
+      image_tag: ${{ github.ref_name }}
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
