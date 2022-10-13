@@ -41,6 +41,6 @@ jobs:
         with:
           context: ${{ inputs.dockerfile_context }}
           file: ${{ inputs.dockerfile_path }}
-          push: false
+          push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
