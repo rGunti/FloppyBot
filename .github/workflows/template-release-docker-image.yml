@@ -34,8 +34,8 @@ jobs:
         with:
           username: ${{ secrets.docker_hub_username }}
           password: ${{ secrets.docker_hub_token }}
-      - name: Debug List Folder Structure
-        run: echo $PWD && find . && echo "=== ROOT ===" && find /
+      - name: Checkout Code
+        uses: actions/checkout@v3
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
