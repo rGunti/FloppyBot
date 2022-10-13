@@ -1,0 +1,42 @@
+name: Publish Docker Images
+
+on:
+  push:
+    tags:
+      - "*"
+    branches:
+      - "10-have-an-automated-deployment-setup"
+
+jobs:
+  chat-agent:
+    name: Publish Chat Agent
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    with:
+      dockerfile_path: src/FloppyBot.Chat.Agent/Dockerfile
+      image_name: floppybot/chat-agent
+      image_tag: ${{ github.ref_name }}
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+  command-executor:
+    name: Publish Command Executor Agent
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    with:
+      dockerfile_path: src/FloppyBot.Commands.Executor.Agent/Dockerfile
+      image_name: floppybot/command-executor
+      image_tag: ${{ github.ref_name }}
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
+
+  command-parser:
+    name: Publish Command Parser Agent
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    with:
+      dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
+      image_name: floppybot/command-parser
+      image_tag: ${{ github.ref_name }}
+    secrets:
+      docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
