@@ -1,4 +1,5 @@
-﻿using FloppyBot.Chat.Entities;
+﻿using FloppyBot.Chat;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Executor.Agent.Cmds;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,5 +41,10 @@ internal static class CommandUtils
         string? reply)
     {
         return !string.IsNullOrWhiteSpace(reply) ? commandInstruction.Reply(reply) : null;
+    }
+
+    public static bool SourceSupports(this CommandInstruction commandInstruction, ChatInterfaceFeatures feature)
+    {
+        return commandInstruction.Context!.SourceMessage.SupportedFeatures.Supports(feature);
     }
 }

@@ -7,4 +7,5 @@ public record ChatMessage(
     ChatUser Author,
     string EventName,
     string Content,
-    string? Context = null);
+    string? Context = null,
+    ChatInterfaceFeatures SupportedFeatures = ChatInterfaceFeatures.None);

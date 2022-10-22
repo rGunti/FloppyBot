@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Expressionator.Expressions.Builder;
 using Expressionator.Expressions.Evaluator;
+using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
@@ -12,6 +13,8 @@ namespace FloppyBot.Commands.Executor.Agent.Cmds;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class MathCommand : RegularBotCommand
 {
+    private const string REPLY_DEFAULT = "The answer is {Answer}";
+    private const string REPLY_MD = "The answer is `{Answer}`";
     private static readonly IImmutableSet<string> CommandNameSet = new[] { "math", "calc" }.ToImmutableHashSet();
 
     private readonly ILogger<MathCommand> _logger;
@@ -38,10 +41,11 @@ public class MathCommand : RegularBotCommand
             if (result == null)
                 return null;
 
-            reply = "The answer is: {Answer}".FormatSmart(new
-            {
-                Answer = result.ToString()
-            });
+            reply = (instruction.SourceSupports(ChatInterfaceFeatures.MarkdownText) ? REPLY_MD : REPLY_DEFAULT)
+                .FormatSmart(new
+                {
+                    Answer = result.ToString()
+                });
         }
         catch (UnexpectedTokenException ex)
         {
