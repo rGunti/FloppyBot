@@ -54,14 +54,6 @@ public class MathCommand : RegularBotCommand
             reply = "Sorry, something broke while I calculated that expression";
         }
 
-        if (!string.IsNullOrWhiteSpace(reply))
-        {
-            return instruction.Context!.SourceMessage with
-            {
-                Content = reply
-            };
-        }
-
-        return null;
+        return instruction.ReplyIfNotEmpty(reply);
     }
 }

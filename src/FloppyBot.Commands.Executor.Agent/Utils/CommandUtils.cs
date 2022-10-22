@@ -1,4 +1,6 @@
-﻿using FloppyBot.Commands.Executor.Agent.Cmds;
+﻿using FloppyBot.Chat.Entities;
+using FloppyBot.Commands.Executor.Agent.Cmds;
+using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Commands.Executor.Agent.Utils;
@@ -21,5 +23,22 @@ internal static class CommandUtils
     public static string JoinToString(this IEnumerable<string> stringEnumerable)
     {
         return string.Join(" ", stringEnumerable);
+    }
+
+    public static ChatMessage Reply(
+        this CommandInstruction commandInstruction,
+        string reply)
+    {
+        return commandInstruction.Context!.SourceMessage with
+        {
+            Content = reply
+        };
+    }
+
+    public static ChatMessage? ReplyIfNotEmpty(
+        this CommandInstruction commandInstruction,
+        string? reply)
+    {
+        return !string.IsNullOrWhiteSpace(reply) ? commandInstruction.Reply(reply) : null;
     }
 }
