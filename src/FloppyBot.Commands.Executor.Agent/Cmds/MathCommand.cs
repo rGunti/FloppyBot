@@ -13,9 +13,12 @@ namespace FloppyBot.Commands.Executor.Agent.Cmds;
 // ReSharper disable once ClassNeverInstantiated.Global
 public class MathCommand : RegularBotCommand
 {
-    private const string REPLY_DEFAULT = "The answer is {Answer}";
-    private const string REPLY_MD = "The answer is `{Answer}`";
-    private static readonly IImmutableSet<string> CommandNameSet = new[] { "math", "calc" }.ToImmutableHashSet();
+    public const string REPLY_DEFAULT = "The answer is {Answer}";
+    public const string REPLY_MD = "The answer is `{Answer}`";
+    public const string REPLY_ERR_PARSE = "Sorry, something in your expression doesn't make sense";
+    public const string REPLY_ERR_EXEC = "Sorry, something broke while I calculated that expression";
+
+    public static readonly IImmutableSet<string> CommandNameSet = new[] { "math", "calc" }.ToImmutableHashSet();
 
     private readonly ILogger<MathCommand> _logger;
 
@@ -50,12 +53,12 @@ public class MathCommand : RegularBotCommand
         catch (UnexpectedTokenException ex)
         {
             _logger.LogWarning(ex, "Failed to parse expression {Expression}", expression);
-            reply = "Sorry, something in your expression doesn't make sense";
+            reply = REPLY_ERR_PARSE;
         }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Failed to execute expression {Expression}", expression);
-            reply = "Sorry, something broke while I calculated that expression";
+            reply = REPLY_ERR_EXEC;
         }
 
         return instruction.ReplyIfNotEmpty(reply);
