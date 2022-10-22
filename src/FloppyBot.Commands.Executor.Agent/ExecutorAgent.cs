@@ -32,13 +32,13 @@ public class ExecutorAgent : BackgroundService
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
             configuration.GetParsedConnectionString("CommandInput"));
 
-        _instructionReceiver.NotificationReceived += OmCommandReceived;
+        _instructionReceiver.NotificationReceived += OnCommandReceived;
 
         _senderFactory = senderFactory;
         _senderConnectionString = configuration.GetParsedConnectionString("ResponseOutput");
     }
 
-    private void OmCommandReceived(CommandInstruction commandInstruction)
+    private void OnCommandReceived(CommandInstruction commandInstruction)
     {
 #if DEBUG
         _logger.LogDebug("Received command instruction {@CommandInstruction}",

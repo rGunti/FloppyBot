@@ -1,5 +1,4 @@
 using FloppyBot.Chat.Entities;
-using FloppyBot.Commands.Parser;
 using FloppyBot.Commands.Parser.Entities;
 
 namespace FloppyBot.Commands;
