@@ -1,8 +1,7 @@
 ﻿using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Logging;
-using FloppyBot.Commands;
 using FloppyBot.Commands.Executor.Agent;
-using FloppyBot.Commands.Executor.Agent.Cmds;
+using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Communication.Redis.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,7 +15,7 @@ IHost host = builder
     {
         services
             .AddRedisCommunication()
-            .AddScoped<IBotCommand, PingCommand>()
+            .AddCommands()
             .AddHostedService<ExecutorAgent>();
     })
     .Build();

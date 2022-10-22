@@ -66,20 +66,6 @@ public class TwitchChatInterface : IChatInterface
         }
     }
 
-    public void SendMessage(string message)
-    {
-        SendMessage(_channelIdentifier, message);
-    }
-
-    public void SendMessage(ChannelIdentifier channel, string message)
-    {
-        string twitchChannel = channel.Channel.ToLowerInvariant();
-        foreach (string line in message.Split("\n\n"))
-        {
-            _client.SendMessage(twitchChannel, line);
-        }
-    }
-
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
         _client.SendReply(
@@ -94,6 +80,20 @@ public class TwitchChatInterface : IChatInterface
     {
         _logger.LogTrace("Disposing interface ...");
         Disconnect();
+    }
+
+    public void SendMessage(string message)
+    {
+        SendMessage(_channelIdentifier, message);
+    }
+
+    public void SendMessage(ChannelIdentifier channel, string message)
+    {
+        string twitchChannel = channel.Channel.ToLowerInvariant();
+        foreach (string line in message.Split("\n\n"))
+        {
+            _client.SendMessage(twitchChannel, line);
+        }
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(string? messageId)
@@ -157,7 +157,9 @@ public class TwitchChatInterface : IChatInterface
                 chatMessage.DisplayName,
                 DeterminePrivilegeLevel(chatMessage)),
             SharedEventTypes.CHAT_MESSAGE,
-            chatMessage.Message);
+            chatMessage.Message,
+            null,
+            SupportedFeatures);
 
         MessageReceived?.Invoke(this, message);
     }

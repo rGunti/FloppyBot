@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using Discord;
+﻿using Discord;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
@@ -151,7 +150,9 @@ public class DiscordChatInterface : IChatInterface
                 socketMessage.Author.Username,
                 DeterminePrivilegeLevel(socketMessage.Author)),
             SharedEventTypes.CHAT_MESSAGE,
-            socketMessage.Content);
+            socketMessage.Content,
+            null,
+            SupportedFeatures);
 
         MessageReceived?.Invoke(this, message);
 
