@@ -1,10 +1,10 @@
-﻿#!/usr/bin/env bash
+﻿#!/bin/bash
 source /semver.sh
 
-local MAJOR=0  
-local MINOR=0  
-local PATCH=0  
-local SPECIAL=""
+MAJOR=0  
+MINOR=0  
+PATCH=0  
+SPECIAL=""
 
 semverParseInto "$(cat /app-version)" MAJOR MINOR PATCH SPECIAL
 
