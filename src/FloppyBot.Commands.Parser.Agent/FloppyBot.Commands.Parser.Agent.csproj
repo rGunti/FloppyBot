@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-FloppyBot.Commands.Parser.Agent-BEBA2852-9E90-4CFE-82E6-49EA8C490C41</UserSecretsId>
+        <Company>FloppyBot</Company>
+        <Product>Command Parser</Product>
     </PropertyGroup>
 
     <ItemGroup>

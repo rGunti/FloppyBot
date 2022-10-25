@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <UserSecretsId>dotnet-FloppyBot.Chat.Agent-F99453DC-434C-44B7-8C26-7BC571C7F1D4</UserSecretsId>
+        <Company>FloppyBot</Company>
+        <Product>Chat Agent</Product>
     </PropertyGroup>
 
     <ItemGroup>

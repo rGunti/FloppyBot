@@ -12,7 +12,8 @@ internal static class CommandUtils
     {
         return services
             .AddCommand<PingCommand>()
-            .AddCommand<MathCommand>();
+            .AddCommand<MathCommand>()
+            .AddCommand<AboutCommand>();
     }
 
     private static IServiceCollection AddCommand<T>(this IServiceCollection services) where T : class, IBotCommand

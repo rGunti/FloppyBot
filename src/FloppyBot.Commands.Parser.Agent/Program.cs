@@ -23,4 +23,4 @@ IHost host = builder
     })
     .Build();
 
-await host.RunAsync();
+await host.LogAndRun();
