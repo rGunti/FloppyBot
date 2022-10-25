@@ -3,6 +3,7 @@ using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Version;
 using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Chat.Discord;
@@ -108,7 +109,7 @@ public class DiscordChatInterface : IChatInterface
     {
         _logger.LogInformation("Connected!");
         await _discordClient.SetStatusAsync(UserStatus.Online);
-        await _discordClient.SetGameAsync("FloppyBot v2");
+        await _discordClient.SetGameAsync($"FloppyBot v{AboutThisApp.Info.Version}");
         _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
     }
 

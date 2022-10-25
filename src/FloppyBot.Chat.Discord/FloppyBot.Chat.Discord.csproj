@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+      <ProjectReference Include="..\FloppyBot.Version\FloppyBot.Version.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

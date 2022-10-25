@@ -2,23 +2,40 @@
 
 namespace FloppyBot.Version;
 
-public static class AboutThisApp
+public class AboutThisApp
 {
     static AboutThisApp()
     {
         var assembly = Assembly.GetEntryAssembly()!;
-        Version = assembly.GetProductVersion()!;
-        ServiceName = assembly.GetProductName()!;
+        Info = new AboutThisApp(
+            "FloppyBot",
+            assembly.GetProductName()!,
+            assembly.GetProductVersion()!);
     }
 
-    public static string Name => "FloppyBot";
-    public static string ServiceName { get; }
-    public static string Version { get; }
+    private AboutThisApp(
+        string name,
+        string serviceName,
+        string version)
+    {
+        Name = name;
+        ServiceName = serviceName;
+        Version = version;
+    }
 
-    private static string? GetProductName(this Assembly assembly)
+    public static AboutThisApp Info { get; }
+
+    public string Name { get; }
+    public string ServiceName { get; }
+    public string Version { get; }
+}
+
+internal static class AssemblyExtensions
+{
+    internal static string? GetProductName(this Assembly assembly)
         => assembly.GetAssemblyAttribute<AssemblyProductAttribute>(v => v.Product);
 
-    private static string? GetProductVersion(this Assembly assembly)
+    internal static string? GetProductVersion(this Assembly assembly)
         => assembly.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(v => v.InformationalVersion);
 
     private static string? GetAssemblyAttribute<T>(

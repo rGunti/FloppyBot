@@ -10,12 +10,13 @@ public static class LoggedStartup
     public static Task LogAndRun(
         this IHost host)
     {
+        var appInfo = AboutThisApp.Info;
         host.Services.GetRequiredService<ILogger<Run>>()
             .LogInformation(
                 "Starting up application {AppName} {ServiceName} {ServiceVersion}",
-                AboutThisApp.Name,
-                AboutThisApp.ServiceName,
-                AboutThisApp.Version);
+                appInfo.Name,
+                appInfo.ServiceName,
+                appInfo.Version);
         return host
             .RunAsync();
     }
