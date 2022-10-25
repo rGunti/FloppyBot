@@ -50,4 +50,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
-            ${{ inputs.image_tag }}
+            CODE_VERSION=${{ inputs.image_tag }}
