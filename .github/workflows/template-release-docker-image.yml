@@ -39,6 +39,8 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
       # Build
+      - name: Set Version
+        run: echo "${{ inputs.image_tag }}" > ./version
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
@@ -49,4 +51,3 @@ jobs:
           tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: CODE_VERSION=${{ inputs.image_tag }}

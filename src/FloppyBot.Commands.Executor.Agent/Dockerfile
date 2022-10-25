@@ -1,27 +1,28 @@
-ARG CODE_VERSION=2.0.0
-ARG CODE_VERSION_SUFFIX=+noversion
-
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-ARG CODE_VERSION
-ARG CODE_VERSION_SUFFIX
 ENV FLOPPYBOT_PROJECT=src/FloppyBot.Commands.Executor.Agent/FloppyBot.Commands.Executor.Agent.csproj
 
-COPY src/ /src/
-RUN dotnet restore ${FLOPPYBOT_PROJECT}
+RUN wget -O /semver.sh https://raw.githubusercontent.com/cloudflare/semver_bash/master/semver.sh
 
+COPY version /app-version
+COPY scripts/determine-version.sh /version.sh
+
+RUN bash /version.sh
+
+COPY src/ /src/
+
+RUN dotnet restore ${FLOPPYBOT_PROJECT}
 RUN dotnet build \
     --no-restore \
     --configuration Release \
+    /p:Version=$(cat /app-short-version | xargs) \
+    /p:InformationalVersion=$(cat /app-version | xargs) \
     ${FLOPPYBOT_PROJECT}
 RUN dotnet publish \
     --no-restore \
     --no-build \
     --configuration Release \
-    /p:Version="${CODE_VERSION}" \
-    /p:InformationalVersion="${CODE_VERSION}" \
     -o /out \
     ${FLOPPYBOT_PROJECT}
-RUN echo "${CODE_VERSION}" > /app-version
 
 FROM mcr.microsoft.com/dotnet/runtime:6.0 AS runtime
 COPY --from=build /out /app
