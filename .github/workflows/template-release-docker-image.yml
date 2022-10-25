@@ -49,5 +49,4 @@ jobs:
           tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          build-args: |
-            CODE_VERSION=${{ inputs.image_tag }}
+          build-args: CODE_VERSION=${{ inputs.image_tag }}
