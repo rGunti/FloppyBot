@@ -15,6 +15,23 @@ public sealed class ImmutableListWithValueSemantics<T> : IImmutableList<T>, IEqu
     private readonly IImmutableList<T> _list;
 
     public ImmutableListWithValueSemantics(IImmutableList<T> list) => _list = list;
+    public bool Equals(IImmutableList<T>? other) => this.SequenceEqual(other ?? ImmutableList<T>.Empty);
+
+    public override bool Equals(object? obj) => Equals(obj as IImmutableList<T>);
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return this.Aggregate(19, (h, i) => h * 19 + i!.GetHashCode());
+        }
+    }
+
+    public override string ToString()
+    {
+        return
+            $"ImmutableList<{typeof(T)}> ({Count}): [{string.Join(",", _list.Select(i => i?.ToString() ?? "<null>"))}]";
+    }
 
     #region IImutableList implementation
 
@@ -56,15 +73,4 @@ public sealed class ImmutableListWithValueSemantics<T> : IImmutableList<T>, IEqu
     IEnumerator IEnumerable.GetEnumerator() => _list.GetEnumerator();
 
     #endregion
-
-    public override bool Equals(object? obj) => Equals(obj as IImmutableList<T>);
-    public bool Equals(IImmutableList<T>? other) => this.SequenceEqual(other ?? ImmutableList<T>.Empty);
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return this.Aggregate(19, (h, i) => h * 19 + i!.GetHashCode());
-        }
-    }
 }
