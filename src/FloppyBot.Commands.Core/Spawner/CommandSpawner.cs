@@ -6,7 +6,7 @@ using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace FloppyBot.Commands.Core.Executor;
+namespace FloppyBot.Commands.Core.Spawner;
 
 public class CommandSpawner : ICommandSpawner
 {

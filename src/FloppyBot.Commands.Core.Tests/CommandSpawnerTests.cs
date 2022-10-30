@@ -2,7 +2,7 @@
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Executor;
+using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Tests.Impl;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
