@@ -1,27 +1,11 @@
 ﻿using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
-using FloppyBot.Commands.Executor.Agent.Cmds;
 using FloppyBot.Commands.Parser.Entities;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Commands.Executor.Agent.Utils;
 
 internal static class CommandUtils
 {
-    public static IServiceCollection AddCommands(this IServiceCollection services)
-    {
-        return services
-            .AddCommand<PingCommand>()
-            .AddCommand<MathCommand>()
-            .AddCommand<AboutCommand>();
-    }
-
-    private static IServiceCollection AddCommand<T>(this IServiceCollection services) where T : class, IBotCommand
-    {
-        return services
-            .AddScoped<IBotCommand, T>();
-    }
-
     public static string JoinToString(this IEnumerable<string> stringEnumerable)
     {
         return string.Join(" ", stringEnumerable);
@@ -47,5 +31,14 @@ internal static class CommandUtils
     public static bool SourceSupports(this CommandInstruction commandInstruction, ChatInterfaceFeatures feature)
     {
         return commandInstruction.Context!.SourceMessage.SupportedFeatures.Supports(feature);
+    }
+
+    public static string DetermineMessageTemplate(
+        this CommandInstruction commandInstruction,
+        ChatInterfaceFeatures features,
+        string messageTemplate,
+        string defaultTemplate)
+    {
+        return commandInstruction.SourceSupports(features) ? messageTemplate : defaultTemplate;
     }
 }
