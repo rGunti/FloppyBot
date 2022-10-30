@@ -6,4 +6,10 @@
 /// </summary>
 public class AllArgumentsAttribute : BaseArgumentAttribute
 {
+    public AllArgumentsAttribute(string joinWith = " ")
+    {
+        JoinWith = joinWith;
+    }
+
+    public string JoinWith { get; }
 }

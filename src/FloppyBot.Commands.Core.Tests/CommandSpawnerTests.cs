@@ -195,6 +195,26 @@ public class CommandSpawnerTests
             returnValue!.Content);
     }
 
+    [TestMethod]
+    public void CanHandleAllArgumentsAsSingleString()
+    {
+        var instruction = MockCommandFactory.NewInstruction(
+            "allargs1",
+            new[] { "1", "2", "3", "4", "5" });
+        var command = GetCommandInfo(
+            "allargs1",
+            typeof(SampleCommands),
+            nameof(SampleCommands.AllArgsAsString));
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual(
+            "1 2 3 4 5",
+            returnValue!.Content);
+    }
+
     [DataTestMethod]
     [DataRow(SampleCommands.SampleEnum.A)]
     [DataRow(SampleCommands.SampleEnum.B)]

@@ -77,6 +77,13 @@ public class SampleCommands
         return string.Join("/", allArgs);
     }
 
+    [Command("allargs1")]
+    public static string AllArgsAsString(
+        [AllArguments] string allArgs)
+    {
+        return allArgs;
+    }
+
     [Command("enum")]
     public static string Enum(
         [ArgumentIndex(0)] SampleEnum sampleEnum)

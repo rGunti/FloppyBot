@@ -120,7 +120,9 @@ public class CommandSpawner : ICommandSpawner
         var argListAttr = parameterInfo.GetCustomAttribute<AllArgumentsAttribute>();
         if (argListAttr != null)
         {
-            return instruction.Parameters;
+            return parameterInfo.ParameterType == typeof(string)
+                ? string.Join(argListAttr.JoinWith, instruction.Parameters)
+                : instruction.Parameters;
         }
 
         var argIndexAttr = parameterInfo.GetCustomAttribute<ArgumentIndexAttribute>();
