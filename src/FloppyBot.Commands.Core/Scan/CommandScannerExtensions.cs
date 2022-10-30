@@ -27,4 +27,9 @@ public static class CommandScannerExtensions
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>();
     }
+
+    public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(this ICommandScanner scanner)
+    {
+        return scanner.ScanTypeForCommandHandlers(typeof(T));
+    }
 }

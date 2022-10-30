@@ -21,8 +21,14 @@ public class CommandScanner : ICommandScanner
 
     public IImmutableDictionary<string, CommandInfo> ScanForCommandHandlers()
     {
-        return ScanTypesForCommandHandlers(AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes()))
+        return IndexCommands(
+            ScanTypesForCommandHandlers(AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(a => a.GetTypes())));
+    }
+
+    public IImmutableDictionary<string, CommandInfo> IndexCommands(IEnumerable<CommandInfo> commands)
+    {
+        return commands
             .SelectMany(commandInfo => commandInfo.Names
                 .Select(commandName => new
                 {
