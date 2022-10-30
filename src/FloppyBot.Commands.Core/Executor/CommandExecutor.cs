@@ -23,6 +23,10 @@ public class CommandExecutor : ICommandExecutor
         _commandSpawner = commandSpawner;
     }
 
+    public IEnumerable<CommandInfo> KnownCommands => _registeredCommands
+        .Values
+        .Distinct();
+
     public ChatMessage? ExecuteCommand(CommandInstruction instruction)
     {
         var command = _registeredCommands.GetValueOrDefault(instruction.CommandName);
