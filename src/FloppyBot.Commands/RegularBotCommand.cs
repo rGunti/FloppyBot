@@ -4,6 +4,7 @@ using FloppyBot.Commands.Parser.Entities;
 
 namespace FloppyBot.Commands;
 
+[Obsolete]
 public abstract class RegularBotCommand : IBotCommand
 {
     protected abstract IImmutableSet<string> CommandNames { get; }
