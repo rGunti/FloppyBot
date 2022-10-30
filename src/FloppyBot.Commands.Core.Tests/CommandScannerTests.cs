@@ -22,13 +22,16 @@ public class CommandScannerTests
         var commands = _scanner.ScanTypeForCommandHandlers(typeof(SampleCommands))
             .ToArray();
 
-        Assert.AreEqual(4, commands.Length);
+        foreach (var commandInfo in commands)
+        {
+            Console.WriteLine(commandInfo);
+        }
 
         CollectionAssert.AreEquivalent(
             new[]
             {
                 new CommandInfo(
-                    new[] { "ping", "test" }.ToImmutableListWithValueSemantics(),
+                    new[] { "ping" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.Ping))!),
                 new CommandInfo(
                     new[] { "sping" }.ToImmutableListWithValueSemantics(),
@@ -38,7 +41,22 @@ public class CommandScannerTests
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.Simple))!),
                 new CommandInfo(
                     new[] { "noargs" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.NoArgsCommand))!)
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.NoArgsCommand))!),
+                new CommandInfo(
+                    new[] { "args" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.ArgsCommand))!),
+                new CommandInfo(
+                    new[] { "add" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Add))!),
+                new CommandInfo(
+                    new[] { "list" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.List))!),
+                new CommandInfo(
+                    new[] { "allargs" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgs))!),
+                new CommandInfo(
+                    new[] { "enum" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Enum))!),
             },
             commands);
     }

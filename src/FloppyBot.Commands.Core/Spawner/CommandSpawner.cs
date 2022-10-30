@@ -1,5 +1,7 @@
-﻿using System.Reflection;
+﻿using System.Collections.Immutable;
+using System.Reflection;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
@@ -10,6 +12,17 @@ namespace FloppyBot.Commands.Core.Spawner;
 
 public class CommandSpawner : ICommandSpawner
 {
+    private static readonly IImmutableDictionary<Type, Func<string, object>> StringTypeConversions =
+        new Dictionary<Type, Func<string, object>>
+        {
+            { typeof(int), s => Convert.ToInt32(s) },
+            { typeof(long), s => Convert.ToInt64(s) },
+            { typeof(double), s => Convert.ToDouble(s) },
+            { typeof(float), s => Convert.ToSingle(s) },
+            { typeof(decimal), s => Convert.ToDecimal(s) },
+            { typeof(byte), s => Convert.ToByte(s) }
+        }.ToImmutableDictionary();
+
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
@@ -38,7 +51,18 @@ public class CommandSpawner : ICommandSpawner
         // TODO: Guard
 
         _logger.LogDebug("Building arguments");
-        var commandArguments = ConstructArguments(commandInfo.HandlerMethod, instruction);
+        object?[] commandArguments;
+        try
+        {
+            commandArguments = ConstructArguments(commandInfo.HandlerMethod, instruction);
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogInformation(
+                ex,
+                "Could not parse arguments due to an exception (possibly not enough arguments supplied)");
+            return null;
+        }
 
         _logger.LogInformation(
             "Executing command {@CommandHandler} with {CommandArgsCount} arguments",
@@ -72,7 +96,16 @@ public class CommandSpawner : ICommandSpawner
         CommandInstruction instruction)
     {
         return methodInfo.GetParameters()
-            .Select(p => ConstructArgument(p, instruction))
+            .Select(p =>
+            {
+                var argValue = ConstructArgument(p, instruction);
+                if (!p.ParameterType.IsAssignableFrom(argValue?.GetType() ?? typeof(object)))
+                {
+                    return ConvertArgumentTo(argValue, p.ParameterType);
+                }
+
+                return argValue;
+            })
             .ToArray();
     }
 
@@ -83,6 +116,78 @@ public class CommandSpawner : ICommandSpawner
             return instruction;
         }
 
+        // TODO: This should be architected better
+        var argListAttr = parameterInfo.GetCustomAttribute<AllArgumentsAttribute>();
+        if (argListAttr != null)
+        {
+            return instruction.Parameters;
+        }
+
+        var argIndexAttr = parameterInfo.GetCustomAttribute<ArgumentIndexAttribute>();
+        if (argIndexAttr != null)
+        {
+            var scopedArgs = instruction.Parameters
+                .Skip(argIndexAttr.Index)
+                .ToArray();
+            if (!scopedArgs.Any() && argIndexAttr.StopIfMissing)
+            {
+                throw new ArgumentOutOfRangeException(
+                    parameterInfo.Name!,
+                    $"Argument {parameterInfo.Name} was not supplied");
+            }
+
+            return scopedArgs.FirstOrDefault();
+        }
+
+        var argRangeAttr = parameterInfo.GetCustomAttribute<ArgumentRangeAttribute>();
+        if (argRangeAttr != null)
+        {
+            var scopedArgs = instruction.Parameters
+                .Skip(argRangeAttr.StartIndex)
+                .TakeWhile((_, i) => i < argRangeAttr.EndIndex)
+                .ToArray();
+            if (!scopedArgs.Any() && argRangeAttr.StopIfMissing)
+            {
+                throw new ArgumentOutOfRangeException(
+                    parameterInfo.Name!,
+                    $"Argument {parameterInfo.Name} was not supplied (looked at index between {argRangeAttr.StartIndex} - {argRangeAttr.EndIndex})");
+            }
+
+            if (argRangeAttr.OutputAsArray)
+            {
+                return scopedArgs.ToImmutableArray();
+            }
+
+            return string.Join(
+                argRangeAttr.JoinWith,
+                scopedArgs);
+        }
+
         return null;
+    }
+
+    private static object? ConvertArgumentTo(object? sourceValue, Type targetType)
+    {
+        if (sourceValue == null)
+        {
+            return null;
+        }
+
+        if (sourceValue is string sourceValueString)
+        {
+            if (StringTypeConversions.ContainsKey(targetType))
+            {
+                return StringTypeConversions[targetType].Invoke(sourceValueString);
+            }
+
+            if (targetType.IsEnum)
+            {
+                return Enum.Parse(targetType, sourceValueString);
+            }
+
+            throw new InvalidCastException($"Cannot (yet) convert from string to {targetType}");
+        }
+
+        throw new InvalidCastException($"Cannot yet convert from {sourceValue.GetType()}");
     }
 }

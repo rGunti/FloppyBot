@@ -12,9 +12,16 @@ namespace FloppyBot.Commands.Core.Attributes;
 [AttributeUsage(AttributeTargets.Method)]
 public class CommandAttribute : Attribute
 {
-    public CommandAttribute(string name, params string[] aliases)
+    public CommandAttribute(params string[] names)
     {
-        Names = aliases.Prepend(name)
+        if (!names.Any())
+        {
+            throw new ArgumentException(
+                "At least one name has to be provided",
+                nameof(names));
+        }
+
+        Names = names
             .AreAllValidCommandNamesOrThrow()
             .ToImmutableHashSet();
     }

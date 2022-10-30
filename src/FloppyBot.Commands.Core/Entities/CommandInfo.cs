@@ -17,4 +17,9 @@ public record CommandInfo(
     /// Returns the type of the class that implements this command handler
     /// </summary>
     public Type ImplementingType => HandlerMethod.ReflectedType!;
+
+    public override string ToString()
+    {
+        return $"Cmd: [{string.Join(",", Names)}]{(IsStatic ? " (static)" : "")} => {HandlerMethod}";
+    }
 }
