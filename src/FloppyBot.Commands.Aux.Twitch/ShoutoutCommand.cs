@@ -15,6 +15,7 @@ using TwitchLib.Api.Interfaces;
 namespace FloppyBot.Commands.Aux.Twitch;
 
 [CommandHost]
+[SourceInterfaceGuard("Twitch")]
 // ReSharper disable once UnusedType.Global
 public class ShoutoutCommand
 {
