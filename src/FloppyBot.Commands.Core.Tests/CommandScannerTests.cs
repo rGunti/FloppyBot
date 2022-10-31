@@ -55,6 +55,9 @@ public class CommandScannerTests
                     new[] { "allargs" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgs))!),
                 new CommandInfo(
+                    new[] { "allargs1" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgsAsString))!),
+                new CommandInfo(
                     new[] { "enum" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.Enum))!),
             },
