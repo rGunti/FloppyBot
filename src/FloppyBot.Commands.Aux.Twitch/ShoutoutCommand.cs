@@ -56,9 +56,14 @@ public class ShoutoutCommand
             .AddSingleton<ITwitchAPI>(s =>
             {
                 var config = s.GetRequiredService<TwitchApiConfig>();
-                var api = new TwitchAPI(s.GetRequiredService<ILoggerFactory>());
-                api.Settings.ClientId = config.ClientId;
-                api.Settings.Secret = config.Secret;
+                var api = new TwitchAPI(s.GetRequiredService<ILoggerFactory>())
+                {
+                    Settings =
+                    {
+                        ClientId = config.ClientId,
+                        Secret = config.Secret
+                    }
+                };
                 return api;
             })
             .AddScoped<ITwitchApiService, TwitchApiService>();
