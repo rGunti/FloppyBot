@@ -157,9 +157,6 @@ public class DiscordChatInterface : IChatInterface
 
         MessageReceived?.Invoke(this, message);
 
-        // Mark message as read
-        socketMessage.AddReactionAsync(ReadEmote);
-
         return Task.CompletedTask;
     }
 

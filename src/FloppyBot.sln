@@ -76,6 +76,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Core", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Core.Tests", "FloppyBot.Commands.Core.Tests\FloppyBot.Commands.Core.Tests.csproj", "{8B6BB80F-AF31-4DF7-874C-9E9701A98F69}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aux", "Aux", "{EBBD7204-782A-4642-AFBF-F52D97C0B985}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,7 @@ Global
 		{4765C187-070B-40C9-8DC6-38006E8DA501} = {6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}
 		{5E56F592-4198-49BB-B2B6-1A9A9685F51E} = {4765C187-070B-40C9-8DC6-38006E8DA501}
 		{8B6BB80F-AF31-4DF7-874C-9E9701A98F69} = {4765C187-070B-40C9-8DC6-38006E8DA501}
+		{EBBD7204-782A-4642-AFBF-F52D97C0B985} = {6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

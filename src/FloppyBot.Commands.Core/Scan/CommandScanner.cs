@@ -15,8 +15,10 @@ public class CommandScanner : ICommandScanner
     {
         // Default
         typeof(ChatMessage),
+        typeof(Task<ChatMessage>),
         // Short Version: only return message
-        typeof(string)
+        typeof(string),
+        typeof(Task<string>),
     }.ToImmutableHashSet();
 
     public IImmutableDictionary<string, CommandInfo> ScanForCommandHandlers()
