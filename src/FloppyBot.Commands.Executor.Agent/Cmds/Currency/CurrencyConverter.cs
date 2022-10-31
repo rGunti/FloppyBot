@@ -31,8 +31,7 @@ public class CurrencyConverter : ICurrencyConverter
 
         if (responseData == null)
         {
-            // throw
-            return null;
+            throw new InvalidOperationException("Could not load data as requested");
         }
 
         return new CurrencyConversionRecord(
