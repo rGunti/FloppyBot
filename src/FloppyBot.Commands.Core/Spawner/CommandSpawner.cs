@@ -160,56 +160,14 @@ public class CommandSpawner : ICommandSpawner
             return instruction;
         }
 
-        // TODO: This should be architected better
-        var argListAttr = parameterInfo.GetCustomAttribute<AllArgumentsAttribute>();
-        if (argListAttr != null)
+        var argumentAttribute = parameterInfo.GetCustomAttribute<BaseArgumentAttribute>();
+        if (argumentAttribute == null)
         {
-            return parameterInfo.ParameterType == typeof(string)
-                ? string.Join(argListAttr.JoinWith, instruction.Parameters)
-                : instruction.Parameters;
+            throw new ArgumentException(
+                $"Don't know how to extract argument {parameterInfo}. Have you added an attribute?");
         }
 
-        var argIndexAttr = parameterInfo.GetCustomAttribute<ArgumentIndexAttribute>();
-        if (argIndexAttr != null)
-        {
-            var scopedArgs = instruction.Parameters
-                .Skip(argIndexAttr.Index)
-                .ToArray();
-            if (!scopedArgs.Any() && argIndexAttr.StopIfMissing)
-            {
-                throw new ArgumentOutOfRangeException(
-                    parameterInfo.Name!,
-                    $"Argument {parameterInfo.Name} was not supplied");
-            }
-
-            return scopedArgs.FirstOrDefault();
-        }
-
-        var argRangeAttr = parameterInfo.GetCustomAttribute<ArgumentRangeAttribute>();
-        if (argRangeAttr != null)
-        {
-            var scopedArgs = instruction.Parameters
-                .Skip(argRangeAttr.StartIndex)
-                .TakeWhile((_, i) => i < argRangeAttr.EndIndex)
-                .ToArray();
-            if (!scopedArgs.Any() && argRangeAttr.StopIfMissing)
-            {
-                throw new ArgumentOutOfRangeException(
-                    parameterInfo.Name!,
-                    $"Argument {parameterInfo.Name} was not supplied (looked at index between {argRangeAttr.StartIndex} - {argRangeAttr.EndIndex})");
-            }
-
-            if (argRangeAttr.OutputAsArray)
-            {
-                return scopedArgs.ToImmutableArray();
-            }
-
-            return string.Join(
-                argRangeAttr.JoinWith,
-                scopedArgs);
-        }
-
-        return null;
+        return argumentAttribute.ExtractArgument(parameterInfo, instruction);
     }
 
     private static object? ConvertArgumentTo(object? sourceValue, Type targetType)

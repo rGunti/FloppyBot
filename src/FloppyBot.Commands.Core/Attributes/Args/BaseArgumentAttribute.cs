@@ -1,7 +1,10 @@
-﻿namespace FloppyBot.Commands.Core.Attributes.Args;
+﻿using System.Reflection;
+using FloppyBot.Commands.Parser.Entities;
+
+namespace FloppyBot.Commands.Core.Attributes.Args;
 
 [AttributeUsage(AttributeTargets.Parameter)]
 public abstract class BaseArgumentAttribute : Attribute
 {
-    //public abstract object? Parse(CommandInstruction instruction);
+    public abstract object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction);
 }

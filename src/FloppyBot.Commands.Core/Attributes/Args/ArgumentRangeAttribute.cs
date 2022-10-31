@@ -1,4 +1,8 @@
-﻿namespace FloppyBot.Commands.Core.Attributes.Args;
+﻿using System.Collections.Immutable;
+using System.Reflection;
+using FloppyBot.Commands.Parser.Entities;
+
+namespace FloppyBot.Commands.Core.Attributes.Args;
 
 /// <summary>
 /// This attribute designates that the parameter denoted shall be assigned
@@ -26,4 +30,27 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
     public string JoinWith { get; }
     public bool StopIfMissing { get; }
     public bool OutputAsArray { get; }
+
+    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    {
+        var scopedArgs = commandInstruction.Parameters
+            .Skip(StartIndex)
+            .TakeWhile((_, i) => i < EndIndex)
+            .ToArray();
+        if (!scopedArgs.Any() && StopIfMissing)
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterInfo.Name!,
+                $"Argument {parameterInfo.Name} was not supplied (looked at index between {StartIndex} - {EndIndex})");
+        }
+
+        if (OutputAsArray)
+        {
+            return scopedArgs.ToImmutableArray();
+        }
+
+        return string.Join(
+            JoinWith,
+            scopedArgs);
+    }
 }

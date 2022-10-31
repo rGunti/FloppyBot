@@ -1,4 +1,7 @@
-﻿namespace FloppyBot.Commands.Core.Attributes.Args;
+﻿using System.Reflection;
+using FloppyBot.Commands.Parser.Entities;
+
+namespace FloppyBot.Commands.Core.Attributes.Args;
 
 /// <summary>
 /// This attribute designates that the parameter denoted shall be assigned
@@ -14,4 +17,19 @@ public class ArgumentIndexAttribute : BaseArgumentAttribute
 
     public int Index { get; }
     public bool StopIfMissing { get; }
+
+    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    {
+        var scopedArgs = commandInstruction.Parameters
+            .Skip(Index)
+            .ToArray();
+        if (!scopedArgs.Any() && StopIfMissing)
+        {
+            throw new ArgumentOutOfRangeException(
+                parameterInfo.Name!,
+                $"Argument {parameterInfo.Name} was not supplied");
+        }
+
+        return scopedArgs.FirstOrDefault();
+    }
 }
