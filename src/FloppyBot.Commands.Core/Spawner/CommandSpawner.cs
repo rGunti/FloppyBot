@@ -124,9 +124,16 @@ public class CommandSpawner : ICommandSpawner
             case string returnMessage:
                 _logger.LogDebug("Return value was string, creating new reply and returning it");
                 return instruction.CreateReply(returnMessage);
+            case Task<string> asyncReturnMessage:
+                _logger.LogDebug("Return value as string (async), creating new reply and returning it");
+                var returnMessageStr = asyncReturnMessage.GetAwaiter().GetResult();
+                return instruction.CreateReply(returnMessageStr);
             case ChatMessage chatMessage:
                 _logger.LogDebug("Return value was ChatMessage, returning it");
                 return chatMessage;
+            case Task<ChatMessage> asyncChatMessage:
+                _logger.LogDebug("Return value was ChatMessage (async), returning it");
+                return asyncChatMessage.GetAwaiter().GetResult();
             default:
                 _logger.LogError("Return value was of type {ReturnValueType}, which is not supported",
                     returnValue.GetType());

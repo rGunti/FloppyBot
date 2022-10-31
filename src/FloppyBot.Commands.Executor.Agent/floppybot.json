@@ -9,5 +9,9 @@
     "Redis": "localhost",
     "CommandInput": "{Redis}|Command.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}"
+  },
+  "Currency": {
+    "ApiKey": "not_provided",
+    "SourceUrl": "https://free.currconv.com"
   }
 }

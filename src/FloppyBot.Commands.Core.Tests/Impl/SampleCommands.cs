@@ -105,4 +105,11 @@ public class SampleCommands
     {
         return $"Your interface supports {features}";
     }
+
+    [Command("async")]
+    public static async Task<string> AsyncCommand()
+    {
+        await Task.Delay(500);
+        return "Async";
+    }
 }

@@ -311,4 +311,24 @@ public class CommandSpawnerTests
             expectedOutput,
             returnValue!.Content);
     }
+
+    [TestMethod]
+    public void CanHandleAsyncReturnValues()
+    {
+        var instruction = MockCommandFactory.NewInstruction(
+            "async",
+            Array.Empty<string>());
+        var command = GetCommandInfo(
+            "async",
+            typeof(SampleCommands),
+            nameof(SampleCommands.AsyncCommand));
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual(
+            "Async",
+            returnValue!.Content);
+    }
 }
