@@ -22,4 +22,17 @@ internal static class InternalExtensions
             yield return item;
         }
     }
+
+    public static void AssertType<T>(this ParameterInfo parameterInfo)
+    {
+        parameterInfo.ParameterType.AssertType<T>();
+    }
+
+    public static void AssertType<T>(this Type type)
+    {
+        if (type != typeof(T) && !type.IsAssignableFrom(typeof(T)))
+        {
+            throw new InvalidCastException($"Parameter of type {type} cannot be assigned to {typeof(T)}");
+        }
+    }
 }

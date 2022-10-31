@@ -60,6 +60,12 @@ public class CommandScannerTests
                 new CommandInfo(
                     new[] { "enum" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.Enum))!),
+                new CommandInfo(
+                    new[] { "author" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AuthorName))!),
+                new CommandInfo(
+                    new[] { "feature" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.SupportFeatures))!),
             },
             commands);
     }

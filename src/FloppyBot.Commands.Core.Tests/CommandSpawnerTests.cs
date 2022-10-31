@@ -1,11 +1,13 @@
 ﻿using System.Text.Json;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Testing;
+using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Tests.Impl;
+using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -258,5 +260,55 @@ public class CommandSpawnerTests
         var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
 
         Assert.IsNull(returnValue);
+    }
+
+    [TestMethod]
+    public void CanHandleAuthorAttribute()
+    {
+        var instruction = MockCommandFactory.NewInstruction(
+            "author",
+            Array.Empty<string>());
+        var command = GetCommandInfo(
+            "author",
+            typeof(SampleCommands),
+            nameof(SampleCommands.AuthorName));
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual(
+            "Your name is Mock User",
+            returnValue!.Content);
+    }
+
+    [DataTestMethod]
+    [DataRow(ChatInterfaceFeatures.None, "Your interface supports None")]
+    [DataRow(ChatInterfaceFeatures.Newline, "Your interface supports Newline")]
+    [DataRow(ChatInterfaceFeatures.MarkdownText, "Your interface supports MarkdownText")]
+    public void CanHandleFeatureAttribute(ChatInterfaceFeatures features, string expectedOutput)
+    {
+        var instruction = MockCommandFactory.NewInstruction(
+            "feature",
+            Array.Empty<string>());
+        instruction = instruction with
+        {
+            Context = new CommandContext(SourceMessage: instruction.Context!.SourceMessage with
+            {
+                SupportedFeatures = features
+            })
+        };
+        var command = GetCommandInfo(
+            "feature",
+            typeof(SampleCommands),
+            nameof(SampleCommands.SupportFeatures));
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual(
+            expectedOutput,
+            returnValue!.Content);
     }
 }

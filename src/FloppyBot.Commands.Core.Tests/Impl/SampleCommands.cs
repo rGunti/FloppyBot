@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Text.Json;
+using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
@@ -89,5 +90,19 @@ public class SampleCommands
         [ArgumentIndex(0)] SampleEnum sampleEnum)
     {
         return $"Enum value was: {sampleEnum}";
+    }
+
+    [Command("author")]
+    public static string AuthorName(
+        [Author] ChatUser author)
+    {
+        return $"Your name is {author.DisplayName}";
+    }
+
+    [Command("feature")]
+    public static string SupportFeatures(
+        [SupportedFeatures] ChatInterfaceFeatures features)
+    {
+        return $"Your interface supports {features}";
     }
 }
