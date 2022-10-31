@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.Testing;
+using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
@@ -17,28 +18,6 @@ public class MathCommandTest
             LoggingUtils.GetLogger<MathCommand>());
     }
 
-    [TestMethod]
-    public void RespondsOnlyToKnownAliases()
-    {
-        foreach (var commandName in MathCommand.CommandNameSet)
-        {
-            Assert.IsTrue(
-                _command.CanExecute(
-                    MockCommandFactory.NewInstruction(
-                        commandName,
-                        new[] { "1+2" })));
-        }
-
-        foreach (var commandName in new[] { "some", "other", "name" })
-        {
-            Assert.IsFalse(
-                _command.CanExecute(
-                    MockCommandFactory.NewInstruction(
-                        commandName,
-                        new[] { "2+1" })));
-        }
-    }
-
     [DataTestMethod]
     [DataRow("1+2", "3")]
     public void CalculatesExpressionCorrectly(
@@ -48,21 +27,26 @@ public class MathCommandTest
         var instruction = MockCommandFactory.NewInstruction(
             "calc",
             new[] { inputStr });
-        var reply = _command.Execute(instruction);
+        var reply = _command.CalculateMathExpression(
+            instruction,
+            inputStr);
 
         Assert.IsNotNull(reply);
-        Assert.AreEqual(instruction.CreateReply(MathCommand.REPLY_DEFAULT.FormatSmart(new
+        Assert.AreEqual(MathCommand.REPLY_DEFAULT.Format(new
         {
             Answer = expectedOutput
-        })), reply);
+        }), reply);
     }
 
-    [TestMethod]
-    public void RepliesWithMarkdownWhenSupported()
+    [DataTestMethod]
+    [DataRow("1+2", "3")]
+    public void RepliesWithMarkdownWhenSupported(
+        string inputStr,
+        string expectedOutput)
     {
         var instruction = MockCommandFactory.NewInstruction(
             "calc",
-            new[] { "1+2*3" });
+            new[] { inputStr });
         instruction = instruction with
         {
             Context = new CommandContext(SourceMessage: instruction.Context!.SourceMessage with
@@ -70,13 +54,13 @@ public class MathCommandTest
                 SupportedFeatures = ChatInterfaceFeatures.MarkdownText
             })
         };
-        var reply = _command.Execute(instruction);
+        var reply = _command.CalculateMathExpression(instruction, inputStr);
 
         Assert.IsNotNull(reply);
-        Assert.AreEqual(instruction.CreateReply(MathCommand.REPLY_MD.FormatSmart(new
+        Assert.AreEqual(MathCommand.REPLY_MD.FormatSmart(new
         {
-            Answer = "7"
-        })), reply);
+            Answer = expectedOutput
+        }), reply);
     }
 
     [DataTestMethod]
@@ -86,10 +70,10 @@ public class MathCommandTest
         var instruction = MockCommandFactory.NewInstruction(
             "calc",
             new[] { input });
-        var reply = _command.Execute(instruction);
+        var reply = _command.CalculateMathExpression(instruction, input);
 
         Assert.IsNotNull(reply);
-        Assert.AreEqual(instruction.CreateReply(MathCommand.REPLY_ERR_PARSE), reply);
+        Assert.AreEqual(MathCommand.REPLY_ERR_PARSE, reply);
     }
 
     [DataTestMethod]
@@ -99,9 +83,9 @@ public class MathCommandTest
         var instruction = MockCommandFactory.NewInstruction(
             "calc",
             new[] { input });
-        var reply = _command.Execute(instruction);
+        var reply = _command.CalculateMathExpression(instruction, input);
 
         Assert.IsNotNull(reply);
-        Assert.AreEqual(instruction.CreateReply(MathCommand.REPLY_ERR_EXEC), reply);
+        Assert.AreEqual(MathCommand.REPLY_ERR_EXEC, reply);
     }
 }

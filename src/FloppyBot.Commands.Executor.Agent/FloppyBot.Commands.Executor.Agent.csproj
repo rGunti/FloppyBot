@@ -18,7 +18,7 @@
         <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
         <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands\FloppyBot.Commands.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
         <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
     </ItemGroup>
 
