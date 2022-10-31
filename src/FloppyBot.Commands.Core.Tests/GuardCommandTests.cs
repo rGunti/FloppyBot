@@ -1,6 +1,8 @@
 ﻿using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Executor;
+using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Tests.Impl;
@@ -25,6 +27,8 @@ public class GuardCommandTests
             .AddScoped<GuardedCommands>()
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
+            .AddGuardRegistry()
+            .AddGuard<PrivilegeGuard, PrivilegeGuardAttribute>()
             .BuildServiceProvider();
     }
 
