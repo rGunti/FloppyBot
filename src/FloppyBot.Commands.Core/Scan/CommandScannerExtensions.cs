@@ -39,7 +39,8 @@ public static class CommandScannerExtensions
     {
         return services
             .AddGuardRegistry()
-            .AddGuard<PrivilegeGuard, PrivilegeGuardAttribute>();
+            .AddGuard<PrivilegeGuard, PrivilegeGuardAttribute>()
+            .AddGuard<SourceInterfaceGuard, SourceInterfaceGuardAttribute>();
     }
 
     public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(this ICommandScanner scanner)
