@@ -19,7 +19,7 @@ public class QuoteCommands
     public const string REPLY_CREATED = "Created new {Quote}";
     public const string REPLY_QUOTE_NOT_FOUND = "Quote #{QuoteId} could not be found";
     public const string REPLY_NO_QUOTES = "There doesn't seem to be any quote.";
-    public const string REPLY_EDITED = "Edited {Quote}";
+    public const string REPLY_EDITED = "Updated {Quote}";
     public const string REPLY_DELETED = "Deleted Quote #{QuoteId}";
     public const string REPLY_TEXT_MISSING = "Quote text is missing";
     public const string REPLY_CONTEXT_MISSING = "Quote context is missing";
