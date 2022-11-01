@@ -1,6 +1,5 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
-using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Config;
 using FloppyBot.Commands.Aux.Twitch.Storage;
@@ -8,7 +7,6 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
-using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -37,11 +35,10 @@ public class ShoutoutCommand
     [Command("shoutout", "so")]
     // ReSharper disable once UnusedMember.Global
     public async Task<string?> Shoutout(
-        CommandInstruction instruction,
+        [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] string channel)
     {
-        var setting = _shoutoutMessageSettingService.GetSettings(
-            instruction.Context!.SourceMessage.Identifier.GetChannel());
+        var setting = _shoutoutMessageSettingService.GetSettings(sourceChannel);
         if (setting == null || string.IsNullOrEmpty(setting.Message))
         {
             return null;
@@ -59,22 +56,18 @@ public class ShoutoutCommand
     [Command("setshoutout")]
     // ReSharper disable once UnusedMember.Global
     public string SetShoutout(
-        CommandInstruction instruction,
+        [SourceChannel] string sourceChannel,
         [AllArguments] string template)
     {
-        _shoutoutMessageSettingService.SetShoutoutMessage(
-            instruction.Context!.SourceMessage.Identifier.GetChannel(),
-            template);
+        _shoutoutMessageSettingService.SetShoutoutMessage(sourceChannel, template);
         return "✅ Shoutout Message has been set";
     }
 
     [Command("clearshoutout")]
     // ReSharper disable once UnusedMember.Global
-    public string ClearShoutout(
-        CommandInstruction instruction)
+    public string ClearShoutout([SourceChannel] string sourceChannel)
     {
-        _shoutoutMessageSettingService.ClearSettings(
-            instruction.Context!.SourceMessage.Identifier.GetChannel());
+        _shoutoutMessageSettingService.ClearSettings(sourceChannel);
         return "✅ Shoutout Message has been cleared";
     }
 
