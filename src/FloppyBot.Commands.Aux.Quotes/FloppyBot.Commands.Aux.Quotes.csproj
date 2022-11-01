@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
+    </ItemGroup>
+
+</Project>

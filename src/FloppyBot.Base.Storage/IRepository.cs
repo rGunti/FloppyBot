@@ -6,8 +6,8 @@ public interface IRepository<TEntity> where TEntity : class, IEntity
     TEntity? GetById(string id);
     TEntity Insert(TEntity entity);
     TEntity Update(TEntity entity);
-    void Delete(string id);
-    void Delete(TEntity entity);
+    bool Delete(string id);
+    bool Delete(TEntity entity);
     int Delete(IEnumerable<string> ids);
     int Delete(IEnumerable<TEntity> entities);
 }

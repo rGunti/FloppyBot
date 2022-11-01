@@ -34,14 +34,14 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return GetById(entity.Id)!;
     }
 
-    public void Delete(string id)
+    public bool Delete(string id)
     {
-        _collection.Delete(id);
+        return _collection.Delete(id);
     }
 
-    public void Delete(TEntity entity)
+    public bool Delete(TEntity entity)
     {
-        Delete(entity.Id);
+        return Delete(entity.Id);
     }
 
     public int Delete(IEnumerable<string> ids)

@@ -36,14 +36,14 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
         return entity;
     }
 
-    public void Delete(string id)
+    public bool Delete(string id)
     {
-        _collection.DeleteOne(GetIdFilter(id));
+        return _collection.DeleteOne(GetIdFilter(id)).DeletedCount > 0L;
     }
 
-    public void Delete(TEntity entity)
+    public bool Delete(TEntity entity)
     {
-        Delete(entity.Id);
+        return Delete(entity.Id);
     }
 
     public int Delete(IEnumerable<string> ids)

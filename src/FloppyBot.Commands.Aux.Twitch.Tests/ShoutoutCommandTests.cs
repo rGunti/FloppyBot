@@ -22,10 +22,10 @@ public class ShoutoutCommandTests
 
         _twitchApiServiceMock
             .Setup(s => s.LookupUser(It.Is<string>(c => c == "somestreamer")))
-            .Returns(async (string _) => new TwitchUserLookupResult(
+            .Returns((string _) => Task.FromResult(new TwitchUserLookupResult(
                 "somestreamer",
                 "SomeStreamer",
-                "Cool Game"));
+                "Cool Game"))!);
         _shoutoutMessageSettingServiceMock
             .Setup(s => s.GetSettings(It.Is<string>(c => c == "Twitch/someuser")))
             .Returns((string _) => new ShoutoutMessageSetting(
