@@ -1,6 +1,7 @@
 ﻿using FloppyBot.Base.BinLoader;
 using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Logging;
+using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Executor.Agent;
 using FloppyBot.Communication.Redis.Config;
@@ -19,6 +20,7 @@ IHost host = builder
     {
         services
             .AddRedisCommunication()
+            .AddMongoDbStorage()
             .ScanAndAddCommandDependencies()
             .AddHostedService<ExecutorAgent>();
     })

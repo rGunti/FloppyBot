@@ -19,6 +19,7 @@
         <ProjectReference Include="..\FloppyBot.Base.BinLoader\FloppyBot.Base.BinLoader.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj"/>
         <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>

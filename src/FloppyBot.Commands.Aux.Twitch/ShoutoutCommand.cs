@@ -2,6 +2,7 @@
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Config;
+using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
@@ -16,33 +17,61 @@ namespace FloppyBot.Commands.Aux.Twitch;
 
 [CommandHost]
 [SourceInterfaceGuard("Twitch")]
+[PrivilegeGuard(PrivilegeLevel.Moderator)]
 // ReSharper disable once UnusedType.Global
 public class ShoutoutCommand
 {
-    // TODO: When database system is in place, this needs to be replaced
-    private const string REPLY =
-        "!!! SHOUTOUT TO {AccountName} !!! They last played {LastGame}, which was no doubt a lot of fun. Check here: {Link}";
+    public const string REPLY_SAVE = "✅ Shoutout Message has been set";
+    public const string REPLY_CLEAR = "✅ Shoutout Message has been cleared";
 
+    private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
     private readonly ITwitchApiService _twitchApiService;
 
-    public ShoutoutCommand(ITwitchApiService twitchApiService)
+    public ShoutoutCommand(
+        ITwitchApiService twitchApiService,
+        IShoutoutMessageSettingService shoutoutMessageSettingService)
     {
         _twitchApiService = twitchApiService;
+        _shoutoutMessageSettingService = shoutoutMessageSettingService;
     }
 
     [Command("shoutout", "so")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
     // ReSharper disable once UnusedMember.Global
     public async Task<string?> Shoutout(
+        [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] string channel)
     {
+        var setting = _shoutoutMessageSettingService.GetSettings(sourceChannel);
+        if (setting == null || string.IsNullOrEmpty(setting.Message))
+        {
+            return null;
+        }
+
         var query = await _twitchApiService.LookupUser(channel);
         if (query == null)
         {
             return null;
         }
 
-        return REPLY.Format(query);
+        return setting.Message.Format(query);
+    }
+
+    [Command("setshoutout")]
+    // ReSharper disable once UnusedMember.Global
+    public string SetShoutout(
+        [SourceChannel] string sourceChannel,
+        [AllArguments] string template)
+    {
+        _shoutoutMessageSettingService.SetShoutoutMessage(sourceChannel, template);
+        return REPLY_SAVE;
+    }
+
+    [Command("clearshoutout")]
+    // ReSharper disable once UnusedMember.Global
+    public string ClearShoutout([SourceChannel] string sourceChannel)
+    {
+        _shoutoutMessageSettingService.ClearSettings(sourceChannel);
+        return REPLY_CLEAR;
     }
 
     [DependencyRegistration]
@@ -67,6 +96,7 @@ public class ShoutoutCommand
                 };
                 return api;
             })
-            .AddScoped<ITwitchApiService, TwitchApiService>();
+            .AddScoped<ITwitchApiService, TwitchApiService>()
+            .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
     }
 }

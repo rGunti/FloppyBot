@@ -6,6 +6,7 @@
     }
   },
   "ConnectionStrings": {
+    "MongoDb": "mongodb://localhost:27017/FloppyBot",
     "Redis": "localhost",
     "CommandInput": "{Redis}|Command.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}"

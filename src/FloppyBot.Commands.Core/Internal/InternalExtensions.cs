@@ -23,6 +23,16 @@ internal static class InternalExtensions
         }
     }
 
+    public static bool IsType<T>(this Type type)
+    {
+        return type == typeof(T);
+    }
+
+    public static bool IsOfType<T>(this ParameterInfo parameterInfo)
+    {
+        return parameterInfo.ParameterType.IsType<T>();
+    }
+
     public static void AssertType<T>(this ParameterInfo parameterInfo)
     {
         parameterInfo.ParameterType.AssertType<T>();

@@ -90,6 +90,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Storage.Lite
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Storage.MongoDb", "FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj", "{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Twitch.Tests", "FloppyBot.Commands.Aux.Twitch.Tests\FloppyBot.Commands.Aux.Twitch.Tests.csproj", "{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -136,6 +138,7 @@ Global
 		{0E6CF011-BCA1-4081-A296-3B7FE8F7687C} = {AF31BD9B-2F13-42AC-80CF-DDCB2F9E316B}
 		{F3589958-47F4-4C5B-B399-9F4E38866877} = {AF31BD9B-2F13-42AC-80CF-DDCB2F9E316B}
 		{D94B7F60-D5E3-4E72-9B47-DD29B2774F79} = {AF31BD9B-2F13-42AC-80CF-DDCB2F9E316B}
+		{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -266,5 +269,9 @@ Global
 		{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
