@@ -2,7 +2,7 @@
 
 namespace FloppyBot.Base.Storage.MongoDb;
 
-public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
 {
     private readonly IMongoCollection<TEntity> _collection;
 

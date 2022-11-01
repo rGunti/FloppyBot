@@ -1,6 +1,6 @@
 ﻿namespace FloppyBot.Base.Storage;
 
-public interface IRepository<TEntity> where TEntity : class, IEntity
+public interface IRepository<TEntity> where TEntity : class, IEntity<TEntity>
 {
     IEnumerable<TEntity> GetAll();
     TEntity? GetById(string id);

@@ -6,7 +6,7 @@ namespace FloppyBot.Base.Storage.Utils;
 
 public static class RepositoryFactoryUtils
 {
-    public static string DetermineCollectionName<T>() where T : class, IEntity
+    public static string DetermineCollectionName<T>() where T : class, IEntity<T>
         => DetermineCollectionName(typeof(T));
 
     private static string DetermineCollectionName(MemberInfo type)

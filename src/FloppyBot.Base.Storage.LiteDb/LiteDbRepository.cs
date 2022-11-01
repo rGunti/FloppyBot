@@ -3,7 +3,7 @@ using LiteDB;
 
 namespace FloppyBot.Base.Storage.LiteDb;
 
-public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
 {
     private readonly ILiteCollection<TEntity> _collection;
 
@@ -19,11 +19,17 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public TEntity? GetById(string id)
     {
-        return _collection.FindOne(id);
+        return _collection.FindById(id);
     }
 
     public TEntity Insert(TEntity entity)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (entity.Id == null)
+        {
+            entity = entity.WithId(Guid.NewGuid().ToString());
+        }
+
         var docId = _collection.Insert(entity);
         return GetById(docId)!;
     }
