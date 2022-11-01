@@ -21,6 +21,9 @@ namespace FloppyBot.Commands.Aux.Twitch;
 // ReSharper disable once UnusedType.Global
 public class ShoutoutCommand
 {
+    public const string REPLY_SAVE = "✅ Shoutout Message has been set";
+    public const string REPLY_CLEAR = "✅ Shoutout Message has been cleared";
+
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
     private readonly ITwitchApiService _twitchApiService;
 
@@ -60,7 +63,7 @@ public class ShoutoutCommand
         [AllArguments] string template)
     {
         _shoutoutMessageSettingService.SetShoutoutMessage(sourceChannel, template);
-        return "✅ Shoutout Message has been set";
+        return REPLY_SAVE;
     }
 
     [Command("clearshoutout")]
@@ -68,7 +71,7 @@ public class ShoutoutCommand
     public string ClearShoutout([SourceChannel] string sourceChannel)
     {
         _shoutoutMessageSettingService.ClearSettings(sourceChannel);
-        return "✅ Shoutout Message has been cleared";
+        return REPLY_CLEAR;
     }
 
     [DependencyRegistration]
