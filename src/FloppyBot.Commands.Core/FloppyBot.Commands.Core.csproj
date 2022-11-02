@@ -9,8 +9,13 @@
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj"/>
         <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Folder Include="Utils"/>
     </ItemGroup>
 
 </Project>

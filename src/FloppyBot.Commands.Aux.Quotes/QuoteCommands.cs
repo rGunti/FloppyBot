@@ -7,6 +7,7 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -28,7 +29,7 @@ public class QuoteCommands
     private static readonly IImmutableSet<string> OpAdd = new[] { "add", "+" }.ToImmutableHashSet();
     private static readonly IImmutableSet<string> OpEdit = new[] { "edit", "*" }.ToImmutableHashSet();
     private static readonly IImmutableSet<string> OpEditContext = new[] { "editcontext", "ec" }.ToImmutableHashSet();
-    private static readonly IImmutableSet<string> OpDelete = new[] { "del", "-" }.ToImmutableHashSet();
+    private static readonly IImmutableSet<string> OpDelete = new[] { "del", "delete", "-" }.ToImmutableHashSet();
 
     private readonly ILogger<QuoteCommands> _logger;
     private readonly IQuoteService _quoteService;
@@ -53,6 +54,32 @@ public class QuoteCommands
         [ArgumentRange(1, stopIfMissing: false)]
         string? text,
         [ArgumentRange(2, stopIfMissing: false)]
+        string? subOpText)
+    {
+        try
+        {
+            return DoQuote(
+                sourceChannel,
+                sourceContext,
+                author,
+                op,
+                subOp,
+                text,
+                subOpText);
+        }
+        catch (MissingPrivilegeException)
+        {
+            return null;
+        }
+    }
+
+    private string? DoQuote(
+        string sourceChannel,
+        string sourceContext,
+        ChatUser author,
+        string? op,
+        string? subOp,
+        string? text,
         string? subOpText)
     {
         if (string.IsNullOrWhiteSpace(op))
@@ -88,6 +115,8 @@ public class QuoteCommands
 
         if (OpEdit.Contains(op))
         {
+            author.AssertLevel(PrivilegeLevel.Moderator);
+
             if (!int.TryParse(subOp, out int editQuoteId))
             {
                 return REPLY_QUOTE_ID_INVALID;
@@ -106,6 +135,8 @@ public class QuoteCommands
 
         if (OpEditContext.Contains(op))
         {
+            author.AssertLevel(PrivilegeLevel.Moderator);
+
             if (!int.TryParse(subOp, out int editQuoteId))
             {
                 return REPLY_QUOTE_ID_INVALID;
@@ -124,6 +155,8 @@ public class QuoteCommands
 
         if (OpDelete.Contains(op))
         {
+            author.AssertLevel(PrivilegeLevel.Moderator);
+
             if (!int.TryParse(subOp, out int deleteQuoteId))
             {
                 return REPLY_QUOTE_ID_INVALID;

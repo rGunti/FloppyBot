@@ -52,5 +52,7 @@ public class QuoteServiceTests
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
                 "My User Name"),
             newQuote);
+        Assert.IsTrue(
+            _quoteRepository.GetAll().Any(i => i.ChannelMappingId == "MappingId123" && i.QuoteId == 1));
     }
 }
