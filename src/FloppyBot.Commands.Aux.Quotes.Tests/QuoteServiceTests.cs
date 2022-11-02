@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.Clock;
+using FloppyBot.Base.Rng;
 using FloppyBot.Base.Storage;
 using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Commands.Aux.Quotes.Storage;
@@ -15,6 +16,7 @@ public class QuoteServiceTests
     private readonly Mock<IQuoteChannelMappingService> _quoteChannelMappingServiceMock;
     private readonly IRepository<Quote> _quoteRepository;
     private readonly QuoteService _quoteService;
+    private readonly StaticNumberGenerator _rng;
     private readonly FixedTimeProvider _timeProvider;
 
     public QuoteServiceTests()
@@ -23,10 +25,12 @@ public class QuoteServiceTests
         _quoteRepository = memoryDb.GetRepository<Quote>();
         _timeProvider = new FixedTimeProvider(DateTimeOffset.Parse("2022-10-12T12:34:56Z"));
         _quoteChannelMappingServiceMock = new Mock<IQuoteChannelMappingService>();
+        _rng = new StaticNumberGenerator(1);
         _quoteService = new QuoteService(
             memoryDb,
             _quoteChannelMappingServiceMock.Object,
-            _timeProvider);
+            _timeProvider,
+            _rng);
 
         _quoteChannelMappingServiceMock
             .Setup(q => q.GetQuoteChannelMapping(
@@ -217,5 +221,9 @@ public class QuoteServiceTests
             quote);
 
         Assert.IsNull(_quoteService.GetRandomQuote("Mock/SomeOtherChannel"));
+
+        // Test with changed rng
+        _rng.SetNumbers(2);
+        Assert.IsNull(_quoteService.GetRandomQuote(CHANNEL_ID));
     }
 }

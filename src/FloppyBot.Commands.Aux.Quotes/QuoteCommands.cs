@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using FloppyBot.Base.Clock;
+using FloppyBot.Base.Rng;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage;
@@ -273,6 +274,7 @@ public class QuoteCommands
     {
         services
             .AddSingleton<ITimeProvider, RealTimeProvider>()
+            .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
             .AddScoped<IQuoteService, QuoteService>()
             .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }

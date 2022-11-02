@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.Clock;
+using FloppyBot.Base.Rng;
 using FloppyBot.Base.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
@@ -8,6 +9,7 @@ public class QuoteService : IQuoteService
 {
     private static readonly Random Rng = new(DateTime.UtcNow.Millisecond + DateTime.Now.Minute);
     private readonly IQuoteChannelMappingService _channelMappingService;
+    private readonly IRandomNumberGenerator _randomNumberGenerator;
 
     private readonly IRepository<Quote> _repository;
     private readonly ITimeProvider _timeProvider;
@@ -15,10 +17,12 @@ public class QuoteService : IQuoteService
     public QuoteService(
         IRepositoryFactory repositoryFactory,
         IQuoteChannelMappingService channelMappingService,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider,
+        IRandomNumberGenerator randomNumberGenerator)
     {
         _channelMappingService = channelMappingService;
         _timeProvider = timeProvider;
+        _randomNumberGenerator = randomNumberGenerator;
         _repository = repositoryFactory.GetRepository<Quote>();
     }
 
@@ -40,7 +44,7 @@ public class QuoteService : IQuoteService
         Quote? quote;
         do
         {
-            quote = GetQuoteByChannelMappingId(mappingId, Rng.Next(1, maxQuoteId));
+            quote = GetQuoteByChannelMappingId(mappingId, _randomNumberGenerator.Next(1, maxQuoteId));
             retries--;
         } while (quote == null && retries > 0);
 
