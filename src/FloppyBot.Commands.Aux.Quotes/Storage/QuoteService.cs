@@ -40,7 +40,7 @@ public class QuoteService : IQuoteService
         Quote? quote;
         do
         {
-            quote = GetQuote(mappingId, Rng.Next(1, maxQuoteId));
+            quote = GetQuoteByChannelMappingId(mappingId, Rng.Next(1, maxQuoteId));
             retries--;
         } while (quote == null && retries > 0);
 
@@ -55,8 +55,7 @@ public class QuoteService : IQuoteService
             return null;
         }
 
-        return _repository.GetAll()
-            .FirstOrDefault(q => q.ChannelMappingId == mappingId && q.QuoteId == quoteId);
+        return GetQuoteByChannelMappingId(mappingId, quoteId);
     }
 
     public Quote AddQuote(string channelId, string quoteText, string? context, string author)
@@ -105,6 +104,12 @@ public class QuoteService : IQuoteService
     {
         var quote = GetQuote(channelId, quoteId);
         return quote != null && _repository.Delete(quote);
+    }
+
+    private Quote? GetQuoteByChannelMappingId(string mappingId, int quoteId)
+    {
+        return _repository.GetAll()
+            .FirstOrDefault(q => q.ChannelMappingId == mappingId && q.QuoteId == quoteId);
     }
 
     private int DetermineNextQuoteId(string channelMappingId)
