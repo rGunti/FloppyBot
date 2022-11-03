@@ -1,4 +1,5 @@
-﻿using FloppyBot.Base.Storage.Utils;
+﻿using FloppyBot.Base.Storage.MongoDb.Indexing;
+using FloppyBot.Base.Storage.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Bson.Serialization;
@@ -25,6 +26,6 @@ public static class Registration
                 .GetConnectionString(connectionStringName)))
             .AddSingleton<IMongoClient>(s => new MongoClient(s.GetMongoUrl()))
             .AddSingleton<IMongoDatabase>(s => s.GetMongoClient().GetDatabase(s.GetMongoUrl().DatabaseName))
-            .AddStorageImplementation<MongoDbRepositoryFactory>();
+            .AddStorageImplementation<MongoDbRepositoryFactory, MongoDbIndexManager>();
     }
 }

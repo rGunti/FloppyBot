@@ -1,7 +1,12 @@
 ﻿namespace FloppyBot.Base.Storage;
 
-public interface IEntity<out TEntity> where TEntity : IEntity<TEntity>
+public interface IEntity
 {
     public string Id { get; }
+}
+
+public interface IEntity<out TEntity> : IEntity
+    where TEntity : IEntity<TEntity>
+{
     public TEntity WithId(string newId);
 }
