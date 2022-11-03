@@ -34,6 +34,18 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return GetById(docId)!;
     }
 
+    public int InsertMany(params TEntity[] entities)
+    {
+        return _collection.InsertBulk(entities
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            .Select(e => e.Id == null ? e.WithId(Guid.NewGuid().ToString()) : e));
+    }
+
+    public int InsertMany(IEnumerable<TEntity> entities)
+    {
+        return InsertMany(entities.ToArray());
+    }
+
     public TEntity Update(TEntity entity)
     {
         _collection.Update(entity);

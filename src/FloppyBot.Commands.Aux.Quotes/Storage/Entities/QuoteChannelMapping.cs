@@ -2,28 +2,24 @@
 
 namespace FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
-/// <summary>
-/// 
-/// </summary>
-/// <remarks>cannot be compared due to use of arrays</remarks>
-/// <param name="Id"></param>
-/// <param name="ChannelIds"></param>
-/// <param name="NeedsConfirmation"></param>
 public record QuoteChannelMapping(
-    string Id,
-    string[] ChannelIds,
-    bool NeedsConfirmation) : IEntity<QuoteChannelMapping>
+        string Id,
+        string MappingId,
+        string ChannelId,
+        bool Confirmed)
+    : IEntity<QuoteChannelMapping>
 {
-    // ReSharper disable once UnusedMember.Global
-    public QuoteChannelMapping() : this(string.Empty, Array.Empty<string>(), true)
-    {
-    }
-
     public QuoteChannelMapping WithId(string newId)
     {
         return this with
         {
             Id = newId
         };
+    }
+
+    public override string ToString()
+    {
+        return
+            $"{nameof(QuoteChannelMapping)}({Id}, {ChannelId} => {MappingId}, {(Confirmed ? "confirmed" : "not confirmed")})";
     }
 }

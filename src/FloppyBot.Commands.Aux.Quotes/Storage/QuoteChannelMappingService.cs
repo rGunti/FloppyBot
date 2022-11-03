@@ -16,22 +16,23 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
     {
         var mapping = _repository
             .GetAll()
-            .FirstOrDefault(m => m.ChannelIds.Contains(channelId));
+            .FirstOrDefault(m => m.ChannelId == channelId && m.Confirmed);
 
         if (mapping == null && createIfMissing)
         {
-            mapping = CreateMapping(channelId);
+            mapping = CreateNewMapping(channelId);
         }
 
-        return mapping?.Id;
+        return mapping?.MappingId;
     }
 
-    private QuoteChannelMapping CreateMapping(string channelId)
+    private QuoteChannelMapping CreateNewMapping(string channelId)
     {
         var mapping = new QuoteChannelMapping(
             null!,
-            new[] { channelId },
-            false);
+            Guid.NewGuid().ToString(),
+            channelId,
+            true);
         return _repository.Insert(mapping);
     }
 }

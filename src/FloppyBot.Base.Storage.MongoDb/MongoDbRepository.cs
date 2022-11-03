@@ -30,6 +30,17 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
         return entity;
     }
 
+    public int InsertMany(IEnumerable<TEntity> entities)
+    {
+        return InsertMany(entities.ToArray());
+    }
+
+    public int InsertMany(params TEntity[] entities)
+    {
+        _collection.InsertMany(entities);
+        return entities.Length;
+    }
+
     public TEntity Update(TEntity entity)
     {
         _collection.ReplaceOne(GetIdFilter(entity.Id), entity);

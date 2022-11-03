@@ -21,27 +21,37 @@ public class QuoteChannelMappingServiceTests
     [TestMethod]
     public void GetQuoteChannelMapping()
     {
-        _repository.Insert(new QuoteChannelMapping(
-            "someId",
-            new[] { "Mock/Channel", "Mock/OtherChannel" },
-            false));
+        _repository.InsertMany(
+            new QuoteChannelMapping(
+                null!,
+                "AnMappingId",
+                "Mock/Channel",
+                true),
+            new QuoteChannelMapping(
+                null!,
+                "AnMappingId",
+                "Mock/OtherChannel",
+                true),
+            new QuoteChannelMapping(
+                null!,
+                "AnMappingId",
+                "Mock/AdditionalChannel",
+                false));
 
-        Assert.AreEqual("someId", _service.GetQuoteChannelMapping("Mock/Channel"));
-        Assert.AreEqual("someId", _service.GetQuoteChannelMapping("Mock/OtherChannel"));
+        Assert.AreEqual("AnMappingId", _service.GetQuoteChannelMapping("Mock/Channel"));
+        Assert.AreEqual("AnMappingId", _service.GetQuoteChannelMapping("Mock/OtherChannel"));
         Assert.IsNull(_service.GetQuoteChannelMapping("Mock/AdditionalChannel"));
+        Assert.IsNull(_service.GetQuoteChannelMapping("Mock/AnotherAdditionalChannel"));
     }
 
     [TestMethod]
-    public void GetQuoteChannelMappingCreatesMapping()
+    public void GetQuoteChannelMappingCreatesConfirmedMapping()
     {
-        Assert.IsFalse(
-            _repository.GetAll()
-                .Any(m => m.ChannelIds.Contains("Mock/Channel")));
-
         var mappingId = _service.GetQuoteChannelMapping("Mock/Channel", true);
-
         Assert.IsTrue(
             _repository.GetAll()
-                .Any(m => m.Id == mappingId && m.ChannelIds.Contains("Mock/Channel")));
+                .Any(m => m.MappingId == mappingId
+                          && m.ChannelId == "Mock/Channel"
+                          && m.Confirmed));
     }
 }
