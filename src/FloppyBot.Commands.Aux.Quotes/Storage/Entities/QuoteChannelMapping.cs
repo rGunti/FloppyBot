@@ -14,6 +14,10 @@ public record QuoteChannelMapping(
     string[] ChannelIds,
     bool NeedsConfirmation) : IEntity<QuoteChannelMapping>
 {
+    public QuoteChannelMapping() : this(string.Empty, Array.Empty<string>(), true)
+    {
+    }
+
     public QuoteChannelMapping WithId(string newId)
     {
         return this with
