@@ -14,6 +14,7 @@ public record QuoteChannelMapping(
     string[] ChannelIds,
     bool NeedsConfirmation) : IEntity<QuoteChannelMapping>
 {
+    // ReSharper disable once UnusedMember.Global
     public QuoteChannelMapping() : this(string.Empty, Array.Empty<string>(), true)
     {
     }
