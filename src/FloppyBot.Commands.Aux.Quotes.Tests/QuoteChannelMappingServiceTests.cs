@@ -112,7 +112,7 @@ public class QuoteChannelMappingServiceTests
         // Confirm with code given
         Assert.IsFalse(_service.ConfirmJoinProcess(mappingId, "Mock/Channel2", confirmCode));
         Assert.IsFalse(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed));
+            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId));
         Assert.IsFalse(_joinKeyRepo.GetAll()
             .Any(k => k.Id == confirmCode
                       && k.MappingId == mappingId

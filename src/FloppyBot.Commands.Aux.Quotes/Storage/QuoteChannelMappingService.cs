@@ -72,6 +72,7 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
         if (key.ExpiresAt < _timeProvider.GetCurrentUtcTime())
         {
+            DeleteUnconfirmedChannelMappings(mappingId);
             DeleteJoinKey(key);
             return false;
         }
@@ -129,5 +130,11 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
     private void DeleteJoinKey(QuoteChannelMappingJoinKeys key)
     {
         _joinKeyRepository.Delete(key);
+    }
+
+    private void DeleteUnconfirmedChannelMappings(string mappingId)
+    {
+        _repository.Delete(_repository.GetAll()
+            .Where(m => m.MappingId == mappingId && !m.Confirmed));
     }
 }
