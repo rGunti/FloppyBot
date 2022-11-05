@@ -4,7 +4,7 @@ namespace FloppyBot.Commands.Core;
 
 public static class CommandNameValidation
 {
-    private static readonly Regex CommandNameRegex = new("^[a-zA-Z0-9]{1,}$");
+    private static readonly Regex CommandNameRegex = new("^[a-zA-Z0-9\\+\\-\\*]{1,}$");
 
     public static bool IsValidCommandName(this string? commandName)
     {

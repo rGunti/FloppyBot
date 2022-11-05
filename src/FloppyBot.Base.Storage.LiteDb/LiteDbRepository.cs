@@ -3,7 +3,7 @@ using LiteDB;
 
 namespace FloppyBot.Base.Storage.LiteDb;
 
-public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
 {
     private readonly ILiteCollection<TEntity> _collection;
 
@@ -19,13 +19,31 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public TEntity? GetById(string id)
     {
-        return _collection.FindOne(id);
+        return _collection.FindById(id);
     }
 
     public TEntity Insert(TEntity entity)
     {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+        if (entity.Id == null)
+        {
+            entity = entity.WithId(Guid.NewGuid().ToString());
+        }
+
         var docId = _collection.Insert(entity);
         return GetById(docId)!;
+    }
+
+    public int InsertMany(params TEntity[] entities)
+    {
+        return _collection.InsertBulk(entities
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+            .Select(e => e.Id == null ? e.WithId(Guid.NewGuid().ToString()) : e));
+    }
+
+    public int InsertMany(IEnumerable<TEntity> entities)
+    {
+        return InsertMany(entities.ToArray());
     }
 
     public TEntity Update(TEntity entity)
@@ -34,14 +52,14 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
         return GetById(entity.Id)!;
     }
 
-    public void Delete(string id)
+    public bool Delete(string id)
     {
-        _collection.Delete(id);
+        return _collection.Delete(id);
     }
 
-    public void Delete(TEntity entity)
+    public bool Delete(TEntity entity)
     {
-        Delete(entity.Id);
+        return Delete(entity.Id);
     }
 
     public int Delete(IEnumerable<string> ids)

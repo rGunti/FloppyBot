@@ -2,7 +2,7 @@
 
 namespace FloppyBot.Base.Storage.MongoDb;
 
-public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
 {
     private readonly IMongoCollection<TEntity> _collection;
 
@@ -30,20 +30,31 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
         return entity;
     }
 
+    public int InsertMany(IEnumerable<TEntity> entities)
+    {
+        return InsertMany(entities.ToArray());
+    }
+
+    public int InsertMany(params TEntity[] entities)
+    {
+        _collection.InsertMany(entities);
+        return entities.Length;
+    }
+
     public TEntity Update(TEntity entity)
     {
         _collection.ReplaceOne(GetIdFilter(entity.Id), entity);
         return entity;
     }
 
-    public void Delete(string id)
+    public bool Delete(string id)
     {
-        _collection.DeleteOne(GetIdFilter(id));
+        return _collection.DeleteOne(GetIdFilter(id)).DeletedCount > 0L;
     }
 
-    public void Delete(TEntity entity)
+    public bool Delete(TEntity entity)
     {
-        Delete(entity.Id);
+        return Delete(entity.Id);
     }
 
     public int Delete(IEnumerable<string> ids)

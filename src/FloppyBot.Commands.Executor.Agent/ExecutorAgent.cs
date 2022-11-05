@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.Configuration;
+using FloppyBot.Base.Storage.Indexing;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
@@ -12,6 +13,8 @@ namespace FloppyBot.Commands.Executor.Agent;
 public class ExecutorAgent : BackgroundService
 {
     private readonly ICommandExecutor _commandExecutor;
+
+    private readonly IndexInitializer _indexInitializer;
     private readonly INotificationReceiver<CommandInstruction> _instructionReceiver;
     private readonly ILogger<ExecutorAgent> _logger;
 
@@ -23,7 +26,8 @@ public class ExecutorAgent : BackgroundService
         IConfiguration configuration,
         INotificationReceiverFactory receiverFactory,
         INotificationSenderFactory senderFactory,
-        ICommandExecutor commandExecutor)
+        ICommandExecutor commandExecutor,
+        IndexInitializer indexInitializer)
     {
         _logger = logger;
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
@@ -33,6 +37,7 @@ public class ExecutorAgent : BackgroundService
 
         _senderFactory = senderFactory;
         _commandExecutor = commandExecutor;
+        _indexInitializer = indexInitializer;
         _senderConnectionString = configuration.GetParsedConnectionString("ResponseOutput");
     }
 
@@ -61,6 +66,8 @@ public class ExecutorAgent : BackgroundService
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
+        _indexInitializer.InitializeIndices();
+
         _logger.LogInformation("Starting Command Executor Agent ...");
         _instructionReceiver.StartListening();
         return base.StartAsync(cancellationToken);

@@ -1,4 +1,5 @@
-﻿using FloppyBot.Base.Storage.Utils;
+﻿using FloppyBot.Base.Storage.LiteDb.Indexing;
+using FloppyBot.Base.Storage.Utils;
 using LiteDB;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,6 +22,6 @@ public static class Registration
                 inst.Pragma("UTC_DATE", true);
                 return inst;
             })
-            .AddStorageImplementation<LiteDbRepositoryFactory>();
+            .AddStorageImplementation<LiteDbRepositoryFactory, LiteDbIndexManager>();
     }
 }

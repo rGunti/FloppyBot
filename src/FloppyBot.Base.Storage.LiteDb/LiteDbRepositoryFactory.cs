@@ -12,11 +12,17 @@ public class LiteDbRepositoryFactory : IRepositoryFactory
         _database = database;
     }
 
-    public IRepository<T> GetRepository<T>() where T : class, IEntity
+    public IRepository<T> GetRepository<T>() where T : class, IEntity<T>
         => GetRepository<T>(RepositoryFactoryUtils.DetermineCollectionName<T>());
 
-    public IRepository<T> GetRepository<T>(string collectionName) where T : class, IEntity
+    public IRepository<T> GetRepository<T>(string collectionName) where T : class, IEntity<T>
     {
         return new LiteDbRepository<T>(_database.GetCollection<T>(collectionName));
+    }
+
+    public static LiteDbRepositoryFactory CreateMemoryInstance()
+    {
+        return new LiteDbRepositoryFactory(
+            new LiteDbInstanceFactory().ConstructMemoryDbInstance());
     }
 }
