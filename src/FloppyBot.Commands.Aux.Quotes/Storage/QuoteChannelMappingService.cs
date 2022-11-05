@@ -5,6 +5,11 @@ using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
 namespace FloppyBot.Commands.Aux.Quotes.Storage;
 
+/*
+ * TODOs for later:
+ * - Setup a clean job to remove unconfirmed channel mappings & expired join keys
+ */
+
 public class QuoteChannelMappingService : IQuoteChannelMappingService
 {
     private static readonly TimeSpan MaxCodeAge = 5.Minutes();
