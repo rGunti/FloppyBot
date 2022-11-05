@@ -1,7 +1,9 @@
 ﻿using FloppyBot.Base.Storage;
+using FloppyBot.Base.Storage.Attributes;
 
 namespace FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
+[IndexFields("ChannelQuote", nameof(ChannelMappingId), nameof(QuoteId))]
 public record Quote(
     string Id,
     string ChannelMappingId,
