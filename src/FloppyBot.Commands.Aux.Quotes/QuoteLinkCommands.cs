@@ -23,11 +23,11 @@ public class QuoteLinkCommands
         "Quotes are not setup. To join this channel to an existing channel with quotes, run !quoteinfo on a channel that is already setup.";
 
     private const string REPLY_JOIN =
-        "Join process started. To confirm the link, run the following command in one of your already joined channels: \"!quoteconfirm {ChannelId} {ConfirmCode}\". " +
+        "Join process started. To confirm the link, run the following command in one of your already joined channels: \"!quoteconfirm {ChannelId} {JoinCode}\". " +
         "Please note that this code will expire in 5 minutes.";
 
     private const string REPLY_JOIN_MD =
-        "Join process started. To confirm the link, run the following command in one of your already joined channels: `!quoteconfirm {ChannelId} {ConfirmCode}`. " +
+        "Join process started. To confirm the link, run the following command in one of your already joined channels: `!quoteconfirm {ChannelId} {JoinCode}`. " +
         "Please note that this code will expire in 5 minutes.";
 
     private const string REPLY_JOIN_FAILED =
