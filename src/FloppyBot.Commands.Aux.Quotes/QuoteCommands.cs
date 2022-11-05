@@ -3,6 +3,7 @@ using FloppyBot.Base.Clock;
 using FloppyBot.Base.Rng;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
@@ -178,15 +179,15 @@ public class QuoteCommands
 
     [Command("quoteadd", "q+")]
     public string AddQuote(
-        [SourceChannel] string sourceChannel,
-        [SourceContext] string sourceContext,
+        [SourceChannel] ChannelIdentifier sourceChannel,
+        [SourceContext] string? sourceContext,
         [Author] ChatUser author,
         [AllArguments] string quoteText)
     {
         var quote = _quoteService.AddQuote(
             sourceChannel,
             quoteText,
-            sourceContext,
+            sourceContext ?? sourceChannel.Interface,
             author.DisplayName);
         return REPLY_CREATED.Format(new
         {
