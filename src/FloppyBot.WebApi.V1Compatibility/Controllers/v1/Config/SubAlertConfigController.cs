@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1.Config;
 
 [ApiController]
-[Route("api/v1/config/sub-alerts")]
+[Route(V1Config.ROUTE_BASE + "api/v1/config/sub-alerts")]
 public class SubAlertConfigController : ControllerBase
 {
     [HttpGet]

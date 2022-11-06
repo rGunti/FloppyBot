@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FloppyBot.WebApi.V1Compatibility.Controllers;
 
 [ApiController]
-[Route("api/patch-notes")]
+[Route(V1Config.ROUTE_BASE + "api/patch-notes")]
 public class PatchNotesController : ControllerBase
 {
     [HttpGet]

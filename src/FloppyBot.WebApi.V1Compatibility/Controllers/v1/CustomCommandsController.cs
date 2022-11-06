@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
 
 [ApiController]
-[Route("api/v1/custom-commands")]
+[Route(V1Config.ROUTE_BASE + "api/v1/custom-commands")]
 public class CustomCommandsController : ControllerBase
 {
     [HttpGet]
