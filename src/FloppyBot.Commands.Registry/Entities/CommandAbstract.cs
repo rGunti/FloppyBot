@@ -11,4 +11,5 @@ public record CommandAbstract(
     string? Description,
     PrivilegeLevel? MinPrivilegeLevel,
     string[] AvailableOnInterfaces,
+    string[]? Syntax,
     Dictionary<string, string> AllMetadata);

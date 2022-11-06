@@ -31,10 +31,18 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
 
     public IImmutableList<string> GetCommands()
     {
-        return _database.HashKeys(GLOBAL_KEY)
+        return _database.HashKeys(_globalKey)
             .Where(v => !v.IsNull)
             .Select(v => v.ToString())
             .ToImmutableListWithValueSemantics();
+    }
+
+    public IImmutableList<CommandAbstract> GetAllCommands()
+    {
+        return _database.HashValues(_globalKey)
+            .Where(v => !v.IsNull)
+            .Select(v => JsonSerializer.Deserialize<CommandAbstract>(v.ToString())!)
+            .ToImmutableList();
     }
 
     public CommandAbstract? GetCommand(string commandName)

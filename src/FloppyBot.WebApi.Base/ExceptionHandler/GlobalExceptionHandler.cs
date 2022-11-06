@@ -2,11 +2,19 @@
 using FloppyBot.WebApi.Base.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.WebApi.Base.ExceptionHandler;
 
 public class GlobalExceptionHandler : IExceptionFilter
 {
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    {
+        _logger = logger;
+    }
+
     public void OnException(ExceptionContext context)
     {
         if (context.Exception != null && !context.ExceptionHandled)
@@ -18,6 +26,7 @@ public class GlobalExceptionHandler : IExceptionFilter
             }
             else
             {
+                _logger.LogWarning(context.Exception, "Unhandled exception occurred");
                 context.Result = new ErrorResponse(
                         StatusCodes.Status500InternalServerError,
                         $"{context.Exception.Message}",

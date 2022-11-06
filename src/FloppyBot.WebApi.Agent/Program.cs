@@ -2,6 +2,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
+using FloppyBot.Commands.Registry;
+using FloppyBot.Communication.Redis.Config;
 using FloppyBot.Version;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
@@ -110,6 +112,8 @@ services
 services
     .AddAutoMapper(typeof(V1CompatibilityProfile))
     .AddMongoDbStorage()
+    .AddRedisCommunication()
+    .AddDistributedCommandRegistry()
     .AddAuthDependencies()
     .AddV1Compatibility();
 

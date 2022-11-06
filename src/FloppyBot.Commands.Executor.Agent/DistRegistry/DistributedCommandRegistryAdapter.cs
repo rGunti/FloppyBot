@@ -74,6 +74,7 @@ public class DistributedCommandRegistryAdapter : IDisposable
             metadata.Description,
             metadata.MinPrivilegeLevel,
             metadata.AvailableOnInterfaces,
+            metadata.Syntax,
             metadata.GetRawDataAsDictionary());
 
         // If a primary name is known, just emit that
@@ -83,6 +84,7 @@ public class DistributedCommandRegistryAdapter : IDisposable
             {
                 Name = metadata[CommandMetadataTypes.PRIMARY_NAME]
             };
+            yield break;
         }
 
         // otherwise emit every name individually
