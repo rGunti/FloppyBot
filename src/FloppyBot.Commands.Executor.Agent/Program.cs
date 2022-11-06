@@ -4,6 +4,8 @@ using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Executor.Agent;
+using FloppyBot.Commands.Executor.Agent.DistRegistry;
+using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +24,8 @@ IHost host = builder
             .AddRedisCommunication()
             .AddMongoDbStorage()
             .ScanAndAddCommandDependencies()
+            .AddDistributedCommandRegistry()
+            .AddSingleton<DistributedCommandRegistryAdapter>()
             .AddHostedService<ExecutorAgent>();
     })
     .Build();

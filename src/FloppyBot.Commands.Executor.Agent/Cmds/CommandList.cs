@@ -1,6 +1,7 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
 using FloppyBot.Commands.Core.Attributes;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
@@ -8,6 +9,7 @@ using FloppyBot.Commands.Parser.Entities;
 namespace FloppyBot.Commands.Executor.Agent.Cmds;
 
 [CommandHost]
+[CommandCategory("Diagnostics")]
 // ReSharper disable once UnusedType.Global
 public class CommandList
 {
@@ -25,6 +27,7 @@ public class CommandList
     }
 
     [Command("commands")]
+    [CommandDescription("Returns a list of all available commands")]
     // ReSharper disable once UnusedMember.Global
     public string? ListCommands(CommandInstruction instruction)
     {

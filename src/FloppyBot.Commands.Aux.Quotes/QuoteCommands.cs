@@ -9,6 +9,7 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ namespace FloppyBot.Commands.Aux.Quotes;
 
 [CommandHost]
 [PrivilegeGuard(PrivilegeLevel.Viewer)]
+[CommandCategory("Quotes")]
 public class QuoteCommands
 {
     public const string REPLY_CREATED = "Created new {Quote}";
@@ -45,6 +47,12 @@ public class QuoteCommands
     }
 
     [Command("quote", "q")]
+    [PrimaryCommandName("quote")]
+    [CommandDescription("Returns a random quote or a specific one, if a quote number is given")]
+    [CommandSyntax(
+        "[<Quote No.>]",
+        "",
+        "123")]
     public string? Quote(
         [SourceChannel] string sourceChannel,
         [SourceContext] string sourceContext,
@@ -178,6 +186,9 @@ public class QuoteCommands
     }
 
     [Command("quoteadd", "q+")]
+    [PrimaryCommandName("quoteadd")]
+    [CommandDescription("Adds a new quote")]
+    [CommandSyntax("<Text>")]
     public string AddQuote(
         [SourceChannel] ChannelIdentifier sourceChannel,
         [SourceContext] string? sourceContext,
@@ -196,6 +207,9 @@ public class QuoteCommands
     }
 
     [Command("quoteedit", "qe", "q*")]
+    [PrimaryCommandName("quoteedit")]
+    [CommandDescription("Edits the text of an existing quote")]
+    [CommandSyntax("<Quote No.> <New Text>")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     public string EditQuote(
         [SourceChannel] string sourceChannel,
@@ -221,6 +235,9 @@ public class QuoteCommands
     }
 
     [Command("quoteeditcontext", "qec", "q*c")]
+    [PrimaryCommandName("quoteeditcontext")]
+    [CommandDescription("Edits the context of an existing quote")]
+    [CommandSyntax("<Quote No.> <New Context>")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     public string EditQuoteContext(
         [SourceChannel] string sourceChannel,
@@ -246,6 +263,9 @@ public class QuoteCommands
     }
 
     [Command("quotedel", "q-")]
+    [PrimaryCommandName("quotedel")]
+    [CommandDescription("Deletes an existing quote")]
+    [CommandSyntax("<Quote No.>", "123")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     public string DeleteQuote(
         [SourceChannel] string sourceChannel,
@@ -260,13 +280,6 @@ public class QuoteCommands
             {
                 QuoteId = quoteId
             });
-    }
-
-    [Command("quotesetup", "qsetup")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
-    public string SetupQuoteLink()
-    {
-        throw new NotImplementedException();
     }
 
     [DependencyRegistration]
