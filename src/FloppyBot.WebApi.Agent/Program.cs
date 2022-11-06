@@ -6,6 +6,7 @@ using FloppyBot.Version;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
 using FloppyBot.WebApi.V1Compatibility;
+using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
@@ -107,6 +108,7 @@ services
     });
 // - Dependencies
 services
+    .AddAutoMapper(typeof(V1CompatibilityProfile))
     .AddMongoDbStorage()
     .AddV1Compatibility();
 

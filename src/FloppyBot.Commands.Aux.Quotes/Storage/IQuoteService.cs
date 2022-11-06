@@ -16,4 +16,7 @@ public interface IQuoteService
     Quote? EditQuote(string channelId, int quoteId, string newContent);
     Quote? EditQuoteContext(string channelId, int quoteId, string newContext);
     bool DeleteQuote(string channelId, int quoteId);
+
+    IEnumerable<Quote> GetQuotes(string channelId);
+    bool UpdateQuote(string channelId, int quoteId, Quote quote);
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace FloppyBot.WebApi.Base.Exceptions;
 
@@ -7,7 +6,7 @@ public static class HttpStatusCodeExceptionExtensions
 {
     public static HttpStatusCodeException NotImplemented(this ControllerBase controller)
     {
-        var url = controller.Request.GetDisplayUrl();
-        return new RouteNotImplementedException($"Route \"{url}\" is not implemented");
+        return new RouteNotImplementedException(
+            $"Route \"{controller.Request.Method} {controller.Request.Path}\" is not implemented");
     }
 }

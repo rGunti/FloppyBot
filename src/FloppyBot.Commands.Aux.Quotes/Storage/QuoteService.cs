@@ -110,6 +110,42 @@ public class QuoteService : IQuoteService
         return quote != null && _repository.Delete(quote);
     }
 
+    public IEnumerable<Quote> GetQuotes(string channelId)
+    {
+        var mapping = _channelMappingService.GetQuoteChannelMapping(channelId);
+        if (mapping == null)
+        {
+            return Enumerable.Empty<Quote>();
+        }
+
+        return _repository.GetAll()
+            .Where(q => q.ChannelMappingId == mapping);
+    }
+
+    public bool UpdateQuote(string channelId, int quoteId, Quote quote)
+    {
+        var mapping = _channelMappingService.GetQuoteChannelMapping(channelId);
+        if (mapping == null)
+        {
+            return false;
+        }
+
+        var existingQuote = GetQuote(channelId, quoteId);
+        if (existingQuote == null)
+        {
+            return false;
+        }
+
+        _repository.Update(quote with
+        {
+            // Force properties to stay as-is
+            Id = existingQuote.Id,
+            QuoteId = existingQuote.QuoteId,
+            ChannelMappingId = existingQuote.ChannelMappingId
+        });
+        return true;
+    }
+
     private Quote? GetQuoteByChannelMappingId(string mappingId, int quoteId)
     {
         return _repository.GetAll()
