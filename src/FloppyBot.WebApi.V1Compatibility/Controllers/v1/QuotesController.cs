@@ -2,6 +2,7 @@
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
+using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Exceptions;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Mvc;
@@ -14,18 +15,31 @@ public class QuotesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly IQuoteService _quoteService;
+    private readonly IUserService _userService;
 
-    public QuotesController(IQuoteService quoteService, IMapper mapper)
+    public QuotesController(IQuoteService quoteService, IUserService userService, IMapper mapper)
     {
         _quoteService = quoteService;
         _mapper = mapper;
+        _userService = userService;
+    }
+
+    private IEnumerable<QuoteDto> GetQuotesForChannel(
+        ChannelIdentifier channelIdentifier)
+    {
+        return _quoteService
+            .GetQuotes(channelIdentifier)
+            .Select(q => _mapper.Map<QuoteDto>(q) with
+            {
+                Channel = channelIdentifier
+            });
     }
 
     [HttpGet]
-    public QuoteDto[] GetQuotes()
+    [Obsolete("This method will not be implemented as it is not used")]
+    public void GetQuotes()
     {
-        // TODO: Figure out what channels this user has access to
-        throw this.NotImplemented();
+        throw this.Obsolete();
     }
 
     [HttpGet("{messageInterface}/{channel}")]
@@ -34,13 +48,7 @@ public class QuotesController : ControllerBase
         [FromRoute] string channel)
     {
         var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
-        return _quoteService
-            .GetQuotes(channelIdentifier)
-            .Select(q => _mapper.Map<QuoteDto>(q) with
-            {
-                Channel = channelIdentifier
-            })
-            .ToArray();
+        return GetQuotesForChannel(channelIdentifier).ToArray();
     }
 
     [HttpGet("{messageInterface}/{channel}/{quoteNumber}")]

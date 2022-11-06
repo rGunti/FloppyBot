@@ -1,5 +1,8 @@
-﻿using AutoMapper;
+﻿using System.Collections.Immutable;
+using AutoMapper;
+using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
+using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
 
 namespace FloppyBot.WebApi.V1Compatibility.Mapping;
@@ -9,6 +12,7 @@ public class V1CompatibilityProfile : Profile
     public V1CompatibilityProfile()
     {
         MapQuote();
+        MapUser();
     }
 
     private void MapQuote()
@@ -21,7 +25,8 @@ public class V1CompatibilityProfile : Profile
                 q.QuoteText,
                 q.QuoteContext,
                 q.CreatedAt,
-                q.CreatedBy));
+                q.CreatedBy))
+            .ForAllMembers(o => o.Ignore());
         CreateMap<QuoteDto, Quote>()
             .ConstructUsing(dto => new Quote(
                 dto.Id,
@@ -30,6 +35,17 @@ public class V1CompatibilityProfile : Profile
                 dto.QuoteText,
                 dto.QuoteContext ?? string.Empty,
                 dto.CreatedAt,
-                dto.CreatedBy));
+                dto.CreatedBy))
+            .ForAllMembers(o => o.Ignore());
+    }
+
+    private void MapUser()
+    {
+        CreateMap<User, UserDto>()
+            .ConstructUsing(u => new UserDto(
+                u.Id,
+                u.OwnerOf.ToImmutableListWithValueSemantics(),
+                u.ChannelAliases.ToImmutableDictionary()))
+            .ForAllMembers(o => o.Ignore());
     }
 }

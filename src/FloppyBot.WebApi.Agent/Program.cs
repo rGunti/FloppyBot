@@ -110,6 +110,7 @@ services
 services
     .AddAutoMapper(typeof(V1CompatibilityProfile))
     .AddMongoDbStorage()
+    .AddAuthDependencies()
     .AddV1Compatibility();
 
 // *** CONFIGURE ************************************************************************
