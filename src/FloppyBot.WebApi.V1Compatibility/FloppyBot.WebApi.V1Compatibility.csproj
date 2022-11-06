@@ -13,10 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Dtos"/>
-    </ItemGroup>
-
-    <ItemGroup>
+        <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj"/>
     </ItemGroup>
 
