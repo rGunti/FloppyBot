@@ -31,7 +31,7 @@ public class V1CommandConverter
         return new CommandInfo(
             commandAbstract.Name,
             commandAbstract.Description ?? string.Empty,
-            commandAbstract.Aliases.ToImmutableListWithValueSemantics(),
+            commandAbstract.Aliases.Except(new[] { commandAbstract.Name }).ToImmutableListWithValueSemantics(),
             commandAbstract.AvailableOnInterfaces.ToImmutableListWithValueSemantics(),
             commandAbstract.MinPrivilegeLevel ?? PrivilegeLevel.Unknown,
             false,
