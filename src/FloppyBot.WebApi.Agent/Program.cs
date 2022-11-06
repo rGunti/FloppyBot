@@ -1,9 +1,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using FloppyBot.Base.Logging;
+using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Version;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
+using FloppyBot.WebApi.V1Compatibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
@@ -103,6 +105,10 @@ services
         // Enums should always be converted to String
         o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+// - Dependencies
+services
+    .AddMongoDbStorage()
+    .AddV1Compatibility();
 
 // *** CONFIGURE ************************************************************************
 var app = builder.Build();

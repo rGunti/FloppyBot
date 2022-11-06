@@ -18,6 +18,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj"/>
         <ProjectReference Include="..\FloppyBot.Version\FloppyBot.Version.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj"/>
