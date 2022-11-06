@@ -2,7 +2,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using FloppyBot.Base.Logging;
 using FloppyBot.Version;
-using FloppyBot.WebApi.Agent.Auth;
+using FloppyBot.WebApi.Auth;
+using FloppyBot.WebApi.Base.ExceptionHandler;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
@@ -96,7 +97,7 @@ services
     .AddSignalR();
 // - Controllers
 services
-    .AddControllers()
+    .AddControllers(o => { o.Filters.Add<GlobalExceptionHandler>(); })
     .AddJsonOptions(o =>
     {
         // Enums should always be converted to String

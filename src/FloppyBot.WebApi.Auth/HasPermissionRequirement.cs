@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 
-namespace FloppyBot.WebApi.Agent.Auth;
+namespace FloppyBot.WebApi.Auth;
 
 public class HasPermissionRequirement : IAuthorizationRequirement
 {

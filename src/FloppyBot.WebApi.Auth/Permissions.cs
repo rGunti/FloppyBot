@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 
-namespace FloppyBot.WebApi.Agent.Auth;
+namespace FloppyBot.WebApi.Auth;
 
 public static class Permissions
 {
