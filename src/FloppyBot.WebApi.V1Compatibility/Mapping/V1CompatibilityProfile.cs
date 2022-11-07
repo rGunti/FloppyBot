@@ -2,6 +2,7 @@
 using AutoMapper;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
+using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
 
@@ -13,6 +14,7 @@ public class V1CompatibilityProfile : Profile
     {
         MapQuote();
         MapUser();
+        MapShoutoutMessage();
     }
 
     private void MapQuote()
@@ -47,5 +49,17 @@ public class V1CompatibilityProfile : Profile
                 u.OwnerOf.ToImmutableListWithValueSemantics(),
                 u.ChannelAliases.ToImmutableDictionary()))
             .ForAllMembers(o => o.Ignore());
+    }
+
+    private void MapShoutoutMessage()
+    {
+        CreateMap<ShoutoutMessageConfig, ShoutoutMessageSetting>()
+            .ConstructUsing(c => new ShoutoutMessageSetting(
+                c.Id,
+                c.Message));
+        CreateMap<ShoutoutMessageSetting, ShoutoutMessageConfig>()
+            .ConstructUsing(c => new ShoutoutMessageConfig(
+                c.Id,
+                c.Message));
     }
 }
