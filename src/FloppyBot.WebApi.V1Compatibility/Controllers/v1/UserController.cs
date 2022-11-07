@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Exceptions;
@@ -37,14 +38,23 @@ public class UserController : ControllerBase
     [HttpPut("me/channels")]
     public IActionResult UpdateAliases([FromBody] Dictionary<string, string> channelNames)
     {
-        throw this.NotImplemented();
+        _userService.UpdateChannelAlias(User.GetUserId(), channelNames);
+        return NoContent();
     }
 
     [HttpGet("me/channels/{messageInterface}/{channel}")]
-    public string GetChannelAlias(
+    public ChannelAliasDto GetChannelAlias(
         [FromRoute] string messageInterface,
         [FromRoute] string channel)
     {
-        throw this.NotImplemented();
+        var userInfo = _userService.GetUserInfo(User.GetUserId());
+        var channelAlias = userInfo?.ChannelAliases.GetValueOrDefault(new ChannelIdentifier(messageInterface, channel));
+
+        if (channelAlias == null)
+        {
+            throw new NotFoundException("Channel ID not found");
+        }
+
+        return new ChannelAliasDto(channelAlias);
     }
 }

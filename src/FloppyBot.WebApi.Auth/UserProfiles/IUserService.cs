@@ -9,6 +9,7 @@ public interface IUserService
 {
     IImmutableList<string> GetAccessibleChannelsForUser(string userId);
     User? GetUserInfo(string userId, bool createIfMissing = false);
+    void UpdateChannelAlias(string userId, IDictionary<string, string> aliases);
 }
 
 public class UserService : IUserService
@@ -51,5 +52,23 @@ public class UserService : IUserService
         }
 
         return user;
+    }
+
+    public void UpdateChannelAlias(string userId, IDictionary<string, string> aliases)
+    {
+        var user = GetUserInfo(userId, true)!;
+        var newAliases = new Dictionary<string, string>(user.ChannelAliases);
+        foreach (var channelId in user.OwnerOf)
+        {
+            if (aliases.ContainsKey(channelId))
+            {
+                newAliases[channelId] = aliases[channelId];
+            }
+        }
+
+        _repository.Update(user with
+        {
+            ChannelAliases = newAliases
+        });
     }
 }
