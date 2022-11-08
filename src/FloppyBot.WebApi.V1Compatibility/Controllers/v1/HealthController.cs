@@ -9,7 +9,7 @@ namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
 public class HealthController : ControllerBase
 {
     [HttpGet]
-    public IReadOnlyDictionary<string, HealthCheckData> GetHealthCheck()
+    public IReadOnlyDictionary<string, V1HealthCheckData> GetHealthCheck()
     {
         throw this.NotImplemented();
     }

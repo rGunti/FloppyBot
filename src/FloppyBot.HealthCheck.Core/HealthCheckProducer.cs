@@ -8,6 +8,7 @@ namespace FloppyBot.HealthCheck.Core;
 
 public class HealthCheckProducer : IHealthCheckProducer
 {
+    private readonly string _instanceId;
     private readonly string _instanceName;
     private readonly ITimeProvider _timeProvider;
 
@@ -16,6 +17,7 @@ public class HealthCheckProducer : IHealthCheckProducer
         IConfiguration configuration)
     {
         _timeProvider = timeProvider;
+        _instanceId = Guid.NewGuid().ToString();
         _instanceName = configuration.GetInstanceName();
     }
 
@@ -25,6 +27,7 @@ public class HealthCheckProducer : IHealthCheckProducer
         var process = Process.GetCurrentProcess();
         return new HealthCheckData(
             _timeProvider.GetCurrentUtcTime(),
+            _instanceId,
             Environment.MachineName,
             new AppInfo(
                 info.ServiceName,

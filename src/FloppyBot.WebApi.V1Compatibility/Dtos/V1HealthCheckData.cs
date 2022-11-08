@@ -2,7 +2,7 @@
 
 namespace FloppyBot.WebApi.V1Compatibility.Dtos;
 
-public record HealthCheckData(
+public record V1HealthCheckData(
     DateTimeOffset RecordedAt,
     string HostName,
     int Pid,

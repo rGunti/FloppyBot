@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <Product>Web API</Product>
+        <Company>FloppyBot</Company>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,15 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Controllers"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
         <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj"/>
         <ProjectReference Include="..\FloppyBot.Version\FloppyBot.Version.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj"/>

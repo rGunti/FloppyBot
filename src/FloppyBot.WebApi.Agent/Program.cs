@@ -6,6 +6,7 @@ using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
+using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.Version;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
@@ -119,6 +120,7 @@ services
     .AddAuthDependencies()
     .AddCronJobSupport()
     .AddHealthCheck()
+    .AddHealthCheckReceiver()
     .AddV1Compatibility();
 
 // *** CONFIGURE ************************************************************************
@@ -149,4 +151,7 @@ app.UseEndpoints(e => e.MapControllers());
 //app.MapHub<SoundCommandHub>("/hub/sound-command");
 
 // *** START ****************************************************************************
-app.BootCronJobs().Run();
+app
+    .BootCronJobs()
+    .StartHealthCheckReceiver()
+    .Run();
