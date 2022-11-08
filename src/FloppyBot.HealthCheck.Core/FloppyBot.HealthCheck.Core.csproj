@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj"/>
         <ProjectReference Include="..\FloppyBot.Communication\FloppyBot.Communication.csproj"/>
         <ProjectReference Include="..\FloppyBot.Version\FloppyBot.Version.csproj"/>

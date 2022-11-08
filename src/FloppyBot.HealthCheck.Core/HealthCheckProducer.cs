@@ -16,7 +16,7 @@ public class HealthCheckProducer : IHealthCheckProducer
         IConfiguration configuration)
     {
         _timeProvider = timeProvider;
-        _instanceName = configuration["InstanceName"] ?? "Unnamed Instance";
+        _instanceName = configuration.GetInstanceName();
     }
 
     public HealthCheckData GetHealthCheckData()
