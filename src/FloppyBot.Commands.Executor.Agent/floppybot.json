@@ -15,5 +15,6 @@
   "Currency": {
     "ApiKey": "not_provided",
     "SourceUrl": "https://free.currconv.com"
-  }
+  },
+  "InstanceName": "1"
 }

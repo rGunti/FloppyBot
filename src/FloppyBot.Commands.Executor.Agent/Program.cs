@@ -1,5 +1,6 @@
 ﻿using FloppyBot.Base.BinLoader;
 using FloppyBot.Base.Configuration;
+using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Core.Scan;
@@ -7,6 +8,7 @@ using FloppyBot.Commands.Executor.Agent;
 using FloppyBot.Commands.Executor.Agent.DistRegistry;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
+using FloppyBot.HealthCheck.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -25,9 +27,13 @@ IHost host = builder
             .AddMongoDbStorage()
             .ScanAndAddCommandDependencies()
             .AddDistributedCommandRegistry()
+            .AddCronJobSupport()
+            .AddHealthCheck()
             .AddSingleton<DistributedCommandRegistryAdapter>()
             .AddHostedService<ExecutorAgent>();
     })
     .Build();
 
-await host.LogAndRun();
+await host
+    .BootCronJobs()
+    .LogAndRun();
