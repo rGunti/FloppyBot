@@ -2,14 +2,17 @@
 using AutoMapper;
 using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
+using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.Exceptions;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/health/bots")]
+[Authorize(Policy = Permissions.READ_BOT)]
 public class HealthController : ControllerBase
 {
     private readonly IKillSwitchTrigger _killSwitchTrigger;
@@ -36,6 +39,7 @@ public class HealthController : ControllerBase
     }
 
     [HttpDelete("{hostName}/{pid}")]
+    [Authorize(Permissions.RESTART_BOT)]
     public IActionResult RestartInstance(
         [FromRoute] string hostName,
         [FromRoute] int pid)

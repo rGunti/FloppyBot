@@ -1,11 +1,14 @@
 ﻿using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.HealthCheck.Receiver;
+using FloppyBot.WebApi.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloppyBot.WebApi.Agent.Controllers;
 
 [ApiController]
 [Route("api/v2/bots/health")]
+[Authorize(Policy = Permissions.READ_BOT)]
 public class HealthCheckTestController : ControllerBase
 {
     private readonly IHealthCheckReceiver _healthCheckReceiver;

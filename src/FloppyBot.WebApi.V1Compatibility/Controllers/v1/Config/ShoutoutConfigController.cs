@@ -6,12 +6,14 @@ using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Exceptions;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1.Config;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/config/so")]
+[Authorize(Policy = Permissions.READ_CONFIG)]
 public class ShoutoutConfigController : ControllerBase
 {
     private readonly IMapper _mapper;
@@ -41,12 +43,13 @@ public class ShoutoutConfigController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = Permissions.EDIT_CONFIG)]
     public IActionResult UpdateAllConfigs([FromBody] ShoutoutMessageConfig[] configs)
     {
         var allowedChannelIds = _userService.GetAccessibleChannelsForUser(User.GetUserId());
         if (configs.Select(c => c.Id).Any(channelId => !allowedChannelIds.Contains(channelId)))
         {
-            throw new BadRequestException("You don't have access to all channels");
+            throw new ForbiddenException("You don't have access to all channels");
         }
 
         foreach (var (id, message) in configs)
@@ -58,6 +61,7 @@ public class ShoutoutConfigController : ControllerBase
     }
 
     [HttpPost("{messageInterface}/{channel}")]
+    [Authorize(Policy = Permissions.EDIT_CONFIG)]
     public IActionResult UpdateConfig(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
@@ -66,7 +70,7 @@ public class ShoutoutConfigController : ControllerBase
         var channelId = new ChannelIdentifier(messageInterface, channel);
         if (_userService.GetAccessibleChannelsForUser(User.GetUserId()).All(c => c != channelId.ToString()))
         {
-            throw new BadRequestException("You don't have access to this channel");
+            throw new ForbiddenException("You don't have access to this channel");
         }
 
         _shoutoutMessageSettingService.SetShoutoutMessage(channelId, config.Message);
