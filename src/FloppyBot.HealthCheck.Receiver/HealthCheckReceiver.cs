@@ -39,7 +39,7 @@ public class HealthCheckReceiver : IHealthCheckReceiver, IDisposable
 
     private void ReceiverOnNotificationReceived(HealthCheckData notification)
     {
-        _logger.LogDebug("Received health check data ...");
+        _logger.LogTrace("Received health check data ...");
         _data.AddOrUpdate(
             notification.InstanceId,
             _ => notification,
