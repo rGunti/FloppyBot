@@ -3,6 +3,7 @@ using AutoMapper;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
 
@@ -15,6 +16,7 @@ public class V1CompatibilityProfile : Profile
         MapQuote();
         MapUser();
         MapShoutoutMessage();
+        MapHealthCheckData();
     }
 
     private void MapQuote()
@@ -61,5 +63,29 @@ public class V1CompatibilityProfile : Profile
             .ConstructUsing(c => new ShoutoutMessageConfig(
                 c.Id,
                 c.Message));
+    }
+
+    private void MapHealthCheckData()
+    {
+        CreateMap<HealthCheckData, V1HealthCheckData>()
+            .ConstructUsing(c => new V1HealthCheckData(
+                c.RecordedAt,
+                c.HostName,
+                c.Process.Pid,
+                c.Process.MemoryConsumed,
+                c.App.Version,
+                new[]
+                {
+                    new MessageInterfaceDescription(
+                        c.App.InstanceName,
+                        $"{c.App.InstanceName} ({c.App.Service})",
+                        c.App.Service,
+                        true,
+                        string.Empty,
+                        null,
+                        null,
+                        null)
+                }.ToImmutableListWithValueSemantics(),
+                DateTimeOffset.UtcNow - c.Process.StartedAt));
     }
 }

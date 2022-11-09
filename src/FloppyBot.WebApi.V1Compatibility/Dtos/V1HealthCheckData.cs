@@ -8,5 +8,5 @@ public record V1HealthCheckData(
     int Pid,
     float MemoryUsed,
     string Version,
-    IImmutableList<MessageInterfaceDescription> MessageInterfaceDescription,
+    IImmutableList<MessageInterfaceDescription> MessageInterfaces,
     TimeSpan Uptime);
