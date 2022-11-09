@@ -6,6 +6,7 @@ using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
+using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.Version;
 using FloppyBot.WebApi.Auth;
@@ -121,6 +122,8 @@ services
     .AddCronJobSupport()
     .AddHealthCheck()
     .AddHealthCheckReceiver()
+    .AddKillSwitchTrigger()
+    .AddKillSwitch()
     .AddV1Compatibility();
 
 // *** CONFIGURE ************************************************************************
@@ -153,5 +156,6 @@ app.UseEndpoints(e => e.MapControllers());
 // *** START ****************************************************************************
 app
     .BootCronJobs()
+    .ArmKillSwitch()
     .StartHealthCheckReceiver()
     .Run();

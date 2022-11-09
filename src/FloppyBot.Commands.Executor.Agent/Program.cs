@@ -9,6 +9,7 @@ using FloppyBot.Commands.Executor.Agent.DistRegistry;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
+using FloppyBot.HealthCheck.KillSwitch;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -29,6 +30,7 @@ IHost host = builder
             .AddDistributedCommandRegistry()
             .AddCronJobSupport()
             .AddHealthCheck()
+            .AddKillSwitch()
             .AddSingleton<DistributedCommandRegistryAdapter>()
             .AddHostedService<ExecutorAgent>();
     })
@@ -36,4 +38,5 @@ IHost host = builder
 
 await host
     .BootCronJobs()
+    .ArmKillSwitch()
     .LogAndRun();

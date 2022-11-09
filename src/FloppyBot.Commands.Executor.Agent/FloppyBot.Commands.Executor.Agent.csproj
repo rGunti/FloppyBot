@@ -27,6 +27,7 @@
         <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
         <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

@@ -9,6 +9,7 @@
     "MongoDb": "mongodb://localhost:27017/FloppyBot",
     "Redis": "localhost",
     "HealthCheck": "{Redis}|HealthCheck",
+    "KillSwitch": "{Redis}|KillSwitch",
     "CommandInput": "{Redis}|Command.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}",
     "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry"

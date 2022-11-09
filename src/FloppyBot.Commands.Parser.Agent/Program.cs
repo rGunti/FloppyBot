@@ -5,6 +5,7 @@ using FloppyBot.Commands.Parser;
 using FloppyBot.Commands.Parser.Agent;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
+using FloppyBot.HealthCheck.KillSwitch;
 
 IHostBuilder builder = Host.CreateDefaultBuilder(args)
     .SetupConfiguration()
@@ -17,6 +18,8 @@ IHost host = builder
             .AddRedisCommunication()
             .AddCronJobSupport()
             .AddHealthCheck()
+            .AddKillSwitchTrigger()
+            .AddKillSwitch()
             .AddSingleton<ICommandParser, CommandParser>(s =>
             {
                 var config = s.GetRequiredService<IConfiguration>();
@@ -29,4 +32,5 @@ IHost host = builder
 
 await host
     .BootCronJobs()
+    .ArmKillSwitch()
     .LogAndRun();

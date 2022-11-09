@@ -14,11 +14,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
-      <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
-      <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
-      <ProjectReference Include="..\FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj" />
-      <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
-      <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
+        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
     </ItemGroup>
 </Project>

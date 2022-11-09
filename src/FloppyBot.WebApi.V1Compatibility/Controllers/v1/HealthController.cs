@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using AutoMapper;
+using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.WebApi.Base.Exceptions;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
@@ -11,13 +12,18 @@ namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
 [Route(V1Config.ROUTE_BASE + "api/v1/health/bots")]
 public class HealthController : ControllerBase
 {
+    private readonly IKillSwitchTrigger _killSwitchTrigger;
     private readonly IMapper _mapper;
     private readonly IHealthCheckReceiver _receiver;
 
-    public HealthController(IHealthCheckReceiver receiver, IMapper mapper)
+    public HealthController(
+        IHealthCheckReceiver receiver,
+        IMapper mapper,
+        IKillSwitchTrigger killSwitchTrigger)
     {
         _receiver = receiver;
         _mapper = mapper;
+        _killSwitchTrigger = killSwitchTrigger;
     }
 
     [HttpGet]
@@ -34,6 +40,16 @@ public class HealthController : ControllerBase
         [FromRoute] string hostName,
         [FromRoute] int pid)
     {
-        throw this.NotImplemented();
+        var instanceId = _receiver.RecordedHealthChecks
+            .Where(d => d.HostName == hostName && d.Process.Pid == pid)
+            .Select(d => d.InstanceId)
+            .FirstOrDefault();
+        if (instanceId == null)
+        {
+            throw new NotFoundException($"Instance does not exist");
+        }
+
+        _killSwitchTrigger.RequestRestart(instanceId);
+        return Accepted();
     }
 }

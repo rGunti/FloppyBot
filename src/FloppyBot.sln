@@ -128,6 +128,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Cron", "Flop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.HealthCheck.Receiver", "FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj", "{795B3128-F662-4546-80E0-B73B2097AF58}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.HealthCheck.KillSwitch", "FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj", "{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -191,6 +193,7 @@ Global
 		{8C05047D-6665-4816-A5A3-A8EDBFD48103} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{59476942-4650-4AB1-A126-B041BCFEAE03} = {8C05047D-6665-4816-A5A3-A8EDBFD48103}
 		{795B3128-F662-4546-80E0-B73B2097AF58} = {335F3E0E-B972-4F18-B3B5-4323A46C0A6E}
+		{5DA9A4F0-FF2F-4022-B490-A7DC960E7551} = {335F3E0E-B972-4F18-B3B5-4323A46C0A6E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -373,5 +376,9 @@ Global
 		{795B3128-F662-4546-80E0-B73B2097AF58}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{795B3128-F662-4546-80E0-B73B2097AF58}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{795B3128-F662-4546-80E0-B73B2097AF58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

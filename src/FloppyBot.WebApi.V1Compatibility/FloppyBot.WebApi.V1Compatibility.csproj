@@ -13,6 +13,7 @@
         <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj"/>
         <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj"/>

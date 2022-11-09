@@ -8,6 +8,7 @@
   "ConnectionStrings": {
     "Redis": "localhost",
     "HealthCheck": "{Redis}|HealthCheck",
+    "KillSwitch": "{Redis}|KillSwitch",
     "MessageInput": "{Redis}|Message.Received",
     "CommandOutput": "{Redis}|Command.Received"
   },
