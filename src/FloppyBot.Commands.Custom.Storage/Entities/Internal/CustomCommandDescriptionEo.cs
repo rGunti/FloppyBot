@@ -1,5 +1,4 @@
 ﻿using FloppyBot.Base.Storage;
-using FloppyBot.Chat.Entities;
 
 namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
 
@@ -19,22 +18,4 @@ public record CustomCommandDescriptionEo
             Id = newId
         };
     }
-}
-
-public record CommandResponseEo
-{
-    public string Type { get; set; }
-    public string Content { get; set; }
-}
-
-public record CommandLimitationEo
-{
-    public PrivilegeLevel MinLevel { get; set; }
-    public CooldownDescriptionEo[] Cooldown { get; set; }
-}
-
-public record CooldownDescriptionEo
-{
-    public PrivilegeLevel Level { get; set; }
-    public int Milliseconds { get; set; }
 }
