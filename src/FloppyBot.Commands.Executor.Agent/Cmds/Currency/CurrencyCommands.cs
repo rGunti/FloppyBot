@@ -4,11 +4,13 @@ using FloppyBot.Chat;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Commands.Executor.Agent.Cmds.Currency;
 
 [CommandHost]
+[CommandCategory("Utilities")]
 // ReSharper disable once UnusedType.Global
 public class CurrencyCommands
 {
@@ -26,7 +28,14 @@ public class CurrencyCommands
         _currencyConverter = currencyConverter;
     }
 
-    [Command("currency")]
+    [Command("money", "currency")]
+    [PrimaryCommandName("money")]
+    [CommandDescription("Converts the given amount of money into another currency. " +
+                        "The international three letter currency codes are to be provided.")]
+    [CommandSyntax(
+        "<Input> <Currency> [in|to] <Target Currency>",
+        "20 EUR in USD",
+        "15.90 CHF to NOK")]
     // ReSharper disable once UnusedMember.Global
     public async Task<string> ConvertCurrency(
         [ArgumentIndex(0)] decimal value,

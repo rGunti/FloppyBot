@@ -1,6 +1,7 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
 using FloppyBot.Commands.Core.Attributes;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Version;
@@ -8,6 +9,7 @@ using FloppyBot.Version;
 namespace FloppyBot.Commands.Executor.Agent.Cmds;
 
 [CommandHost]
+[CommandCategory("Diagnostics")]
 // ReSharper disable once UnusedType.Global
 public class BuiltInCommands
 {
@@ -16,9 +18,13 @@ public class BuiltInCommands
     private const string REPLY_ABOUT_MD = "Hello! This is **FloppyBot v{Version}**";
 
     [Command("ping")]
+    [PrimaryCommandName("ping")]
+    [CommandDescription("Returns a test message. Useful to check if FloppyBot responds to commands.")]
     public static string Ping() => REPLY_PING;
 
     [Command("about")]
+    [PrimaryCommandName("about")]
+    [CommandDescription("Returns FloppyBots current version")]
     public static string About(
         CommandInstruction instruction)
     {

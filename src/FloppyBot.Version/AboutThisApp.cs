@@ -10,24 +10,44 @@ public class AboutThisApp
         Info = new AboutThisApp(
             "FloppyBot",
             assembly.GetProductName()!,
-            assembly.GetProductVersion()!);
+            assembly.GetProductVersion()!,
+            Guid.NewGuid().ToString());
     }
 
     private AboutThisApp(
         string name,
         string serviceName,
-        string version)
+        string version,
+        string instanceId)
     {
         Name = name;
         ServiceName = serviceName;
         Version = version;
+        InstanceId = instanceId;
     }
 
     public static AboutThisApp Info { get; }
 
+    /// <summary>
+    /// Name of the application
+    /// </summary>
     public string Name { get; }
+
+    /// <summary>
+    /// Name of the service
+    /// </summary>
     public string ServiceName { get; }
+
+    /// <summary>
+    /// Version of the service
+    /// </summary>
     public string Version { get; }
+
+    /// <summary>
+    /// An ID identifying this exact instance
+    /// which is randomly generated on startup
+    /// </summary>
+    public string InstanceId { get; }
 }
 
 internal static class AssemblyExtensions

@@ -5,12 +5,15 @@
       "Microsoft.Hosting.Lifetime": "Information"
     }
   },
-  
   "ConnectionStrings": {
     "Redis": "localhost",
+    "HealthCheck": "{Redis}|HealthCheck",
+    "KillSwitch": "{Redis}|KillSwitch",
     "MessageInput": "{Redis}|Message.Received",
     "CommandOutput": "{Redis}|Command.Received"
   },
-  
-  "CommandPrefixes": ["-"]
+  "InstanceName": "1",
+  "CommandPrefixes": [
+    "-"
+  ]
 }

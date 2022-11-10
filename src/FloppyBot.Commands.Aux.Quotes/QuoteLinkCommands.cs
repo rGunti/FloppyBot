@@ -5,12 +5,14 @@ using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Commands.Aux.Quotes;
 
 [CommandHost]
 [PrivilegeGuard(PrivilegeLevel.Moderator)]
+[CommandCategory("Quotes")]
 public class QuoteLinkCommands
 {
     private const string REPLY_INFO =
@@ -51,6 +53,9 @@ public class QuoteLinkCommands
     }
 
     [Command("quoteinfo", "qi")]
+    [PrimaryCommandName("quoteinfo")]
+    [CommandDescription("Returns administrative information about this channels quote database and information about " +
+                        "how to link it with one from another channel.")]
     public string? GetMappingInfo(
         [SourceChannel] string sourceChannel,
         [SupportedFeatures] ChatInterfaceFeatures supportedFeatures)
@@ -69,6 +74,9 @@ public class QuoteLinkCommands
     }
 
     [Command("quotejoin", "qj")]
+    [PrimaryCommandName("quotejoin")]
+    [CommandDescription("Starts the join process for the given channel.")]
+    [CommandSyntax("<Channel ID>", "Twitch/pinsrltrex")]
     public string? JoinChannel(
         [SourceChannel] string sourceChannel,
         [SupportedFeatures] ChatInterfaceFeatures supportedFeatures,
@@ -94,6 +102,11 @@ public class QuoteLinkCommands
     }
 
     [Command("quoteconfirm", "qc")]
+    [PrimaryCommandName("quoteconfirm")]
+    [CommandDescription("Confirms the connection between this channel and another one, " +
+                        "linking their quote databases together. This is to be executed after " +
+                        "\"quotejoin\".")]
+    [CommandSyntax("<Channel ID> <Join Code>")]
     public string? ConfirmJoin(
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] string channelId,

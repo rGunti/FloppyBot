@@ -1,7 +1,10 @@
 using FloppyBot.Base.Configuration;
+using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Chat.Agent;
 using FloppyBot.Communication.Redis.Config;
+using FloppyBot.HealthCheck.Core;
+using FloppyBot.HealthCheck.KillSwitch;
 
 IConfiguration config = AppConfigurationUtils.BuildCommonConfig();
 
@@ -17,8 +20,14 @@ IHost host = builder
         services
             .RegisterChatInterface(config.GetValue<string>("InterfaceType"))
             .AddRedisCommunication()
+            .AddCronJobSupport()
+            .AddHealthCheck()
+            .AddKillSwitch()
             .AddHostedService<ChatAgent>();
     })
     .Build();
 
-await host.LogAndRun();
+await host
+    .BootCronJobs()
+    .ArmKillSwitch()
+    .LogAndRun();

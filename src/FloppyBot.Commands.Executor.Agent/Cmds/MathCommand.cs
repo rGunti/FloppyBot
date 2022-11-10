@@ -4,6 +4,7 @@ using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 namespace FloppyBot.Commands.Executor.Agent.Cmds;
 
 [CommandHost]
+[CommandCategory("Math")]
 // ReSharper disable once UnusedType.Global
 public class MathCommand
 {
@@ -27,6 +29,11 @@ public class MathCommand
     }
 
     [Command("math", "calc")]
+    [PrimaryCommandName("math")]
+    [CommandDescription("Calculate something using a calculator")]
+    [CommandSyntax(
+        "<Expression>",
+        "2+3")]
     // ReSharper disable once UnusedMember.Global
     public string? CalculateMathExpression(
         CommandInstruction instruction,
