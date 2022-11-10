@@ -15,6 +15,8 @@ public sealed class ImmutableListWithValueSemantics<T> : IImmutableList<T>, IEqu
     private readonly IImmutableList<T> _list;
 
     public ImmutableListWithValueSemantics(IImmutableList<T> list) => _list = list;
+
+    public static IImmutableList<T> Empty => Enumerable.Empty<T>().ToImmutableListWithValueSemantics();
     public bool Equals(IImmutableList<T>? other) => this.SequenceEqual(other ?? ImmutableList<T>.Empty);
 
     public override bool Equals(object? obj) => Equals(obj as IImmutableList<T>);
