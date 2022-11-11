@@ -1,4 +1,5 @@
-﻿namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
+﻿#pragma warning disable CS8618
+namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
 
 public record CommandResponseEo
 {

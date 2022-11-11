@@ -1,4 +1,5 @@
-﻿using FloppyBot.Chat.Entities;
+﻿#pragma warning disable CS8618
+using FloppyBot.Chat.Entities;
 
 namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
 
