@@ -25,6 +25,12 @@ public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquat
         }
     }
 
+    public override string ToString()
+    {
+        return
+            $"ImmutableList<{typeof(T)}> ({Count}): [{string.Join(",", _set.Select(i => i?.ToString() ?? "<null>"))}]";
+    }
+
     #region IImmutableSet implementation
 
     public int Count => _set.Count;

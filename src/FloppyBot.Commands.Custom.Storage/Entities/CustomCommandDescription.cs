@@ -11,18 +11,20 @@ public record CustomCommandDescription : IEntity<CustomCommandDescription>
     private readonly IImmutableSet<string> _owner = ImmutableSetWithValueSemantics<string>.Empty;
     private readonly IImmutableList<CommandResponse> _responses = ImmutableList<CommandResponse>.Empty;
 
+    public string Id { get; init; }
+
     public string Name { get; init; }
 
     public IImmutableSet<string> Aliases
     {
         get => _aliases;
-        init => _aliases = value.WithValueSemantics();
+        init => _aliases = value.ToImmutableSortedSetWithValueSemantics();
     }
 
     public IImmutableSet<string> Owners
     {
         get => _owner;
-        init => _owner = value.WithValueSemantics();
+        init => _owner = value.ToImmutableSortedSetWithValueSemantics();
     }
 
     public IImmutableList<CommandResponse> Responses
@@ -34,8 +36,6 @@ public record CustomCommandDescription : IEntity<CustomCommandDescription>
     public CommandLimitation Limitations { get; init; }
 
     public CommandResponseMode ResponseMode { get; init; }
-
-    public string Id { get; init; }
 
     public CustomCommandDescription WithId(string newId)
     {
