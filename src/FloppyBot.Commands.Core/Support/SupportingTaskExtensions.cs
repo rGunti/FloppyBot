@@ -33,8 +33,8 @@ public static class SupportingTaskExtensions
     internal static IServiceCollection AddTasks(this IServiceCollection services)
     {
         return services
-            .AddPreExecutionTask<LogTask>()
-            .AddPostExecutionTask<LogTask>();
+            .AddHybridExecutionTask<LogTask>()
+            .AddPreExecutionTask<GuardTask>();
     }
 
     private static IOrderedEnumerable<T> GetSupportingTasks<T>(this IServiceProvider provider)

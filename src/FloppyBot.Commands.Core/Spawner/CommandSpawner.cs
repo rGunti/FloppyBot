@@ -2,7 +2,6 @@
 using System.Reflection;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Args;
-using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Support;
@@ -59,45 +58,6 @@ public class CommandSpawner : ICommandSpawner
         {
             _logger.LogDebug("Skipped creating host class instance because command is declared as static");
         }
-
-        _logger.LogDebug("Checking for guards");
-        var guards = commandInfo.ImplementingType
-            .GetCustomAttributes<GuardAttribute>()
-            .Concat(commandInfo.HandlerMethod
-                .GetCustomAttributes<GuardAttribute>())
-            .SelectMany(attribute => _guardRegistry.FindGuardImplementation(attribute)
-                .Select(guardType => new
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    GuardImpl = (ICommandGuard)scope.ServiceProvider.GetRequiredService(guardType),
-                    GuardType = guardType,
-                    Settings = attribute,
-                }))
-            .ToArray();
-        var failedGuards = guards
-            .Where(guard =>
-            {
-                _logger.LogTrace(
-                    "Running guard {GuardType} with settings {GuardSettings}",
-                    guard.GuardType,
-                    guard.Settings);
-                return !guard.GuardImpl.CanExecute(instruction, commandInfo, guard.Settings);
-            })
-            .ToArray();
-
-        if (failedGuards.Any())
-        {
-            _logger.LogInformation(
-                "{FailedGuardCount} of {GuardCount} guard(s) have failed, command is not executed",
-                failedGuards.Length,
-                guards.Length);
-            _logger.LogDebug(
-                "The following guards have failed: {FailedGuards}",
-                failedGuards.Select(g => g.Settings).ToArray());
-            return null;
-        }
-
-        _logger.LogDebug("Passed {GuardCount} guard checks", guards.Length);
 
         _logger.LogDebug("Running pre-execution tasks");
         IPreExecutionTask? failedPreExecutionTask = scope.RunPreExecutionTasks(commandInfo, instruction);
