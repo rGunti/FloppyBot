@@ -6,10 +6,3 @@ public record CommandResult(
 {
     public bool HasResponse => ResponseContent != null;
 }
-
-public enum CommandOutcome
-{
-    NoResponse,
-    Success,
-    Failed
-}
