@@ -69,6 +69,12 @@ public class CommandScannerTests
                 new CommandInfo(
                     new[] { "async" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommand))!),
+                new CommandInfo(
+                    new[] { "cmdresult" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.CommandResult))!),
+                new CommandInfo(
+                    new[] { "asynccmdresult" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommandResult))!),
             },
             commands);
     }

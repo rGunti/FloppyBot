@@ -14,6 +14,9 @@ public class CommandScanner : ICommandScanner
     private static readonly IImmutableSet<Type> AllowedReturnTypes = new[]
     {
         // Default
+        typeof(CommandResult),
+        typeof(Task<CommandResult>),
+        // Deprecated
         typeof(ChatMessage),
         typeof(Task<ChatMessage>),
         // Short Version: only return message

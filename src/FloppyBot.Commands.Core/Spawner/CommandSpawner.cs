@@ -145,6 +145,9 @@ public class CommandSpawner : ICommandSpawner
             case string returnMessage:
                 _logger.LogDebug("Return value was string, returning as successful outcome");
                 return new CommandResult(CommandOutcome.Success, returnMessage);
+            case CommandResult result:
+                _logger.LogDebug($"Return value was {nameof(CommandResult)}, returning as is");
+                return result;
             case ChatMessage chatMessage:
                 _logger.LogWarning(
                     "Return value was chat message (deprecated), returning its content as successful outcome");
