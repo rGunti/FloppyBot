@@ -2,6 +2,7 @@
 using System.Reflection;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Cooldown;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Guard;
@@ -35,7 +36,8 @@ public static class CommandScannerExtensions
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddSingleton<IMetadataExtractor, MetadataExtractor>()
             .AddGuards()
-            .AddTasks();
+            .AddTasks()
+            .AddCooldown();
     }
 
     internal static IServiceCollection AddGuards(this IServiceCollection services)

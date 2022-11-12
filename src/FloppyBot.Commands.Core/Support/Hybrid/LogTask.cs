@@ -1,13 +1,11 @@
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Support.PostExecution;
-using FloppyBot.Commands.Core.Support.PreExecution;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace FloppyBot.Commands.Core.Support.Shared;
+namespace FloppyBot.Commands.Core.Support.Hybrid;
 
 [TaskOrder(int.MinValue)]
-public class LogTask : IPreExecutionTask, IPostExecutionTask
+public class LogTask : IHybridTask
 {
     private readonly ILogger<LogTask> _logger;
 

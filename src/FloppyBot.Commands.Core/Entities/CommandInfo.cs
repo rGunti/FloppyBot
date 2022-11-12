@@ -18,6 +18,11 @@ public record CommandInfo(
     /// </summary>
     public Type ImplementingType => HandlerMethod.ReflectedType!;
 
+    /// <summary>
+    /// Returns an ID that identifies the command
+    /// </summary>
+    public string CommandId => ToString();
+
     public override string ToString()
     {
         return $"Cmd: [{string.Join(",", Names)}]{(IsStatic ? " (static)" : "")} => {HandlerMethod}";

@@ -1,8 +1,8 @@
 using System.Reflection;
 using FloppyBot.Commands.Core.Entities;
+using FloppyBot.Commands.Core.Support.Hybrid;
 using FloppyBot.Commands.Core.Support.PostExecution;
 using FloppyBot.Commands.Core.Support.PreExecution;
-using FloppyBot.Commands.Core.Support.Shared;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +23,7 @@ public static class SupportingTaskExtensions
     }
 
     public static IServiceCollection AddHybridExecutionTask<TTask>(this IServiceCollection services)
-        where TTask : class, IPreExecutionTask, IPostExecutionTask
+        where TTask : class, IHybridTask
     {
         return services
             .AddPreExecutionTask<TTask>()
@@ -34,7 +34,8 @@ public static class SupportingTaskExtensions
     {
         return services
             .AddHybridExecutionTask<LogTask>()
-            .AddPreExecutionTask<GuardTask>();
+            .AddPreExecutionTask<GuardTask>()
+            .AddHybridExecutionTask<CooldownTask>();
     }
 
     private static IOrderedEnumerable<T> GetSupportingTasks<T>(this IServiceProvider provider)
