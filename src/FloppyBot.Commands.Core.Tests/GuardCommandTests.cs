@@ -5,6 +5,8 @@ using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Core.Spawner;
+using FloppyBot.Commands.Core.Support;
+using FloppyBot.Commands.Core.Support.PreExecution;
 using FloppyBot.Commands.Core.Tests.Impl;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +31,7 @@ public class GuardCommandTests
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddGuardRegistry()
             .AddGuard<PrivilegeGuard, PrivilegeGuardAttribute>()
+            .AddPreExecutionTask<GuardTask>()
             .BuildServiceProvider();
     }
 
