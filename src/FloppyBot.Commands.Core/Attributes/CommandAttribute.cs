@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using FloppyBot.Base.EquatableCollections;
 
 namespace FloppyBot.Commands.Core.Attributes;
 
@@ -23,7 +24,7 @@ public class CommandAttribute : Attribute
 
         Names = names
             .AreAllValidCommandNamesOrThrow()
-            .ToImmutableHashSet();
+            .ToImmutableSortedSetWithValueSemantics();
     }
 
     /// <summary>
