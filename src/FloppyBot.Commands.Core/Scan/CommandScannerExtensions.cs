@@ -8,6 +8,7 @@ using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Internal;
 using FloppyBot.Commands.Core.Metadata;
 using FloppyBot.Commands.Core.Spawner;
+using FloppyBot.Commands.Core.Support;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Commands.Core.Scan;
@@ -16,8 +17,7 @@ public static class CommandScannerExtensions
 {
     private static readonly ICommandScanner CommandScanner = new CommandScanner();
 
-    public static IServiceCollection ScanAndAddCommandDependencies(
-        this IServiceCollection services)
+    public static IServiceCollection ScanAndAddCommandDependencies(this IServiceCollection services)
     {
         IImmutableDictionary<string, CommandInfo> handlers = CommandScanner.ScanForCommandHandlers();
 
@@ -34,7 +34,8 @@ public static class CommandScannerExtensions
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddSingleton<IMetadataExtractor, MetadataExtractor>()
-            .AddGuards();
+            .AddGuards()
+            .AddTasks();
     }
 
     internal static IServiceCollection AddGuards(this IServiceCollection services)

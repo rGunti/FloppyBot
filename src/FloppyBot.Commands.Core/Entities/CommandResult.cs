@@ -5,4 +5,9 @@ public record CommandResult(
     string? ResponseContent = null)
 {
     public bool HasResponse => ResponseContent != null;
+
+    public override string ToString()
+    {
+        return HasResponse ? $"{Outcome}: {ResponseContent ?? "empty"}" : $"{Outcome}";
+    }
 }

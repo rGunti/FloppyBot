@@ -5,6 +5,9 @@ using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Guard;
+using FloppyBot.Commands.Core.Support;
+using FloppyBot.Commands.Core.Support.PostExecution;
+using FloppyBot.Commands.Core.Support.PreExecution;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,6 +99,16 @@ public class CommandSpawner : ICommandSpawner
 
         _logger.LogDebug("Passed {GuardCount} guard checks", guards.Length);
 
+        _logger.LogDebug("Running pre-execution tasks");
+        IPreExecutionTask? failedPreExecutionTask = scope.RunPreExecutionTasks(commandInfo, instruction);
+        if (failedPreExecutionTask != null)
+        {
+            _logger.LogInformation(
+                "Pre-execution task {TaskName} has failed, command is not executed",
+                failedPreExecutionTask.GetType());
+            return null;
+        }
+
         _logger.LogDebug("Building arguments");
         object?[] commandArguments;
         try
@@ -117,6 +130,16 @@ public class CommandSpawner : ICommandSpawner
 
         object? returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
         CommandResult result = ProcessReturnValue(returnValue);
+
+        _logger.LogDebug("Running post-execution tasks");
+        IPostExecutionTask? failedPostExecutionTask = scope.RunPostExecutionTasks(commandInfo, instruction, result);
+        if (failedPostExecutionTask != null)
+        {
+            _logger.LogInformation(
+                "Post-execution task {TaskName} has failed, response is dropped",
+                failedPostExecutionTask.GetType());
+            return null;
+        }
 
         _logger.LogDebug("Command executed successfully, returning value");
         return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
