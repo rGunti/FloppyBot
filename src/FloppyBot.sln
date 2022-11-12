@@ -138,8 +138,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.T
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Execution", "FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj", "{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Core.Cooldown", "FloppyBot.Commands.Core.Cooldown\FloppyBot.Commands.Core.Cooldown.csproj", "{73E6662A-DEBC-4F9F-A874-33C97B274491}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -208,7 +206,6 @@ Global
 		{BC26BEB2-4CB7-4EAF-BA4E-1DF9452ED52D} = {EB2C4423-A34B-4287-B7A1-F2E83E9EE935}
 		{FEF38D6D-1C5B-4E2A-8E45-EC788F8E5839} = {EB2C4423-A34B-4287-B7A1-F2E83E9EE935}
 		{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87} = {EB2C4423-A34B-4287-B7A1-F2E83E9EE935}
-		{73E6662A-DEBC-4F9F-A874-33C97B274491} = {4765C187-070B-40C9-8DC6-38006E8DA501}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -407,9 +404,5 @@ Global
 		{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73E6662A-DEBC-4F9F-A874-33C97B274491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73E6662A-DEBC-4F9F-A874-33C97B274491}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73E6662A-DEBC-4F9F-A874-33C97B274491}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73E6662A-DEBC-4F9F-A874-33C97B274491}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
