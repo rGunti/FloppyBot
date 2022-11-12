@@ -30,7 +30,9 @@ public class CommandSpawner : ICommandSpawner
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public CommandSpawner(ILogger<CommandSpawner> logger, IServiceProvider serviceProvider,
+    public CommandSpawner(
+        ILogger<CommandSpawner> logger,
+        IServiceProvider serviceProvider,
         ICommandGuardRegistry guardRegistry)
     {
         _logger = logger;
@@ -113,32 +115,45 @@ public class CommandSpawner : ICommandSpawner
             commandInfo.HandlerMethod,
             commandArguments.Length);
 
-        var returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
+        object? returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
+        CommandResult result = ProcessReturnValue(returnValue);
 
         _logger.LogDebug("Command executed successfully, returning value");
-        switch (returnValue)
+        return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
+    }
+
+    private CommandResult ProcessReturnValue(object? returnValue)
+    {
+        if (returnValue == null)
         {
-            case null:
-                _logger.LogDebug("Return value was null, returning null as well");
-                return null;
+            _logger.LogDebug("Return value was null, returning null as well");
+            return new CommandResult(CommandOutcome.NoResponse);
+        }
+
+        var returnValueToProcess = returnValue;
+        if (returnValueToProcess is Task task)
+        {
+            _logger.LogDebug("Return value is asynchronous, waiting for reply");
+            task.ConfigureAwait(false);
+            task.Wait();
+            // ReSharper disable once TailRecursiveCall
+            returnValueToProcess = (object)((dynamic)task).Result;
+        }
+
+        switch (returnValueToProcess)
+        {
             case string returnMessage:
-                _logger.LogDebug("Return value was string, creating new reply and returning it");
-                return instruction.CreateReply(returnMessage);
-            case Task<string> asyncReturnMessage:
-                _logger.LogDebug("Return value as string (async), creating new reply and returning it");
-                var returnMessageStr = asyncReturnMessage.GetAwaiter().GetResult();
-                return instruction.CreateReply(returnMessageStr);
+                _logger.LogDebug("Return value was string, returning as successful outcome");
+                return new CommandResult(CommandOutcome.Success, returnMessage);
             case ChatMessage chatMessage:
-                _logger.LogDebug("Return value was ChatMessage, returning it");
-                return chatMessage;
-            case Task<ChatMessage> asyncChatMessage:
-                _logger.LogDebug("Return value was ChatMessage (async), returning it");
-                return asyncChatMessage.GetAwaiter().GetResult();
+                _logger.LogWarning(
+                    "Return value was chat message (deprecated), returning its content as successful outcome");
+                return new CommandResult(CommandOutcome.Success, chatMessage.Content);
             default:
                 _logger.LogError("Return value was of type {ReturnValueType}, which is not supported",
-                    returnValue.GetType());
+                    returnValueToProcess.GetType());
                 throw new InvalidDataException(
-                    $"Return value was of type {returnValue.GetType()}, which is not supported");
+                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported");
         }
     }
 
