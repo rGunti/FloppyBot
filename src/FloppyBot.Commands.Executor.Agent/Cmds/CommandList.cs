@@ -1,5 +1,6 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Executor;
@@ -28,11 +29,12 @@ public class CommandList
 
     [Command("commands")]
     [CommandDescription("Returns a list of all available commands")]
+    [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
     // ReSharper disable once UnusedMember.Global
     public string? ListCommands(CommandInstruction instruction)
     {
         var commands = _commandExecutor.KnownCommands
-            .Select(c => c.Names[0])
+            .Select(c => c.PrimaryCommandName)
             .Distinct()
             .OrderBy(i => i);
 
