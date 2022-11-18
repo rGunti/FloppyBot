@@ -4,13 +4,11 @@ using FloppyBot.Base.Testing;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Tests.Impl;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace FloppyBot.Commands.Core.Tests;
 
@@ -24,8 +22,7 @@ public class CommandSpawnerTests
             .BuildServiceProvider();
         return new CommandSpawner(
             LoggingUtils.GetLogger<CommandSpawner>(),
-            sp,
-            new CommandGuardRegistry(NullLogger<CommandGuardRegistry>.Instance));
+            sp);
     }
 
     private static CommandInfo GetCommandInfo(

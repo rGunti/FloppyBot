@@ -3,7 +3,6 @@ using System.Reflection;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Support;
 using FloppyBot.Commands.Core.Support.PostExecution;
 using FloppyBot.Commands.Core.Support.PreExecution;
@@ -27,19 +26,15 @@ public class CommandSpawner : ICommandSpawner
             { typeof(byte), s => Convert.ToByte(s) }
         }.ToImmutableDictionary();
 
-    private readonly ICommandGuardRegistry _guardRegistry;
-
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     public CommandSpawner(
         ILogger<CommandSpawner> logger,
-        IServiceProvider serviceProvider,
-        ICommandGuardRegistry guardRegistry)
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _guardRegistry = guardRegistry;
     }
 
     public ChatMessage? SpawnAndExecuteCommand(CommandInfo commandInfo, CommandInstruction instruction)
