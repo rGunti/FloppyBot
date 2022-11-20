@@ -27,6 +27,7 @@ public class CustomCommandExecutorTests
         {
             Cooldown = new CooldownDescription[]
             {
+                new(PrivilegeLevel.Moderator, 0),
                 new(PrivilegeLevel.Viewer, 15 * 1000)
             }.ToImmutableHashSetWithValueSemantics()
         },
@@ -78,6 +79,55 @@ public class CustomCommandExecutorTests
             cooldownServiceMock.Object);
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
+        if (expectResult)
+        {
+            CollectionAssert.AreEqual(new[]
+            {
+                "Hello World"
+            }, reply);
+        }
+        else
+        {
+            Assert.AreEqual(0, reply.Length);
+        }
+    }
+
+    [DataTestMethod]
+    [DataRow(PrivilegeLevel.Administrator, true)]
+    [DataRow(PrivilegeLevel.Moderator, true)]
+    [DataRow(PrivilegeLevel.Viewer, false)]
+    public void HandlesCooldownWithPrivilegeLevelsCorrectly(
+        PrivilegeLevel userPrivilegeLevel,
+        bool expectResult)
+    {
+        var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
+
+        var cooldownServiceMock = new Mock<ICooldownService>();
+        cooldownServiceMock
+            .Setup(c => c.GetLastExecution(
+                It.Is<string>(c => c == "Mock/Channel"),
+                It.Is<string>(u => u == "Mock/User"),
+                It.Is<string>(c => c == "mycommand")))
+            .Returns<string, string, string>((_, _, _) => RefTime);
+
+        var executor = new CustomCommandExecutor(
+            NullLogger<CustomCommandExecutor>.Instance,
+            timeProvider,
+            new RandomNumberGenerator(),
+            cooldownServiceMock.Object);
+
+        string?[] reply = executor.Execute(CommandInstruction with
+            {
+                Context = new CommandContext(
+                    CommandInstruction.Context!.SourceMessage with
+                    {
+                        Author = CommandInstruction.Context!.SourceMessage.Author with
+                        {
+                            PrivilegeLevel = userPrivilegeLevel
+                        }
+                    })
+            }, CommandDescription)
+            .ToArray();
         if (expectResult)
         {
             CollectionAssert.AreEqual(new[]
