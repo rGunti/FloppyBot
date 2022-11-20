@@ -80,7 +80,33 @@ public class CommandScannerTests
     }
 
     [TestMethod]
+    public void DiscoversVariableHandlersCorrectly()
+    {
+        VariableCommandInfo[] handlers = _scanner.ScanTypeForVariableCommandHandlers(typeof(VariableCommands))
+            .ToArray();
+
+        CollectionAssert.AreEquivalent(
+            new[]
+            {
+                new VariableCommandInfo(
+                    "MyCustomHandler",
+                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.HandleVariableCommands))!,
+                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.CanHandle))!)
+            },
+            handlers);
+    }
+
+    [TestMethod]
     public void ThrowsExceptionWhenNotMarkedAsCommandHost()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+        {
+            _scanner.ScanTypeForCommandHandlers(typeof(NotACommandHost));
+        });
+    }
+
+    [TestMethod]
+    public void ThrowsExceptionWhenNotMarkedAsVariableCommandHost()
     {
         Assert.ThrowsException<ArgumentException>(() =>
         {

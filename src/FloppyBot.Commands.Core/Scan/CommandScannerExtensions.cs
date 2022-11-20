@@ -20,18 +20,9 @@ public static class CommandScannerExtensions
 
     public static IServiceCollection ScanAndAddCommandDependencies(this IServiceCollection services)
     {
-        IImmutableDictionary<string, CommandInfo> handlers = CommandScanner.ScanForCommandHandlers();
-
-        foreach (var type in handlers
-                     .Select(i => i.Value.ImplementingType)
-                     .Distinct())
-        {
-            services.AddScoped(type);
-            ScanForCommandDependencies(services, type);
-        }
-
         return services
-            .AddSingleton(handlers)
+            .ScanAndAddCommandHandlers()
+            .ScanAndAddVariableCommandHandlers()
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddSingleton<IMetadataExtractor, MetadataExtractor>()
@@ -40,7 +31,42 @@ public static class CommandScannerExtensions
             .AddCooldown();
     }
 
-    internal static IServiceCollection AddGuards(this IServiceCollection services)
+    private static IServiceCollection ScanAndAddCommandHandlers(this IServiceCollection services)
+    {
+        IImmutableDictionary<string, CommandInfo> handlers = CommandScanner.ScanForCommandHandlers();
+
+        foreach (var type in handlers
+                     .Select(i => i.Value.ImplementingType)
+                     .Distinct())
+        {
+            services
+                .AddScoped(type)
+                .ScanForCommandDependencies(type);
+        }
+
+        return services
+            .AddSingleton(handlers);
+    }
+
+    private static IServiceCollection ScanAndAddVariableCommandHandlers(this IServiceCollection services)
+    {
+        ImmutableList<VariableCommandInfo> handlers = CommandScanner.ScanForVariableCommandHandlers()
+            .ToImmutableList();
+
+        foreach (Type type in handlers
+                     .Select(i => i.ImplementingType)
+                     .Distinct())
+        {
+            services
+                .AddScoped(type)
+                .ScanForCommandDependencies(type);
+        }
+
+        return services
+            .AddSingleton(handlers);
+    }
+
+    private static IServiceCollection AddGuards(this IServiceCollection services)
     {
         return services
             .AddGuardRegistry()
@@ -53,7 +79,7 @@ public static class CommandScannerExtensions
         return scanner.ScanTypeForCommandHandlers(typeof(T));
     }
 
-    internal static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)
+    private static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)
     {
         foreach (var diRegistrationMethod in type.GetMethods(BindingFlags.Static | BindingFlags.Public)
                      .Where(m => m.IsStatic && m.HasCustomAttribute<DependencyRegistrationAttribute>()))

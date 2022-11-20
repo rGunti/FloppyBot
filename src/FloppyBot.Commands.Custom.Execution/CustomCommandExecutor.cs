@@ -13,7 +13,7 @@ public interface ICustomCommandExecutor
     IEnumerable<string?> Execute(CommandInstruction instruction, CustomCommandDescription description);
 }
 
-public class CustomCommandExecutor
+public class CustomCommandExecutor : ICustomCommandExecutor
 {
     private readonly ILogger<CustomCommandExecutor> _logger;
     private readonly IRandomNumberGenerator _randomNumberGenerator;

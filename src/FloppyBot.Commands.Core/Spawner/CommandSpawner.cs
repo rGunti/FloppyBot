@@ -3,7 +3,6 @@ using System.Reflection;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Support;
 using FloppyBot.Commands.Core.Support.PostExecution;
 using FloppyBot.Commands.Core.Support.PreExecution;
@@ -27,19 +26,15 @@ public class CommandSpawner : ICommandSpawner
             { typeof(byte), s => Convert.ToByte(s) }
         }.ToImmutableDictionary();
 
-    private readonly ICommandGuardRegistry _guardRegistry;
-
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
     public CommandSpawner(
         ILogger<CommandSpawner> logger,
-        IServiceProvider serviceProvider,
-        ICommandGuardRegistry guardRegistry)
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _guardRegistry = guardRegistry;
     }
 
     public ChatMessage? SpawnAndExecuteCommand(CommandInfo commandInfo, CommandInstruction instruction)
@@ -103,6 +98,32 @@ public class CommandSpawner : ICommandSpawner
 
         _logger.LogDebug("Command executed successfully, returning value");
         return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
+    }
+
+    public bool CanExecuteVariableCommand(VariableCommandInfo commandInfo, CommandInstruction instruction)
+    {
+        using var logScope = _logger.BeginScope(instruction.Context!.SourceMessage.Identifier);
+        using var scope = _serviceProvider.CreateScope();
+        _logger.LogTrace("Created new service provider scope");
+
+        object? host = null;
+        if (!commandInfo.IsStatic)
+        {
+            _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
+            host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+        }
+        else
+        {
+            _logger.LogDebug("Skipped creating host class instance because command is declared as static");
+        }
+
+        _logger.LogInformation(
+            "Executing command assertion handler {@CommandHandler}",
+            commandInfo.TestHandlerMethod);
+        return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[]
+        {
+            instruction
+        })!;
     }
 
     private CommandResult ProcessReturnValue(object? returnValue)

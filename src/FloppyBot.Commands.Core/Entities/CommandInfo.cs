@@ -46,6 +46,11 @@ public record CommandInfo
         => HandlerMethod.GetCustomAttribute<PrimaryCommandNameAttribute>()?.Value
            ?? Names.First();
 
+    /// <summary>
+    /// Returns true, if the command is variable
+    /// </summary>
+    public virtual bool IsVariable => false;
+
     public override string ToString()
     {
         return

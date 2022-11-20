@@ -31,6 +31,12 @@ public class CommandScanner : ICommandScanner
                 .SelectMany(a => a.GetTypes())));
     }
 
+    public IEnumerable<VariableCommandInfo> ScanForVariableCommandHandlers()
+    {
+        return ScanTypesForVariableCommandHandlers(AppDomain.CurrentDomain.GetAssemblies()
+            .SelectMany(a => a.GetTypes()));
+    }
+
     public IImmutableDictionary<string, CommandInfo> IndexCommands(IEnumerable<CommandInfo> commands)
     {
         return commands
@@ -75,8 +81,53 @@ public class CommandScanner : ICommandScanner
                 method));
     }
 
+    public IEnumerable<VariableCommandInfo> ScanTypesForVariableCommandHandlers(IEnumerable<Type> types)
+    {
+        return types
+            .Where(t => t.HasCustomAttribute<VariableCommandHostAttribute>())
+            .Distinct()
+            .SelectMany(ScanTypeForVariableCommandHandlers);
+    }
+
+    public IEnumerable<VariableCommandInfo> ScanTypeForVariableCommandHandlers(Type type)
+    {
+        if (!type.HasCustomAttribute<VariableCommandHostAttribute>())
+        {
+            throw new ArgumentException(
+                $"Type {type} does not have {nameof(VariableCommandHostAttribute)} attached and cannot be used to host variable command handlers",
+                nameof(type));
+        }
+
+        return type
+            .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+            .Where(method => method.HasCustomAttribute<VariableCommandHandlerAttribute>())
+            .Inspect(method =>
+            {
+                if (!IsVariableCommandSignatureValid(method))
+                {
+                    throw new InvalidCommandSignatureException(method);
+                }
+            })
+            .Select(method => new VariableCommandInfo(
+                method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier ??
+                GetDefaultIdentifierForVariableCommandHandler(method),
+                method,
+                method.ReflectedType!.GetMethod(method.GetCustomAttribute<VariableCommandHandlerAttribute>()!
+                    .AssertionHandlerName!)!));
+    }
+
     private static bool IsCommandSignatureValid(MethodInfo method)
     {
         return AllowedReturnTypes.Contains(method.ReturnType);
+    }
+
+    private static bool IsVariableCommandSignatureValid(MethodInfo method)
+    {
+        return method.ReturnType == typeof(CommandResult);
+    }
+
+    private static string GetDefaultIdentifierForVariableCommandHandler(MemberInfo method)
+    {
+        return $"{method.DeclaringType!.FullName}.{method.Name}";
     }
 }

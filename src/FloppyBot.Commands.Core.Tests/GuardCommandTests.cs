@@ -1,6 +1,8 @@
-﻿using FloppyBot.Base.Testing;
+﻿using System.Collections.Immutable;
+using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Scan;
@@ -26,6 +28,7 @@ public class GuardCommandTests
             .AddLogging(lb => lb.AddSerilog(LoggingUtils.SerilogLogger.Value))
             .AddSingleton(scanner.IndexCommands(
                 scanner.ScanTypeForCommandHandlers<GuardedCommands>()))
+            .AddSingleton<IImmutableList<VariableCommandInfo>>(Array.Empty<VariableCommandInfo>().ToImmutableList())
             .AddScoped<GuardedCommands>()
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
