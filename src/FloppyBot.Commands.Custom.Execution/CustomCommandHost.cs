@@ -6,6 +6,7 @@ using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
+using FloppyBot.Commands.Custom.Storage.Entities.Internal;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -75,6 +76,7 @@ public class CustomCommandHost
     public static void DiSetup(IServiceCollection services)
     {
         services
+            .AddAutoMapper(typeof(CustomCommandStorageProfile))
             .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
             .AddScoped<ICustomCommandService, CustomCommandService>();
     }

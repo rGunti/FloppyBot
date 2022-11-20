@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Entities;
@@ -47,7 +48,18 @@ public class CommandSpawner : ICommandSpawner
         if (!commandInfo.IsStatic)
         {
             _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
-            host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+            try
+            {
+                host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to create host class {HostType} due to an exception",
+                    commandInfo.ImplementingType);
+                throw;
+            }
         }
         else
         {
@@ -55,7 +67,9 @@ public class CommandSpawner : ICommandSpawner
         }
 
         _logger.LogDebug("Running pre-execution tasks");
-        IPreExecutionTask? failedPreExecutionTask = scope.RunPreExecutionTasks(commandInfo, instruction);
+        IPreExecutionTask? failedPreExecutionTask = TryExtensions.TryOr(
+            () => scope.RunPreExecutionTasks(commandInfo, instruction),
+            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
         if (failedPreExecutionTask != null)
         {
             _logger.LogInformation(
@@ -87,7 +101,9 @@ public class CommandSpawner : ICommandSpawner
         CommandResult result = ProcessReturnValue(returnValue);
 
         _logger.LogDebug("Running post-execution tasks");
-        IPostExecutionTask? failedPostExecutionTask = scope.RunPostExecutionTasks(commandInfo, instruction, result);
+        IPostExecutionTask? failedPostExecutionTask = TryExtensions.TryOr(
+            () => scope.RunPostExecutionTasks(commandInfo, instruction, result),
+            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
         if (failedPostExecutionTask != null)
         {
             _logger.LogInformation(

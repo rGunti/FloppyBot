@@ -15,4 +15,8 @@
         <ProjectReference Include="..\FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0"/>
+    </ItemGroup>
+
 </Project>

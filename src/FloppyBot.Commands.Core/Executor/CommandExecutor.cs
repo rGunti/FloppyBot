@@ -45,6 +45,7 @@ public class CommandExecutor : ICommandExecutor
             instruction.CommandName);
 
         VariableCommandInfo? availableHandlers = _variableCommands
+            .Select(handler => new VariableCommandInfo(instruction.CommandName, handler))
             .FirstOrDefault(handler => _commandSpawner.CanExecuteVariableCommand(handler, instruction));
         if (availableHandlers != null)
         {

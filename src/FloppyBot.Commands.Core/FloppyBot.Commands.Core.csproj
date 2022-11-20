@@ -9,6 +9,7 @@
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj"/>

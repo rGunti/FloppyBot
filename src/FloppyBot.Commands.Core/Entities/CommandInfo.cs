@@ -37,12 +37,12 @@ public record CommandInfo
     /// <summary>
     /// Returns an ID that identifies the command
     /// </summary>
-    public string CommandId => PrimaryCommandName;
+    public virtual string CommandId => PrimaryCommandName;
 
     /// <summary>
     /// Returns the primary name of this command
     /// </summary>
-    public string PrimaryCommandName
+    public virtual string PrimaryCommandName
         => HandlerMethod.GetCustomAttribute<PrimaryCommandNameAttribute>()?.Value
            ?? Names.First();
 

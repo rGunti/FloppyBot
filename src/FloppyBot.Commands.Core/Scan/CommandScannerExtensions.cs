@@ -63,7 +63,7 @@ public static class CommandScannerExtensions
         }
 
         return services
-            .AddSingleton(handlers);
+            .AddSingleton<IImmutableList<VariableCommandInfo>>(handlers);
     }
 
     private static IServiceCollection AddGuards(this IServiceCollection services)
