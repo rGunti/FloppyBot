@@ -105,9 +105,9 @@ public class CustomCommandExecutorTests
         var cooldownServiceMock = new Mock<ICooldownService>();
         cooldownServiceMock
             .Setup(c => c.GetLastExecution(
-                It.Is<string>(c => c == "Mock/Channel"),
+                It.Is<string>(ch => ch == "Mock/Channel"),
                 It.Is<string>(u => u == "Mock/User"),
-                It.Is<string>(c => c == "mycommand")))
+                It.Is<string>(cmd => cmd == "mycommand")))
             .Returns<string, string, string>((_, _, _) => RefTime);
 
         var executor = new CustomCommandExecutor(
