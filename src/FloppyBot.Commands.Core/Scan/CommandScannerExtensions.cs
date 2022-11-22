@@ -7,6 +7,7 @@ using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Internal;
+using FloppyBot.Commands.Core.ListSupplier;
 using FloppyBot.Commands.Core.Metadata;
 using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Support;
@@ -23,6 +24,8 @@ public static class CommandScannerExtensions
         return services
             .ScanAndAddCommandHandlers()
             .ScanAndAddVariableCommandHandlers()
+            .AddSingleton<CommandListSupplierAggregator>()
+            .AddCommandListSupplier<BuiltInCommandListSupplier>()
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddSingleton<IMetadataExtractor, MetadataExtractor>()
@@ -77,6 +80,13 @@ public static class CommandScannerExtensions
     public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(this ICommandScanner scanner)
     {
         return scanner.ScanTypeForCommandHandlers(typeof(T));
+    }
+
+    public static IServiceCollection AddCommandListSupplier<T>(this IServiceCollection services)
+        where T : class, ICommandListSupplier
+    {
+        return services
+            .AddSingleton<ICommandListSupplier, T>();
     }
 
     private static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)

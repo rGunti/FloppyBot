@@ -4,6 +4,7 @@ using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Entities;
+using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Custom.Storage.Entities.Internal;
@@ -77,6 +78,7 @@ public class CustomCommandHost
     {
         services
             .AddAutoMapper(typeof(CustomCommandStorageProfile))
+            .AddCommandListSupplier<CustomCommandListSupplier>()
             .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
             .AddScoped<ICustomCommandService, CustomCommandService>();
     }
