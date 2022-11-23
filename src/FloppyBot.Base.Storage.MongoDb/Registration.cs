@@ -2,7 +2,9 @@
 using FloppyBot.Base.Storage.Utils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Bson.Serialization.IdGenerators;
 using MongoDB.Driver;
 
@@ -10,17 +12,20 @@ namespace FloppyBot.Base.Storage.MongoDb;
 
 public static class Registration
 {
-    private static MongoUrl GetMongoUrl(this IServiceProvider provider) =>
-        provider.GetRequiredService<MongoUrl>();
+    private static MongoUrl GetMongoUrl(this IServiceProvider provider) => provider.GetRequiredService<MongoUrl>();
 
-    private static IMongoClient GetMongoClient(this IServiceProvider provider) =>
-        provider.GetRequiredService<IMongoClient>();
+    private static IMongoClient GetMongoClient(this IServiceProvider provider)
+        => provider.GetRequiredService<IMongoClient>();
 
     public static IServiceCollection AddMongoDbStorage(
         this IServiceCollection services,
         string connectionStringName = "MongoDb")
     {
         BsonSerializer.RegisterIdGenerator(typeof(string), StringObjectIdGenerator.Instance);
+        ConventionRegistry.Register("Enum2String", new ConventionPack
+        {
+            new EnumRepresentationConvention(BsonType.String)
+        }, _ => true);
         return services
             .AddSingleton<MongoUrl>(s => MongoUrl.Create(s.GetRequiredService<IConfiguration>()
                 .GetConnectionString(connectionStringName)))

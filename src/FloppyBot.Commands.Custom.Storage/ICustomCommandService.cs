@@ -12,7 +12,9 @@ public interface ICustomCommandService
     CustomCommandDescription? GetCommand(string channelId, string commandName);
     IEnumerable<CustomCommandDescription> GetCommandsOfChannel(string channelId);
     bool CreateSimpleCommand(string channelId, string commandName, string response);
+    bool CreateCommand(CustomCommandDescription commandDescription);
     bool DeleteCommand(string channelId, string commandName);
+    void UpdateCommand(CustomCommandDescription commandDescription);
 }
 
 public class CustomCommandService : ICustomCommandService
@@ -73,6 +75,20 @@ public class CustomCommandService : ICustomCommandService
         return true;
     }
 
+    public bool CreateCommand(CustomCommandDescription commandDescription)
+    {
+        if (commandDescription.Owners
+            .Select(channel
+                => ExistsAnyWithName(channel, commandDescription.Name, commandDescription.Aliases.ToArray()))
+            .Any(exists => exists))
+        {
+            return false;
+        }
+
+        _repository.Insert(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
+        return true;
+    }
+
     public bool DeleteCommand(string channelId, string commandName)
     {
         NullableObject<CustomCommandDescriptionEo> command = GetCommandEo(channelId, commandName);
@@ -85,6 +101,11 @@ public class CustomCommandService : ICustomCommandService
         return true;
     }
 
+    public void UpdateCommand(CustomCommandDescription commandDescription)
+    {
+        _repository.Update(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
+    }
+
     private NullableObject<CustomCommandDescriptionEo> GetCommandEo(string channelId, string commandName)
     {
         return _repository
@@ -92,5 +113,14 @@ public class CustomCommandService : ICustomCommandService
             .Where(c => c.Owners.Contains(channelId))
             .FirstOrDefault(c => c.Name == commandName || c.Aliases.Contains(commandName))
             .Wrap();
+    }
+
+    private bool ExistsAnyWithName(string channelId, string commandName, params string[] aliases)
+    {
+        return aliases
+            .Concat(new[] { commandName })
+            .Distinct()
+            .Select(name => GetCommandEo(channelId, name))
+            .Any(cmd => cmd.HasValue);
     }
 }

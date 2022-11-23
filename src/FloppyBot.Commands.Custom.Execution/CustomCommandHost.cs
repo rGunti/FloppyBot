@@ -82,4 +82,11 @@ public class CustomCommandHost
             .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
             .AddScoped<ICustomCommandService, CustomCommandService>();
     }
+
+    public static void WebDiSetup(IServiceCollection services)
+    {
+        services
+            .AddAutoMapper(typeof(CustomCommandStorageProfile))
+            .AddScoped<ICustomCommandService, CustomCommandService>();
+    }
 }
