@@ -124,6 +124,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                     AllParams = string.Join(" ", instruction.Parameters),
                     Now = _timeProvider.GetCurrentUtcTime(),
                     Random = _randomNumberGenerator.Next(0, 100),
+                    Counter = -1,
                 });
             default:
                 throw new NotImplementedException($"Response Type {response.Type} not implemented");
