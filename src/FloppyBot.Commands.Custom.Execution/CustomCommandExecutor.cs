@@ -5,6 +5,8 @@ using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Core.Cooldown;
 using FloppyBot.Commands.Core.Exceptions;
+using FloppyBot.Commands.Custom.Execution.InternalEntities;
+using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging;
@@ -19,6 +21,7 @@ public interface ICustomCommandExecutor
 public class CustomCommandExecutor : ICustomCommandExecutor
 {
     private readonly ICooldownService _cooldownService;
+    private readonly ICounterStorageService _counterStorageService;
     private readonly ILogger<CustomCommandExecutor> _logger;
     private readonly IRandomNumberGenerator _randomNumberGenerator;
     private readonly ITimeProvider _timeProvider;
@@ -27,12 +30,14 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         ILogger<CustomCommandExecutor> logger,
         ITimeProvider timeProvider,
         IRandomNumberGenerator randomNumberGenerator,
-        ICooldownService cooldownService)
+        ICooldownService cooldownService,
+        ICounterStorageService counterStorageService)
     {
         _logger = logger;
         _timeProvider = timeProvider;
         _randomNumberGenerator = randomNumberGenerator;
         _cooldownService = cooldownService;
+        _counterStorageService = counterStorageService;
     }
 
     public IEnumerable<string?> Execute(CommandInstruction instruction, CustomCommandDescription description)
@@ -117,15 +122,12 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response.Content.Format(new
-                {
-                    Caller = instruction.Context!.SourceMessage.Author.DisplayName,
-                    Params = instruction.Parameters,
-                    AllParams = string.Join(" ", instruction.Parameters),
-                    Now = _timeProvider.GetCurrentUtcTime(),
-                    Random = _randomNumberGenerator.Next(0, 100),
-                    Counter = -1,
-                });
+                return response.Content.Format(new PlaceholderContainer(
+                    instruction,
+                    description,
+                    _timeProvider.GetCurrentUtcTime(),
+                    _randomNumberGenerator.Next(0, 100),
+                    _counterStorageService));
             default:
                 throw new NotImplementedException($"Response Type {response.Type} not implemented");
         }

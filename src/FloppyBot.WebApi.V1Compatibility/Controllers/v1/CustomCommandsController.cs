@@ -16,6 +16,7 @@ namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
 [Route(V1Config.ROUTE_BASE + "api/v1/custom-commands")]
 public class CustomCommandsController : ControllerBase
 {
+    private readonly ICounterStorageService _counterStorageService;
     private readonly ICustomCommandService _customCommandService;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
@@ -23,11 +24,13 @@ public class CustomCommandsController : ControllerBase
     public CustomCommandsController(
         ICustomCommandService customCommandService,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        ICounterStorageService counterStorageService)
     {
         _customCommandService = customCommandService;
         _userService = userService;
         _mapper = mapper;
+        _counterStorageService = counterStorageService;
     }
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
@@ -90,7 +93,12 @@ public class CustomCommandsController : ControllerBase
         [FromRoute]
         string command)
     {
-        throw this.NotImplemented();
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        return _customCommandService
+            .GetCommand(channelId, command)
+            .Wrap()
+            .Select(cmd => (int?)_counterStorageService.Peek(cmd.Id))
+            .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
     }
 
     [HttpPut("{messageInterface}/{channel}/{command}/counter")]
@@ -103,7 +111,19 @@ public class CustomCommandsController : ControllerBase
         [FromBody]
         int counterValue)
     {
-        throw this.NotImplemented();
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        string? commandId = _customCommandService
+            .GetCommand(channelId, command)
+            .Wrap()
+            .Select(cmd => cmd.Id)
+            .FirstOrDefault();
+        if (commandId == null)
+        {
+            throw new NotFoundException($"Command {command} not found");
+        }
+
+        _counterStorageService.Set(commandId, counterValue);
+        return NoContent();
     }
 
     [HttpPut("{messageInterface}/{channel}/{command}/rename")]

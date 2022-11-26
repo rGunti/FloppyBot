@@ -5,6 +5,8 @@ using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Cooldown;
 using FloppyBot.Commands.Custom.Execution;
+using FloppyBot.Commands.Custom.Execution.InternalEntities;
+using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -76,7 +78,8 @@ public class CustomCommandExecutorTests
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object);
+            cooldownServiceMock.Object,
+            Mock.Of<ICounterStorageService>());
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
         if (expectResult)
@@ -114,7 +117,8 @@ public class CustomCommandExecutorTests
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object);
+            cooldownServiceMock.Object,
+            Mock.Of<ICounterStorageService>());
 
         string?[] reply = executor.Execute(CommandInstruction with
             {
@@ -139,5 +143,76 @@ public class CustomCommandExecutorTests
         {
             Assert.AreEqual(0, reply.Length);
         }
+    }
+
+    [TestMethod]
+    public void HandlesCounterCorrectly()
+    {
+        var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
+
+        var cooldownServiceMock = new Mock<ICooldownService>();
+        var counterMock = new Mock<ICounterStorageService>();
+        var counter = 0;
+        counterMock
+            .Setup(s => s.Next(It.Is<string>(c => c == CommandDescription.Id)))
+            .Returns((string _) => ++counter);
+
+        var executor = new CustomCommandExecutor(
+            NullLogger<CustomCommandExecutor>.Instance,
+            timeProvider,
+            new RandomNumberGenerator(),
+            cooldownServiceMock.Object,
+            counterMock.Object);
+
+        string?[] reply = executor.Execute(CommandInstruction, CommandDescription with
+            {
+                Responses = new[]
+                {
+                    new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                }.ToImmutableListWithValueSemantics()
+            })
+            .ToArray();
+
+        counterMock.Verify(
+            s => s.Next(It.Is<string>(c => c == CommandDescription.Id)),
+            Times.Once);
+        Assert.AreEqual("I am at level 1 now!", reply.First());
+
+        // Repeat
+        reply = executor.Execute(CommandInstruction, CommandDescription with
+            {
+                Responses = new[]
+                {
+                    new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                }.ToImmutableListWithValueSemantics()
+            })
+            .ToArray();
+        Assert.AreEqual("I am at level 2 now!", reply.First());
+    }
+
+    [TestMethod]
+    public void CounterWillOnlyIncrementOnce()
+    {
+        var counterMock = new Mock<ICounterStorageService>();
+        var counter = 0;
+        counterMock
+            .Setup(s => s.Next(It.IsAny<string>()))
+            .Returns((string _) => ++counter);
+        var placeholder = new PlaceholderContainer(
+            CommandInstruction,
+            CommandDescription,
+            RefTime,
+            42,
+            counterMock.Object);
+
+        // Access counter
+        Assert.AreEqual(1, placeholder.Counter);
+        counterMock
+            .Verify(s => s.Next(It.IsAny<string>()), Times.Once);
+
+        // Access counter again (ensure it has not been called twice)
+        Assert.AreEqual(1, placeholder.Counter);
+        counterMock
+            .Verify(s => s.Next(It.IsAny<string>()), Times.Once);
     }
 }

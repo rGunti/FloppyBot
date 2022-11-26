@@ -24,7 +24,10 @@ public class NullableObject<T> : IEnumerable<T>
 
     public IEnumerator<T> GetEnumerator()
     {
-        yield return _value!;
+        if (HasValue)
+        {
+            yield return _value!;
+        }
     }
 
     IEnumerator IEnumerable.GetEnumerator()

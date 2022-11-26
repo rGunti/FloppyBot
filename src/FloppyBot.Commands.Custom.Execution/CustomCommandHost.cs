@@ -76,17 +76,17 @@ public class CustomCommandHost
     // ReSharper disable once UnusedMember.Global
     public static void DiSetup(IServiceCollection services)
     {
+        WebDiSetup(services);
         services
-            .AddAutoMapper(typeof(CustomCommandStorageProfile))
             .AddCommandListSupplier<CustomCommandListSupplier>()
-            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
-            .AddScoped<ICustomCommandService, CustomCommandService>();
+            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>();
     }
 
     public static void WebDiSetup(IServiceCollection services)
     {
         services
             .AddAutoMapper(typeof(CustomCommandStorageProfile))
-            .AddScoped<ICustomCommandService, CustomCommandService>();
+            .AddScoped<ICustomCommandService, CustomCommandService>()
+            .AddScoped<ICounterStorageService, CounterStorageService>();
     }
 }
