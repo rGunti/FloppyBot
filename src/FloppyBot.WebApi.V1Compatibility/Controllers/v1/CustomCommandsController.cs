@@ -147,13 +147,10 @@ public class CustomCommandsController : ControllerBase
         CustomCommand newCommand)
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        if (string.IsNullOrWhiteSpace(newCommand.Channel))
+        newCommand = newCommand with
         {
-            newCommand = newCommand with
-            {
-                Channel = channelId
-            };
-        }
+            Channel = channelId
+        };
 
         var convertedCommand = _mapper.Map<CustomCommandDescription>(newCommand);
         if (!_customCommandService.CreateCommand(convertedCommand))
@@ -174,7 +171,28 @@ public class CustomCommandsController : ControllerBase
         [FromBody]
         CustomCommand updatedCommand)
     {
-        throw this.NotImplemented();
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        updatedCommand = updatedCommand with
+        {
+            Channel = channelId
+        };
+
+        // Check if command is allowed to be updated over legacy API
+        NullableObject<CustomCommandDescription> existingCommand = _customCommandService.GetCommand(channelId, command)
+            .Wrap();
+        if (!existingCommand.HasValue)
+        {
+            throw new NotFoundException($"Command with name {command} does not exist");
+        }
+
+        if (existingCommand.Select(V1CompatibilityProfile.IsConvertableForTextCommand).Any(v => !v))
+        {
+            throw new BadRequestException($"Command {channelId},{command} cannot be updated using the legacy API");
+        }
+
+        var convertedCommand = _mapper.Map<CustomCommandDescription>(updatedCommand);
+        _customCommandService.UpdateCommand(convertedCommand);
+        return NoContent();
     }
 
     [HttpDelete("{messageInterface}/{channel}/{command}")]
