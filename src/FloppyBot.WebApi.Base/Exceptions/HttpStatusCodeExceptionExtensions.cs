@@ -4,15 +4,27 @@ namespace FloppyBot.WebApi.Base.Exceptions;
 
 public static class HttpStatusCodeExceptionExtensions
 {
+    private static string GetRequestIdentifier(this ControllerBase controllerBase)
+    {
+        return $"{controllerBase.Request.Method} {controllerBase.Request.Path}";
+    }
+
     public static HttpStatusCodeException NotImplemented(this ControllerBase controller)
     {
         return new RouteNotImplementedException(
-            $"Route \"{controller.Request.Method} {controller.Request.Path}\" is not implemented");
+            $"Route \"{controller.GetRequestIdentifier()}\" is not implemented");
     }
 
     public static HttpStatusCodeException Obsolete(this ControllerBase controller)
     {
         return new BadRequestException(
-            $"Route \"{controller.Request.Method} {controller.Request.Path}\" is marked obsolete and will not be implemented");
+            $"Route \"{controller.GetRequestIdentifier()}\" is marked obsolete and will not be implemented");
+    }
+
+    public static HttpStatusCodeException UnsupportedFeature(
+        this ControllerBase controller,
+        string message)
+    {
+        return new UnsupportedV1OperationException(message, controller.GetRequestIdentifier());
     }
 }

@@ -15,7 +15,7 @@ public class HttpStatusCodeException : Exception
 
     public int StatusCode { get; }
 
-    public ErrorResponse GetErrorResponse()
+    public virtual ErrorResponse GetErrorResponse()
     {
         return new ErrorResponse(StatusCode, Message);
     }
