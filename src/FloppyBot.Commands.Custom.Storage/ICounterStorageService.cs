@@ -9,6 +9,7 @@ public interface ICounterStorageService
     int Peek(string commandId);
     int Next(string commandId);
     void Set(string commandId, int value);
+    int Increase(string commandId, int increment);
 }
 
 public class CounterStorageService : ICounterStorageService
@@ -56,6 +57,28 @@ public class CounterStorageService : ICounterStorageService
                 Value = value
             });
         }
+    }
+
+    public int Increase(string commandId, int increment)
+    {
+        NullableObject<CounterEo> counter = GetCounter(commandId);
+        bool needsInsert = counter.HasValue;
+        int newValue = counter
+            .Select(c => c.Value)
+            .FirstOrDefault() + increment;
+        if (needsInsert)
+        {
+            CreateCounter(commandId, newValue);
+        }
+        else
+        {
+            UpdateCounter(counter.Value with
+            {
+                Value = newValue
+            });
+        }
+
+        return newValue;
     }
 
     private NullableObject<CounterEo> GetCounter(string commandId)
