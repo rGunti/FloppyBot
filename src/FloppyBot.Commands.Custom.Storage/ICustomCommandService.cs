@@ -97,7 +97,7 @@ public class CustomCommandService : ICustomCommandService
             return false;
         }
 
-        _repository.Delete(command);
+        _repository.Delete(command.Value);
         return true;
     }
 

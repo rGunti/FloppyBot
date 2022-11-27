@@ -20,6 +20,7 @@ public class V1CompatibilityProfile : Profile
         MapShoutoutMessage();
         MapHealthCheckData();
         MapCustomCommands();
+        MapFileStorage();
     }
 
     private void MapQuote()
@@ -137,6 +138,17 @@ public class V1CompatibilityProfile : Profile
                     }.ToImmutableListWithValueSemantics(),
                 Id = null!,
             });
+    }
+
+    private void MapFileStorage()
+    {
+        CreateMap<FloppyBot.FileStorage.Entities.FileHeader, FileHeader>()
+            .ConstructUsing(f => new FileHeader(
+                f.Id,
+                f.Owner,
+                f.FileName,
+                (long)f.FileSize,
+                f.MimeType));
     }
 
     public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)

@@ -2,7 +2,7 @@
 
 public record FileStorageQuota(
     string ChannelId,
-    long MaxStorageQuota,
+    double MaxStorageQuota,
     int MaxFileNumber,
-    long StorageUsed,
+    double StorageUsed,
     int FileCount);

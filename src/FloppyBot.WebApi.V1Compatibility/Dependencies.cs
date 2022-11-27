@@ -2,6 +2,7 @@
 using FloppyBot.Commands.Aux.Twitch;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Registry;
+using FloppyBot.FileStorage;
 using FloppyBot.WebApi.V1Compatibility.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,6 +16,7 @@ public static class Dependencies
         QuoteCommands.RegisterDependencies(services);
         CustomCommandHost.WebDiSetup(services);
         return services
+            .AddFileStorage()
             .AddDistributedCommandRegistry()
             .AddSingleton<V1CommandConverter>();
     }
