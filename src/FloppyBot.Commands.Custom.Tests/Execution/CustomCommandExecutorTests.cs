@@ -215,4 +215,27 @@ public class CustomCommandExecutorTests
         counterMock
             .Verify(s => s.Next(It.IsAny<string>()), Times.Once);
     }
+
+    [TestMethod]
+    public void PeekCounterWillNotIncreaseCounterValue()
+    {
+        var counterMock = new Mock<ICounterStorageService>();
+        counterMock
+            .Setup(s => s.Peek(It.IsAny<string>()))
+            .Returns((string _) => 1);
+        counterMock
+            .Setup(s => s.Next(It.IsAny<string>()))
+            .Verifiable();
+        var placeholder = new PlaceholderContainer(
+            CommandInstruction,
+            CommandDescription,
+            RefTime,
+            42,
+            counterMock.Object);
+
+        // Access counter
+        Assert.AreEqual(1, placeholder.PeekCounter);
+        counterMock.Verify(s => s.Peek(It.IsAny<string>()), Times.Once);
+        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Never);
+    }
 }
