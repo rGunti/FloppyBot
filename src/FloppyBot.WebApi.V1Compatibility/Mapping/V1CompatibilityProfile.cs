@@ -20,6 +20,7 @@ public class V1CompatibilityProfile : Profile
         MapShoutoutMessage();
         MapHealthCheckData();
         MapCustomCommands();
+        MapSoundCommand();
         MapFileStorage();
     }
 
@@ -140,6 +141,52 @@ public class V1CompatibilityProfile : Profile
             });
     }
 
+    private void MapSoundCommand()
+    {
+        CreateMap<CustomCommandDescription, SoundCommand>()
+            .ConstructUsing(c => new SoundCommand(
+                c.Id,
+                c.Name,
+                c.Owners.First(),
+                c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
+                Array.Empty<string>().ToImmutableList(),
+                false,
+                c.Limitations.Cooldown
+                    .OrderBy(cd => cd.Level)
+                    .Select(cd => cd.Milliseconds)
+                    .FirstOrDefault(),
+                c.Responses
+                    .Where(r => r.Type == ResponseType.Text)
+                    .Select(r => r.Content)
+                    .FirstOrDefault()!,
+                c.Responses
+                    .Where(r => r.Type == ResponseType.Sound)
+                    .Select(r => r.Content)
+                    .ToImmutableListWithValueSemantics()));
+
+        CreateMap<SoundCommand, CustomCommandDescription>()
+            .ConstructUsing(c => new CustomCommandDescription
+            {
+                Name = c.CommandName,
+                Owners = new[] { c.ChannelId }.ToImmutableHashSet(),
+                Limitations = new CommandLimitation
+                {
+                    MinLevel = c.LimitedToMod ? PrivilegeLevel.Moderator : PrivilegeLevel.Viewer,
+                    Cooldown = new[]
+                    {
+                        new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)
+                    }.ToImmutableHashSetWithValueSemantics()
+                },
+                ResponseMode = CommandResponseMode.All,
+                Responses = new[]
+                {
+                    new CommandResponse(ResponseType.Text, c.Response),
+                    new CommandResponse(ResponseType.Sound, c.SoundFiles[0])
+                }.ToImmutableList(),
+                Id = null!,
+            });
+    }
+
     private void MapFileStorage()
     {
         CreateMap<FloppyBot.FileStorage.Entities.FileHeader, FileHeader>()
@@ -155,5 +202,12 @@ public class V1CompatibilityProfile : Profile
     {
         return commandDescription.Aliases.Count == 0
                && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
+    }
+
+    public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)
+    {
+        return commandDescription.Aliases.Count == 0
+               && commandDescription.ResponseMode == CommandResponseMode.All
+               && commandDescription.Responses.Any(r => r.Type == ResponseType.Sound);
     }
 }

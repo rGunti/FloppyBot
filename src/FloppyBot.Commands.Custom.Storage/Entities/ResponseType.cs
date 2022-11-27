@@ -3,6 +3,8 @@
 public enum ResponseType
 {
     Text,
-    [Obsolete("Not yet implemented")] Sound,
-    [Obsolete("Not yet implemented")] JavaScript
+    Sound,
+
+    [Obsolete("Not yet implemented")]
+    JavaScript
 }

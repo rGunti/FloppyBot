@@ -52,7 +52,7 @@ public class CustomCommandsController : ControllerBase
     [HttpGet]
     public CustomCommand[] GetAll()
     {
-        throw this.NotImplemented();
+        throw this.UnsupportedFeature("Requesting all commands is not supported");
     }
 
     [HttpGet("{messageInterface}/{channel}")]
@@ -81,6 +81,7 @@ public class CustomCommandsController : ControllerBase
         return _customCommandService
             .GetCommand(channelId, command)
             .Wrap()
+            .Where(V1CompatibilityProfile.IsConvertableForTextCommand)
             .Select(c => _mapper.Map<CustomCommand>(c))
             .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
     }
