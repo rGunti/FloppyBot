@@ -1,5 +1,10 @@
 {
   "Serilog": {
-    "MinimumLevel": "Verbose"
+    "MinimumLevel": {
+      "Default": "Verbose",
+      "Override": {
+        "FloppyBot.HealthCheck.Core.HealthCheckProducerCronJob": "Debug"
+      }
+    }
   }
 }

@@ -7,4 +7,5 @@ namespace FloppyBot.Commands.Core.Spawner;
 public interface ICommandSpawner
 {
     ChatMessage? SpawnAndExecuteCommand(CommandInfo commandInfo, CommandInstruction instruction);
+    bool CanExecuteVariableCommand(VariableCommandInfo commandInfo, CommandInstruction instruction);
 }

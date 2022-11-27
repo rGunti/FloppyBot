@@ -69,12 +69,44 @@ public class CommandScannerTests
                 new CommandInfo(
                     new[] { "async" }.ToImmutableListWithValueSemantics(),
                     typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommand))!),
+                new CommandInfo(
+                    new[] { "cmdresult" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.CommandResult))!),
+                new CommandInfo(
+                    new[] { "asynccmdresult" }.ToImmutableListWithValueSemantics(),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommandResult))!),
             },
             commands);
     }
 
     [TestMethod]
+    public void DiscoversVariableHandlersCorrectly()
+    {
+        VariableCommandInfo[] handlers = _scanner.ScanTypeForVariableCommandHandlers(typeof(VariableCommands))
+            .ToArray();
+
+        CollectionAssert.AreEquivalent(
+            new[]
+            {
+                new VariableCommandInfo(
+                    "MyCustomHandler",
+                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.HandleVariableCommands))!,
+                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.CanHandle))!)
+            },
+            handlers);
+    }
+
+    [TestMethod]
     public void ThrowsExceptionWhenNotMarkedAsCommandHost()
+    {
+        Assert.ThrowsException<ArgumentException>(() =>
+        {
+            _scanner.ScanTypeForCommandHandlers(typeof(NotACommandHost));
+        });
+    }
+
+    [TestMethod]
+    public void ThrowsExceptionWhenNotMarkedAsVariableCommandHost()
     {
         Assert.ThrowsException<ArgumentException>(() =>
         {

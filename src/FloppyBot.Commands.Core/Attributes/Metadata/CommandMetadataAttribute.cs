@@ -10,5 +10,10 @@ public class CommandMetadataAttribute : Attribute
     }
 
     public string Type { get; }
-    public string Value { get; }
+    public virtual string Value { get; }
+
+    public override string ToString()
+    {
+        return $"{Type}({Value})";
+    }
 }

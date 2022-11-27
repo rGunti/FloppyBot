@@ -7,7 +7,9 @@ public class MinCommandPrivilegeAttribute : CommandOnlyMetadataAttribute
     public MinCommandPrivilegeAttribute(PrivilegeLevel privilegeLevel)
         : base(CommandMetadataTypes.MIN_PRIVILEGE, privilegeLevel.ToString())
     {
+        PrivilegeLevel = privilegeLevel;
     }
 
-    public PrivilegeLevel PrivilegeLevel => Enum.Parse<PrivilegeLevel>(Value);
+    public PrivilegeLevel PrivilegeLevel { get; }
+    public override string Value => PrivilegeLevel.ToString();
 }

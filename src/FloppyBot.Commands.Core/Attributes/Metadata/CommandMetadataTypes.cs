@@ -8,4 +8,5 @@ public static class CommandMetadataTypes
     public const string SYNTAX = "Syntax";
     public const string MIN_PRIVILEGE = "MinPrivilege";
     public const string INTERFACES = "Interfaces";
+    public const string COOLDOWN = "Cooldown";
 }

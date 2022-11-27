@@ -1,5 +1,6 @@
 ﻿using FloppyBot.Commands.Aux.Quotes;
 using FloppyBot.Commands.Aux.Twitch;
+using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Registry;
 using FloppyBot.WebApi.V1Compatibility.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ public static class Dependencies
     {
         ShoutoutCommand.RegisterDependencies(services);
         QuoteCommands.RegisterDependencies(services);
+        CustomCommandHost.WebDiSetup(services);
         return services
             .AddDistributedCommandRegistry()
             .AddSingleton<V1CommandConverter>();

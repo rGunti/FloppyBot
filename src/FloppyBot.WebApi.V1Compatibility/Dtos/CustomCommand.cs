@@ -3,7 +3,7 @@
 namespace FloppyBot.WebApi.V1Compatibility.Dtos;
 
 public record CustomCommand(
-    string Id,
+    string? Id,
     string Channel,
     string Command,
     string Response,

@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿#pragma warning disable CS8618
+using System.Collections.Immutable;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Storage;
 
@@ -7,13 +8,23 @@ namespace FloppyBot.Commands.Custom.Storage.Entities;
 public record CustomCommandDescription : IEntity<CustomCommandDescription>
 {
     private readonly IImmutableSet<string> _aliases = ImmutableSetWithValueSemantics<string>.Empty;
+    private readonly IImmutableSet<string> _owner = ImmutableSetWithValueSemantics<string>.Empty;
     private readonly IImmutableList<CommandResponse> _responses = ImmutableList<CommandResponse>.Empty;
+
+    public string Id { get; init; }
+
     public string Name { get; init; }
 
     public IImmutableSet<string> Aliases
     {
         get => _aliases;
-        init => _aliases = value.WithValueSemantics();
+        init => _aliases = value.ToImmutableSortedSetWithValueSemantics();
+    }
+
+    public IImmutableSet<string> Owners
+    {
+        get => _owner;
+        init => _owner = value.ToImmutableSortedSetWithValueSemantics();
     }
 
     public IImmutableList<CommandResponse> Responses
@@ -24,7 +35,7 @@ public record CustomCommandDescription : IEntity<CustomCommandDescription>
 
     public CommandLimitation Limitations { get; init; }
 
-    public string Id { get; init; }
+    public CommandResponseMode ResponseMode { get; init; }
 
     public CustomCommandDescription WithId(string newId)
     {

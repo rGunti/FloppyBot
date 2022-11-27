@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.WebApi.Base.ExceptionHandler;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class GlobalExceptionHandler : IExceptionFilter
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;

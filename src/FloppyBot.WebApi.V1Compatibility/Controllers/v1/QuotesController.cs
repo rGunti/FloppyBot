@@ -29,8 +29,8 @@ public class QuotesController : ControllerBase
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
-        if (_userService.GetAccessibleChannelsForUser(User.GetUserId())
-            .Contains(channelIdentifier.ToString()))
+        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString()))
         {
             throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
         }

@@ -1,8 +1,9 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Metadata;
-using FloppyBot.Commands.Core.Executor;
+using FloppyBot.Commands.Core.ListSupplier;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
 
@@ -19,29 +20,27 @@ public class CommandList
     private const string COMMAND_LIST_DELIMITER_DEFAULT = ", ";
     private const string COMMAND_LIST_DELIMITER_MD = "`, `";
 
-    private readonly ICommandExecutor _commandExecutor;
+    private readonly CommandListSupplierAggregator _aggregator;
 
-    public CommandList(ICommandExecutor commandExecutor)
+    public CommandList(CommandListSupplierAggregator aggregator)
     {
-        _commandExecutor = commandExecutor;
+        _aggregator = aggregator;
     }
 
     [Command("commands")]
     [CommandDescription("Returns a list of all available commands")]
+    [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
     // ReSharper disable once UnusedMember.Global
     public string? ListCommands(CommandInstruction instruction)
     {
-        var commands = _commandExecutor.KnownCommands
-            .Select(c => c.Names[0])
-            .Distinct()
-            .OrderBy(i => i);
+        var commands = _aggregator.GetCommandList(instruction);
 
         var commandList = string.Join(
             instruction.DetermineMessageTemplate(
                 ChatInterfaceFeatures.MarkdownText,
                 COMMAND_LIST_DELIMITER_MD,
                 COMMAND_LIST_DELIMITER_DEFAULT),
-            commands);
+            commands.Distinct().OrderBy(i => i));
 
         return instruction.DetermineMessageTemplate(
                 ChatInterfaceFeatures.MarkdownText,

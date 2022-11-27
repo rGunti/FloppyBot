@@ -23,6 +23,9 @@ public class CustomCommandStorageProfile : Profile
                 eo.Aliases = dto.Aliases.AsEnumerable()
                     .OrderBy(i => i)
                     .ToArray();
+                eo.Owners = dto.Owners.AsEnumerable()
+                    .OrderBy(i => i)
+                    .ToArray();
             });
         CreateMap<CommandResponse, CommandResponseEo>();
         CreateMap<CommandLimitation, CommandLimitationEo>();
@@ -34,11 +37,13 @@ public class CustomCommandStorageProfile : Profile
             {
                 Id = eo.Id,
                 Name = eo.Name,
-                Aliases = eo.Aliases.ToImmutableHashSet(),
+                Aliases = eo.Aliases.ToImmutableSortedSet(),
+                Owners = eo.Owners.ToImmutableSortedSet(),
                 Responses = eo.Responses
                     .Select(e => ctx.Mapper.Map<CommandResponse>(e))
                     .ToImmutableList(),
                 Limitations = ctx.Mapper.Map<CommandLimitation>(eo.Limitations),
+                ResponseMode = eo.ResponseMode,
             });
         CreateMap<CommandResponseEo, CommandResponse>();
         CreateMap<CommandLimitationEo, CommandLimitation>()

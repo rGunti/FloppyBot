@@ -1,8 +1,10 @@
 ﻿using System.Collections.Immutable;
 using AutoMapper;
 using FloppyBot.Base.EquatableCollections;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Dtos;
@@ -17,6 +19,7 @@ public class V1CompatibilityProfile : Profile
         MapUser();
         MapShoutoutMessage();
         MapHealthCheckData();
+        MapCustomCommands();
     }
 
     private void MapQuote()
@@ -87,5 +90,58 @@ public class V1CompatibilityProfile : Profile
                         null)
                 }.ToImmutableListWithValueSemantics(),
                 DateTimeOffset.UtcNow - c.Process.StartedAt));
+    }
+
+    private void MapCustomCommands()
+    {
+        CreateMap<CustomCommandDescription, CustomCommand>()
+            .ConstructUsing(c => new CustomCommand(
+                c.Id,
+                c.Owners.First(),
+                c.Name,
+                c.Responses.Count == 1 ? c.Responses.Select(r => r.Content).First() : string.Empty,
+                c.Responses.Count == 1
+                    ? ImmutableListWithValueSemantics<string>.Empty
+                    : c.Responses
+                        .Where(r => r.Type == ResponseType.Text)
+                        .Select(r => r.Content)
+                        .ToImmutableList(),
+                c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
+                Array.Empty<string>().ToImmutableList(),
+                c.Limitations.Cooldown
+                    .OrderBy(cd => cd.Level)
+                    .Select(cd => cd.Milliseconds)
+                    .FirstOrDefault()));
+        CreateMap<CustomCommand, CustomCommandDescription>()
+            .ConstructUsing(c => new CustomCommandDescription
+            {
+                Name = c.Command,
+                Aliases = ImmutableSetWithValueSemantics<string>.Empty,
+                Owners = new[] { c.Channel }.ToImmutableHashSetWithValueSemantics(),
+                Limitations = new CommandLimitation
+                {
+                    MinLevel = c.LimitedToMod ? PrivilegeLevel.Moderator : PrivilegeLevel.Viewer,
+                    Cooldown = new[]
+                    {
+                        new CooldownDescription(PrivilegeLevel.Unknown, c.Timeout)
+                    }.ToImmutableHashSetWithValueSemantics()
+                },
+                ResponseMode = CommandResponseMode.PickOneRandom,
+                Responses = (c.ResponseVariants ?? Enumerable.Empty<string>()).Any()
+                    ? c.ResponseVariants!
+                        .Select(r => new CommandResponse(ResponseType.Text, r))
+                        .ToImmutableListWithValueSemantics()
+                    : new[]
+                    {
+                        new CommandResponse(ResponseType.Text, c.Response)
+                    }.ToImmutableListWithValueSemantics(),
+                Id = null!,
+            });
+    }
+
+    public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
+    {
+        return commandDescription.Aliases.Count == 0
+               && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
     }
 }

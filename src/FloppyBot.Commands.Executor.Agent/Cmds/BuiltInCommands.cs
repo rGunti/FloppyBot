@@ -1,5 +1,6 @@
 ﻿using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Executor.Agent.Utils;
@@ -20,13 +21,14 @@ public class BuiltInCommands
     [Command("ping")]
     [PrimaryCommandName("ping")]
     [CommandDescription("Returns a test message. Useful to check if FloppyBot responds to commands.")]
+    [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
     public static string Ping() => REPLY_PING;
 
     [Command("about")]
     [PrimaryCommandName("about")]
     [CommandDescription("Returns FloppyBots current version")]
-    public static string About(
-        CommandInstruction instruction)
+    [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
+    public static string About(CommandInstruction instruction)
     {
         var template = instruction.SourceSupports(ChatInterfaceFeatures.MarkdownText)
             ? REPLY_ABOUT_MD

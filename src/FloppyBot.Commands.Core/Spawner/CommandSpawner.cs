@@ -1,10 +1,12 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Args;
-using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Entities;
-using FloppyBot.Commands.Core.Guard;
+using FloppyBot.Commands.Core.Support;
+using FloppyBot.Commands.Core.Support.PostExecution;
+using FloppyBot.Commands.Core.Support.PreExecution;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Commands.Parser.Entities.Utils;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,17 +27,15 @@ public class CommandSpawner : ICommandSpawner
             { typeof(byte), s => Convert.ToByte(s) }
         }.ToImmutableDictionary();
 
-    private readonly ICommandGuardRegistry _guardRegistry;
-
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public CommandSpawner(ILogger<CommandSpawner> logger, IServiceProvider serviceProvider,
-        ICommandGuardRegistry guardRegistry)
+    public CommandSpawner(
+        ILogger<CommandSpawner> logger,
+        IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
-        _guardRegistry = guardRegistry;
     }
 
     public ChatMessage? SpawnAndExecuteCommand(CommandInfo commandInfo, CommandInstruction instruction)
@@ -48,51 +48,35 @@ public class CommandSpawner : ICommandSpawner
         if (!commandInfo.IsStatic)
         {
             _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
-            host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+            try
+            {
+                host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to create host class {HostType} due to an exception",
+                    commandInfo.ImplementingType);
+                throw;
+            }
         }
         else
         {
             _logger.LogDebug("Skipped creating host class instance because command is declared as static");
         }
 
-        _logger.LogDebug("Checking for guards");
-        var guards = commandInfo.ImplementingType
-            .GetCustomAttributes<GuardAttribute>()
-            .Concat(commandInfo.HandlerMethod
-                .GetCustomAttributes<GuardAttribute>())
-            .SelectMany(attribute => _guardRegistry.FindGuardImplementation(attribute)
-                .Select(guardType => new
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    GuardImpl = (ICommandGuard)scope.ServiceProvider.GetRequiredService(guardType),
-                    GuardType = guardType,
-                    Settings = attribute,
-                }))
-            .ToArray();
-        var failedGuards = guards
-            .Where(guard =>
-            {
-                _logger.LogTrace(
-                    "Running guard {GuardType} with settings {GuardSettings}",
-                    guard.GuardType,
-                    guard.Settings);
-                return !guard.GuardImpl.CanExecute(instruction, commandInfo, guard.Settings);
-            })
-            .ToArray();
-
-        if (failedGuards.Any())
+        _logger.LogDebug("Running pre-execution tasks");
+        IPreExecutionTask? failedPreExecutionTask = TryExtensions.TryOr(
+            () => scope.RunPreExecutionTasks(commandInfo, instruction),
+            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
+        if (failedPreExecutionTask != null)
         {
             _logger.LogInformation(
-                "{FailedGuardCount} of {GuardCount} guard(s) have failed, command is not executed",
-                failedGuards.Length,
-                guards.Length);
-            _logger.LogDebug(
-                "The following guards have failed: {FailedGuards}",
-                failedGuards.Select(g => g.Settings).ToArray());
+                "Pre-execution task {TaskName} has failed, command is not executed",
+                failedPreExecutionTask.GetType());
             return null;
         }
-
-        _logger.LogDebug("Passed {GuardCount} guard checks", guards.Length);
 
         _logger.LogDebug("Building arguments");
         object?[] commandArguments;
@@ -113,32 +97,86 @@ public class CommandSpawner : ICommandSpawner
             commandInfo.HandlerMethod,
             commandArguments.Length);
 
-        var returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
+        object? returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
+        CommandResult result = ProcessReturnValue(returnValue);
+
+        _logger.LogDebug("Running post-execution tasks");
+        IPostExecutionTask? failedPostExecutionTask = TryExtensions.TryOr(
+            () => scope.RunPostExecutionTasks(commandInfo, instruction, result),
+            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
+        if (failedPostExecutionTask != null)
+        {
+            _logger.LogInformation(
+                "Post-execution task {TaskName} has failed, response is dropped",
+                failedPostExecutionTask.GetType());
+            return null;
+        }
 
         _logger.LogDebug("Command executed successfully, returning value");
-        switch (returnValue)
+        return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
+    }
+
+    public bool CanExecuteVariableCommand(VariableCommandInfo commandInfo, CommandInstruction instruction)
+    {
+        using var logScope = _logger.BeginScope(instruction.Context!.SourceMessage.Identifier);
+        using var scope = _serviceProvider.CreateScope();
+        _logger.LogTrace("Created new service provider scope");
+
+        object? host = null;
+        if (!commandInfo.IsStatic)
         {
-            case null:
-                _logger.LogDebug("Return value was null, returning null as well");
-                return null;
+            _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
+            host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
+        }
+        else
+        {
+            _logger.LogDebug("Skipped creating host class instance because command is declared as static");
+        }
+
+        _logger.LogInformation(
+            "Executing command assertion handler {@CommandHandler}",
+            commandInfo.TestHandlerMethod);
+        return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[]
+        {
+            instruction
+        })!;
+    }
+
+    private CommandResult ProcessReturnValue(object? returnValue)
+    {
+        if (returnValue == null)
+        {
+            _logger.LogDebug("Return value was null, returning null as well");
+            return new CommandResult(CommandOutcome.NoResponse);
+        }
+
+        var returnValueToProcess = returnValue;
+        if (returnValueToProcess is Task task)
+        {
+            _logger.LogDebug("Return value is asynchronous, waiting for reply");
+            task.ConfigureAwait(false);
+            task.Wait();
+            // ReSharper disable once TailRecursiveCall
+            returnValueToProcess = (object)((dynamic)task).Result;
+        }
+
+        switch (returnValueToProcess)
+        {
             case string returnMessage:
-                _logger.LogDebug("Return value was string, creating new reply and returning it");
-                return instruction.CreateReply(returnMessage);
-            case Task<string> asyncReturnMessage:
-                _logger.LogDebug("Return value as string (async), creating new reply and returning it");
-                var returnMessageStr = asyncReturnMessage.GetAwaiter().GetResult();
-                return instruction.CreateReply(returnMessageStr);
+                _logger.LogDebug("Return value was string, returning as successful outcome");
+                return new CommandResult(CommandOutcome.Success, returnMessage);
+            case CommandResult result:
+                _logger.LogDebug($"Return value was {nameof(CommandResult)}, returning as is");
+                return result;
             case ChatMessage chatMessage:
-                _logger.LogDebug("Return value was ChatMessage, returning it");
-                return chatMessage;
-            case Task<ChatMessage> asyncChatMessage:
-                _logger.LogDebug("Return value was ChatMessage (async), returning it");
-                return asyncChatMessage.GetAwaiter().GetResult();
+                _logger.LogWarning(
+                    "Return value was chat message (deprecated), returning its content as successful outcome");
+                return new CommandResult(CommandOutcome.Success, chatMessage.Content);
             default:
                 _logger.LogError("Return value was of type {ReturnValueType}, which is not supported",
-                    returnValue.GetType());
+                    returnValueToProcess.GetType());
                 throw new InvalidDataException(
-                    $"Return value was of type {returnValue.GetType()}, which is not supported");
+                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported");
         }
     }
 

@@ -60,6 +60,7 @@ public class EoDtoMappingTests
                 Id = "someId",
                 Name = "someCommand",
                 Aliases = new[] { "a", "b" }.ToImmutableHashSet(),
+                Owners = new[] { "Mock/Channel1" }.ToImmutableHashSet(),
                 Responses = new[]
                 {
                     new CommandResponse(

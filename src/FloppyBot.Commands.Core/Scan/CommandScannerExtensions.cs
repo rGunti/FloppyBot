@@ -2,12 +2,15 @@
 using System.Reflection;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Cooldown;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Internal;
+using FloppyBot.Commands.Core.ListSupplier;
 using FloppyBot.Commands.Core.Metadata;
 using FloppyBot.Commands.Core.Spawner;
+using FloppyBot.Commands.Core.Support;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Commands.Core.Scan;
@@ -16,8 +19,22 @@ public static class CommandScannerExtensions
 {
     private static readonly ICommandScanner CommandScanner = new CommandScanner();
 
-    public static IServiceCollection ScanAndAddCommandDependencies(
-        this IServiceCollection services)
+    public static IServiceCollection ScanAndAddCommandDependencies(this IServiceCollection services)
+    {
+        return services
+            .ScanAndAddCommandHandlers()
+            .ScanAndAddVariableCommandHandlers()
+            .AddSingleton<CommandListSupplierAggregator>()
+            .AddCommandListSupplier<BuiltInCommandListSupplier>()
+            .AddSingleton<ICommandSpawner, CommandSpawner>()
+            .AddSingleton<ICommandExecutor, CommandExecutor>()
+            .AddSingleton<IMetadataExtractor, MetadataExtractor>()
+            .AddGuards()
+            .AddTasks()
+            .AddCooldown();
+    }
+
+    private static IServiceCollection ScanAndAddCommandHandlers(this IServiceCollection services)
     {
         IImmutableDictionary<string, CommandInfo> handlers = CommandScanner.ScanForCommandHandlers();
 
@@ -25,19 +42,34 @@ public static class CommandScannerExtensions
                      .Select(i => i.Value.ImplementingType)
                      .Distinct())
         {
-            services.AddScoped(type);
-            ScanForCommandDependencies(services, type);
+            services
+                .AddScoped(type)
+                .ScanForCommandDependencies(type);
         }
 
         return services
-            .AddSingleton(handlers)
-            .AddSingleton<ICommandSpawner, CommandSpawner>()
-            .AddSingleton<ICommandExecutor, CommandExecutor>()
-            .AddSingleton<IMetadataExtractor, MetadataExtractor>()
-            .AddGuards();
+            .AddSingleton(handlers);
     }
 
-    internal static IServiceCollection AddGuards(this IServiceCollection services)
+    private static IServiceCollection ScanAndAddVariableCommandHandlers(this IServiceCollection services)
+    {
+        ImmutableList<VariableCommandInfo> handlers = CommandScanner.ScanForVariableCommandHandlers()
+            .ToImmutableList();
+
+        foreach (Type type in handlers
+                     .Select(i => i.ImplementingType)
+                     .Distinct())
+        {
+            services
+                .AddScoped(type)
+                .ScanForCommandDependencies(type);
+        }
+
+        return services
+            .AddSingleton<IImmutableList<VariableCommandInfo>>(handlers);
+    }
+
+    private static IServiceCollection AddGuards(this IServiceCollection services)
     {
         return services
             .AddGuardRegistry()
@@ -50,7 +82,14 @@ public static class CommandScannerExtensions
         return scanner.ScanTypeForCommandHandlers(typeof(T));
     }
 
-    internal static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)
+    public static IServiceCollection AddCommandListSupplier<T>(this IServiceCollection services)
+        where T : class, ICommandListSupplier
+    {
+        return services
+            .AddSingleton<ICommandListSupplier, T>();
+    }
+
+    private static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)
     {
         foreach (var diRegistrationMethod in type.GetMethods(BindingFlags.Static | BindingFlags.Public)
                      .Where(m => m.IsStatic && m.HasCustomAttribute<DependencyRegistrationAttribute>()))
