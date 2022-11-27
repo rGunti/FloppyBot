@@ -62,7 +62,7 @@ public class CounterStorageService : ICounterStorageService
     public int Increase(string commandId, int increment)
     {
         NullableObject<CounterEo> counter = GetCounter(commandId);
-        bool needsInsert = counter.HasValue;
+        bool needsInsert = !counter.HasValue;
         int newValue = counter
             .Select(c => c.Value)
             .FirstOrDefault() + increment;
