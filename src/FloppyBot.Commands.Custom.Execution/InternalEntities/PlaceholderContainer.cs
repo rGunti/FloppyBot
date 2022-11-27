@@ -14,6 +14,7 @@ public interface IPlaceholderContainer
     DateTimeOffset Now { get; }
     int Random { get; }
     int Counter { get; }
+    int PeekCounter { get; }
 }
 
 public class PlaceholderContainer : IPlaceholderContainer
@@ -61,4 +62,6 @@ public class PlaceholderContainer : IPlaceholderContainer
             return _newCounterValue!.Value;
         }
     }
+
+    public int PeekCounter => _counterStorageService.Peek(_commandDescription.Id);
 }
