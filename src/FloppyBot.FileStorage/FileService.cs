@@ -91,7 +91,7 @@ public class FileService : IFileService
 
         _logger.LogTrace("Storing file header {FileOwner}/{FileName}", owner, fileName);
         FileHeader header = _fileHeaders.Insert(new FileHeader(
-            null!,
+            CreateFileId(owner, fileName),
             owner,
             fileName,
             fileContent.Length,
@@ -143,6 +143,11 @@ public class FileService : IFileService
         int fileCount = GetFilesOf(owner).Count();
 
         return new FileQuota(owner, storedFileSize, fileCount);
+    }
+
+    private static string CreateFileId(string owner, string fileName)
+    {
+        return $"{owner}/{fileName}";
     }
 
     private IEnumerable<MemoryStream> GetStreamForFile(string fileId)
