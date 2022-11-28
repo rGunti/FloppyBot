@@ -4,6 +4,7 @@ using FloppyBot.Base.Rng;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Cooldown;
+using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Execution.InternalEntities;
 using FloppyBot.Commands.Custom.Storage;
@@ -79,7 +80,8 @@ public class CustomCommandExecutorTests
             timeProvider,
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
-            Mock.Of<ICounterStorageService>());
+            Mock.Of<ICounterStorageService>(),
+            Mock.Of<ISoundCommandInvocationSender>());
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
         if (expectResult)
@@ -118,7 +120,8 @@ public class CustomCommandExecutorTests
             timeProvider,
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
-            Mock.Of<ICounterStorageService>());
+            Mock.Of<ICounterStorageService>(),
+            Mock.Of<ISoundCommandInvocationSender>());
 
         string?[] reply = executor.Execute(CommandInstruction with
             {
@@ -162,7 +165,8 @@ public class CustomCommandExecutorTests
             timeProvider,
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
-            counterMock.Object);
+            counterMock.Object,
+            Mock.Of<ISoundCommandInvocationSender>());
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription with
             {

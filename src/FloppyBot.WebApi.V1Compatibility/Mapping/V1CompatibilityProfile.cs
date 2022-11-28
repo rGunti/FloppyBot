@@ -4,6 +4,8 @@ using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.Commands.Custom.Communication.Entities;
+using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
@@ -22,6 +24,7 @@ public class V1CompatibilityProfile : Profile
         MapCustomCommands();
         MapSoundCommand();
         MapFileStorage();
+        MapSoundCommandInvocation();
     }
 
     private void MapQuote()
@@ -157,11 +160,12 @@ public class V1CompatibilityProfile : Profile
                     .FirstOrDefault(),
                 c.Responses
                     .Where(r => r.Type == ResponseType.Text)
-                    .Select(r => r.Content)
+                    .Select(r => r.Content.Substring(r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR))
+                        .Trim())
                     .FirstOrDefault()!,
                 c.Responses
                     .Where(r => r.Type == ResponseType.Sound)
-                    .Select(r => r.Content)
+                    .Select(r => r.Content.Substring(0, r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR)))
                     .ToImmutableListWithValueSemantics()));
 
         CreateMap<SoundCommand, CustomCommandDescription>()
@@ -177,11 +181,12 @@ public class V1CompatibilityProfile : Profile
                         new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)
                     }.ToImmutableHashSetWithValueSemantics()
                 },
-                ResponseMode = CommandResponseMode.All,
+                ResponseMode = CommandResponseMode.PickOneRandom,
                 Responses = new[]
                 {
-                    new CommandResponse(ResponseType.Text, c.Response),
-                    new CommandResponse(ResponseType.Sound, c.SoundFiles[0])
+                    new CommandResponse(
+                        ResponseType.Sound,
+                        $"{c.SoundFiles[0]}{CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR}{c.Response}")
                 }.ToImmutableList(),
                 Id = null!,
             });
@@ -198,6 +203,16 @@ public class V1CompatibilityProfile : Profile
                 f.MimeType));
     }
 
+    private void MapSoundCommandInvocation()
+    {
+        CreateMap<SoundCommandInvocation, InvokeSoundCommandEvent>()
+            .ConstructUsing(i => new InvokeSoundCommandEvent(
+                i.InvokedBy,
+                i.InvokedFrom,
+                i.CommandName,
+                i.InvokedAt));
+    }
+
     public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
     {
         return commandDescription.Aliases.Count == 0
@@ -207,7 +222,6 @@ public class V1CompatibilityProfile : Profile
     public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)
     {
         return commandDescription.Aliases.Count == 0
-               && commandDescription.ResponseMode == CommandResponseMode.All
-               && commandDescription.Responses.Any(r => r.Type == ResponseType.Sound);
+               && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }

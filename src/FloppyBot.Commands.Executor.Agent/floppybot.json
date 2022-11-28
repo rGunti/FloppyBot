@@ -12,7 +12,8 @@
     "KillSwitch": "{Redis}|KillSwitch",
     "CommandInput": "{Redis}|Command.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}",
-    "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry"
+    "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry",
+    "SoundCommandInvocation": "{Redis}|FloppyBot.SoundCommandInvocation"
   },
   "Currency": {
     "ApiKey": "not_provided",

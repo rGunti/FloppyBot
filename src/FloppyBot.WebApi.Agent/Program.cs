@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
+using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
@@ -151,11 +152,12 @@ app
 // - Controllers
 app.UseEndpoints(e => e.MapControllers());
 // - SignalR
-//app.MapHub<SoundCommandHub>("/hub/sound-command");
+app.MapV1SignalRHub();
 
 // *** START ****************************************************************************
 app
     .BootCronJobs()
     .ArmKillSwitch()
     .StartHealthCheckReceiver()
+    .StartSoundCommandInvocationReceiver()
     .Run();
