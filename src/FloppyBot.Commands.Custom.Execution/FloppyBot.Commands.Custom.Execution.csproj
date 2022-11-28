@@ -11,6 +11,7 @@
         <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Rng\FloppyBot.Base.Rng.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Commands.Custom.Communication\FloppyBot.Commands.Custom.Communication.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj"/>
     </ItemGroup>

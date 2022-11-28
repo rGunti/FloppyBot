@@ -14,6 +14,7 @@
         <ProjectReference Include="..\FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
+        <ProjectReference Include="..\FloppyBot.FileStorage\FloppyBot.FileStorage.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
         <ProjectReference Include="..\FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj"/>
@@ -23,6 +24,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="12.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="6.0.11"/>
     </ItemGroup>
 
 </Project>

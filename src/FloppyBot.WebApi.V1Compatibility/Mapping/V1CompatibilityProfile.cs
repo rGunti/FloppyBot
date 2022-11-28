@@ -4,6 +4,8 @@ using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.Commands.Custom.Communication.Entities;
+using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
@@ -20,6 +22,9 @@ public class V1CompatibilityProfile : Profile
         MapShoutoutMessage();
         MapHealthCheckData();
         MapCustomCommands();
+        MapSoundCommand();
+        MapFileStorage();
+        MapSoundCommandInvocation();
     }
 
     private void MapQuote()
@@ -139,9 +144,84 @@ public class V1CompatibilityProfile : Profile
             });
     }
 
+    private void MapSoundCommand()
+    {
+        CreateMap<CustomCommandDescription, SoundCommand>()
+            .ConstructUsing(c => new SoundCommand(
+                c.Id,
+                c.Name,
+                c.Owners.First(),
+                c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
+                Array.Empty<string>().ToImmutableList(),
+                false,
+                c.Limitations.Cooldown
+                    .OrderBy(cd => cd.Level)
+                    .Select(cd => cd.Milliseconds)
+                    .FirstOrDefault(),
+                c.Responses
+                    .Where(r => r.Type == ResponseType.Text)
+                    .Select(r => r.Content.Substring(r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR))
+                        .Trim())
+                    .FirstOrDefault()!,
+                c.Responses
+                    .Where(r => r.Type == ResponseType.Sound)
+                    .Select(r => r.Content.Substring(0, r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR)))
+                    .ToImmutableListWithValueSemantics()));
+
+        CreateMap<SoundCommand, CustomCommandDescription>()
+            .ConstructUsing(c => new CustomCommandDescription
+            {
+                Name = c.CommandName,
+                Owners = new[] { c.ChannelId }.ToImmutableHashSet(),
+                Limitations = new CommandLimitation
+                {
+                    MinLevel = c.LimitedToMod ? PrivilegeLevel.Moderator : PrivilegeLevel.Viewer,
+                    Cooldown = new[]
+                    {
+                        new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)
+                    }.ToImmutableHashSetWithValueSemantics()
+                },
+                ResponseMode = CommandResponseMode.PickOneRandom,
+                Responses = new[]
+                {
+                    new CommandResponse(
+                        ResponseType.Sound,
+                        $"{c.SoundFiles[0]}{CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR}{c.Response}")
+                }.ToImmutableList(),
+                Id = null!,
+            });
+    }
+
+    private void MapFileStorage()
+    {
+        CreateMap<FloppyBot.FileStorage.Entities.FileHeader, FileHeader>()
+            .ConstructUsing(f => new FileHeader(
+                f.Id,
+                f.Owner,
+                f.FileName,
+                (long)f.FileSize,
+                f.MimeType));
+    }
+
+    private void MapSoundCommandInvocation()
+    {
+        CreateMap<SoundCommandInvocation, InvokeSoundCommandEvent>()
+            .ConstructUsing(i => new InvokeSoundCommandEvent(
+                i.InvokedBy,
+                i.InvokedFrom,
+                i.CommandName,
+                i.InvokedAt));
+    }
+
     public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
     {
         return commandDescription.Aliases.Count == 0
                && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
+    }
+
+    public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)
+    {
+        return commandDescription.Aliases.Count == 0
+               && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }

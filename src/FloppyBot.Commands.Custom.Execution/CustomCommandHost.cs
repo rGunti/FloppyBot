@@ -5,6 +5,7 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Scan;
+using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Custom.Storage.Entities.Internal;
@@ -79,7 +80,8 @@ public class CustomCommandHost
         WebDiSetup(services);
         services
             .AddCommandListSupplier<CustomCommandListSupplier>()
-            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>();
+            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
+            .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
     }
 
     public static void WebDiSetup(IServiceCollection services)
@@ -87,6 +89,7 @@ public class CustomCommandHost
         services
             .AddAutoMapper(typeof(CustomCommandStorageProfile))
             .AddScoped<ICustomCommandService, CustomCommandService>()
-            .AddScoped<ICounterStorageService, CounterStorageService>();
+            .AddScoped<ICounterStorageService, CounterStorageService>()
+            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
     }
 }
