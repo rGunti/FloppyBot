@@ -1,6 +1,7 @@
 using System.Globalization;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.Testing;
+using FloppyBot.Commands.Core.Entities;
 
 namespace FloppyBot.Commands.Aux.Time.Tests;
 
@@ -32,8 +33,22 @@ public class TimeCommandsTest
         string expectedOutput)
     {
         Assert.AreEqual(
-            expectedOutput,
-            _host.ShowCurrentTime(timeZoneId).ResponseContent);
+            CommandResult.SuccessWith(expectedOutput),
+            _host.ShowCurrentTime(timeZoneId));
+    }
+
+    [DataTestMethod]
+    [DataRow(null, "The current time is 05:24 DEC in Coordinated Universal Time")]
+    [DataRow("Europe/Berlin", "The current time is 05:65 DEC in Central European Standard Time")]
+    [DataRow("America/New_York", "The current time is 03:15 DEC in Eastern Standard Time")]
+    public void OutputsCurrentDecimalTime(
+        string? timeZoneId,
+        string expectedOutput)
+    {
+        Assert.AreEqual(
+            CommandResult.SuccessWith(expectedOutput),
+            _host.ShowCurrentDecimalTime(timeZoneId));
     }
 }
+
 

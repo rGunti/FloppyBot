@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using FloppyBot.Base.Clock;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
@@ -10,6 +11,22 @@ using Pallettaro.Revo;
 using DateTime = Pallettaro.Revo.DateTime;
 
 namespace FloppyBot.Commands.Aux.Time;
+
+internal record TimeCommandOutput(
+    DateTimeOffset Time,
+    // ReSharper disable once NotAccessedPositionalProperty.Global
+    string TimeStr,
+    TimeZoneInfo TimeZone)
+{
+    // ReSharper disable once UnusedMember.Global
+    public DateTimeOffset UtcTime => TimeZoneInfo.ConvertTime(Time, TimeZoneInfo.Utc);
+
+    // ReSharper disable once UnusedMember.Global
+    public string TimeZoneName
+        => TimeZone.IsDaylightSavingTime(Time)
+            ? TimeZone.DaylightName
+            : TimeZone.StandardName;
+}
 
 [CommandHost]
 [CommandCategory("Time")]
@@ -55,9 +72,7 @@ public class TimeCommands
         return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
     }
 
-    [Command("time")]
-    [CommandDescription("What is the current time")]
-    public CommandResult ShowCurrentTime([AllArguments("_")] string? timeZoneId)
+    private NullableObject<TimeCommandOutput> GetTime(string? timeZoneId)
     {
         TimeZoneInfo timeZone;
         try
@@ -67,23 +82,29 @@ public class TimeCommands
         catch (TimeZoneNotFoundException ex)
         {
             _logger.LogError(ex, "Failed to get time zone {TimeZoneInput}", timeZoneId);
-            return CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new
-            {
-                Input = timeZoneId
-            }));
+            return NullableObject.Empty<TimeCommandOutput>();
         }
 
         DateTimeOffset currentUtcTime = _timeProvider.GetCurrentUtcTime();
         DateTimeOffset currentTimeAtTz = TimeZoneInfo.ConvertTime(currentUtcTime, timeZone);
 
-        return REPLY_TIME.Format(new
-        {
-            Time = currentTimeAtTz,
-            TimeZone = timeZone,
-            TimeZoneName = timeZone.IsDaylightSavingTime(currentTimeAtTz)
-                ? timeZone.DaylightName
-                : timeZone.StandardName
-        });
+        return new TimeCommandOutput(
+            currentTimeAtTz,
+            currentTimeAtTz.ToString("HH:mm"),
+            timeZone);
+    }
+
+    [Command("time")]
+    [CommandDescription("What is the current time")]
+    public CommandResult ShowCurrentTime([AllArguments("_")] string? timeZoneId)
+    {
+        return GetTime(timeZoneId)
+            .Select(t => REPLY_TIME.Format(t))
+            .Select(CommandResult.SuccessWith)
+            .FirstOrDefault(CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new
+            {
+                Input = timeZoneId
+            })));
     }
 
     [Command("dectime", "dt")]
@@ -91,32 +112,18 @@ public class TimeCommands
     [CommandDescription("What is the current decimal time")]
     public CommandResult ShowCurrentDecimalTime([AllArguments("_")] string? timeZoneId)
     {
-        TimeZoneInfo timeZone;
-        try
-        {
-            timeZone = FindTimeZone(timeZoneId);
-        }
-        catch (TimeZoneNotFoundException ex)
-        {
-            _logger.LogError(ex, "Failed to get time zone {TimeZoneInput}", timeZoneId);
-            return CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new
+        return GetTime(timeZoneId)
+            .Select(t => REPLY_TIME_DEC.Format(t with
+            {
+                TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm")
+            }))
+            .Select(CommandResult.SuccessWith)
+            .FirstOrDefault(CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new
             {
                 Input = timeZoneId
-            }));
-        }
-
-        DateTimeOffset currentUtcTime = _timeProvider.GetCurrentUtcTime();
-        DateTimeOffset currentTimeAtTz = TimeZoneInfo.ConvertTime(currentUtcTime, timeZone);
-
-        return REPLY_TIME_DEC.Format(new
-        {
-            TimeStr = DateTimeFormat.Format(new DateTime(currentTimeAtTz.DateTime), "HH:mm"),
-            TimeZone = timeZone,
-            TimeZoneName = timeZone.IsDaylightSavingTime(currentTimeAtTz)
-                ? timeZone.DaylightName
-                : timeZone.StandardName
-        });
+            })));
     }
 }
+
 
 
