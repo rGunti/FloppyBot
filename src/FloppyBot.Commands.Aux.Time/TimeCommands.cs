@@ -2,6 +2,7 @@
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.Extensions;
 using FloppyBot.Base.TextFormatting;
+using FloppyBot.Commands.Aux.Time.Internal;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Metadata;
@@ -11,22 +12,6 @@ using Pallettaro.Revo;
 using DateTime = Pallettaro.Revo.DateTime;
 
 namespace FloppyBot.Commands.Aux.Time;
-
-internal record TimeCommandOutput(
-    DateTimeOffset Time,
-    // ReSharper disable once NotAccessedPositionalProperty.Global
-    string TimeStr,
-    TimeZoneInfo TimeZone)
-{
-    // ReSharper disable once UnusedMember.Global
-    public DateTimeOffset UtcTime => TimeZoneInfo.ConvertTime(Time, TimeZoneInfo.Utc);
-
-    // ReSharper disable once UnusedMember.Global
-    public string TimeZoneName
-        => TimeZone.IsDaylightSavingTime(Time)
-            ? TimeZone.DaylightName
-            : TimeZone.StandardName;
-}
 
 [CommandHost]
 [CommandCategory("Time")]
@@ -124,6 +109,7 @@ public class TimeCommands
             })));
     }
 }
+
 
 
 
