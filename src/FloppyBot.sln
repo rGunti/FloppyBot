@@ -146,6 +146,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.FileStorage", "Fl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Communication", "FloppyBot.Commands.Custom.Communication\FloppyBot.Commands.Custom.Communication.csproj", "{43763F7E-CD96-4169-ADCD-C935E9B5B00C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time", "Time", "{60929F61-CB5D-4E9C-A598-1DB850A56961}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Time", "FloppyBot.Commands.Aux.Time\FloppyBot.Commands.Aux.Time.csproj", "{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Time.Tests", "FloppyBot.Commands.Aux.Time.Tests\FloppyBot.Commands.Aux.Time.Tests.csproj", "{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -217,6 +223,9 @@ Global
 		{F844D228-57D4-47BE-B176-1EB7E7EA4AB6} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{B681BADE-684E-40B8-8178-F324E78D0C5C} = {282A2EF5-E0CE-47BE-832A-B43B1E447287}
 		{43763F7E-CD96-4169-ADCD-C935E9B5B00C} = {EB2C4423-A34B-4287-B7A1-F2E83E9EE935}
+		{60929F61-CB5D-4E9C-A598-1DB850A56961} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
+		{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6} = {60929F61-CB5D-4E9C-A598-1DB850A56961}
+		{023BAFAE-FCDD-4B3D-8780-EB8AE047E804} = {60929F61-CB5D-4E9C-A598-1DB850A56961}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -427,5 +436,13 @@ Global
 		{43763F7E-CD96-4169-ADCD-C935E9B5B00C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{43763F7E-CD96-4169-ADCD-C935E9B5B00C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{43763F7E-CD96-4169-ADCD-C935E9B5B00C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
