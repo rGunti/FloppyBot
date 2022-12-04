@@ -160,9 +160,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Tran
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{B34926A9-FD38-4887-A240-7283E1A79033}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Unit", "FloppyBot.Commands.Aux.Unit\FloppyBot.Commands.Aux.Unit.csproj", "{224C088D-E4D5-49F4-91A7-3163B44455CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv", "FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj", "{224C088D-E4D5-49F4-91A7-3163B44455CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Unit.Tests", "FloppyBot.Commands.Aux.Unit.Tests\FloppyBot.Commands.Aux.Unit.Tests.csproj", "{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv.Tests", "FloppyBot.Commands.Aux.UnitConv.Tests\FloppyBot.Commands.Aux.UnitConv.Tests.csproj", "{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
