@@ -158,6 +158,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Tran
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Translation.Tests", "FloppyBot.Commands.Aux.Translation.Tests\FloppyBot.Commands.Aux.Translation.Tests.csproj", "{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{B34926A9-FD38-4887-A240-7283E1A79033}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv", "FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj", "{224C088D-E4D5-49F4-91A7-3163B44455CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv.Tests", "FloppyBot.Commands.Aux.UnitConv.Tests\FloppyBot.Commands.Aux.UnitConv.Tests.csproj", "{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -235,6 +241,9 @@ Global
 		{D24E58E1-DAD7-4683-9193-38C3F0DFE010} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
 		{AA7B0A7B-BEDF-44E0-AFDD-0488F8D350F6} = {D24E58E1-DAD7-4683-9193-38C3F0DFE010}
 		{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474} = {D24E58E1-DAD7-4683-9193-38C3F0DFE010}
+		{B34926A9-FD38-4887-A240-7283E1A79033} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
+		{224C088D-E4D5-49F4-91A7-3163B44455CD} = {B34926A9-FD38-4887-A240-7283E1A79033}
+		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A} = {B34926A9-FD38-4887-A240-7283E1A79033}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -461,5 +470,13 @@ Global
 		{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}.Release|Any CPU.Build.0 = Release|Any CPU
+		{224C088D-E4D5-49F4-91A7-3163B44455CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{224C088D-E4D5-49F4-91A7-3163B44455CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{224C088D-E4D5-49F4-91A7-3163B44455CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{224C088D-E4D5-49F4-91A7-3163B44455CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
