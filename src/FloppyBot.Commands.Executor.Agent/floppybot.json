@@ -19,5 +19,8 @@
     "ApiKey": "not_provided",
     "SourceUrl": "https://free.currconv.com"
   },
+  "DeepL": {
+    "ApiKey": "not_provided"
+  },
   "InstanceName": "1"
 }
