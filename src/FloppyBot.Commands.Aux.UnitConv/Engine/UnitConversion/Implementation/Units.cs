@@ -42,6 +42,8 @@ internal static class Units
 
         // - Fun
         ConstructDefaultUnit(UNIT_PINS, "pins length", allowNegative: false),
+        ConstructDefaultUnit(UNIT_SOPH, "soph length", allowNegative: false),
+        ConstructDefaultUnit(UNIT_SPOH, "spoh length", allowNegative: false),
 
         // Temperature
         ConstructSuffixedUnit(UNIT_CELSIUS, "Degrees Celsius", "°?C"),
@@ -117,6 +119,9 @@ internal static class Units
 
             // - Fun
             { (UNIT_PINS, UNIT_CM), Factor(173f) },
+            { (UNIT_SOPH, UNIT_CM), Factor(160f) },
+            { (UNIT_SOPH, UNIT_PINS), Same() },
+            { (UNIT_SOPH, UNIT_SPOH), Same() },
 
             // Temperatures
             { (UNIT_KELVIN, UNIT_CELSIUS), Offset(-273.15f) },
@@ -175,7 +180,12 @@ internal static class Units
             { (UNIT_MI, UNIT_INCH), Chain(UNIT_MI, UNIT_YD, UNIT_FT, UNIT_INCH, UNIT_FT_INCH) },
             { (UNIT_MPS, UNIT_MPH), Chain(UNIT_MPS, UNIT_KMH, UNIT_MPH) },
             { (UNIT_T, UNIT_G), Chain(UNIT_T, UNIT_KG, UNIT_G) },
-            { (UNIT_HL, UNIT_ML), Chain(UNIT_HL, UNIT_L, UNIT_DL, UNIT_CL, UNIT_ML) }
+            { (UNIT_HL, UNIT_ML), Chain(UNIT_HL, UNIT_L, UNIT_DL, UNIT_CL, UNIT_ML) },
+            // Meme Assist: make sure that 1pins=1soph
+            { (UNIT_PINS, UNIT_M), Chain(UNIT_PINS, UNIT_CM, UNIT_M) },
+            { (UNIT_PINS, UNIT_INCH), Chain(UNIT_PINS, UNIT_CM, UNIT_INCH) },
+            { (UNIT_PINS, UNIT_FT_INCH), Chain(UNIT_PINS, UNIT_CM, UNIT_INCH, UNIT_FT_INCH) },
+            { (UNIT_SPOH, UNIT_PINS), Chain(UNIT_SPOH, UNIT_SOPH, UNIT_PINS) },
         };
     }
 
@@ -184,7 +194,7 @@ internal static class Units
         string unitName,
         bool allowNegative = true,
         bool allowDecimal = true,
-        Func<float, string> customFormatMethod = null)
+        Func<float, string>? customFormatMethod = null)
     {
         var formatMethod = customFormatMethod ?? (Func<float, string>)
             (allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
@@ -201,7 +211,7 @@ internal static class Units
         string suffixRegex,
         bool allowNegative = true,
         bool allowDecimal = true,
-        Func<float, string> customFormatMethod = null)
+        Func<float, string>? customFormatMethod = null)
     {
         var formatMethod = customFormatMethod ?? (Func<float, string>)
             (allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
@@ -278,6 +288,8 @@ internal static class Units
 
     // - Fun
     private const string UNIT_PINS = "pins";
+    private const string UNIT_SOPH = "soph";
+    private const string UNIT_SPOH = "spoh";
 
     // Temperature
     private const string UNIT_FAHRENHEIT = "F";
@@ -319,4 +331,5 @@ internal static class Units
 
     #endregion
 }
+
 

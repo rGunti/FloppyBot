@@ -23,6 +23,10 @@
         [DataRow(1f, "l", 1000f, "ml")]
         [DataRow(1f, "dm3", 1f, "l")]
         [DataRow(10f, "l", 0.1f, "m3")]
+        [DataRow(1f, "spoh", 1f, "pins")]
+        [DataRow(1f, "pins", 1f, "soph")]
+        [DataRow(1f, "pins", 1f, "spoh")]
+        [DataRow(1f, "spoh", 1f, "soph")]
         public void CanConvertThroughMultipleUnits(
             float value,
             string unitName,
@@ -40,20 +44,5 @@
 
         [TestMethod]
         public void CanConvertFromMiToCmAndBack() => CanConvertThroughMultipleUnits(1, "mi", 160934.4f, "cm");
-
-        #region Inheritance Bloat
-
-        public override void CanDoSimpleUnitConversions(
-            float value,
-            string unitName,
-            float expectedConvertedValue,
-            string convertedUnit,
-            float diversionTolerance = CONVERSION_TOLERANCE)
-            => base.CanDoSimpleUnitConversions(value, unitName, expectedConvertedValue, convertedUnit,
-                diversionTolerance);
-
-        public override void CanConvertToSameUnit() => base.CanConvertToSameUnit();
-
-        #endregion
     }
 }
