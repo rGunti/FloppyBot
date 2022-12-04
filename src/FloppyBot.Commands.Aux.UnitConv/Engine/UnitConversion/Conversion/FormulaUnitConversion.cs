@@ -7,9 +7,9 @@ internal class FormulaUnitConversion : IUnitConversion
 {
     private readonly Expression<Func<float, float>> _backConversion;
     private readonly Expression<Func<float, float>> _conversion;
-    private Func<float, float> _backConversionFunc;
+    private Func<float, float>? _backConversionFunc;
 
-    private Func<float, float> _conversionFunc;
+    private Func<float, float>? _conversionFunc;
 
     public FormulaUnitConversion(
         Expression<Func<float, float>> conversion,
@@ -33,4 +33,5 @@ internal class FormulaUnitConversion : IUnitConversion
 
     public override string ToString() => $"Formula({_conversion}, {_backConversion})";
 }
+
 

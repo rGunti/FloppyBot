@@ -25,10 +25,12 @@ public record Unit
     public Func<float, string> FormatFunction { get; }
 
     public string DebugString => $"{this} (Expr: {ParsingExpression})";
+    public string MdDebugString => $"Unit **{FullName}** [`{Symbol}`] (Expr: `{ParsingExpression}`)";
 
     public override string ToString()
     {
         return $"Unit {FullName} [{Symbol}]";
     }
 }
+
 
