@@ -26,6 +26,7 @@
         <ProjectReference Include="..\FloppyBot.Commands.Aux.Translation\FloppyBot.Commands.Aux.Translation.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
