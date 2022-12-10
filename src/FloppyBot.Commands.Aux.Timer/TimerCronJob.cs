@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Cron.Attributes;
+using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Timer.Storage;
@@ -13,6 +14,9 @@ namespace FloppyBot.Commands.Aux.Timer;
 [CronInterval(Milliseconds = 30000)]
 public class TimerCronJob : ICronJob
 {
+    private const string EMOJI_SEQ_BELL = "f09f9494";
+    private static readonly string BellEmoji = EMOJI_SEQ_BELL.ConvertEmojiSequence();
+
     private readonly ILogger<TimerCronJob> _logger;
     private readonly IMessageReplier _replier;
     private readonly ITimerService _timerService;
@@ -59,7 +63,8 @@ public class TimerCronJob : ICronJob
                 string.Empty,
                 PrivilegeLevel.Unknown),
             SharedEventTypes.CHAT_MESSAGE,
-            timerRecord.TimerMessage);
+            $"{BellEmoji} {timerRecord.TimerMessage}");
     }
 }
+
 
