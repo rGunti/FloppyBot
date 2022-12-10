@@ -174,6 +174,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Time
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Timer.Tests", "FloppyBot.Commands.Aux.Timer.Tests\FloppyBot.Commands.Aux.Timer.Tests.csproj", "{0170115D-E0FE-491A-8479-B78D8A32877E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{CE6BD053-FEE6-4075-93C2-D38C7BA2B0E5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Tools.V1Migrator", "FloppyBot.Tools.V1Migrator\FloppyBot.Tools.V1Migrator.csproj", "{A6CBF92E-336C-4A3F-9D24-49624FBC069B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -259,6 +263,7 @@ Global
 		{DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
 		{0DC72F20-5325-44E0-AA31-F00BBAF2F110} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
 		{0170115D-E0FE-491A-8479-B78D8A32877E} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
+		{A6CBF92E-336C-4A3F-9D24-49624FBC069B} = {CE6BD053-FEE6-4075-93C2-D38C7BA2B0E5}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -505,5 +510,9 @@ Global
 		{0170115D-E0FE-491A-8479-B78D8A32877E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0170115D-E0FE-491A-8479-B78D8A32877E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0170115D-E0FE-491A-8479-B78D8A32877E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6CBF92E-336C-4A3F-9D24-49624FBC069B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6CBF92E-336C-4A3F-9D24-49624FBC069B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6CBF92E-336C-4A3F-9D24-49624FBC069B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6CBF92E-336C-4A3F-9D24-49624FBC069B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
