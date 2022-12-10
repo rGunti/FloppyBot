@@ -9,6 +9,7 @@ using FloppyBot.Commands.Core.Guard;
 using FloppyBot.Commands.Core.Internal;
 using FloppyBot.Commands.Core.ListSupplier;
 using FloppyBot.Commands.Core.Metadata;
+using FloppyBot.Commands.Core.Replier;
 using FloppyBot.Commands.Core.Spawner;
 using FloppyBot.Commands.Core.Support;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,6 +30,7 @@ public static class CommandScannerExtensions
             .AddSingleton<ICommandSpawner, CommandSpawner>()
             .AddSingleton<ICommandExecutor, CommandExecutor>()
             .AddSingleton<IMetadataExtractor, MetadataExtractor>()
+            .AddSingleton<IMessageReplier, MessageReplier>()
             .AddGuards()
             .AddTasks()
             .AddCooldown();
@@ -108,3 +110,4 @@ public static class CommandScannerExtensions
         }
     }
 }
+

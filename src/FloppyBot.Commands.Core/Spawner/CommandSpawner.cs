@@ -91,6 +91,13 @@ public class CommandSpawner : ICommandSpawner
                 "Could not parse arguments due to an exception (possibly not enough arguments supplied)");
             return null;
         }
+        catch (InvalidCastException ex)
+        {
+            _logger.LogInformation(
+                ex,
+                "Could not cast data to arguments (possibly wrong data type for argument)");
+            return null;
+        }
 
         _logger.LogInformation(
             "Executing command {@CommandHandler} with {CommandArgsCount} arguments",
@@ -237,6 +244,7 @@ public class CommandSpawner : ICommandSpawner
             throw new InvalidCastException($"Cannot (yet) convert from string to {targetType}");
         }
 
-        throw new InvalidCastException($"Cannot yet convert from {sourceValue.GetType()}");
+        throw new InvalidCastException($"Cannot yet convert from {sourceValue.GetType()} to {targetType}");
     }
 }
+

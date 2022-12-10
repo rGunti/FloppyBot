@@ -168,6 +168,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UrbanDictionary", "UrbanDic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UrbanDictionary", "FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj", "{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Timer", "Timer", "{DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Timer", "FloppyBot.Commands.Aux.Timer\FloppyBot.Commands.Aux.Timer.csproj", "{0DC72F20-5325-44E0-AA31-F00BBAF2F110}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Timer.Tests", "FloppyBot.Commands.Aux.Timer.Tests\FloppyBot.Commands.Aux.Timer.Tests.csproj", "{0170115D-E0FE-491A-8479-B78D8A32877E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -250,6 +256,9 @@ Global
 		{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A} = {B34926A9-FD38-4887-A240-7283E1A79033}
 		{55E4803D-D915-4C43-95D1-C79AB0A30A81} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
 		{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E} = {55E4803D-D915-4C43-95D1-C79AB0A30A81}
+		{DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
+		{0DC72F20-5325-44E0-AA31-F00BBAF2F110} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
+		{0170115D-E0FE-491A-8479-B78D8A32877E} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -488,5 +497,13 @@ Global
 		{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DC72F20-5325-44E0-AA31-F00BBAF2F110}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DC72F20-5325-44E0-AA31-F00BBAF2F110}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DC72F20-5325-44E0-AA31-F00BBAF2F110}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DC72F20-5325-44E0-AA31-F00BBAF2F110}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0170115D-E0FE-491A-8479-B78D8A32877E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0170115D-E0FE-491A-8479-B78D8A32877E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0170115D-E0FE-491A-8479-B78D8A32877E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0170115D-E0FE-491A-8479-B78D8A32877E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
