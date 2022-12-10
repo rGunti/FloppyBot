@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
     </ItemGroup>
 

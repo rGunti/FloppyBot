@@ -1,3 +1,4 @@
+using FloppyBot.Base.Cron;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
@@ -35,7 +36,8 @@ public class TimerCommands
     public static void DiSetup(IServiceCollection services)
     {
         services
-            .AddTransient<ITimerService, TimerService>();
+            .AddTransient<ITimerService, TimerService>()
+            .AddCronJob<TimerCronJob>();
     }
 
     [Command("timer")]
@@ -66,5 +68,6 @@ public class TimerCommands
         }));
     }
 }
+
 
 

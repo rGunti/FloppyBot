@@ -1,13 +1,14 @@
 ﻿using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Storage.Indexing;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Executor;
+using FloppyBot.Commands.Core.Replier;
 using FloppyBot.Commands.Executor.Agent.DistRegistry;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SmartFormat;
 
 namespace FloppyBot.Commands.Executor.Agent;
 
@@ -21,17 +22,16 @@ public class ExecutorAgent : BackgroundService
     private readonly INotificationReceiver<CommandInstruction> _instructionReceiver;
     private readonly ILogger<ExecutorAgent> _logger;
 
-    private readonly string _senderConnectionString;
-    private readonly INotificationSenderFactory _senderFactory;
+    private readonly IMessageReplier _replier;
 
     public ExecutorAgent(
         ILogger<ExecutorAgent> logger,
         IConfiguration configuration,
         INotificationReceiverFactory receiverFactory,
-        INotificationSenderFactory senderFactory,
         ICommandExecutor commandExecutor,
         IndexInitializer indexInitializer,
-        DistributedCommandRegistryAdapter distributedCommandRegistryAdapter)
+        DistributedCommandRegistryAdapter distributedCommandRegistryAdapter,
+        IMessageReplier replier)
     {
         _logger = logger;
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
@@ -39,35 +39,28 @@ public class ExecutorAgent : BackgroundService
 
         _instructionReceiver.NotificationReceived += OnCommandReceived;
 
-        _senderFactory = senderFactory;
         _commandExecutor = commandExecutor;
         _indexInitializer = indexInitializer;
-        _senderConnectionString = configuration.GetParsedConnectionString("ResponseOutput");
 
         _distributedCommandRegistryAdapter = distributedCommandRegistryAdapter;
+        _replier = replier;
     }
 
     private void OnCommandReceived(CommandInstruction commandInstruction)
     {
-#if DEBUG
+        #if DEBUG
         _logger.LogDebug("Received command instruction {@CommandInstruction}",
             commandInstruction);
-#endif
+        #endif
 
-        var reply = _commandExecutor.ExecuteCommand(commandInstruction);
-
+        ChatMessage? reply = _commandExecutor.ExecuteCommand(commandInstruction);
         if (reply == null || string.IsNullOrWhiteSpace(reply.Content))
         {
             _logger.LogDebug("Reply was empty (null or whitespace), discarding");
             return;
         }
 
-        var sender = _senderFactory.GetNewSender(
-            _senderConnectionString.FormatSmart(new
-            {
-                Interface = reply.Identifier.Interface
-            }));
-        sender.Send(reply);
+        _replier.SendMessage(reply);
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -92,3 +85,4 @@ public class ExecutorAgent : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 }
+
