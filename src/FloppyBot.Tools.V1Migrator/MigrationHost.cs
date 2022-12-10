@@ -37,10 +37,18 @@ public class MigrationHost : BackgroundService
                     break;
                 }
 
+                if (!migration.CanExecute())
+                {
+                    _logger.LogDebug("Skipping migration {MigrationOrder} {Migration}",
+                        migration.Order,
+                        migration.GetType().Name);
+                    continue;
+                }
+
                 _logger.LogInformation(
                     "Executing migration {MigrationOrder} {Migration}",
                     migration.Order,
-                    migration.GetType());
+                    migration.GetType().Name);
                 migration.Execute();
             }
         }
@@ -53,4 +61,5 @@ public class MigrationHost : BackgroundService
         return Task.CompletedTask;
     }
 }
+
 

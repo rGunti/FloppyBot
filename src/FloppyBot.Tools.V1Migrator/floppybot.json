@@ -2,5 +2,10 @@
   "ConnectionStrings": {
     "Source": "mongodb://localhost:27017/pinsrbot",
     "Destination": "mongodb://localhost:27017/FloppyBot_Mig"
+  },
+  "Migration": {
+    "Simulate": true,
+    "LimitToChannels": [],
+    "DropDestinationBeforeExecution": false
   }
 }

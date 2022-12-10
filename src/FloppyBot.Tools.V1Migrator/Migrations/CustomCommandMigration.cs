@@ -3,6 +3,7 @@ using FloppyBot.Base.Storage;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Custom.Storage.Entities.Internal;
+using FloppyBot.Tools.V1Migrator.Config;
 using FloppyBot.Tools.V1Migrator.Storage;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
@@ -12,15 +13,18 @@ namespace FloppyBot.Tools.V1Migrator.Migrations;
 
 public class CustomCommandMigration : IMigration
 {
+    private readonly MigrationConfiguration _configuration;
     private readonly IRepository<CustomCommandDescriptionEo> _destinationRepository;
     private readonly ILogger<CustomCommandMigration> _logger;
     private readonly IMongoDatabase _mongoDatabase;
 
     public CustomCommandMigration(
         ILogger<CustomCommandMigration> logger,
-        IStorageFactory storageFactory)
+        IStorageFactory storageFactory,
+        MigrationConfiguration configuration)
     {
         _logger = logger;
+        _configuration = configuration;
         _mongoDatabase = storageFactory.GetMongoDatabase(StorageSource.Source);
         _destinationRepository = storageFactory.GetRepositoryFactory(StorageSource.Destination)
             .GetRepository<CustomCommandDescriptionEo>();
@@ -31,25 +35,47 @@ public class CustomCommandMigration : IMigration
     private IMongoCollection<BsonDocument> SourceCollection
         => _mongoDatabase.GetCollection<BsonDocument>("CustomCommand");
 
+    public bool CanExecute() => true;
+
     public void Execute()
     {
         _logger.LogTrace("Fetching commands from source...");
         IImmutableList<BsonDocument> sourceCommands = GetCommandsFromSource();
 
-        _logger.LogDebug("Found {CommandCount} commands on source, converting to V2 now ...", sourceCommands.Count);
+        _logger.LogInformation("Found {CommandCount} commands on source, converting to V2 now ...",
+            sourceCommands.Count);
         ImmutableArray<CustomCommandDescriptionEo> convertedCommands = sourceCommands
             .Select(ConvertToV2)
             .ToImmutableArray();
 
-        _logger.LogDebug("Converted successfully, now inserting into destination ...");
+        _logger.LogDebug("Converted successfully, now writing to destination ...");
         foreach (CustomCommandDescriptionEo command in convertedCommands)
         {
-            _logger.LogTrace("Inserting command {Command}", command);
+            InsertCommand(command);
+        }
+    }
+
+    private void InsertCommand(CustomCommandDescriptionEo command)
+    {
+        _logger.LogTrace("Inserting command {Command}", command);
+        if (!_configuration.Simulate)
+        {
             _destinationRepository.Insert(command);
         }
     }
 
-    private IImmutableList<BsonDocument> GetCommandsFromSource() => SourceCollection.AsQueryable().ToImmutableArray();
+    private IImmutableList<BsonDocument> GetCommandsFromSource()
+    {
+        if (_configuration.LimitToChannels.Any())
+        {
+            return SourceCollection
+                .Find(Builders<BsonDocument>.Filter.In("Channel", _configuration.LimitToChannels))
+                .ToList()
+                .ToImmutableArray();
+        }
+
+        return SourceCollection.AsQueryable().ToImmutableArray();
+    }
 
     private static CustomCommandDescriptionEo ConvertToV2(BsonDocument document)
     {
@@ -93,3 +119,4 @@ public class CustomCommandMigration : IMigration
         };
     }
 }
+
