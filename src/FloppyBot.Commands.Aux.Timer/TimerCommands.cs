@@ -1,5 +1,6 @@
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Timer.Storage;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
@@ -44,9 +45,9 @@ public class TimerCommands
         [ArgumentRange(1)]
         string timerMessage,
         [Author]
-        string author,
+        ChatUser author,
         [SourceMessageIdentifier]
-        string sourceMessageId)
+        ChatMessageIdentifier sourceMessageId)
     {
         TimeSpan? timespan = TimeExpressionParser.ParseTimeExpression(timeExpression);
         if (timespan == null)
@@ -56,7 +57,7 @@ public class TimerCommands
 
         _timerService.CreateTimer(
             sourceMessageId,
-            author,
+            author.Identifier,
             timespan.Value,
             timerMessage);
         return CommandResult.SuccessWith(REPLY_CREATED.Format(new
@@ -65,4 +66,5 @@ public class TimerCommands
         }));
     }
 }
+
 

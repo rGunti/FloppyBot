@@ -1,4 +1,5 @@
 using FloppyBot.Base.Testing;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Timer.Storage;
 using FloppyBot.Commands.Core.Entities;
 using Moq;
@@ -33,7 +34,10 @@ public class TimerCommandsTests
         CommandResult result = _host.CreateTimer(
             "12m",
             "Hello World",
-            "Mock/User",
+            new ChatUser(
+                "Mock/User",
+                "User",
+                PrivilegeLevel.Moderator),
             "Mock/Channel/Message");
 
         Assert.AreEqual(
@@ -55,7 +59,11 @@ public class TimerCommandsTests
     {
         Assert.AreEqual(
             CommandResult.FailedWith(TimerCommands.REPLY_FAILED_TIMESPAN),
-            _host.CreateTimer(input, "Some Text", "Mock/User", "Mock/Channel/Message"));
+            _host.CreateTimer(
+                input,
+                "Some Text",
+                new ChatUser("Mock/User", "User", PrivilegeLevel.Moderator),
+                "Mock/Channel/Message"));
     }
 }
 

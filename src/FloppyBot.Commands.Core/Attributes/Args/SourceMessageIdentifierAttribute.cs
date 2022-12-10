@@ -10,7 +10,8 @@ public class SourceMessageIdentifierAttribute : BaseArgumentAttribute
     public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
     {
         parameterInfo.AssertType<ChatMessageIdentifier>();
-        return commandInstruction.Context!.SourceMessage;
+        return commandInstruction.Context!.SourceMessage.Identifier;
     }
 }
+
 
