@@ -9,7 +9,9 @@ public static class V1Migrations
         return services
             .AddSingleton<IMigration, DropDestinationMigration>()
             .AddSingleton<IMigration, CustomCommandMigration>()
-            .AddSingleton<IMigration, FileMigration>();
+            .AddSingleton<IMigration, FileMigration>()
+            .AddSingleton<IMigration, SoundCommandMigration>();
     }
 }
+
 

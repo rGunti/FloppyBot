@@ -31,7 +31,7 @@ public class FileMigration : IMigration
         _fileContentRepository = repoFactory.GetRepository<FileContent>();
     }
 
-    public uint Order => 2;
+    public uint Order => 110;
 
     private IMongoCollection<BsonDocument> SourceFileHeaderTable
         => _sourceDatabase.GetCollection<BsonDocument>("FileHeader");
@@ -130,4 +130,5 @@ public class FileMigration : IMigration
             document["Content"].AsByteArray);
     }
 }
+
 

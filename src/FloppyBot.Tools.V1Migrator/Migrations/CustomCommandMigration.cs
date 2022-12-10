@@ -57,7 +57,7 @@ public class CustomCommandMigration : IMigration
 
     private void InsertCommand(CustomCommandDescriptionEo command)
     {
-        _logger.LogTrace("Inserting command {Command}", command);
+        _logger.LogTrace("Inserting command {@Command}", command);
         if (!_configuration.Simulate)
         {
             _destinationRepository.Insert(command);
@@ -119,4 +119,5 @@ public class CustomCommandMigration : IMigration
         };
     }
 }
+
 
