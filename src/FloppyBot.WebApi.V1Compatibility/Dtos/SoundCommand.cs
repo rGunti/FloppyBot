@@ -11,4 +11,6 @@ public record SoundCommand(
     bool HideFromCommandList,
     int Cooldown,
     string? Response,
-    IImmutableList<string> SoundFiles);
+    IImmutableList<string> SoundFiles,
+    string? PayloadId);
+

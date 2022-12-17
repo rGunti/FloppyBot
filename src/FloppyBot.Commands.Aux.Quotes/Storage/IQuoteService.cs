@@ -13,6 +13,8 @@ public interface IQuoteService
         string? context,
         string author);
 
+    Quote ImportQuote(Quote quote);
+
     Quote? EditQuote(string channelId, int quoteId, string newContent);
     Quote? EditQuoteContext(string channelId, int quoteId, string newContext);
     bool DeleteQuote(string channelId, int quoteId);
@@ -20,3 +22,4 @@ public interface IQuoteService
     IEnumerable<Quote> GetQuotes(string channelId);
     bool UpdateQuote(string channelId, int quoteId, Quote quote);
 }
+

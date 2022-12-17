@@ -18,6 +18,17 @@ public static class AuthExtensions
             .Value;
     }
 
+    public static string? TryGetUserId(
+        this ClaimsPrincipal user)
+    {
+        return user
+            .Identities
+            .First()
+            .Claims
+            .FirstOrDefault(c => c.Type == USER_ID_CLAIM)?
+            .Value;
+    }
+
     public static IEnumerable<string> GetUserPermissions(
         this ClaimsPrincipal user)
     {
@@ -29,3 +40,4 @@ public static class AuthExtensions
             .Select(c => c.Value);
     }
 }
+

@@ -76,6 +76,17 @@ public class QuoteService : IQuoteService
             author));
     }
 
+    public Quote ImportQuote(Quote quote)
+    {
+        var channelMappingId = _channelMappingService.GetQuoteChannelMapping(
+            quote.ChannelMappingId,
+            true)!;
+        return _repository.Insert(quote with
+        {
+            ChannelMappingId = channelMappingId
+        });
+    }
+
     public Quote? EditQuote(string channelId, int quoteId, string newContent)
     {
         var quote = GetQuote(channelId, quoteId);
@@ -168,3 +179,4 @@ public class QuoteService : IQuoteService
             .Max(q => q.QuoteId);
     }
 }
+
