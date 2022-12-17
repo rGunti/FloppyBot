@@ -166,7 +166,8 @@ public class V1CompatibilityProfile : Profile
                 c.Responses
                     .Where(r => r.Type == ResponseType.Sound)
                     .Select(r => r.Content.Substring(0, r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR)))
-                    .ToImmutableListWithValueSemantics()));
+                    .ToImmutableListWithValueSemantics(),
+                null));
 
         CreateMap<SoundCommand, CustomCommandDescription>()
             .ConstructUsing(c => new CustomCommandDescription
@@ -225,3 +226,4 @@ public class V1CompatibilityProfile : Profile
                && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }
+

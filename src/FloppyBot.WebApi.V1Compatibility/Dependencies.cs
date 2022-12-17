@@ -4,6 +4,7 @@ using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Registry;
 using FloppyBot.FileStorage;
 using FloppyBot.WebApi.V1Compatibility.Controllers;
+using FloppyBot.WebApi.V1Compatibility.DataImport;
 using FloppyBot.WebApi.V1Compatibility.Hubs;
 using FloppyBot.WebApi.V1Compatibility.Services;
 using Microsoft.AspNetCore.Builder;
@@ -23,7 +24,8 @@ public static class Dependencies
             .AddFileStorage()
             .AddDistributedCommandRegistry()
             .AddSingleton<V1CommandConverter>()
-            .AddSingleton<SoundCommandInvocationCollector>();
+            .AddSingleton<SoundCommandInvocationCollector>()
+            .AddTransient<V1DataImportService>();
     }
 
     public static HubEndpointConventionBuilder MapV1SignalRHub(this IEndpointRouteBuilder endpoints)
@@ -33,3 +35,4 @@ public static class Dependencies
         return endpoints.MapHub<V1SoundCommandHub>($"/{V1Config.ROUTE_BASE}hub/sound-command");
     }
 }
+
