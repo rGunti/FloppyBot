@@ -33,13 +33,13 @@ public class V1CompatibilityProfile : Profile
         CreateMap<TimerMessageConfig, TimerMessageConfiguration>()
             .ConstructUsing(c => new TimerMessageConfiguration(
                 c.Id,
-                c.Messages.ToArray(),
+                c.Messages,
                 c.Interval,
                 c.MinMessages));
         CreateMap<TimerMessageConfiguration, TimerMessageConfig>()
             .ConstructUsing(c => new TimerMessageConfig(
                 c.Id,
-                c.Messages.ToImmutableArray(),
+                c.Messages,
                 c.Interval,
                 c.MinMessages));
     }
@@ -242,4 +242,5 @@ public class V1CompatibilityProfile : Profile
                && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }
+
 
