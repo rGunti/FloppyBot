@@ -18,6 +18,17 @@ namespace FloppyBot.Commands.Aux.Twitch.Tests;
 public class TimerMessageTests
 {
     private static readonly DateTimeOffset RefTime = DateTimeOffset.Parse("2022-12-12T12:00:00Z");
+
+    private static readonly TimerMessageConfiguration RefConfig = new(
+        "Mock/Channel",
+        new[]
+        {
+            "Hello World",
+            "This is a test"
+        },
+        5,
+        5);
+
     private readonly IRepository<TimerMessageConfiguration> _configRepo;
 
     private readonly TimerMessageCronJob _cronJob;
@@ -57,14 +68,14 @@ public class TimerMessageTests
             _timeProvider);
     }
 
-    private void GenerateMessageOccurrences(int amount, TimeSpan gap)
+    private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
     {
-        var _ = Enumerable.Range(0, amount)
+        var _ = Enumerable.Range(startId, amount)
             .Select(i => new MessageOccurrence(
                 $"Mock/Channel/Message{i}",
                 "Mock/Channel",
                 "Mock/User",
-                RefTime - i * gap))
+                _timeProvider.GetCurrentUtcTime() - (i - startId) * gap))
             .Select(_occurrenceRepo.Insert)
             .ToArray();
     }
@@ -76,23 +87,47 @@ public class TimerMessageTests
         CollectionAssert.AreEqual(
             Array.Empty<ChatMessage>(),
             _sentMessages.ToArray());
+        CollectionAssert.AreEqual(
+            Array.Empty<TimerMessageExecution>(),
+            _executionRepo.GetAll().ToArray());
+    }
+
+    [TestMethod]
+    public void SendNoMessageWhenNotMessageOcc()
+    {
+        _configRepo.Insert(RefConfig);
+        _cronJob.Run();
+        CollectionAssert.AreEqual(
+            Array.Empty<ChatMessage>(),
+            _sentMessages.ToArray());
+        CollectionAssert.AreEqual(
+            Array.Empty<TimerMessageExecution>(),
+            _executionRepo.GetAll().ToArray());
+    }
+
+    [TestMethod]
+    public void SendNoMessageWhenNotEnoughMessageOcc()
+    {
+        GenerateMessageOccurrences(5, 45.Second());
+        _configRepo.Insert(RefConfig);
+        _cronJob.Run();
+
+        CollectionAssert.AreEqual(
+            Array.Empty<ChatMessage>(),
+            _sentMessages.ToArray());
+        CollectionAssert.AreEqual(
+            Array.Empty<TimerMessageExecution>(),
+            _executionRepo.GetAll().ToArray());
     }
 
     [TestMethod]
     public void SendExpectedChatMessage()
     {
         GenerateMessageOccurrences(10, 30.Second());
-        _configRepo.Insert(new TimerMessageConfiguration(
-            "Mock/Channel",
-            new[]
-            {
-                "Hello World",
-                "This is a test"
-            },
-            5,
-            5));
+        _configRepo.Insert(RefConfig);
 
         _cronJob.Run();
+
         CollectionAssert.AreEquivalent(
             new[]
             {
@@ -100,9 +135,38 @@ public class TimerMessageTests
                     ChatMessageIdentifier.NewFor("Mock/Channel"),
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
-                    "Hello World")
+                    RefConfig.Messages[0])
             },
             _sentMessages.ToArray());
+        Assert.AreEqual(
+            new TimerMessageExecution(
+                "Mock/Channel",
+                RefTime,
+                0),
+            _executionRepo.GetAll().Single());
+
+        _timeProvider.AdvanceTimeBy(10.Minutes());
+        _sentMessages.Clear();
+        GenerateMessageOccurrences(10, 30.Second(), 10);
+
+        _cronJob.Run();
+
+        CollectionAssert.AreEquivalent(
+            new[]
+            {
+                new ChatMessage(
+                    ChatMessageIdentifier.NewFor("Mock/Channel"),
+                    ChatUser.Anonymous,
+                    SharedEventTypes.CHAT_MESSAGE,
+                    RefConfig.Messages[1])
+            },
+            _sentMessages.ToArray());
+        Assert.AreEqual(
+            new TimerMessageExecution(
+                "Mock/Channel",
+                RefTime + 10.Minutes(),
+                1),
+            _executionRepo.GetAll().Single());
     }
 }
 

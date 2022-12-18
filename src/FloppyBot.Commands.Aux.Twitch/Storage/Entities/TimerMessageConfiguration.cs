@@ -8,6 +8,10 @@ public record TimerMessageConfiguration(
     int Interval,
     int MinMessages) : IEntity<TimerMessageConfiguration>
 {
+    public TimerMessageConfiguration() : this(null!, Array.Empty<string>(), -1, -1)
+    {
+    }
+
     public TimerMessageConfiguration WithId(string newId)
     {
         return this with
@@ -16,3 +20,4 @@ public record TimerMessageConfiguration(
         };
     }
 }
+
