@@ -11,9 +11,11 @@ internal static class IdentifierExtensions
         return !ulong.TryParse(identifier.Channel, out var channelId) ? null : client.GetChannel(channelId);
     }
 
-    public static MessageReference ToMessageReference(this ChatMessageIdentifier id)
+    public static MessageReference? ToMessageReference(this ChatMessageIdentifier id)
     {
         ulong? msgRefId = null;
+        if (id.MessageId == string.Empty || id.MessageId == ChatMessageIdentifier.NEW_MESSAGE_ID)
+            return null;
         if (ulong.TryParse(id.MessageId, out var msgRefIdVal))
             msgRefId = msgRefIdVal;
         return new MessageReference(
@@ -21,3 +23,4 @@ internal static class IdentifierExtensions
             failIfNotExists: false);
     }
 }
+

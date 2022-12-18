@@ -11,9 +11,16 @@ public record ChatMessageIdentifier(
     string Channel,
     string MessageId)
 {
+    public const string NEW_MESSAGE_ID = "new";
+
     public static implicit operator string(ChatMessageIdentifier identifier) => identifier.ToString();
 
     public static implicit operator ChatMessageIdentifier(string messageId) => messageId.ParseAsMessageId();
+
+    public static ChatMessageIdentifier NewFor(string channelId)
+    {
+        return $"{channelId}/{NEW_MESSAGE_ID}";
+    }
 
     public override string ToString()
     {
@@ -23,3 +30,4 @@ public record ChatMessageIdentifier(
             MessageId);
     }
 }
+

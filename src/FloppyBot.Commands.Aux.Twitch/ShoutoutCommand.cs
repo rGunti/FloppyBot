@@ -1,4 +1,6 @@
-﻿using FloppyBot.Base.TextFormatting;
+﻿using FloppyBot.Aux.MessageCounter.Core;
+using FloppyBot.Base.Cron;
+using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Config;
@@ -92,7 +94,6 @@ public class ShoutoutCommand
     }
 
     [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
     public static void RegisterDependencies(IServiceCollection services)
     {
         services
@@ -116,4 +117,21 @@ public class ShoutoutCommand
             .AddScoped<ITwitchApiService, TwitchApiService>()
             .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
     }
+
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void SetupTimerMessageDependencies(IServiceCollection services)
+    {
+        SetupTimerMessageDbDependencies(services);
+        services
+            .AddCronJob<TimerMessageCronJob>();
+    }
+
+    public static void SetupTimerMessageDbDependencies(IServiceCollection services)
+    {
+        services
+            .AddMessageOccurrenceService()
+            .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
+    }
 }
+
