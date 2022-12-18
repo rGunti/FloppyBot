@@ -85,13 +85,13 @@ public class TimerMessageCronJob : ICronJob
         }
 
         _logger.LogTrace(
-            "{ChannelId} received {MessageCount} in the last {Interval}",
+            "{ChannelId} received {MessageCount} messages in the last {Interval}",
             timerMessageConfiguration.Id,
             messageCount,
             interval);
         return
             timerMessageConfiguration.MinMessages <= 0 ||
-            messageCount > timerMessageConfiguration.MinMessages;
+            messageCount >= timerMessageConfiguration.MinMessages;
     }
 
     private ChatMessage CreateChatMessage(TimerMessageConfiguration config, TimerMessageExecution lastExecution)
@@ -113,4 +113,5 @@ public class TimerMessageCronJob : ICronJob
             content);
     }
 }
+
 
