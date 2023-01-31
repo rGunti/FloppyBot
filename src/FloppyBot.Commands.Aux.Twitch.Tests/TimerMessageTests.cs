@@ -108,7 +108,7 @@ public class TimerMessageTests
     [TestMethod]
     public void SendNoMessageWhenNotEnoughMessageOcc()
     {
-        GenerateMessageOccurrences(5, 45.Second());
+        GenerateMessageOccurrences(5, 120.Second());
         _configRepo.Insert(RefConfig);
         _cronJob.Run();
 
@@ -169,4 +169,3 @@ public class TimerMessageTests
             _executionRepo.GetAll().Single());
     }
 }
-
