@@ -7,6 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj"/>
         <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj"/>
         <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>

@@ -17,6 +17,7 @@ public static class Dependencies
     public static IServiceCollection AddV1Compatibility(this IServiceCollection services)
     {
         ShoutoutCommand.RegisterDependencies(services);
+        ShoutoutCommand.SetupTimerMessageDbDependencies(services);
         QuoteCommands.RegisterDependencies(services);
         CustomCommandHost.WebDiSetup(services);
         return services
@@ -33,3 +34,4 @@ public static class Dependencies
         return endpoints.MapHub<V1SoundCommandHub>($"/{V1Config.ROUTE_BASE}hub/sound-command");
     }
 }
+
