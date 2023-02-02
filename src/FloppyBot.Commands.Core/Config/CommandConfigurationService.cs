@@ -24,4 +24,17 @@ public class CommandConfigurationService : ICommandConfigurationService
         return _repository.GetAll()
             .Where(c => c.ChannelId == channelId);
     }
+
+    public void SetCommandConfiguration(CommandConfiguration commandConfiguration)
+    {
+        _repository.Insert(commandConfiguration with
+        {
+            Id = GenerateCommandConfigurationId(commandConfiguration.ChannelId, commandConfiguration.CommandName)
+        });
+    }
+
+    private static string GenerateCommandConfigurationId(string channelId, string commandName)
+    {
+        return $"{channelId},{commandName}";
+    }
 }
