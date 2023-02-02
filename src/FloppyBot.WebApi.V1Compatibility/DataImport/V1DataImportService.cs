@@ -7,6 +7,7 @@ using FloppyBot.Base.Extensions;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage;
+using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.FileStorage;
@@ -18,11 +19,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.WebApi.V1Compatibility.DataImport;
 
-internal record V1DataImport(IImmutableList<Tuple<string, string, string, Stream>> Files,
+internal record V1DataImport(
+    IImmutableList<Tuple<string, string, string, Stream>> Files,
     IImmutableList<Quote> Quotes,
     ImmutableArray<CustomCommandDescription> CustomCommands,
     ImmutableArray<Tuple<string, string>> ShoutoutMessageSettings,
-    ImmutableArray<object> TimerMessageConfigurations,
+    ImmutableArray<TimerMessageConfiguration> TimerMessageConfigurations,
     ImmutableArray<object> CommandConfigurations);
 
 public class V1DataImportService
@@ -47,6 +49,7 @@ public class V1DataImportService
     private readonly IMapper _mapper;
     private readonly IQuoteService _quoteService;
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
+    private readonly ITimerMessageConfigurationService _timerMessageConfigurationService;
     private readonly IUserService _userService;
 
     public V1DataImportService(
@@ -56,7 +59,8 @@ public class V1DataImportService
         IMapper mapper,
         IQuoteService quoteService,
         ICustomCommandService customCommandService,
-        IShoutoutMessageSettingService shoutoutMessageSettingService)
+        IShoutoutMessageSettingService shoutoutMessageSettingService,
+        ITimerMessageConfigurationService timerMessageConfigurationService)
     {
         _logger = logger;
         _userService = userService;
@@ -65,6 +69,7 @@ public class V1DataImportService
         _quoteService = quoteService;
         _customCommandService = customCommandService;
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
+        _timerMessageConfigurationService = timerMessageConfigurationService;
     }
 
     public bool ProcessFile(Stream fileStream, string? userId, bool simulate)
@@ -210,11 +215,17 @@ public class V1DataImportService
         }
     }
 
-    private void ImportTimerMessageConfigurations(IImmutableList<object> importTimerMessageConfigurations)
+    private void ImportTimerMessageConfigurations(
+        IImmutableList<TimerMessageConfiguration> importTimerMessageConfigurations)
     {
         _logger.LogDebug("Importing {TimerMessageConfigCount} timer message configurations ...",
             importTimerMessageConfigurations.Count);
-        _logger.LogWarning("Timer messages are not yet available in V2!");
+        foreach (TimerMessageConfiguration timerMessageConfig in importTimerMessageConfigurations)
+        {
+            _timerMessageConfigurationService.UpdateConfigurationForChannel(
+                timerMessageConfig.Id,
+                timerMessageConfig);
+        }
     }
 
     private void ImportCommandConfigurations(IImmutableList<object> importCommandConfigurations)
@@ -356,8 +367,7 @@ public class V1DataImportService
             quote.CreatedBy);
     }
 
-    private IEnumerable<CustomCommandDescription> PrepareImportCustomCommands(
-        IImmutableList<CustomCommand> commands)
+    private IEnumerable<CustomCommandDescription> PrepareImportCustomCommands(IImmutableList<CustomCommand> commands)
     {
         _logger.LogDebug(
             "Preparing import of {FileCount} custom commands ...",
@@ -366,8 +376,7 @@ public class V1DataImportService
             .Select(PrepareImportCustomCommand);
     }
 
-    private CustomCommandDescription PrepareImportCustomCommand(
-        CustomCommand customCommand)
+    private CustomCommandDescription PrepareImportCustomCommand(CustomCommand customCommand)
     {
         _logger.LogTrace("Preparing custom command {CommandChannel}/{CommandName}",
             customCommand.Channel,
@@ -474,27 +483,27 @@ public class V1DataImportService
         return Tuple.Create(config.Id, config.Message);
     }
 
-    private ImmutableArray<object> PrepareImportTimerMessages(
+    private ImmutableArray<TimerMessageConfiguration> PrepareImportTimerMessages(
         IImmutableList<TimerMessageConfig> timerMessageConfigs)
     {
         _logger.LogDebug("Preparing import of {TimerMessageCount} timer message configurations",
             timerMessageConfigs.Count);
-
-        return ImmutableArray<object>.Empty;
 
         return timerMessageConfigs
             .Select(PrepareImportTimerMessage)
             .ToImmutableArray();
     }
 
-    private object PrepareImportTimerMessage(
-        TimerMessageConfig timerMessageConfig)
+    private TimerMessageConfiguration PrepareImportTimerMessage(TimerMessageConfig timerMessageConfig)
     {
-        throw new NotImplementedException("Not yet available in V2");
+        return new TimerMessageConfiguration(
+            timerMessageConfig.Id,
+            timerMessageConfig.Messages,
+            timerMessageConfig.Interval,
+            timerMessageConfig.MinMessages);
     }
 
-    private ImmutableArray<object> PrepareImportCommandConfigs(
-        IImmutableList<CommandConfig> commandConfigs)
+    private ImmutableArray<object> PrepareImportCommandConfigs(IImmutableList<CommandConfig> commandConfigs)
     {
         _logger.LogDebug("Preparing import of {TimerMessageCount} command configurations",
             commandConfigs.Count);
@@ -506,10 +515,8 @@ public class V1DataImportService
             .ToImmutableArray();
     }
 
-    private object PrepareImportCommandConfig(
-        CommandConfig commandConfig)
+    private object PrepareImportCommandConfig(CommandConfig commandConfig)
     {
         throw new NotImplementedException("Not yet available in V2");
     }
 }
-
