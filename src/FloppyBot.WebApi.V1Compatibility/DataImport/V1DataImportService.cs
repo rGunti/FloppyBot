@@ -8,6 +8,7 @@ using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.FileStorage;
@@ -25,7 +26,7 @@ internal record V1DataImport(
     ImmutableArray<CustomCommandDescription> CustomCommands,
     ImmutableArray<Tuple<string, string>> ShoutoutMessageSettings,
     ImmutableArray<TimerMessageConfiguration> TimerMessageConfigurations,
-    ImmutableArray<object> CommandConfigurations);
+    ImmutableArray<CommandConfiguration> CommandConfigurations);
 
 public class V1DataImportService
 {
@@ -41,6 +42,8 @@ public class V1DataImportService
             new JsonStringEnumConverter()
         }
     };
+
+    private readonly ICommandConfigurationService _commandConfigurationService;
 
     private readonly ICustomCommandService _customCommandService;
     private readonly IFileService _fileService;
@@ -60,7 +63,8 @@ public class V1DataImportService
         IQuoteService quoteService,
         ICustomCommandService customCommandService,
         IShoutoutMessageSettingService shoutoutMessageSettingService,
-        ITimerMessageConfigurationService timerMessageConfigurationService)
+        ITimerMessageConfigurationService timerMessageConfigurationService,
+        ICommandConfigurationService commandConfigurationService)
     {
         _logger = logger;
         _userService = userService;
@@ -70,6 +74,7 @@ public class V1DataImportService
         _customCommandService = customCommandService;
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
         _timerMessageConfigurationService = timerMessageConfigurationService;
+        _commandConfigurationService = commandConfigurationService;
     }
 
     public bool ProcessFile(Stream fileStream, string? userId, bool simulate)
@@ -228,11 +233,14 @@ public class V1DataImportService
         }
     }
 
-    private void ImportCommandConfigurations(IImmutableList<object> importCommandConfigurations)
+    private void ImportCommandConfigurations(IImmutableList<CommandConfiguration> importCommandConfigurations)
     {
         _logger.LogDebug("Importing {CommandConfigCount} command configurations ...",
             importCommandConfigurations.Count);
-        _logger.LogWarning("Command configurations not yet available in V2!");
+        foreach (CommandConfiguration commandConfiguration in importCommandConfigurations)
+        {
+            _commandConfigurationService.SetCommandConfiguration(commandConfiguration);
+        }
     }
 
     private void ValidateOwnership(
@@ -503,20 +511,19 @@ public class V1DataImportService
             timerMessageConfig.MinMessages);
     }
 
-    private ImmutableArray<object> PrepareImportCommandConfigs(IImmutableList<CommandConfig> commandConfigs)
+    private ImmutableArray<CommandConfiguration> PrepareImportCommandConfigs(
+        IImmutableList<CommandConfig> commandConfigs)
     {
         _logger.LogDebug("Preparing import of {TimerMessageCount} command configurations",
             commandConfigs.Count);
-
-        return ImmutableArray<object>.Empty;
 
         return commandConfigs
             .Select(PrepareImportCommandConfig)
             .ToImmutableArray();
     }
 
-    private object PrepareImportCommandConfig(CommandConfig commandConfig)
+    private CommandConfiguration PrepareImportCommandConfig(CommandConfig commandConfig)
     {
-        throw new NotImplementedException("Not yet available in V2");
+        return _mapper.Map<CommandConfiguration>(commandConfig);
     }
 }
