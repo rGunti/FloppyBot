@@ -1,7 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
 using FloppyBot.Base.Clock;
-using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Metadata;
@@ -51,7 +50,8 @@ public class DistributedCommandRegistryAdapter : IDisposable
     public void Start()
     {
         _storedCommandAbstracts = _commandExecutor.KnownCommands
-            .SelectMany(ConvertToAbstract)
+            .OrderBy(c => c.CommandId)
+            .Select(ConvertToAbstract)
             .ToImmutableList();
         _logger.LogInformation(
             "Submitting {CommandCount} known command(s) to distributed command store",
@@ -62,38 +62,19 @@ public class DistributedCommandRegistryAdapter : IDisposable
         }
     }
 
-    private IEnumerable<CommandAbstract> ConvertToAbstract(CommandInfo commandInfo)
+    private CommandAbstract ConvertToAbstract(CommandInfo commandInfo)
     {
         _logger.LogDebug("Extracting metadata for command {CommandInfo}", commandInfo);
-        var metadata = _metadataExtractor.ExtractMetadataFromCommand(commandInfo);
-        var commandAbstract = new CommandAbstract(
+        CommandMetadata metadata = _metadataExtractor.ExtractMetadataFromCommand(commandInfo);
+        return new CommandAbstract(
             HostProcess,
             _timeProvider.GetCurrentUtcTime(),
-            string.Empty, // <- filled later
+            commandInfo.PrimaryCommandName,
             commandInfo.Names.ToArray(),
             metadata.Description,
             metadata.MinPrivilegeLevel,
             metadata.AvailableOnInterfaces,
             metadata.Syntax,
             metadata.GetRawDataAsDictionary());
-
-        // If a primary name is known, just emit that
-        if (metadata.HasValue(CommandMetadataTypes.PRIMARY_NAME))
-        {
-            yield return commandAbstract with
-            {
-                Name = metadata[CommandMetadataTypes.PRIMARY_NAME]
-            };
-            yield break;
-        }
-
-        // otherwise emit every name individually
-        foreach (var commandInfoName in commandInfo.Names)
-        {
-            yield return commandAbstract with
-            {
-                Name = commandInfoName
-            };
-        }
     }
 }
