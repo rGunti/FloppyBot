@@ -7,4 +7,5 @@ public interface ICommandConfigurationService
     NullableObject<CommandConfiguration> GetCommandConfiguration(string channelId, string commandName);
     IEnumerable<CommandConfiguration> GetCommandConfigurationsForChannel(string channelId);
     void SetCommandConfiguration(CommandConfiguration commandConfiguration);
+    void DeleteCommandConfiguration(string channelId, string commandName);
 }

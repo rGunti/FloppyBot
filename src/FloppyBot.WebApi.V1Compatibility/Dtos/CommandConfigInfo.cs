@@ -2,4 +2,4 @@
 
 public record CommandConfigInfo(
     CommandInfo Info,
-    object? Config);
+    CommandConfig? Config);

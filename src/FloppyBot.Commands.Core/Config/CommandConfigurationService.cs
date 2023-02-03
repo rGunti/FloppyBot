@@ -33,6 +33,11 @@ public class CommandConfigurationService : ICommandConfigurationService
         });
     }
 
+    public void DeleteCommandConfiguration(string channelId, string commandName)
+    {
+        _repository.Delete(GenerateCommandConfigurationId(channelId, commandName));
+    }
+
     private static string GenerateCommandConfigurationId(string channelId, string commandName)
     {
         return $"{channelId},{commandName}";

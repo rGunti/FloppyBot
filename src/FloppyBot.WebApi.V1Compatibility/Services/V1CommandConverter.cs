@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.EquatableCollections;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Commands.Registry.Entities;
@@ -12,7 +13,8 @@ public class V1CommandConverter
     private readonly IDistributedCommandRegistry _distributedCommandRegistry;
     private readonly ILogger<V1CommandConverter> _logger;
 
-    public V1CommandConverter(IDistributedCommandRegistry distributedCommandRegistry,
+    public V1CommandConverter(
+        IDistributedCommandRegistry distributedCommandRegistry,
         ILogger<V1CommandConverter> logger)
     {
         _distributedCommandRegistry = distributedCommandRegistry;
@@ -23,6 +25,14 @@ public class V1CommandConverter
     {
         return _distributedCommandRegistry.GetAllCommands()
             .Select(ConvertToCommandInfo);
+    }
+
+    public NullableObject<CommandInfo> GetCommand(string name)
+    {
+        return _distributedCommandRegistry.GetCommand(name)
+            .Wrap()
+            .Select(ConvertToCommandInfo)
+            .Wrap();
     }
 
     private CommandInfo ConvertToCommandInfo(CommandAbstract commandAbstract)
