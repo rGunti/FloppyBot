@@ -1,5 +1,6 @@
 ﻿using FloppyBot.Commands.Aux.Quotes;
 using FloppyBot.Commands.Aux.Twitch;
+using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Registry;
 using FloppyBot.FileStorage;
@@ -26,7 +27,8 @@ public static class Dependencies
             .AddDistributedCommandRegistry()
             .AddSingleton<V1CommandConverter>()
             .AddSingleton<SoundCommandInvocationCollector>()
-            .AddTransient<V1DataImportService>();
+            .AddTransient<V1DataImportService>()
+            .AddSingleton<ICommandConfigurationService, CommandConfigurationService>();
     }
 
     public static HubEndpointConventionBuilder MapV1SignalRHub(this IEndpointRouteBuilder endpoints)
@@ -36,4 +38,3 @@ public static class Dependencies
         return endpoints.MapHub<V1SoundCommandHub>($"/{V1Config.ROUTE_BASE}hub/sound-command");
     }
 }
-

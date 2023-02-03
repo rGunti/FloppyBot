@@ -24,4 +24,13 @@ public static class Registration
             })
             .AddStorageImplementation<LiteDbRepositoryFactory, LiteDbIndexManager>();
     }
+
+    public static IServiceCollection AddInMemoryStorage(this IServiceCollection services)
+    {
+        return services
+            .AddSingleton<LiteDbInstanceFactory>()
+            .AddSingleton<ILiteDatabase>(s => s.GetRequiredService<LiteDbInstanceFactory>()
+                .ConstructMemoryDbInstance())
+            .AddStorageImplementation<LiteDbRepositoryFactory, LiteDbIndexManager>();
+    }
 }

@@ -66,7 +66,6 @@ public class ExecutorAgent : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _indexInitializer.InitializeIndices();
-        _distributedCommandRegistryAdapter.Start();
 
         _logger.LogInformation("Starting Command Executor Agent ...");
         _instructionReceiver.StartListening();
@@ -85,4 +84,3 @@ public class ExecutorAgent : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 }
-

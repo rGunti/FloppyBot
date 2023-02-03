@@ -29,4 +29,12 @@ public static class NullableExtensions
     {
         return new NullableObject<T>(obj);
     }
+
+    public static NullableObject<T> Wrap<T>(this IEnumerable<T> enumerable)
+        where T : class
+    {
+        return enumerable
+            .SingleOrDefault()
+            .Wrap();
+    }
 }
