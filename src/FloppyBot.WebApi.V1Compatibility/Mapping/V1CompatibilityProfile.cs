@@ -4,6 +4,7 @@ using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Custom.Communication.Entities;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Storage.Entities;
@@ -26,6 +27,7 @@ public class V1CompatibilityProfile : Profile
         MapFileStorage();
         MapSoundCommandInvocation();
         MapTimerMessageConfig();
+        MapCommandConfig();
     }
 
     private void MapTimerMessageConfig()
@@ -230,6 +232,69 @@ public class V1CompatibilityProfile : Profile
                 i.InvokedAt));
     }
 
+    private void MapCommandConfig()
+    {
+        CreateMap<CommandConfig, CommandConfiguration>()
+            .ConstructUsing(i => new CommandConfiguration
+            {
+                Id = $"---",
+                ChannelId = i.ChannelId,
+                CommandName = i.CommandName,
+                Disabled = i.Disabled,
+                RequiredPrivilegeLevel = i.PrivilegeLevelOverride,
+                CustomCooldown = i.Cooldown,
+                CustomCooldownConfiguration = i.Cooldown
+                    ? ConvertCooldownConfig(i.CooldownConfig).ToArray()
+                    : Array.Empty<CooldownConfiguration>(),
+            });
+        CreateMap<CommandConfiguration, CommandConfig>()
+            .ConstructUsing(i => new CommandConfig(
+                i.ChannelId,
+                i.CommandName,
+                i.RequiredPrivilegeLevel,
+                i.Disabled,
+                i.CustomCooldown,
+                ConvertCooldownConfig(i.CustomCooldownConfiguration)));
+    }
+
+    private static IEnumerable<CooldownConfiguration> ConvertCooldownConfig(CooldownConfig cooldownConfig)
+    {
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Administrator,
+            CooldownMs = cooldownConfig.AdminCooldown
+        };
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Moderator,
+            CooldownMs = cooldownConfig.ModCooldown
+        };
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Viewer,
+            CooldownMs = cooldownConfig.Cooldown
+        };
+    }
+
+    private static CooldownConfig ConvertCooldownConfig(CooldownConfiguration[] configs)
+    {
+        return new CooldownConfig(
+            configs
+                .Where(c => c.PrivilegeLevel <= PrivilegeLevel.Viewer)
+                .MaxBy(c => c.PrivilegeLevel)
+                ?
+                .CooldownMs ?? 0,
+            configs
+                .FirstOrDefault(c => c.PrivilegeLevel == PrivilegeLevel.Moderator)
+                ?
+                .CooldownMs ?? 0,
+            configs
+                .Where(c => c.PrivilegeLevel >= PrivilegeLevel.Administrator)
+                .MinBy(c => c.PrivilegeLevel)
+                ?
+                .CooldownMs ?? 0);
+    }
+
     public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
     {
         return commandDescription.Aliases.Count == 0
@@ -242,5 +307,3 @@ public class V1CompatibilityProfile : Profile
                && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }
-
-

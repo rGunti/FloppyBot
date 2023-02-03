@@ -34,6 +34,7 @@ public static class SupportingTaskExtensions
     {
         return services
             .AddHybridExecutionTask<LogTask>()
+            .AddPreExecutionTask<DisabledCommandTask>()
             .AddPreExecutionTask<GuardTask>()
             .AddHybridExecutionTask<CooldownTask>();
     }

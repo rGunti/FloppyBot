@@ -1,8 +1,10 @@
 using System.Reflection;
 using FloppyBot.Base.Clock;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Core.Attributes.Metadata;
+using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Core.Cooldown;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Parser.Entities;
@@ -14,6 +16,7 @@ namespace FloppyBot.Commands.Core.Support.Hybrid;
 public class CooldownTask : IHybridTask
 {
     private const int ORDER = 20;
+    private readonly ICommandConfigurationService _commandConfigurationService;
     private readonly ICooldownService _cooldownService;
 
     private readonly ILogger<CooldownTask> _logger;
@@ -32,14 +35,12 @@ public class CooldownTask : IHybridTask
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
     {
         ChatMessage sourceMessage = instruction.Context!.SourceMessage;
-        CommandCooldownAttribute? cooldown = ExtractCooldown(info, sourceMessage.Author.PrivilegeLevel);
-        if (cooldown == null)
+        TimeSpan cooldownTime = DetermineCooldown(info, sourceMessage);
+        if (cooldownTime == TimeSpan.Zero)
         {
             _logger.LogDebug("No cooldown defined, skipped");
             return true;
         }
-
-        TimeSpan cooldownTime = TimeSpan.FromMilliseconds(cooldown.CooldownMs);
 
         DateTimeOffset lastExecution = _cooldownService.GetLastExecution(
             sourceMessage.Identifier.GetChannel(),
@@ -72,11 +73,41 @@ public class CooldownTask : IHybridTask
         return true;
     }
 
-    private CommandCooldownAttribute? ExtractCooldown(CommandInfo info, PrivilegeLevel userPrivilegeLevel)
+    private TimeSpan DetermineCooldown(CommandInfo info, ChatMessage sourceMessage)
+    {
+        PrivilegeLevel userPrivilegeLevel = sourceMessage.Author.PrivilegeLevel;
+        return ExtractCooldownFromConfiguration(
+                sourceMessage.Identifier.GetChannel(),
+                info.CommandId,
+                userPrivilegeLevel)
+            .Concat(ExtractCooldownFromCommandImplementation(info, userPrivilegeLevel))
+            .FirstOrDefault(TimeSpan.Zero);
+    }
+
+    private IEnumerable<TimeSpan> ExtractCooldownFromConfiguration(
+        string channelId,
+        string command,
+        PrivilegeLevel userPrivilegeLevel)
+    {
+        return _commandConfigurationService
+            .GetCommandConfiguration(channelId, command)
+            .Where(config => config.CustomCooldown)
+            .SelectMany(config => config.CustomCooldownConfiguration)
+            .Where(cooldownConfig => userPrivilegeLevel <= cooldownConfig.PrivilegeLevel)
+            .MaxBy(cooldownConfig => cooldownConfig.PrivilegeLevel)
+            .Wrap()
+            .Select(cooldownConfig => TimeSpan.FromMilliseconds(cooldownConfig.CooldownMs));
+    }
+
+    private IEnumerable<TimeSpan> ExtractCooldownFromCommandImplementation(
+        CommandInfo info,
+        PrivilegeLevel userPrivilegeLevel)
     {
         return info.HandlerMethod
             .GetCustomAttributes<CommandCooldownAttribute>()
             .Where(a => userPrivilegeLevel <= a.MaxLevel)
-            .MaxBy(a => a.MaxLevel);
+            .MaxBy(a => a.MaxLevel)
+            .Wrap()
+            .Select(i => TimeSpan.FromMilliseconds(i.CooldownMs));
     }
 }

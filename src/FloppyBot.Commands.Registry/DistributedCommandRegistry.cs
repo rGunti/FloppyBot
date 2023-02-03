@@ -14,6 +14,8 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
 {
     private const string GLOBAL_KEY = "FloppyBot.Commands";
 
+    private static readonly TimeSpan ExpiryTime = TimeSpan.FromMinutes(5) + TimeSpan.FromSeconds(15);
+
     private readonly IDatabase _database;
     private readonly string _globalKey;
 
@@ -81,5 +83,6 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
     private void AddCommandToDb(string commandName, CommandAbstract command)
     {
         _database.HashSet(_globalKey, commandName, JsonSerializer.Serialize(command));
+        _database.KeyExpire(_globalKey, ExpiryTime);
     }
 }
