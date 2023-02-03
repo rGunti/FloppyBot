@@ -32,6 +32,7 @@ IHost host = builder
             .AddHealthCheck()
             .AddKillSwitch()
             .AddSingleton<DistributedCommandRegistryAdapter>()
+            .AddCronJob<DistributedCommandRegistryCronJob>()
             .AddHostedService<ExecutorAgent>();
     })
     .Build();

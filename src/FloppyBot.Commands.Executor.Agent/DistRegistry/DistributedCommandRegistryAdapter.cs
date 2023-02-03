@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Commands.Executor.Agent.DistRegistry;
 
-public class DistributedCommandRegistryAdapter : IDisposable
+public class DistributedCommandRegistryAdapter
 {
     private static readonly string HostProcess = Assembly.GetExecutingAssembly().FullName!;
     private readonly ICommandExecutor _commandExecutor;
@@ -36,18 +36,7 @@ public class DistributedCommandRegistryAdapter : IDisposable
         _metadataExtractor = metadataExtractor;
     }
 
-    public void Dispose()
-    {
-        _logger.LogInformation(
-            "Removing {CommandCount} command(s) from distributed command store",
-            _storedCommandAbstracts.Count);
-        foreach (var commandAbstract in _storedCommandAbstracts)
-        {
-            _distributedCommandRegistry.RemoveCommand(commandAbstract.Name);
-        }
-    }
-
-    public void Start()
+    public void ScanAndStoreCommands()
     {
         _storedCommandAbstracts = _commandExecutor.KnownCommands
             .OrderBy(c => c.CommandId)
