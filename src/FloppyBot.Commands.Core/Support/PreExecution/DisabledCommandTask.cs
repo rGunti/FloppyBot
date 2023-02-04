@@ -12,6 +12,11 @@ public class DisabledCommandTask : IPreExecutionTask
 
     private readonly ICommandConfigurationService _commandConfigurationService;
 
+    public DisabledCommandTask(ICommandConfigurationService commandConfigurationService)
+    {
+        _commandConfigurationService = commandConfigurationService;
+    }
+
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
     {
         return _commandConfigurationService
