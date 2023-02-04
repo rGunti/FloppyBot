@@ -25,11 +25,13 @@ public class CooldownTask : IHybridTask
     public CooldownTask(
         ILogger<CooldownTask> logger,
         ICooldownService cooldownService,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider,
+        ICommandConfigurationService commandConfigurationService)
     {
         _logger = logger;
         _cooldownService = cooldownService;
         _timeProvider = timeProvider;
+        _commandConfigurationService = commandConfigurationService;
     }
 
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
