@@ -55,7 +55,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.WebApi.Agent/Dockerfile
-      image_name: floppybot/command-parser
+      image_name: floppybot/web-api
       image_tag: ${{ github.ref_name }}
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
