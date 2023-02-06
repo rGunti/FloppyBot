@@ -16,6 +16,12 @@ public static class AppConfigurationUtils
         return builder
             .AddJsonFile("floppybot.json", optional: false)
             .AddJsonFile($"floppybot.{environment ?? CurrentEnvironment}.json", optional: true)
+            .SetupEnvironmentConfig();
+    }
+
+    public static IConfigurationBuilder SetupEnvironmentConfig(this IConfigurationBuilder builder)
+    {
+        return builder
             .AddEnvironmentVariables("FLOPPYBOT_");
     }
 
@@ -29,7 +35,7 @@ public static class AppConfigurationUtils
     public static IHostBuilder SetupConfiguration(this IHostBuilder hostBuilder)
     {
         return hostBuilder
-            .ConfigureAppConfiguration((_, c) => c.SetupCommonConfig());
+            .ConfigureAppConfiguration((_, c) => c.SetupEnvironmentConfig());
     }
 
     public static IReadOnlyDictionary<string, string> GetConnectionStrings(this IConfiguration configuration)

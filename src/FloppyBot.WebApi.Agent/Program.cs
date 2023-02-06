@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
@@ -21,6 +22,9 @@ using Serilog;
 
 // *** BOOT *****************************************************************************
 var builder = WebApplication.CreateBuilder(args);
+builder
+    .Configuration
+    .SetupEnvironmentConfig();
 builder.Host.UseSerilog((ctx, lc) => lc
     .ConfigureSerilog(ctx.Configuration));
 
