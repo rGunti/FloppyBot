@@ -10,30 +10,30 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MathExpression.net" Version="1.1.0.2006"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0"/>
-        <PackageReference Include="RestSharp" Version="108.0.2"/>
+        <PackageReference Include="MathExpression.net" Version="1.1.0.2006" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
+        <PackageReference Include="RestSharp" Version="108.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FloppyBot.Base.BinLoader\FloppyBot.Base.BinLoader.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.Timer\FloppyBot.Commands.Aux.Timer.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.Time\FloppyBot.Commands.Aux.Time.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.Translation\FloppyBot.Commands.Aux.Translation.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
-        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
-        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.BinLoader\FloppyBot.Base.BinLoader.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj" />
+        <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.Timer\FloppyBot.Commands.Aux.Timer.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.Time\FloppyBot.Commands.Aux.Time.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.Translation\FloppyBot.Commands.Aux.Translation.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj" />
+        <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj" />
+        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
+        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
+        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,12 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="LiteDB" Version="5.0.12"/>
-        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0"/>
+        <PackageReference Include="LiteDB" Version="5.0.15" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
     </ItemGroup>
 
 </Project>

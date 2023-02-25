@@ -10,13 +10,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj"/>
-        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj"/>
-        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj"/>
-        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj"/>
+        <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
+        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj" />
+        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
+        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
+        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -30,18 +30,18 @@
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
-        <None Remove="floppybot.json"/>
+        <None Remove="floppybot.json" />
         <Content Include="floppybot.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
-        <None Remove="floppybot.Development.json"/>
+        <None Remove="floppybot.Development.json" />
         <Content Include="floppybot.Development.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </Content>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
     </ItemGroup>
 
 </Project>
