@@ -35,7 +35,8 @@ public static class AppConfigurationUtils
     public static IHostBuilder SetupConfiguration(this IHostBuilder hostBuilder)
     {
         return hostBuilder
-            .ConfigureAppConfiguration((_, c) => c.SetupEnvironmentConfig());
+            .ConfigureAppConfiguration((_, c) => c
+                .SetupCommonConfig());
     }
 
     public static IReadOnlyDictionary<string, string> GetConnectionStrings(this IConfiguration configuration)
