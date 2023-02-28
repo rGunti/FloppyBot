@@ -2,7 +2,7 @@
 
 <!-- TODO: Logo -->
 
-[![MIT License](https://img.shields.io/github/license/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/blob/master/LICENSEs)
+[![BSD-3-Clause](https://img.shields.io/github/license/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/issues)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/rGunti/FloppyBot.svg?style=flat)](https://github.com/rGunti/FloppyBot/pulls)
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rGunti/FloppyBot/Build%20&%20Test/main)](https://github.com/rGunti/FloppyBot/actions/workflows/build-test.yml)
