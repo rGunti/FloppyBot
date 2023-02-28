@@ -1,0 +1,3 @@
+- [Home](/)
+- [Issues](https://github.com/rgunti/floppybot/issues "Go to GitHub Issues")
+- [Releases](https://github.com/rgunti/floppybot/releases "Go to GitHub Releases")
