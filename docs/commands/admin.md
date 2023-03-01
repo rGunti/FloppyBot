@@ -11,3 +11,7 @@ Hello World
 ## `command3`
 
 Hello World
+
+## `command4`
+
+Hello World
