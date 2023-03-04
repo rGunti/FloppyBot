@@ -13,4 +13,10 @@
 - Guides
     - [Join Quote Databases](guides/quote-join.md)
 
+- Operations
+    - Host your own
+
+- Development
+    - Architecture
+
 - [Changelog](changelog.md)
