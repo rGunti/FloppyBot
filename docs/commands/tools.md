@@ -28,8 +28,12 @@ All sections are optional (though at least one has to be present) and units have
 ```
 > User:      timer 15m20s Hello, very specific timer
 < FloppyBot: Created new timer. Your message should be there in about 15 minutes.
-# Note: The command above will create a timer that runs for 15 minutes and 20 seconds.
+
+< FloppyBot: 🔔 Hello, very specific timer
 ```
+
+?> **Note**: The command in the example above will create a timer that runs for 15 minutes and 20 seconds.
+
 
 ## `translate`
 
