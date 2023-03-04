@@ -10,4 +10,7 @@
     - [Twitch](commands/twitch.md "Twitch-only Commands")
     - [Quotes](commands/quotes.md "Quote Commands")
 
+- Guides
+    - [Join Quote Databases](guides/quote-join.md)
+
 - [Changelog](changelog.md)

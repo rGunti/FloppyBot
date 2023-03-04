@@ -62,6 +62,9 @@ Starts the join process for the given channel. On Twitch, your channel ID is for
 
 Syntax: `quotejoin <Channel ID>`
 
+?> For more information about how to setup a connection between two channels to share the quote database, see
+the [appropriate Guide](guides/quote-join.md).
+
 ## `quoteconfirm`
 
 _Alias: `qc`_
