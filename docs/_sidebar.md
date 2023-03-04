@@ -3,10 +3,11 @@
 - Configuration
 
 - [Commands](commands.md)
-    - [Admin](commands/admin.md "Administrative Commands")
     - [Core](commands/core.md "Core Commands")
     - [Conversion](commands/conversion.md "Conversion Commands")
     - [Debug](commands/debug.md "Debug Commands")
     - [Tools](commands/tools.md "Tool Commands")
+    - [Twitch](commands/twitch.md "Twitch-only Commands")
+    - [Quotes](commands/quotes.md "Quote Commands")
 
 - [Changelog](changelog.md)
