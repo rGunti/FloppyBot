@@ -56,6 +56,8 @@ Syntax: `time [<Time Zone>]`
 Allows the user to store their own time zone. This can be used by `time` and `dectime` to
 always feed the users time zone instead of a default one (which is usually UTC).
 
+Syntax: `timeset <Time Zone>`
+
 ## `unit`
 
 This command can be used to convert one unit to another.
