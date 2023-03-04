@@ -1,7 +1,5 @@
 - [Welcome to FloppyBot](/)
 
-- Configuration
-
 - [Commands](commands.md)
     - [Core](commands/core.md "Core Commands")
     - [Conversion](commands/conversion.md "Conversion Commands")
