@@ -2,10 +2,10 @@
 
 ## `money`
 
+_Alias: `currency`_
+
 Converts a given amount of money into another currency.
 The international three letter currency codes ([ISO 4217][iso4217]) are to be provided.
-
-_Alias: `currency`_
 
 Syntax: `money <Input> <Currency> [in|to] <Target Currency>`
 
