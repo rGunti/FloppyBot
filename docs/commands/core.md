@@ -8,13 +8,9 @@ Prints the currently running version of FloppyBot.
 
 ?> Hello! This is FloppyBot v2.2303.02-beta01
 
-**Default Settings**: Restricted to "Viewers" and above, Cooldown 30s
-
 ## `commands`
 
 Prints a list of available commands.
-
-**Default Settings**: Restricted to "Viewers" and above, Cooldown 30s
 
 ## `math`
 
@@ -32,5 +28,3 @@ Syntax: `math <Expression>`
 ## `ping`
 
 Replies with "Pong!". Useful for testing if the bot is able to read and send messages.
-
-**Default Settings**: Restricted to "Viewers" and above, Cooldown 30s

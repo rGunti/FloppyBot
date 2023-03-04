@@ -6,8 +6,6 @@ _Alias: `urbandictionary`_
 
 Looks up a definition for the given word in [Urban Dictionary](https://www.urbandictionary.com/).
 
-**Default Settings**: Restricted to "Viewers" and above, Cooldown 30s
-
 Syntax: `define <Term>`
 
 ```
@@ -21,8 +19,6 @@ Syntax: `define <Term>`
 ## `translate`
 
 Translates a given text from one langauage to another using [DeepL Translator](https://www.deepl.com/).
-
-**Default Settings**: Restricted to "Viewers" and above, Cooldown 25s
 
 Syntax: `translate <Input Text> [from <Input Language>] to <Output Language>`
 
