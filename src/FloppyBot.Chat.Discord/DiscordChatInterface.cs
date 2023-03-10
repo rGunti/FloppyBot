@@ -173,7 +173,7 @@ public class DiscordChatInterface : IChatInterface
                                    "No description was provided for this command, but I'm sure it's lovely");
                 if (description.Length >= 100)
                 {
-                    description = description.Substring(0, 96) + "...";
+                    description = description[..96] + "...";
                 }
 
                 return new SlashCommandBuilder()
