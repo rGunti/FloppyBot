@@ -2,6 +2,7 @@ using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Chat.Agent;
+using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
 using FloppyBot.HealthCheck.KillSwitch;
@@ -23,6 +24,7 @@ IHost host = builder
             .AddCronJobSupport()
             .AddHealthCheck()
             .AddKillSwitch()
+            .AddDistributedCommandRegistry()
             .AddHostedService<ChatAgent>();
     })
     .Build();

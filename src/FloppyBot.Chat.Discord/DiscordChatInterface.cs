@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Commands.Registry;
 using FloppyBot.Version;
 using Microsoft.Extensions.Logging;
 
@@ -19,6 +20,8 @@ public class DiscordChatInterface : IChatInterface
     private static readonly IEmote ReadEmote = new Emoji("✅");
 
     private readonly ILogger<DiscordSocketClient> _clientLogger;
+
+    private readonly IDistributedCommandRegistry _commandRegistry;
     private readonly DiscordConfiguration _configuration;
     private readonly DiscordSocketClient _discordClient;
 
@@ -31,12 +34,14 @@ public class DiscordChatInterface : IChatInterface
         // ReSharper disable once ContextualLoggerProblem
         ILogger<DiscordSocketClient> clientLogger,
         DiscordConfiguration configuration,
-        DiscordSocketClient discordClient)
+        DiscordSocketClient discordClient,
+        IDistributedCommandRegistry commandRegistry)
     {
         _logger = logger;
         _clientLogger = clientLogger;
         _configuration = configuration;
         _discordClient = discordClient;
+        _commandRegistry = commandRegistry;
 
         _discordClient.Log += DiscordClientOnLog;
         _discordClient.Ready += DiscordClientOnReady;
@@ -154,20 +159,39 @@ public class DiscordChatInterface : IChatInterface
 
     private async Task SetupSlashCommands()
     {
-        _logger.LogTrace("Setting up slash commands");
-        var demoCommand = new SlashCommandBuilder()
-            .WithName($"{SLASH_COMMAND_PREFIX}ping")
-            .WithDescription("A simple ping command")
-            .AddOption(
-                "parameters",
-                ApplicationCommandOptionType.String,
-                "Any parameters to add",
-                isRequired: false);
+        _logger.LogDebug("Setting up slash commands");
+
+        var slashCommands = _commandRegistry
+            .GetAllCommands()
+            .Where(c => c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME))
+            .Select(c =>
+            {
+                _logger.LogTrace(
+                    "Building slash command for {CommandName}",
+                    c.Name);
+                var description = (c.Description ??
+                                   "No description was provided for this command, but I'm sure it's lovely");
+                if (description.Length >= 100)
+                {
+                    description = description.Substring(0, 96) + "...";
+                }
+
+                return new SlashCommandBuilder()
+                    .WithName($"{SLASH_COMMAND_PREFIX}{c.Name}")
+                    .WithDescription(description)
+                    .AddOption(
+                        "arguments",
+                        ApplicationCommandOptionType.String,
+                        "Additional arguments for the command (depends on the command used)",
+                        isRequired: false)
+                    .Build();
+            })
+            .ToArray();
 
         try
         {
             await _discordClient.BulkOverwriteGlobalApplicationCommandsAsync(
-                new ApplicationCommandProperties[] { demoCommand.Build() });
+                slashCommands);
         }
         catch (HttpException ex)
         {

@@ -11,7 +11,8 @@
     "HealthCheck": "{Redis}|HealthCheck",
     "KillSwitch": "{Redis}|KillSwitch",
     "MessageOutput": "{Redis}|Message.Received",
-    "MessageInput": "{Redis}|Message.Responded.\\{InterfaceType\\}"
+    "MessageInput": "{Redis}|Message.Responded.\\{InterfaceType\\}",
+    "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry"
   },
 
   // Configure Chat Interface
