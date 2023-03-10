@@ -42,6 +42,30 @@ public class DiscordChatInterface : IChatInterface
         _discordClient.Ready += DiscordClientOnReady;
         _discordClient.MessageReceived += DiscordClientOnMessageReceived;
         _discordClient.SlashCommandExecuted += DiscordClientSlashCommandExecuted;
+        _discordClient.ApplicationCommandCreated += (c) =>
+        {
+            _logger.LogDebug(
+                "Registered new command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
+        _discordClient.ApplicationCommandUpdated += (c) =>
+        {
+            _logger.LogDebug(
+                "Updated existing command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
+        _discordClient.ApplicationCommandDeleted += (c) =>
+        {
+            _logger.LogDebug(
+                "Deleted existing command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
     }
 
     public string ConnectUrl
