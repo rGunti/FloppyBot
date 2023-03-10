@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using System.Collections.Concurrent;
+using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
@@ -12,6 +14,8 @@ public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
 
+    private const string SLASH_COMMAND_PREFIX = "floppy-";
+
     private static readonly IEmote ReadEmote = new Emoji("✅");
 
     private readonly ILogger<DiscordSocketClient> _clientLogger;
@@ -19,6 +23,8 @@ public class DiscordChatInterface : IChatInterface
     private readonly DiscordSocketClient _discordClient;
 
     private readonly ILogger<DiscordChatInterface> _logger;
+
+    private readonly ConcurrentDictionary<string, SocketSlashCommand> _slashCommandExecutions = new();
 
     public DiscordChatInterface(
         ILogger<DiscordChatInterface> logger,
@@ -35,6 +41,7 @@ public class DiscordChatInterface : IChatInterface
         _discordClient.Log += DiscordClientOnLog;
         _discordClient.Ready += DiscordClientOnReady;
         _discordClient.MessageReceived += DiscordClientOnMessageReceived;
+        _discordClient.SlashCommandExecuted += DiscordClientSlashCommandExecuted;
     }
 
     public string ConnectUrl
@@ -60,6 +67,13 @@ public class DiscordChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
+        if (_slashCommandExecutions.ContainsKey(referenceMessage.MessageId)
+            && _slashCommandExecutions.Remove(referenceMessage.MessageId, out var socketSlashCommand))
+        {
+            socketSlashCommand.FollowupAsync(message);
+            return;
+        }
+
         var channel = _discordClient.GetChannel(referenceMessage);
         if (channel == null)
         {
@@ -108,9 +122,33 @@ public class DiscordChatInterface : IChatInterface
     private async Task DiscordClientOnReady()
     {
         _logger.LogInformation("Connected!");
+        await SetupSlashCommands();
         await _discordClient.SetStatusAsync(UserStatus.Online);
         await _discordClient.SetGameAsync($"FloppyBot v{AboutThisApp.Info.Version}");
         _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
+    }
+
+    private async Task SetupSlashCommands()
+    {
+        _logger.LogTrace("Setting up slash commands");
+        var demoCommand = new SlashCommandBuilder()
+            .WithName($"{SLASH_COMMAND_PREFIX}ping")
+            .WithDescription("A simple ping command")
+            .AddOption(
+                "parameters",
+                ApplicationCommandOptionType.String,
+                "Any parameters to add",
+                isRequired: false);
+
+        try
+        {
+            await _discordClient.BulkOverwriteGlobalApplicationCommandsAsync(
+                new ApplicationCommandProperties[] { demoCommand.Build() });
+        }
+        catch (HttpException ex)
+        {
+            _logger.LogError(ex, "Failed to setup slash command due to an exception");
+        }
     }
 
     private Task DiscordClientOnLog(LogMessage arg)
@@ -206,5 +244,44 @@ public class DiscordChatInterface : IChatInterface
             default:
                 return LogLevel.Trace;
         }
+    }
+
+    private Task DiscordClientSlashCommandExecuted(SocketSlashCommand arg)
+    {
+        if (arg.User.IsBot)
+        {
+            _logger.LogTrace("Received command from a bot, ignoring");
+            return Task.CompletedTask;
+        }
+
+        _logger.LogTrace(
+            "Received command from {Username}@{Channel}: CommandName={CommandName} CommandArgs={CommandArguments}",
+            arg.User.ToString(),
+            arg.Channel.Name,
+            arg.Data.Name,
+            arg.Data.Options);
+
+        var commandName = arg.Data.Name
+            .Substring(SLASH_COMMAND_PREFIX.Length);
+
+        var message = new ChatMessage(
+            NewChatMessageIdentifier(arg.Channel.Id, arg.Id),
+            new ChatUser(
+                new ChannelIdentifier(
+                    IF_NAME,
+                    $"{arg.User.Id}"),
+                arg.User.Username,
+                DeterminePrivilegeLevel(arg.User)),
+            SharedEventTypes.CHAT_MESSAGE,
+            string.Join(' ', Enumerable.Empty<string>()
+                .Append($"-{commandName}") // TODO: configurable command prefix
+                .Concat(arg.Data.Options
+                    .Select(o => o.Value))),
+            null,
+            SupportedFeatures);
+
+        MessageReceived?.Invoke(this, message);
+        _slashCommandExecutions.TryAdd($"{arg.Id}", arg);
+        return arg.DeferAsync();
     }
 }
