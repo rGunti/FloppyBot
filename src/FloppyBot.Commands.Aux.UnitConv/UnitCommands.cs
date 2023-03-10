@@ -89,8 +89,15 @@ public class UnitCommands
     }
 
     [Command("unit")]
+    [CommandParameterHint(0, "sourceValueAndUnit", CommandParameterType.String,
+        true,
+        "The source value and unit to convert from")]
+    [CommandParameterHint(1, "targetUnit", CommandParameterType.String,
+        true,
+        "The unit to convert to")]
     public CommandResult ConvertUnit(
-        [ArgumentIndex(0, stopIfMissing: false)] string? commandOrSourceValueInput,
+        [ArgumentIndex(0, stopIfMissing: false)]
+        string? commandOrSourceValueInput,
         [ArgumentIndex(1, stopIfMissing: false)]
         string? fillerWordOrDestinationUnitInput,
         [ArgumentIndex(2, stopIfMissing: false)]
@@ -153,7 +160,8 @@ public class UnitCommands
     [CommandCategory("Diagnostics")]
     [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public CommandResult ShowUnitConversion(
-        [ArgumentIndex(0, stopIfMissing: false)] string? subCommand,
+        [ArgumentIndex(0, stopIfMissing: false)]
+        string? subCommand,
         [ArgumentIndex(1, stopIfMissing: false)]
         string? subCommandParam1,
         [ArgumentIndex(2, stopIfMissing: false)]
@@ -273,4 +281,3 @@ public class UnitCommands
             .FirstOrDefault(CommandResult.FailedWith(REPLY_ERROR_PARSE_SOURCE));
     }
 }
-

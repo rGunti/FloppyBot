@@ -64,6 +64,31 @@ public class DistributedCommandRegistryAdapter
             metadata.MinPrivilegeLevel,
             metadata.AvailableOnInterfaces,
             metadata.Syntax,
+            metadata.HasNoParameters,
+            metadata.Parameters
+                .Select(p => new CommandParameterAbstract(
+                    p.Order,
+                    p.Name,
+                    ToCommandParameterAbstractType(p.Type),
+                    p.Required,
+                    p.Description,
+                    p.PossibleValues))
+                .ToArray(),
             metadata.GetRawDataAsDictionary());
+    }
+
+    private static CommandParameterAbstractType ToCommandParameterAbstractType(CommandParameterType parameterType)
+    {
+        switch (parameterType)
+        {
+            case CommandParameterType.String:
+                return CommandParameterAbstractType.String;
+            case CommandParameterType.Number:
+                return CommandParameterAbstractType.Number;
+            case CommandParameterType.Enum:
+                return CommandParameterAbstractType.Enum;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(parameterType), parameterType, null);
+        }
     }
 }

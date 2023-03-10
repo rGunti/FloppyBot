@@ -6,6 +6,7 @@ using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Registry;
+using FloppyBot.Commands.Registry.Entities;
 using FloppyBot.Version;
 using Microsoft.Extensions.Logging;
 
@@ -176,16 +177,47 @@ public class DiscordChatInterface : IChatInterface
                     description = description[..96] + "...";
                 }
 
-                return new SlashCommandBuilder()
+                var cmd = new SlashCommandBuilder()
                     .WithName($"{SLASH_COMMAND_PREFIX}{c.Name}")
-                    .WithDescription(description)
-                    .AddOption(
-                        "arguments",
-                        ApplicationCommandOptionType.String,
-                        "Additional arguments for the command (depends on the command used)",
-                        isRequired: false)
-                    .Build();
+                    .WithDescription(description);
+                if (!c.NoParameters && c.Parameters.Length == 0)
+                {
+                    cmd = cmd
+                        .AddOption(
+                            "arguments",
+                            ApplicationCommandOptionType.String,
+                            "Additional arguments for the command (depends on the command used)",
+                            isRequired: false);
+                }
+                else if (!c.NoParameters)
+                {
+                    cmd.AddOptions(
+                        c.Parameters
+                            .OrderBy(p => p.Order)
+                            .Select(p =>
+                            {
+                                var cmdParam = new SlashCommandOptionBuilder()
+                                    .WithName(p.Name.ToLowerInvariant())
+                                    .WithDescription(p.Description ?? "An undocumented parameter")
+                                    .WithType(ConvertParamType(p.Type))
+                                    .WithRequired(p.Required);
+                                if (p.Type == CommandParameterAbstractType.Enum)
+                                {
+                                    foreach (var possibleValue in p.PossibleValues)
+                                    {
+                                        cmdParam = cmdParam
+                                            .AddChoice(possibleValue, possibleValue);
+                                    }
+                                }
+
+                                return cmdParam;
+                            })
+                            .ToArray());
+                }
+
+                return cmd;
             })
+            .Select(command => command.Build())
             .ToArray();
 
         try
@@ -197,6 +229,19 @@ public class DiscordChatInterface : IChatInterface
         {
             _logger.LogError(ex, "Failed to setup slash command due to an exception");
         }
+    }
+
+    private static ApplicationCommandOptionType ConvertParamType(
+        CommandParameterAbstractType commandParameterAbstractType)
+    {
+        return commandParameterAbstractType switch
+        {
+            CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
+            _ => throw new ArgumentOutOfRangeException(nameof(commandParameterAbstractType),
+                commandParameterAbstractType, "This value is not supported!"),
+        };
     }
 
     private Task DiscordClientOnLog(LogMessage arg)

@@ -9,4 +9,6 @@ public static class CommandMetadataTypes
     public const string MIN_PRIVILEGE = "MinPrivilege";
     public const string INTERFACES = "Interfaces";
     public const string COOLDOWN = "Cooldown";
+    public const string PARAMETER_HINTS = "ParameterHints";
+    public const string NO_PARAMETERS = "NoParameters";
 }
