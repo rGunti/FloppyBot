@@ -6,6 +6,7 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Attributes.Metadata;
+using FloppyBot.Commands.Core.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Commands.Aux.Quotes;
@@ -56,9 +57,13 @@ public class QuoteLinkCommands
     [PrimaryCommandName("quoteinfo")]
     [CommandDescription("Returns administrative information about this channels quote database and information about " +
                         "how to link it with one from another channel.")]
+    [CommandNoParametersHint]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? GetMappingInfo(
         [SourceChannel] string sourceChannel,
-        [SupportedFeatures] ChatInterfaceFeatures supportedFeatures)
+        [SupportedFeatures]
+        ChatInterfaceFeatures supportedFeatures)
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(sourceChannel);
         if (mapping == null)
@@ -77,10 +82,15 @@ public class QuoteLinkCommands
     [PrimaryCommandName("quotejoin")]
     [CommandDescription("Starts the join process for the given channel.")]
     [CommandSyntax("<Channel ID>", "Twitch/pinsrltrex")]
+    [CommandParameterHint(1, "channelId", CommandParameterType.String)]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? JoinChannel(
         [SourceChannel] string sourceChannel,
-        [SupportedFeatures] ChatInterfaceFeatures supportedFeatures,
-        [ArgumentIndex(0)] string joinToChannel)
+        [SupportedFeatures]
+        ChatInterfaceFeatures supportedFeatures,
+        [ArgumentIndex(0)]
+        string joinToChannel)
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(joinToChannel);
         if (mapping == null)
@@ -107,10 +117,16 @@ public class QuoteLinkCommands
                         "linking their quote databases together. This is to be executed after " +
                         "\"quotejoin\".")]
     [CommandSyntax("<Channel ID> <Join Code>")]
+    [CommandParameterHint(1, "channelId", CommandParameterType.String)]
+    [CommandParameterHint(2, "joinCode", CommandParameterType.String)]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? ConfirmJoin(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] string channelId,
-        [ArgumentIndex(1)] string joinCode)
+        [ArgumentIndex(0)]
+        string channelId,
+        [ArgumentIndex(1)]
+        string joinCode)
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(sourceChannel);
         if (mapping == null)

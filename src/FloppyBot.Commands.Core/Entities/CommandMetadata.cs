@@ -37,6 +37,8 @@ public class CommandMetadata
     public bool HasNoParameters => RawData.ContainsKey(CommandMetadataTypes.NO_PARAMETERS);
     public CommandParameterMetadata[] Parameters { get; private set; } = Array.Empty<CommandParameterMetadata>();
 
+    public bool HiddenCommand => RawData.ContainsKey(CommandMetadataTypes.HIDDEN);
+
     private void Init()
     {
         if (RawData.ContainsKey(CommandMetadataTypes.MIN_PRIVILEGE))
@@ -56,7 +58,8 @@ public class CommandMetadata
 
         if (RawData.ContainsKey(CommandMetadataTypes.PARAMETER_HINTS))
         {
-            Parameters = RawData[CommandMetadataTypes.PARAMETER_HINTS].Split("\n\n")
+            Parameters = RawData[CommandMetadataTypes.PARAMETER_HINTS]
+                .Split("\n\n")
                 .Select(CommandParameterMetadata.ParseFromString)
                 .OrderBy(p => p.Order)
                 .ToArray();
@@ -87,8 +90,7 @@ public record CommandParameterMetadata(
     string? Description = null,
     string[]? PossibleValues = null)
 {
-    public static CommandParameterMetadata ParseFromString(
-        string inputString)
+    public static CommandParameterMetadata ParseFromString(string inputString)
     {
         var split = inputString.Split('|');
         var possibleValues = split[5].Split(';');

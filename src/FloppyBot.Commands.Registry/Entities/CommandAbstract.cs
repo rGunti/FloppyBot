@@ -13,6 +13,7 @@ public record CommandAbstract(
     string[] AvailableOnInterfaces,
     string[]? Syntax,
     bool NoParameters,
+    bool Hidden,
     CommandParameterAbstract[] Parameters,
     Dictionary<string, string> AllMetadata);
 

@@ -16,7 +16,7 @@ public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
 
-    private const string SLASH_COMMAND_PREFIX = "floppy-";
+    private const string SLASH_COMMAND_PREFIX = "";
 
     private static readonly IEmote ReadEmote = new Emoji("✅");
 
@@ -74,14 +74,13 @@ public class DiscordChatInterface : IChatInterface
         };
     }
 
-    public string ConnectUrl
-        =>
-            $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
-
     public string Name => IF_NAME;
 
-    public ChatInterfaceFeatures SupportedFeatures =>
-        ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+    public ChatInterfaceFeatures SupportedFeatures
+        => ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+
+    public string ConnectUrl
+        => $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public void Connect()
     {
@@ -130,7 +129,6 @@ public class DiscordChatInterface : IChatInterface
     public void Dispose()
     {
         _logger.LogTrace("Disposing interface ...");
-
         _discordClient.MessageReceived -= DiscordClientOnMessageReceived;
     }
 
@@ -165,6 +163,7 @@ public class DiscordChatInterface : IChatInterface
         var slashCommands = _commandRegistry
             .GetAllCommands()
             .Where(c => c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME))
+            .Where(c => !c.Hidden)
             .Select(c =>
             {
                 _logger.LogTrace(

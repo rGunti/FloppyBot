@@ -5,6 +5,7 @@ using FloppyBot.Chat;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Metadata;
+using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Executor.Agent.Utils;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging;
@@ -34,10 +35,12 @@ public class MathCommand
     [CommandSyntax(
         "<Expression>",
         "2+3")]
+    [CommandParameterHint(1, "expression", CommandParameterType.String)]
     // ReSharper disable once UnusedMember.Global
     public string? CalculateMathExpression(
         CommandInstruction instruction,
-        [AllArguments] string expression)
+        [AllArguments]
+        string expression)
     {
         try
         {
@@ -46,12 +49,13 @@ public class MathCommand
                 return null;
 
             return instruction.DetermineMessageTemplate(
-                ChatInterfaceFeatures.MarkdownText,
-                REPLY_MD,
-                REPLY_DEFAULT).Format(new
-            {
-                Answer = result.ToString()
-            });
+                    ChatInterfaceFeatures.MarkdownText,
+                    REPLY_MD,
+                    REPLY_DEFAULT)
+                .Format(new
+                {
+                    Answer = result.ToString()
+                });
         }
         catch (UnexpectedTokenException ex)
         {

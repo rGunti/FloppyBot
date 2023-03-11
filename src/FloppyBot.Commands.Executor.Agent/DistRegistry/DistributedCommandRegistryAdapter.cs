@@ -65,6 +65,7 @@ public class DistributedCommandRegistryAdapter
             metadata.AvailableOnInterfaces,
             metadata.Syntax,
             metadata.HasNoParameters,
+            metadata.HiddenCommand,
             metadata.Parameters
                 .Select(p => new CommandParameterAbstract(
                     p.Order,
