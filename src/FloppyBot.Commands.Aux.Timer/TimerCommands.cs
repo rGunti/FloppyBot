@@ -7,6 +7,7 @@ using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
+using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Entities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -41,6 +42,9 @@ public class TimerCommands
     }
 
     [Command("timer")]
+    [CommandDescription("Creates a timer that sends a message when the given time is elapsed")]
+    [CommandParameterHint(1, "time", CommandParameterType.String)]
+    [CommandParameterHint(2, "message", CommandParameterType.String)]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     public CommandResult CreateTimer(
         [ArgumentIndex(0)] string timeExpression,
@@ -68,6 +72,3 @@ public class TimerCommands
         }));
     }
 }
-
-
-

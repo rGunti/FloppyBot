@@ -67,6 +67,10 @@ public class DeepLCommands
 
     [Command("translate")]
     [CommandCooldown(PrivilegeLevel.Viewer, 25000)]
+    [CommandDescription("Translates a given text from one language to another")]
+    [CommandParameterHint(1, "text", CommandParameterType.String)]
+    [CommandParameterHint(2, "fromLanguage", CommandParameterType.String)]
+    [CommandParameterHint(3, "toLanguage", CommandParameterType.String)]
     // ReSharper disable once UnusedMember.Global
     public CommandResult Translate(
         [AllArguments] string? inputString,
@@ -122,4 +126,3 @@ public class DeepLCommands
         }
     }
 }
-

@@ -30,6 +30,7 @@ public class CommandList
     [Command("commands")]
     [CommandDescription("Returns a list of all available commands")]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
+    [CommandNoParametersHint]
     // ReSharper disable once UnusedMember.Global
     public string? ListCommands(CommandInstruction instruction)
     {

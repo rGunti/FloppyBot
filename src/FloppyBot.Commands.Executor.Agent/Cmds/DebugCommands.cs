@@ -11,6 +11,8 @@ namespace FloppyBot.Commands.Executor.Agent.Cmds;
 public class DebugCommands
 {
     [Command("debugpriv")]
+    [CommandDescription("Returns the privilege level of the user running the command")]
+    [CommandHidden]
     // ReSharper disable once UnusedMember.Global
     public static string GetPrivilegeLevel([Author] ChatUser author)
     {

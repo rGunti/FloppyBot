@@ -28,6 +28,7 @@ public class UrbanDictionaryCommands
     [Command("urbandictionary", "define")]
     [PrimaryCommandName("define")]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
+    [CommandParameterHint(0, "query", CommandParameterType.String)]
     public async Task<CommandResult> Define([AllArguments] string query)
     {
         WordDefine? definition = await _urbanClient.GetWordAsync(query);
@@ -50,4 +51,3 @@ public class UrbanDictionaryCommands
             .AddSingleton<UrbanClient>();
     }
 }
-

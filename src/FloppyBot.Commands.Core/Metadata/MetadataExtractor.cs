@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Reflection;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Attributes.Metadata;
@@ -23,12 +24,16 @@ public class MetadataExtractor : IMetadataExtractor
         var dict = new Dictionary<string, string>();
         foreach (var (type, values) in classAttributes)
         {
-            dict[type] = values.First().Value;
+            dict[type] = values
+                .Select(v => v.Value)
+                .Join("\n\n");
         }
 
         foreach (var (type, values) in methodAttributes)
         {
-            dict[type] = values.First().Value;
+            dict[type] = values
+                .Select(v => v.Value)
+                .Join("\n\n");
         }
 
         ExtractAdditionalMetadata(commandInfo, dict);

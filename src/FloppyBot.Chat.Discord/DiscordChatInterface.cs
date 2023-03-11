@@ -1,8 +1,12 @@
-﻿using Discord;
+﻿using System.Collections.Concurrent;
+using Discord;
+using Discord.Net;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord.Config;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Commands.Registry;
+using FloppyBot.Commands.Registry.Entities;
 using FloppyBot.Version;
 using Microsoft.Extensions.Logging;
 
@@ -12,39 +16,71 @@ public class DiscordChatInterface : IChatInterface
 {
     public const string IF_NAME = "Discord";
 
+    private const string SLASH_COMMAND_PREFIX = "";
+
     private static readonly IEmote ReadEmote = new Emoji("✅");
 
     private readonly ILogger<DiscordSocketClient> _clientLogger;
+
+    private readonly IDistributedCommandRegistry _commandRegistry;
     private readonly DiscordConfiguration _configuration;
     private readonly DiscordSocketClient _discordClient;
 
     private readonly ILogger<DiscordChatInterface> _logger;
+
+    private readonly ConcurrentDictionary<string, SocketSlashCommand> _slashCommandExecutions = new();
 
     public DiscordChatInterface(
         ILogger<DiscordChatInterface> logger,
         // ReSharper disable once ContextualLoggerProblem
         ILogger<DiscordSocketClient> clientLogger,
         DiscordConfiguration configuration,
-        DiscordSocketClient discordClient)
+        DiscordSocketClient discordClient,
+        IDistributedCommandRegistry commandRegistry)
     {
         _logger = logger;
         _clientLogger = clientLogger;
         _configuration = configuration;
         _discordClient = discordClient;
+        _commandRegistry = commandRegistry;
 
         _discordClient.Log += DiscordClientOnLog;
         _discordClient.Ready += DiscordClientOnReady;
         _discordClient.MessageReceived += DiscordClientOnMessageReceived;
+        _discordClient.SlashCommandExecuted += DiscordClientSlashCommandExecuted;
+        _discordClient.ApplicationCommandCreated += (c) =>
+        {
+            _logger.LogDebug(
+                "Registered new command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
+        _discordClient.ApplicationCommandUpdated += (c) =>
+        {
+            _logger.LogDebug(
+                "Updated existing command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
+        _discordClient.ApplicationCommandDeleted += (c) =>
+        {
+            _logger.LogDebug(
+                "Deleted existing command {CommandName} [{CommandId}]",
+                c.Name,
+                c.Id);
+            return Task.CompletedTask;
+        };
     }
-
-    public string ConnectUrl
-        =>
-            $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public string Name => IF_NAME;
 
-    public ChatInterfaceFeatures SupportedFeatures =>
-        ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+    public ChatInterfaceFeatures SupportedFeatures
+        => ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+
+    public string ConnectUrl
+        => $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public void Connect()
     {
@@ -60,6 +96,13 @@ public class DiscordChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
+        if (_slashCommandExecutions.ContainsKey(referenceMessage.MessageId)
+            && _slashCommandExecutions.Remove(referenceMessage.MessageId, out var socketSlashCommand))
+        {
+            socketSlashCommand.FollowupAsync(message);
+            return;
+        }
+
         var channel = _discordClient.GetChannel(referenceMessage);
         if (channel == null)
         {
@@ -86,7 +129,6 @@ public class DiscordChatInterface : IChatInterface
     public void Dispose()
     {
         _logger.LogTrace("Disposing interface ...");
-
         _discordClient.MessageReceived -= DiscordClientOnMessageReceived;
     }
 
@@ -108,9 +150,104 @@ public class DiscordChatInterface : IChatInterface
     private async Task DiscordClientOnReady()
     {
         _logger.LogInformation("Connected!");
+        await SetupSlashCommands();
         await _discordClient.SetStatusAsync(UserStatus.Online);
         await _discordClient.SetGameAsync($"FloppyBot v{AboutThisApp.Info.Version}");
         _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
+    }
+
+    private async Task SetupSlashCommands()
+    {
+        _logger.LogDebug("Setting up slash commands");
+
+        var slashCommands = _commandRegistry
+            .GetAllCommands()
+            .Where(c => c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME))
+            .Where(c => !c.Hidden)
+            .Select(c =>
+            {
+                _logger.LogTrace(
+                    "Building slash command for {CommandName}",
+                    c.Name);
+                var description = (c.Description ??
+                                   "No description was provided for this command, but I'm sure it's lovely");
+                if (description.Length >= 100)
+                {
+                    description = description[..96] + "...";
+                }
+
+                var cmd = new SlashCommandBuilder()
+                    .WithName($"{SLASH_COMMAND_PREFIX}{c.Name}")
+                    .WithDescription(description);
+
+                if (c.MinPrivilegeLevel != null)
+                {
+                    cmd = cmd
+                        .WithDefaultMemberPermissions(ConvertToGuildPermission(c.MinPrivilegeLevel));
+                }
+
+                if (!c.NoParameters && c.Parameters.Length == 0)
+                {
+                    cmd = cmd
+                        .AddOption(
+                            "arguments",
+                            ApplicationCommandOptionType.String,
+                            "Additional arguments for the command (depends on the command used)",
+                            isRequired: false);
+                }
+                else if (!c.NoParameters)
+                {
+                    cmd.AddOptions(
+                        c.Parameters
+                            .OrderBy(p => p.Order)
+                            .Select(p =>
+                            {
+                                var cmdParam = new SlashCommandOptionBuilder()
+                                    .WithName(p.Name.ToLowerInvariant())
+                                    .WithDescription(p.Description ?? "An undocumented parameter")
+                                    .WithType(ConvertParamType(p.Type))
+                                    .WithRequired(p.Required);
+                                if (p.Type == CommandParameterAbstractType.Enum && p.PossibleValues != null)
+                                {
+                                    foreach (var possibleValue in p.PossibleValues)
+                                    {
+                                        cmdParam = cmdParam
+                                            .AddChoice(possibleValue, possibleValue);
+                                    }
+                                }
+
+                                return cmdParam;
+                            })
+                            .ToArray());
+                }
+
+                return cmd;
+            })
+            .Select(command => command.Build())
+            .ToArray();
+
+        try
+        {
+            await _discordClient.BulkOverwriteGlobalApplicationCommandsAsync(
+                slashCommands);
+        }
+        catch (HttpException ex)
+        {
+            _logger.LogError(ex, "Failed to setup slash command due to an exception");
+        }
+    }
+
+    private static ApplicationCommandOptionType ConvertParamType(
+        CommandParameterAbstractType commandParameterAbstractType)
+    {
+        return commandParameterAbstractType switch
+        {
+            CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
+            _ => throw new ArgumentOutOfRangeException(nameof(commandParameterAbstractType),
+                commandParameterAbstractType, "This value is not supported!"),
+        };
     }
 
     private Task DiscordClientOnLog(LogMessage arg)
@@ -160,7 +297,7 @@ public class DiscordChatInterface : IChatInterface
         return Task.CompletedTask;
     }
 
-    private PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
+    private static PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
     {
         if (user.IsBot || user.IsWebhook)
             return PrivilegeLevel.Unknown;
@@ -175,6 +312,22 @@ public class DiscordChatInterface : IChatInterface
         }
 
         return PrivilegeLevel.Unknown;
+    }
+
+    private static GuildPermission? ConvertToGuildPermission(PrivilegeLevel? level)
+    {
+        if (level == null)
+        {
+            return null;
+        }
+
+        return level switch
+        {
+            PrivilegeLevel.Administrator => GuildPermission.Administrator,
+            PrivilegeLevel.Moderator => GuildPermission.ManageChannels,
+            PrivilegeLevel.Viewer => GuildPermission.SendMessages,
+            _ => null,
+        };
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(
@@ -206,5 +359,43 @@ public class DiscordChatInterface : IChatInterface
             default:
                 return LogLevel.Trace;
         }
+    }
+
+    private Task DiscordClientSlashCommandExecuted(SocketSlashCommand arg)
+    {
+        if (arg.User.IsBot)
+        {
+            _logger.LogTrace("Received command from a bot, ignoring");
+            return Task.CompletedTask;
+        }
+
+        _logger.LogTrace(
+            "Received command from {Username}@{Channel}: CommandName={CommandName} CommandArgs={CommandArguments}",
+            arg.User.ToString(),
+            arg.Channel.Name,
+            arg.Data.Name,
+            arg.Data.Options);
+
+        string? commandName = arg.Data.Name[SLASH_COMMAND_PREFIX.Length..];
+
+        var message = new ChatMessage(
+            NewChatMessageIdentifier(arg.Channel.Id, arg.Id),
+            new ChatUser(
+                new ChannelIdentifier(
+                    IF_NAME,
+                    $"{arg.User.Id}"),
+                arg.User.Username,
+                DeterminePrivilegeLevel(arg.User)),
+            SharedEventTypes.CHAT_MESSAGE,
+            string.Join(' ', Enumerable.Empty<string>()
+                .Append($"{_configuration.CommandPrefix}{commandName}")
+                .Concat(arg.Data.Options
+                    .Select(o => o.Value))),
+            null,
+            SupportedFeatures);
+
+        MessageReceived?.Invoke(this, message);
+        _slashCommandExecutions.TryAdd($"{arg.Id}", arg);
+        return arg.DeferAsync();
     }
 }

@@ -22,12 +22,14 @@ public class BuiltInCommands
     [PrimaryCommandName("ping")]
     [CommandDescription("Returns a test message. Useful to check if FloppyBot responds to commands.")]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
+    [CommandNoParametersHint]
     public static string Ping() => REPLY_PING;
 
     [Command("about")]
     [PrimaryCommandName("about")]
     [CommandDescription("Returns FloppyBots current version")]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
+    [CommandNoParametersHint]
     public static string About(CommandInstruction instruction)
     {
         var template = instruction.SourceSupports(ChatInterfaceFeatures.MarkdownText)
