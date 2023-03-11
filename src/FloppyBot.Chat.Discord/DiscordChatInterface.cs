@@ -376,8 +376,7 @@ public class DiscordChatInterface : IChatInterface
             arg.Data.Name,
             arg.Data.Options);
 
-        var commandName = arg.Data.Name
-            .Substring(SLASH_COMMAND_PREFIX.Length);
+        string? commandName = arg.Data.Name[SLASH_COMMAND_PREFIX.Length..];
 
         var message = new ChatMessage(
             NewChatMessageIdentifier(arg.Channel.Id, arg.Id),
@@ -389,7 +388,7 @@ public class DiscordChatInterface : IChatInterface
                 DeterminePrivilegeLevel(arg.User)),
             SharedEventTypes.CHAT_MESSAGE,
             string.Join(' ', Enumerable.Empty<string>()
-                .Append($"-{commandName}") // TODO: configurable command prefix
+                .Append($"{_configuration.CommandPrefix}{commandName}")
                 .Concat(arg.Data.Options
                     .Select(o => o.Value))),
             null,
