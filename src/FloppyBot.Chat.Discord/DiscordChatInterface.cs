@@ -179,6 +179,13 @@ public class DiscordChatInterface : IChatInterface
                 var cmd = new SlashCommandBuilder()
                     .WithName($"{SLASH_COMMAND_PREFIX}{c.Name}")
                     .WithDescription(description);
+
+                if (c.MinPrivilegeLevel != null)
+                {
+                    cmd = cmd
+                        .WithDefaultMemberPermissions(ConvertToGuildPermission(c.MinPrivilegeLevel));
+                }
+
                 if (!c.NoParameters && c.Parameters.Length == 0)
                 {
                     cmd = cmd
@@ -290,7 +297,7 @@ public class DiscordChatInterface : IChatInterface
         return Task.CompletedTask;
     }
 
-    private PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
+    private static PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
     {
         if (user.IsBot || user.IsWebhook)
             return PrivilegeLevel.Unknown;
@@ -305,6 +312,22 @@ public class DiscordChatInterface : IChatInterface
         }
 
         return PrivilegeLevel.Unknown;
+    }
+
+    private static GuildPermission? ConvertToGuildPermission(PrivilegeLevel? level)
+    {
+        if (level == null)
+        {
+            return null;
+        }
+
+        return level switch
+        {
+            PrivilegeLevel.Administrator => GuildPermission.Administrator,
+            PrivilegeLevel.Moderator => GuildPermission.ManageChannels,
+            PrivilegeLevel.Viewer => GuildPermission.SendMessages,
+            _ => null,
+        };
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(
