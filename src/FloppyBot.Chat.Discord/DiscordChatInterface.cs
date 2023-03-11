@@ -200,7 +200,7 @@ public class DiscordChatInterface : IChatInterface
                                     .WithDescription(p.Description ?? "An undocumented parameter")
                                     .WithType(ConvertParamType(p.Type))
                                     .WithRequired(p.Required);
-                                if (p.Type == CommandParameterAbstractType.Enum)
+                                if (p.Type == CommandParameterAbstractType.Enum && p.PossibleValues != null)
                                 {
                                     foreach (var possibleValue in p.PossibleValues)
                                     {
