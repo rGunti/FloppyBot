@@ -15,7 +15,9 @@
     - [Host your own](operations/host-your-own.md)
     - [Configuration](operations/configuration.md)
 
+<!--
 - Development
     - Architecture
 
 - [Changelog](changelog.md)
+-->
