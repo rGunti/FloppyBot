@@ -107,6 +107,7 @@ public class TimeCommands
 
     [Command("time")]
     [CommandDescription("What is the current time")]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
     public CommandResult ShowCurrentTime(
         [Author] ChatUser author,
         [AllArguments("_")]
@@ -124,6 +125,7 @@ public class TimeCommands
     [Command("dectime", "dt")]
     [PrimaryCommandName("dectime")]
     [CommandDescription("What is the current decimal time")]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
     public CommandResult ShowCurrentDecimalTime(
         [Author] ChatUser author,
         [AllArguments("_")]
@@ -144,6 +146,7 @@ public class TimeCommands
     [Command("timeset")]
     [CommandDescription("Set your default timezone")]
     [PrivilegeGuard(PrivilegeLevel.Viewer)]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String)]
     public CommandResult SetUserTimeZone(
         [Author] ChatUser author,
         [AllArguments("_")]
@@ -175,4 +178,3 @@ public class TimeCommands
         }));
     }
 }
-

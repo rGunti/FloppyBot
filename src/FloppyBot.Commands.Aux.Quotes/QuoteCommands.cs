@@ -10,6 +10,7 @@ using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
 using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Attributes.Metadata;
+using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -53,10 +54,13 @@ public class QuoteCommands
         "[<Quote No.>]",
         "",
         "123")]
+    [CommandParameterHint(1, "input", CommandParameterType.String, false)]
     public string? Quote(
         [SourceChannel] string sourceChannel,
-        [SourceContext] string sourceContext,
-        [Author] ChatUser author,
+        [SourceContext]
+        string sourceContext,
+        [Author]
+        ChatUser author,
         [ArgumentIndex(0, stopIfMissing: false)]
         string? op,
         [ArgumentIndex(1, stopIfMissing: false)]
@@ -189,11 +193,15 @@ public class QuoteCommands
     [PrimaryCommandName("quoteadd")]
     [CommandDescription("Adds a new quote")]
     [CommandSyntax("<Text>")]
+    [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
     public string AddQuote(
         [SourceChannel] ChannelIdentifier sourceChannel,
-        [SourceContext] string? sourceContext,
-        [Author] ChatUser author,
-        [AllArguments] string quoteText)
+        [SourceContext]
+        string? sourceContext,
+        [Author]
+        ChatUser author,
+        [AllArguments]
+        string quoteText)
     {
         var quote = _quoteService.AddQuote(
             sourceChannel,
@@ -211,10 +219,14 @@ public class QuoteCommands
     [CommandDescription("Edits the text of an existing quote")]
     [CommandSyntax("<Quote No.> <New Text>")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    [CommandParameterHint(2, "newText", CommandParameterType.String)]
     public string EditQuote(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteText)
+        [ArgumentIndex(0)]
+        int quoteId,
+        [ArgumentRange(1)]
+        string newQuoteText)
     {
         var editedQuote = _quoteService.EditQuote(
             sourceChannel,
@@ -239,10 +251,14 @@ public class QuoteCommands
     [CommandDescription("Edits the context of an existing quote")]
     [CommandSyntax("<Quote No.> <New Context>")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    [CommandParameterHint(2, "newContext", CommandParameterType.String)]
     public string EditQuoteContext(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteContext)
+        [ArgumentIndex(0)]
+        int quoteId,
+        [ArgumentRange(1)]
+        string newQuoteContext)
     {
         var editedQuote = _quoteService.EditQuoteContext(
             sourceChannel,
@@ -267,9 +283,11 @@ public class QuoteCommands
     [CommandDescription("Deletes an existing quote")]
     [CommandSyntax("<Quote No.>", "123")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
     public string DeleteQuote(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId)
+        [ArgumentIndex(0)]
+        int quoteId)
     {
         return _quoteService.DeleteQuote(sourceChannel, quoteId)
             ? REPLY_DELETED.Format(new

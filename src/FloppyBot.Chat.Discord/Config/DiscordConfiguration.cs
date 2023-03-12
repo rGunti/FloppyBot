@@ -4,7 +4,8 @@ public record DiscordConfiguration(
     string ClientId,
     string ClientSecret,
     string Token,
-    long Privileges)
+    long Privileges,
+    string CommandPrefix)
 {
     [Obsolete("This constructor is only present for configuration purposes and should not be used")]
     // ReSharper disable once UnusedMember.Global
@@ -13,7 +14,8 @@ public record DiscordConfiguration(
             string.Empty,
             string.Empty,
             string.Empty,
-            339008)
+            339008,
+            string.Empty)
     {
     }
 }
