@@ -12,7 +12,8 @@
     - [Join Quote Databases](guides/quote-join.md)
 
 - Operations
-    - Host your own
+    - [Host your own](operations/host-your-own.md)
+    - [Configuration](operations/configuration.md)
 
 - Development
     - Architecture
