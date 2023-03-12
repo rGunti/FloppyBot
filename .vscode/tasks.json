@@ -5,11 +5,7 @@
             "label": "Start docsify",
             "type": "shell",
             "command": "docsify serve docs",
-            "problemMatcher": [],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
+            "problemMatcher": []
         }
     ]
 }
