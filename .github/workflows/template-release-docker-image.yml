@@ -14,6 +14,14 @@ on:
       image_tag:
         required: true
         type: string
+      push_release:
+        required: false
+        type: boolean
+        default: false
+      push_latest:
+        required: false
+        type: boolean
+        default: false
     secrets:
       docker_hub_username:
         required: true
@@ -41,7 +49,7 @@ jobs:
       # Build
       - name: Set Version
         run: echo "${{ inputs.image_tag }}" > ./version
-      - name: Build and push
+      - name: Build and push (${{ inputs.image_tag }})
         uses: docker/build-push-action@v3
         with:
           context: ${{ inputs.dockerfile_context }}
@@ -49,5 +57,38 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ${{ inputs.image_name }}:${{ inputs.image_tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build and push (latest)
+        if: ${{ inputs.push_latest }}
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.dockerfile_context }}
+          file: ${{ inputs.dockerfile_path }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ inputs.image_name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build and push (latest)
+        if: ${{ inputs.push_latest }}
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.dockerfile_context }}
+          file: ${{ inputs.dockerfile_path }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ inputs.image_name }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build and push (release)
+        if: ${{ inputs.push_release }}
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ inputs.dockerfile_context }}
+          file: ${{ inputs.dockerfile_path }}
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ inputs.image_name }}:release
           cache-from: type=gha
           cache-to: type=gha,mode=max
