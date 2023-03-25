@@ -70,17 +70,6 @@ jobs:
           tags: ${{ inputs.image_name }}:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - name: Build and push (latest)
-        if: ${{ inputs.push_latest }}
-        uses: docker/build-push-action@v3
-        with:
-          context: ${{ inputs.dockerfile_context }}
-          file: ${{ inputs.dockerfile_path }}
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ inputs.image_name }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
       - name: Build and push (release)
         if: ${{ inputs.push_release }}
         uses: docker/build-push-action@v3
