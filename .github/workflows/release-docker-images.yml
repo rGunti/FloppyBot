@@ -13,6 +13,7 @@ jobs:
       dockerfile_path: src/FloppyBot.Chat.Agent/Dockerfile
       image_name: floppybot/chat-agent
       image_tag: ${{ github.ref_name }}
+      push_latest: true
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -24,6 +25,7 @@ jobs:
       dockerfile_path: src/FloppyBot.Commands.Executor.Agent/Dockerfile
       image_name: floppybot/command-executor
       image_tag: ${{ github.ref_name }}
+      push_latest: true
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -35,6 +37,7 @@ jobs:
       dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
       image_name: floppybot/command-parser
       image_tag: ${{ github.ref_name }}
+      push_latest: true
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -46,6 +49,7 @@ jobs:
       dockerfile_path: src/FloppyBot.Aux.MessageCounter.Agent/Dockerfile
       image_name: floppybot/message-counter
       image_tag: ${{ github.ref_name }}
+      push_latest: true
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -57,6 +61,7 @@ jobs:
       dockerfile_path: src/FloppyBot.WebApi.Agent/Dockerfile
       image_name: floppybot/web-api
       image_tag: ${{ github.ref_name }}
+      push_latest: true
     secrets:
       docker_hub_username: ${{ secrets.DOCKER_HUB_USERNAME }}
       docker_hub_token: ${{ secrets.DOCKER_HUB_TOKEN }}
