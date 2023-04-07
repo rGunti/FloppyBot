@@ -13,6 +13,7 @@ using FloppyBot.Commands.Core.Attributes.Metadata;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SmartFormat.Core.Formatting;
 using TwitchLib.Api;
 using TwitchLib.Api.Interfaces;
 
@@ -28,15 +29,22 @@ public class ShoutoutCommand
     public const string REPLY_SAVE = "✅ Shoutout Message has been set";
     public const string REPLY_CLEAR = "✅ Shoutout Message has been cleared";
 
+    public const string REPLY_ERR_FORMATTING =
+        "🛑 Failed to format your shoutout message. Make sure all placeholders are spelt correctly.";
+
+    private readonly ILogger<ShoutoutCommand> _logger;
+
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
     private readonly ITwitchApiService _twitchApiService;
 
     public ShoutoutCommand(
         ITwitchApiService twitchApiService,
-        IShoutoutMessageSettingService shoutoutMessageSettingService)
+        IShoutoutMessageSettingService shoutoutMessageSettingService,
+        ILogger<ShoutoutCommand> logger)
     {
         _twitchApiService = twitchApiService;
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
+        _logger = logger;
     }
 
     [Command("shoutout", "so")]
@@ -62,7 +70,18 @@ public class ShoutoutCommand
             return null;
         }
 
-        return setting.Message.Format(query);
+        try
+        {
+            return setting.Message.Format(query);
+        }
+        catch (FormattingException ex)
+        {
+            _logger.LogWarning(
+                ex,
+                "Failed to format message. Message template was {MessageTemplate}",
+                setting.Message);
+            return REPLY_ERR_FORMATTING;
+        }
     }
 
     [Command("setshoutout")]
@@ -134,4 +153,3 @@ public class ShoutoutCommand
             .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
     }
 }
-
