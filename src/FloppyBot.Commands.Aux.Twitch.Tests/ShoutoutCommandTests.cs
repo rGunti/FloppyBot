@@ -1,6 +1,7 @@
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace FloppyBot.Commands.Aux.Twitch.Tests;
@@ -18,7 +19,8 @@ public class ShoutoutCommandTests
         _shoutoutMessageSettingServiceMock = new Mock<IShoutoutMessageSettingService>();
         _shoutoutCommand = new ShoutoutCommand(
             _twitchApiServiceMock.Object,
-            _shoutoutMessageSettingServiceMock.Object);
+            _shoutoutMessageSettingServiceMock.Object,
+            Mock.Of<ILogger<ShoutoutCommand>>());
 
         _twitchApiServiceMock
             .Setup(s => s.LookupUser(It.Is<string>(c => c == "somestreamer")))
