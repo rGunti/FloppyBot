@@ -167,6 +167,12 @@ public class CommandSpawner : ICommandSpawner
             returnValueToProcess = (object)((dynamic)task).Result;
         }
 
+        if (returnValueToProcess == null)
+        {
+            _logger.LogDebug("Return value as null, so message is being ignored");
+            return CommandResult.Empty;
+        }
+
         switch (returnValueToProcess)
         {
             case string returnMessage:
@@ -247,4 +253,3 @@ public class CommandSpawner : ICommandSpawner
         throw new InvalidCastException($"Cannot yet convert from {sourceValue.GetType()} to {targetType}");
     }
 }
-
