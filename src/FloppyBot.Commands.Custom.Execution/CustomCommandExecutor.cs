@@ -54,7 +54,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         author.AssertLevel(description.Limitations.MinLevel);
 
         if (description.Limitations.LimitedToUsers.Any() &&
-            !description.Limitations.LimitedToUsers.Contains(author.Identifier))
+            !description.Limitations.LimitedToUsers.Contains(author.Identifier.ToString().ToLowerInvariant()))
         {
             _logger.LogDebug(
                 "User {UserId} is not whitelisted for command {CommandId} ({CommandName}), command execution skipped",
