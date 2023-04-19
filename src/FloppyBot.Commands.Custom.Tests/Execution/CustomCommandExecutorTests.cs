@@ -227,7 +227,7 @@ public class CustomCommandExecutorTests
                 Limitations = CommandDescription.Limitations with
                 {
                     LimitedToUsers = ImmutableHashSet.Create<string>()
-                        .Add("Mock/CoolUser")
+                        .Add("CoolUser".ToLowerInvariant())
                 }
             })
             .ToArray();
