@@ -53,8 +53,23 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         ChatUser author = instruction.Context!.SourceMessage.Author;
         author.AssertLevel(description.Limitations.MinLevel);
 
+        if (description.Limitations.LimitedToUsers.Any() &&
+            !description.Limitations.LimitedToUsers.Contains(author.Identifier))
+        {
+            _logger.LogDebug(
+                "User {UserId} is not whitelisted for command {CommandId} ({CommandName}), command execution skipped",
+                author.Identifier,
+                description.Id,
+                description.Name);
+            yield break;
+        }
+
         if (IsOnCooldown(instruction, description))
         {
+            _logger.LogDebug(
+                "Command {CommandId} ({CommandName}) is currently on cooldown, command execution skipped",
+                description.Id,
+                description.Name);
             yield break;
         }
 

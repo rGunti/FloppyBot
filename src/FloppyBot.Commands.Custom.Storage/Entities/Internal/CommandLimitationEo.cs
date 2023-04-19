@@ -7,4 +7,5 @@ public record CommandLimitationEo
 {
     public PrivilegeLevel MinLevel { get; set; }
     public CooldownDescriptionEo[] Cooldown { get; set; }
+    public string[]? LimitedToUsers { get; set; }
 }

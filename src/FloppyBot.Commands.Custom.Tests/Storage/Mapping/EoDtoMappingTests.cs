@@ -70,6 +70,10 @@ public class EoDtoMappingTests
                 Limitations = new CommandLimitation
                 {
                     MinLevel = PrivilegeLevel.Moderator,
+                    LimitedToUsers = new[]
+                    {
+                        "Twitch/User"
+                    }.ToImmutableHashSet(),
                     Cooldown = new[]
                     {
                         new CooldownDescription(PrivilegeLevel.Moderator, 2500),

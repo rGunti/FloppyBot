@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Rng;
@@ -192,6 +193,55 @@ public class CustomCommandExecutorTests
             })
             .ToArray();
         Assert.AreEqual("I am at level 2 now!", reply.First());
+    }
+
+    [DataTestMethod]
+    [DataRow("Mock/CoolUser", true)]
+    [DataRow("Mock/UncoolUser", false)]
+    [DataRow("Mock/SomeOtherUser", false)]
+    public void HandlesUserLimitationCorrectly(string inputUser, bool expectResult)
+    {
+        var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
+
+        var cooldownServiceMock = new Mock<ICooldownService>();
+        var executor = new CustomCommandExecutor(
+            NullLogger<CustomCommandExecutor>.Instance,
+            timeProvider,
+            new RandomNumberGenerator(),
+            cooldownServiceMock.Object,
+            Mock.Of<ICounterStorageService>(),
+            Mock.Of<ISoundCommandInvocationSender>());
+
+        string?[] reply = executor.Execute(CommandInstruction with
+            {
+                Context = new CommandContext(
+                    CommandInstruction.Context!.SourceMessage with
+                    {
+                        Author = CommandInstruction.Context!.SourceMessage.Author with
+                        {
+                            Identifier = inputUser
+                        }
+                    })
+            }, CommandDescription with
+            {
+                Limitations = CommandDescription.Limitations with
+                {
+                    LimitedToUsers = ImmutableHashSet.Create<string>()
+                        .Add("Mock/CoolUser")
+                }
+            })
+            .ToArray();
+        if (expectResult)
+        {
+            CollectionAssert.AreEqual(new[]
+            {
+                "Hello World"
+            }, reply);
+        }
+        else
+        {
+            Assert.AreEqual(0, reply.Length);
+        }
     }
 
     [TestMethod]
