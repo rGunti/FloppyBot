@@ -131,7 +131,7 @@ public class V1CompatibilityProfile : Profile
                         .Select(r => r.Content)
                         .ToImmutableList(),
                 c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
-                Array.Empty<string>().ToImmutableList(),
+                c.Limitations.LimitedToUsers.ToImmutableList(),
                 c.Limitations.Cooldown
                     .OrderBy(cd => cd.Level)
                     .Select(cd => cd.Milliseconds)
@@ -145,6 +145,7 @@ public class V1CompatibilityProfile : Profile
                 Limitations = new CommandLimitation
                 {
                     MinLevel = c.LimitedToMod ? PrivilegeLevel.Moderator : PrivilegeLevel.Viewer,
+                    LimitedToUsers = c.LimitedToUsers.ToImmutableHashSetWithValueSemantics(),
                     Cooldown = new[]
                     {
                         new CooldownDescription(PrivilegeLevel.Unknown, c.Timeout)
@@ -171,7 +172,7 @@ public class V1CompatibilityProfile : Profile
                 c.Name,
                 c.Owners.First(),
                 c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
-                Array.Empty<string>().ToImmutableList(),
+                c.Limitations.LimitedToUsers.ToImmutableList(),
                 false,
                 c.Limitations.Cooldown
                     .OrderBy(cd => cd.Level)
@@ -196,6 +197,7 @@ public class V1CompatibilityProfile : Profile
                 Limitations = new CommandLimitation
                 {
                     MinLevel = c.LimitedToMod ? PrivilegeLevel.Moderator : PrivilegeLevel.Viewer,
+                    LimitedToUsers = c.LimitedToUsers.ToImmutableHashSetWithValueSemantics(),
                     Cooldown = new[]
                     {
                         new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)

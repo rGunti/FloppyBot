@@ -50,6 +50,7 @@ public class CustomCommandStorageProfile : Profile
             .ConvertUsing((eo, _, ctx) => new CommandLimitation
             {
                 MinLevel = eo.MinLevel,
+                LimitedToUsers = (eo.LimitedToUsers ?? Array.Empty<string>()).ToImmutableHashSet(),
                 Cooldown = eo.Cooldown
                     .Select(c => ctx.Mapper.Map<CooldownDescription>(c))
                     .ToImmutableHashSet()
