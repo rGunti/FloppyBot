@@ -8,49 +8,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
         #region Test Data Setup
 
         private const string A = "A";
-
         private const string B = "B";
-
-        private readonly ConversionMap _map;
-
-        public ConversionMapTests()
-        {
-            _map = ConversionMapBuilder.BuildMap(Nodes, NodeRelations);
-        }
-
-        [TestMethod]
-        [DataRow(A, I, true)]
-        [DataRow(A, C, true)]
-        [DataRow(A, O, false)]
-        [DataRow(E, L, false)]
-        public void TestReachabilityOfPoints(string origin, string target, bool canReach)
-        {
-            DoReachTest(
-                origin,
-                target,
-                (o, t) =>
-                {
-                    var res = _map.IsNodeReachable(o, t, out var path);
-                    Console.WriteLine(path.ToString());
-                    return res;
-                },
-                canReach
-            );
-        }
-
-        private void DoReachTest(
-            string origin,
-            string target,
-            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
-            bool expectReach
-        )
-        {
-            ConversionNode originNode = _map.GetNode(origin),
-                targetNode = _map.GetNode(target);
-
-            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
-        }
-
         private const string C = "C";
         private const string D = "D";
         private const string E = "E";
@@ -126,6 +84,46 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             (O, M),
             (P, N),
         };
+
+        private readonly ConversionMap _map;
+
+        public ConversionMapTests()
+        {
+            _map = ConversionMapBuilder.BuildMap(Nodes, NodeRelations);
+        }
+
+        [TestMethod]
+        [DataRow(A, I, true)]
+        [DataRow(A, C, true)]
+        [DataRow(A, O, false)]
+        [DataRow(E, L, false)]
+        public void TestReachabilityOfPoints(string origin, string target, bool canReach)
+        {
+            DoReachTest(
+                origin,
+                target,
+                (o, t) =>
+                {
+                    var res = _map.IsNodeReachable(o, t, out var path);
+                    Console.WriteLine(path.ToString());
+                    return res;
+                },
+                canReach
+            );
+        }
+
+        private void DoReachTest(
+            string origin,
+            string target,
+            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
+            bool expectReach
+        )
+        {
+            ConversionNode originNode = _map.GetNode(origin),
+                targetNode = _map.GetNode(target);
+
+            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
+        }
 
         #endregion
     }
