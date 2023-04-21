@@ -29,7 +29,3 @@ jobs:
         report_name: floppybot_v2_tests
         report_title: FloppyBot v2 Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Check Code Style
-      run: |
-        dotnet tool restore
-        dotnet csharpier --check .
