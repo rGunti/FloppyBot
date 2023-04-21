@@ -216,6 +216,33 @@ public class CommandSpawner : ICommandSpawner
         return argumentAttribute.ExtractArgument(parameterInfo, instruction);
     }
 
+    private static object? ConvertArgumentTo(object? sourceValue, Type targetType)
+    {
+        if (sourceValue == null)
+        {
+            return null;
+        }
+
+        if (sourceValue is string sourceValueString)
+        {
+            if (StringTypeConversions.ContainsKey(targetType))
+            {
+                return StringTypeConversions[targetType].Invoke(sourceValueString);
+            }
+
+            if (targetType.IsEnum)
+            {
+                return Enum.Parse(targetType, sourceValueString);
+            }
+
+            throw new InvalidCastException($"Cannot (yet) convert from string to {targetType}");
+        }
+
+        throw new InvalidCastException(
+            $"Cannot yet convert from {sourceValue.GetType()} to {targetType}"
+        );
+    }
+
     private CommandResult ProcessReturnValue(object? returnValue)
     {
         if (returnValue == null)
@@ -262,32 +289,5 @@ public class CommandSpawner : ICommandSpawner
                     $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
                 );
         }
-    }
-
-    private static object? ConvertArgumentTo(object? sourceValue, Type targetType)
-    {
-        if (sourceValue == null)
-        {
-            return null;
-        }
-
-        if (sourceValue is string sourceValueString)
-        {
-            if (StringTypeConversions.ContainsKey(targetType))
-            {
-                return StringTypeConversions[targetType].Invoke(sourceValueString);
-            }
-
-            if (targetType.IsEnum)
-            {
-                return Enum.Parse(targetType, sourceValueString);
-            }
-
-            throw new InvalidCastException($"Cannot (yet) convert from string to {targetType}");
-        }
-
-        throw new InvalidCastException(
-            $"Cannot yet convert from {sourceValue.GetType()} to {targetType}"
-        );
     }
 }

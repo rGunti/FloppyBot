@@ -44,6 +44,15 @@ public class CustomCommandHost
             .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
     }
 
+    public static void WebDiSetup(IServiceCollection services)
+    {
+        services
+            .AddAutoMapper(typeof(CustomCommandStorageProfile))
+            .AddScoped<ICustomCommandService, CustomCommandService>()
+            .AddScoped<ICounterStorageService, CounterStorageService>()
+            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
+    }
+
     public bool CanHandleCommand(CommandInstruction instruction)
     {
         return GetCommand(instruction).HasValue;
@@ -66,15 +75,6 @@ public class CustomCommandHost
 
         // TODO: Supply multiple results
         return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
-    }
-
-    public static void WebDiSetup(IServiceCollection services)
-    {
-        services
-            .AddAutoMapper(typeof(CustomCommandStorageProfile))
-            .AddScoped<ICustomCommandService, CustomCommandService>()
-            .AddScoped<ICounterStorageService, CounterStorageService>()
-            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
     }
 
     private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)

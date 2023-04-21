@@ -195,6 +195,27 @@ public class DiscordChatInterface : IChatInterface
         };
     }
 
+    private static LogLevel TranslateLogLevel(LogSeverity severity)
+    {
+        switch (severity)
+        {
+            case LogSeverity.Critical:
+                return LogLevel.Critical;
+            case LogSeverity.Error:
+                return LogLevel.Error;
+            case LogSeverity.Warning:
+                return LogLevel.Warning;
+            case LogSeverity.Info:
+                return LogLevel.Information;
+            case LogSeverity.Verbose:
+                return LogLevel.Trace;
+            case LogSeverity.Debug:
+                return LogLevel.Debug;
+            default:
+                return LogLevel.Trace;
+        }
+    }
+
     private async void ConnectAsync()
     {
         _logger.LogTrace("Logging in with Bot Token ...");
@@ -352,27 +373,6 @@ public class DiscordChatInterface : IChatInterface
         MessageReceived?.Invoke(this, message);
 
         return Task.CompletedTask;
-    }
-
-    private static LogLevel TranslateLogLevel(LogSeverity severity)
-    {
-        switch (severity)
-        {
-            case LogSeverity.Critical:
-                return LogLevel.Critical;
-            case LogSeverity.Error:
-                return LogLevel.Error;
-            case LogSeverity.Warning:
-                return LogLevel.Warning;
-            case LogSeverity.Info:
-                return LogLevel.Information;
-            case LogSeverity.Verbose:
-                return LogLevel.Trace;
-            case LogSeverity.Debug:
-                return LogLevel.Debug;
-            default:
-                return LogLevel.Trace;
-        }
     }
 
     private ChatMessageIdentifier NewChatMessageIdentifier(ulong channelId, ulong messageId)

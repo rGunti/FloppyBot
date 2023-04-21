@@ -79,6 +79,13 @@ public class ShoutoutCommand
         services.AddCronJob<TimerMessageCronJob>();
     }
 
+    public static void SetupTimerMessageDbDependencies(IServiceCollection services)
+    {
+        services
+            .AddMessageOccurrenceService()
+            .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
+    }
+
     [Command("shoutout", "so")]
     [CommandDescription(
         "Shouts out a Twitch channel with a customized message defined for the channel"
@@ -146,12 +153,5 @@ public class ShoutoutCommand
     {
         _shoutoutMessageSettingService.ClearSettings(sourceChannel);
         return REPLY_CLEAR;
-    }
-
-    public static void SetupTimerMessageDbDependencies(IServiceCollection services)
-    {
-        services
-            .AddMessageOccurrenceService()
-            .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
     }
 }

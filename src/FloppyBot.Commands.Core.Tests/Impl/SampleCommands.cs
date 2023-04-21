@@ -41,18 +41,6 @@ public class SampleCommands
         return JsonSerializer.Serialize(new { arg0, arg1, });
     }
 
-    [Command("ping")]
-    public ChatMessage? Ping(CommandInstruction instruction)
-    {
-        return instruction.CreateReply("Pong!");
-    }
-
-    [Command("simple")]
-    public string Simple(CommandInstruction _)
-    {
-        return "Simple Response";
-    }
-
     [Command("add")]
     public static string Add([ArgumentIndex(0)] int a, [ArgumentIndex(1)] int b)
     {
@@ -113,5 +101,17 @@ public class SampleCommands
     {
         await Task.Delay(500);
         return new CommandResult(CommandOutcome.Success, "Some content");
+    }
+
+    [Command("ping")]
+    public ChatMessage? Ping(CommandInstruction instruction)
+    {
+        return instruction.CreateReply("Pong!");
+    }
+
+    [Command("simple")]
+    public string Simple(CommandInstruction _)
+    {
+        return "Simple Response";
     }
 }
