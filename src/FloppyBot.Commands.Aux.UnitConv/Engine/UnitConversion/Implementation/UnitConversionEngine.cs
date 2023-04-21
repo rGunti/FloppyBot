@@ -8,15 +8,15 @@ namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion.Implementation;
 internal class UnitConversionEngine : IUnitConversionEngine
 {
     private readonly ConversionMap _conversionMap;
-    private readonly IImmutableDictionary<(string from, string to), IUnitConversion> _conversions;
+    private readonly IImmutableDictionary<(string From, string To), IUnitConversion> _conversions;
     private readonly IImmutableDictionary<
-        (string from, string to),
+        (string From, string To),
         (string, string)[]
     > _proxyConversions;
 
     public UnitConversionEngine(
-        Dictionary<(string from, string to), IUnitConversion> conversions,
-        Dictionary<(string from, string to), (string, string)[]> proxyConversions,
+        Dictionary<(string From, string To), IUnitConversion> conversions,
+        Dictionary<(string From, string To), (string From, string To)[]> proxyConversions,
         IEnumerable<DTOs.Unit> registeredUnits
     )
     {
@@ -25,7 +25,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
         _proxyConversions = proxyConversions.ToImmutableDictionary();
     }
 
-    public IImmutableDictionary<(string @from, string to), IUnitConversion> RegisteredConversions =>
+    public IImmutableDictionary<(string From, string To), IUnitConversion> RegisteredConversions =>
         _conversions;
 
     public bool HasDirectConversion(string from, string to) => _conversions.ContainsKey((from, to));
@@ -61,8 +61,8 @@ internal class UnitConversionEngine : IUnitConversionEngine
             $"Proxy[{string.Join('>', steps.Reverse())}]"
         );
 
-    public IEnumerable<(string from, string to)> GetConversionsForUnit(string unit) =>
-        _conversions.Keys.Where(i => i.from == unit || i.to == unit);
+    public IEnumerable<(string From, string To)> GetConversionsForUnit(string unit) =>
+        _conversions.Keys.Where(i => i.From == unit || i.To == unit);
 
     private IEnumerable<IUnitConversion> GetProxyConversionSteps(
         string from,
@@ -283,13 +283,13 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindMatchingProxyConversion(
         string from,
         string to,
-        out (string from, string to)[] conversionKeys
+        out (string From, string To)[] conversionKeys
     ) => TryFindMatchingProxyConversion(from, to, _proxyConversions, out conversionKeys);
 
     private bool TryFindReverseMatchingProxyConversion(
         string from,
         string to,
-        out (string from, string to)[] conversionKeys
+        out (string From, string To)[] conversionKeys
     )
     {
         var reversedConversionKeys = _proxyConversions.ToImmutableDictionary(
@@ -302,8 +302,8 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindMatchingProxyConversion(
         string from,
         string to,
-        IImmutableDictionary<(string from, string to), (string, string)[]> proxyConversions,
-        out (string from, string to)[] conversionKeys
+        IImmutableDictionary<(string From, string To), (string, string)[]> proxyConversions,
+        out (string From, string To)[] conversionKeys
     )
     {
         conversionKeys = proxyConversions
@@ -328,7 +328,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryConstructProxyConversion(
         string from,
         string to,
-        (string from, string to) usingBaseChain,
+        (string From, string To) usingBaseChain,
         out IUnitConversion conversion,
         bool reverse = false
     )
@@ -419,7 +419,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
             {
                 if (
                     TryFindMatchingProxyConversion(
-                        sourceConversionPair.to,
+                        sourceConversionPair.To,
                         to,
                         out var foreignProxyChains
                     )
@@ -429,7 +429,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
                     {
                         if (
                             TryConstructProxyConversion(
-                                foreignProxyChain.to,
+                                foreignProxyChain.To,
                                 to,
                                 foreignProxyChain,
                                 out var partialChain
@@ -438,7 +438,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
                         {
                             var bridgeConversion = FindSafeConversion(
                                 from,
-                                sourceConversionPair.to
+                                sourceConversionPair.To
                             );
                             if (bridgeConversion == null)
                             {
@@ -461,7 +461,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
                 if (
                     TryFindMatchingProxyConversion(
                         from,
-                        targetConversionPair.from,
+                        targetConversionPair.From,
                         out var foreignProxyChains
                     )
                 )
@@ -471,14 +471,14 @@ internal class UnitConversionEngine : IUnitConversionEngine
                         if (
                             TryConstructProxyConversion(
                                 from,
-                                foreignProxyChain.from,
+                                foreignProxyChain.From,
                                 foreignProxyChain,
                                 out var partialChain
                             )
                         )
                         {
                             var bridgeConversion = FindSafeConversion(
-                                targetConversionPair.from,
+                                targetConversionPair.From,
                                 to
                             );
                             if (bridgeConversion == null)
@@ -508,8 +508,8 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindUnitWithSameConversion(string unit, out string[] matchingUnits)
     {
         matchingUnits = _conversions
-            .Where(i => i.Value is NoneConversion && (i.Key.from == unit || i.Key.to == unit))
-            .SelectMany(i => new[] { i.Key.from, i.Key.to })
+            .Where(i => i.Value is NoneConversion && (i.Key.From == unit || i.Key.To == unit))
+            .SelectMany(i => new[] { i.Key.From, i.Key.To })
             .Where(i => i != unit)
             .ToArray();
         return matchingUnits.Any();

@@ -7,7 +7,7 @@ public static class ConversionMapBuilder
 {
     public static ConversionMap BuildMap(
         IEnumerable<DTOs.Unit> knownUnits,
-        IImmutableDictionary<(string from, string to), IUnitConversion> knownConversions
+        IImmutableDictionary<(string From, string To), IUnitConversion> knownConversions
     )
     {
         return BuildMap(knownUnits.Select(u => u.Symbol), knownConversions.Keys.ToHashSet());
@@ -15,7 +15,7 @@ public static class ConversionMapBuilder
 
     public static ConversionMap BuildMap(
         IEnumerable<string> knownNodes,
-        ISet<(string a, string b)> knownRelations
+        ISet<(string A, string B)> knownRelations
     )
     {
         var nodes = knownNodes.Distinct().ToDictionary(u => u, u => new ConversionNode(u));

@@ -110,11 +110,14 @@ internal static class Units
     public static readonly DTOs.Unit DefaultUnit = new(null, "Default Unit", null, null);
 
     public static readonly Dictionary<(string, string), IUnitConversion> AllConversions;
-    public static readonly Dictionary<(string, string), (string, string)[]> AllProxyConversions;
+    public static readonly Dictionary<
+        (string, string),
+        (string From, string To)[]
+    > AllProxyConversions;
 
     static Units()
     {
-        AllConversions = new Dictionary<(string from, string to), IUnitConversion>()
+        AllConversions = new Dictionary<(string From, string To), IUnitConversion>
         {
             // Distances
             // - Metric <-> Metric
@@ -176,7 +179,7 @@ internal static class Units
             { (UNIT_GAL, UNIT_L), Factor(3.785411784f) },
         };
 
-        AllProxyConversions = new Dictionary<(string, string), (string, string)[]>
+        AllProxyConversions = new Dictionary<(string, string), (string From, string To)[]>
         {
             { (UNIT_KM, UNIT_MM), Chain(UNIT_KM, UNIT_M, UNIT_CM, UNIT_MM) },
             { (UNIT_MI, UNIT_INCH), Chain(UNIT_MI, UNIT_YD, UNIT_FT, UNIT_INCH, UNIT_FT_INCH) },
@@ -297,9 +300,9 @@ internal static class Units
     private static IUnitConversion Chain(params IUnitConversion[] conversions) =>
         new ChainedUnitConversion(conversions);
 
-    private static (string from, string to)[] Chain(params string[] steps)
+    private static (string From, string To)[] Chain(params string[] steps)
     {
-        var stepPairs = new List<(string from, string to)>();
+        var stepPairs = new List<(string From, string To)>();
         for (var i = 0; i < steps.Length - 1; i++)
         {
             stepPairs.Add((steps[i], steps[i + 1]));

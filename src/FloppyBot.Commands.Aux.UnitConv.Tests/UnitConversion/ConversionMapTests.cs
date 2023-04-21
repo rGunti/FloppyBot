@@ -44,9 +44,9 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             P,
         };
 
-        private static readonly ISet<(string a, string b)> NodeRelations = new HashSet<(
-            string a,
-            string b
+        private static readonly ISet<(string A, string B)> NodeRelations = new HashSet<(
+            string A,
+            string B
         )>
         {
             (A, I),
