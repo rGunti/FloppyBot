@@ -72,11 +72,13 @@ dotnet_diagnostic.SA1515.severity = none # no empty line before comment
 dotnet_diagnostic.SA1124.severity = none # allow regions
 dotnet_diagnostic.SA1649.severity = none # file name don't have to match if not needed
 dotnet_diagnostic.SA1201.severity = none # 
+dotnet_diagnostic.SA1312.severity = none # parameter can also begin with _
 dotnet_diagnostic.SA1313.severity = none # parameter can also begin with _
 dotnet_diagnostic.SA1402.severity = none # file should be able to contain multiple types
 
 # Documentation
 dotnet_diagnostic.SA1614.severity = none
 dotnet_diagnostic.SA1616.severity = none
+dotnet_diagnostic.SA1622.severity = none
 dotnet_diagnostic.SA1623.severity = none
 dotnet_diagnostic.SA1629.severity = none
