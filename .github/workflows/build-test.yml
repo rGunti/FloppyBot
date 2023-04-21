@@ -19,12 +19,9 @@ jobs:
         dotnet-version: 6.0.x
     - name: Restore dependencies
       run: |
-        dotnet tool restore
         dotnet restore src/FloppyBot.sln
     - name: Build
       run: dotnet build --no-restore src/FloppyBot.sln
-    #- name: Test
-    #  run: dotnet test --no-build --verbosity normal src/FloppyBot.sln
     - name: Test
       uses: zyborg/dotnet-tests-report@v1
       with:
@@ -33,4 +30,6 @@ jobs:
         report_title: FloppyBot v2 Tests
         github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Check Code Style
-      run: dotnet csharpier --check 
+      run: |
+        dotnet tool restore
+        dotnet csharpier --check .
