@@ -34,7 +34,6 @@ All sections are optional (though at least one has to be present) and units have
 
 ?> **Note**: The command in the example above will create a timer that runs for 15 minutes and 20 seconds.
 
-
 ## `translate`
 
 Translates a given text from one langauage to another using [DeepL Translator](https://www.deepl.com/).

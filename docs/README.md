@@ -9,7 +9,8 @@ _A customizable, open source, multi-platform chat bot_
 !> **In Development**: FloppyBot is currently in active pre-release development.
 As such, the documentation might still be lacking.
 
-FloppyBot is an open-source, multi-platform chat bot. It was originally designed for the Twitch streamer [pinsrlTrex](https://twitch.tv/pinsrltrex) but has since been extended to more users.
+FloppyBot is an open-source, multi-platform chat bot. It was originally designed for the Twitch
+streamer [pinsrlTrex](https://twitch.tv/pinsrltrex) but has since been extended to more users.
 
 ## License
 

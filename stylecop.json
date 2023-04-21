@@ -21,7 +21,9 @@
       "tupleElementNameCasing": "PascalCase"
     },
     "maintainabilityRules": {
-      "topLevelTypes": ["class"]
+      "topLevelTypes": [
+        "class"
+      ]
     },
     "layoutRules": {
       "newlineAtEndOfFile": "allow",
@@ -43,7 +45,9 @@
       "documentPrivateElements": false,
       "documentPrivateFields": false,
       "documentationCulture": "en-GB",
-      "excludeFromPunctuationCheck": ["seealso"],
+      "excludeFromPunctuationCheck": [
+        "seealso"
+      ],
       "fileNamingConvention": "stylecop"
     }
   }

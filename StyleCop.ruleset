@@ -1,14 +1,14 @@
 <RuleSet Name="StyleCop Rules for FloppyBot" Description="StyleCop Rules for FloppyBot" ToolsVersion="10.0">
     <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
-        <Rule Id="CA1001" Action="Warning" />
-        <Rule Id="CA1009" Action="Warning" />
-        <Rule Id="CA1016" Action="Warning" />
-        <Rule Id="CA1033" Action="Warning" />
+        <Rule Id="CA1001" Action="Warning"/>
+        <Rule Id="CA1009" Action="Warning"/>
+        <Rule Id="CA1016" Action="Warning"/>
+        <Rule Id="CA1033" Action="Warning"/>
     </Rules>
     <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
-        <Rule Id="CA1802" Action="Error" />
-        <Rule Id="CA1814" Action="Info" />
-        <Rule Id="CA1823" Action="None" />
-        <Rule Id="CA2217" Action="Warning" />
+        <Rule Id="CA1802" Action="Error"/>
+        <Rule Id="CA1814" Action="Info"/>
+        <Rule Id="CA1823" Action="None"/>
+        <Rule Id="CA2217" Action="Warning"/>
     </Rules>
 </RuleSet>
