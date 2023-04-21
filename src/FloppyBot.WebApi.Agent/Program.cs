@@ -107,7 +107,7 @@ services
                         Reference = new OpenApiReference
                         {
                             Id = "Bearer",
-                            Type = ReferenceType.SecurityScheme
+                            Type = ReferenceType.SecurityScheme,
                         },
                     },
                     Array.Empty<string>()

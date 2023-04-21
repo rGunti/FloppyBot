@@ -143,7 +143,7 @@ public class CustomCommandExecutorTests
                         {
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
-                                PrivilegeLevel = userPrivilegeLevel
+                                PrivilegeLevel = userPrivilegeLevel,
                             },
                         }
                     ),
@@ -241,7 +241,7 @@ public class CustomCommandExecutorTests
                         {
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
-                                Identifier = inputUser
+                                Identifier = inputUser,
                             },
                         }
                     ),
