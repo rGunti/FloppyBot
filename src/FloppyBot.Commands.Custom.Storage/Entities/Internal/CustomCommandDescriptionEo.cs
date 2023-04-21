@@ -3,8 +3,7 @@ using FloppyBot.Base.Storage;
 
 namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
 
-public record CustomCommandDescriptionEo
-    : IEntity<CustomCommandDescriptionEo>
+public record CustomCommandDescriptionEo : IEntity<CustomCommandDescriptionEo>
 {
     public string Name { get; set; }
     public string[] Aliases { get; set; }
@@ -16,9 +15,6 @@ public record CustomCommandDescriptionEo
 
     public CustomCommandDescriptionEo WithId(string newId)
     {
-        return this with
-        {
-            Id = newId
-        };
+        return this with { Id = newId };
     }
 }

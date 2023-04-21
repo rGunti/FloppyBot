@@ -5,4 +5,3 @@ public interface IUnitConversion
     float Convert(float input);
     float ConvertBack(float input);
 }
-

@@ -27,7 +27,8 @@ public class TimerMessageCronJob : ICronJob
         IMessageOccurrenceService messageOccurrenceService,
         IMessageReplier messageReplier,
         ITimerMessageConfigurationService configurationService,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider
+    )
     {
         _logger = logger;
         _messageOccurrenceService = messageOccurrenceService;
@@ -38,28 +39,34 @@ public class TimerMessageCronJob : ICronJob
 
     public void Run()
     {
-        var messagesToSend = _configurationService.GetAllConfigs()
-            .Select(config => new
-            {
-                Config = config,
-                LastExecution = _configurationService.GetLastExecution(config.Id)
-                    .SingleOrDefault(new TimerMessageExecution(
-                        config.Id,
-                        DateTimeOffset.MinValue,
-                        -1)),
-                MessageCount = config.MinMessages > 0
-                    ? _messageOccurrenceService.GetMessageCountInChannel(
-                        config.Id,
-                        TimeSpan.FromMinutes(config.MinMessages))
-                    : -1
-            })
+        var messagesToSend = _configurationService
+            .GetAllConfigs()
+            .Select(
+                config =>
+                    new
+                    {
+                        Config = config,
+                        LastExecution = _configurationService
+                            .GetLastExecution(config.Id)
+                            .SingleOrDefault(
+                                new TimerMessageExecution(config.Id, DateTimeOffset.MinValue, -1)
+                            ),
+                        MessageCount = config.MinMessages > 0
+                            ? _messageOccurrenceService.GetMessageCountInChannel(
+                                config.Id,
+                                TimeSpan.FromMinutes(config.MinMessages)
+                            )
+                            : -1
+                    }
+            )
             .Where(i => IsExecutionRequired(i.Config, i.LastExecution, i.MessageCount))
             .Select(i => CreateChatMessage(i.Config, i.LastExecution))
             .ToImmutableArray();
 
         _logger.LogInformation(
             "Got {TimerMessageCount} timer messages to send",
-            messagesToSend.Length);
+            messagesToSend.Length
+        );
 
         foreach (ChatMessage message in messagesToSend)
         {
@@ -70,9 +77,13 @@ public class TimerMessageCronJob : ICronJob
     private bool IsExecutionRequired(
         TimerMessageConfiguration timerMessageConfiguration,
         TimerMessageExecution lastExecution,
-        int messageCount)
+        int messageCount
+    )
     {
-        _logger.LogDebug("Testing if timer for channel {ChannelId} is to be executed", timerMessageConfiguration.Id);
+        _logger.LogDebug(
+            "Testing if timer for channel {ChannelId} is to be executed",
+            timerMessageConfiguration.Id
+        );
 
         DateTimeOffset now = _timeProvider.GetCurrentUtcTime();
         TimeSpan interval = TimeSpan.FromMinutes(timerMessageConfiguration.Interval);
@@ -88,19 +99,23 @@ public class TimerMessageCronJob : ICronJob
             "{ChannelId} received {MessageCount} messages in the last {Interval}",
             timerMessageConfiguration.Id,
             messageCount,
-            interval);
-        return
-            timerMessageConfiguration.MinMessages <= 0 ||
-            messageCount >= timerMessageConfiguration.MinMessages;
+            interval
+        );
+        return timerMessageConfiguration.MinMessages <= 0
+            || messageCount >= timerMessageConfiguration.MinMessages;
     }
 
-    private ChatMessage CreateChatMessage(TimerMessageConfiguration config, TimerMessageExecution lastExecution)
+    private ChatMessage CreateChatMessage(
+        TimerMessageConfiguration config,
+        TimerMessageExecution lastExecution
+    )
     {
         var msgIndex = (lastExecution.MessageIndex + 1) % config.Messages.Length;
         _configurationService.UpdateLastExecutionTime(
             config.Id,
             _timeProvider.GetCurrentUtcTime(),
-            msgIndex);
+            msgIndex
+        );
         return CreateMessageTo(config.Id, config.Messages[msgIndex]);
     }
 
@@ -110,8 +125,7 @@ public class TimerMessageCronJob : ICronJob
             ChatMessageIdentifier.NewFor(channelId),
             ChatUser.Anonymous,
             SharedEventTypes.CHAT_MESSAGE,
-            content);
+            content
+        );
     }
 }
-
-

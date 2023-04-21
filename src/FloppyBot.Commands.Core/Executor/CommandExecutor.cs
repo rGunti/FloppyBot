@@ -18,7 +18,8 @@ public class CommandExecutor : ICommandExecutor
         ILogger<CommandExecutor> logger,
         IImmutableDictionary<string, CommandInfo> registeredCommands,
         IImmutableList<VariableCommandInfo> variableCommands,
-        ICommandSpawner commandSpawner)
+        ICommandSpawner commandSpawner
+    )
     {
         _logger = logger;
         _registeredCommands = registeredCommands;
@@ -26,10 +27,7 @@ public class CommandExecutor : ICommandExecutor
         _commandSpawner = commandSpawner;
     }
 
-    public IEnumerable<CommandInfo> KnownCommands
-        => _registeredCommands
-            .Values
-            .Distinct();
+    public IEnumerable<CommandInfo> KnownCommands => _registeredCommands.Values.Distinct();
 
     public ChatMessage? ExecuteCommand(CommandInstruction instruction)
     {
@@ -42,11 +40,14 @@ public class CommandExecutor : ICommandExecutor
 
         _logger.LogDebug(
             "Preregistered Command with name {CommandName} could not be found, trying to find a handler to execute it",
-            instruction.CommandName);
+            instruction.CommandName
+        );
 
         VariableCommandInfo? availableHandlers = _variableCommands
             .Select(handler => new VariableCommandInfo(instruction.CommandName, handler))
-            .FirstOrDefault(handler => _commandSpawner.CanExecuteVariableCommand(handler, instruction));
+            .FirstOrDefault(
+                handler => _commandSpawner.CanExecuteVariableCommand(handler, instruction)
+            );
         if (availableHandlers != null)
         {
             _logger.LogDebug("Spawning and executing variable command {@Command}", command);

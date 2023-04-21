@@ -30,15 +30,16 @@ public class CommandSpawner : ICommandSpawner
     private readonly ILogger<CommandSpawner> _logger;
     private readonly IServiceProvider _serviceProvider;
 
-    public CommandSpawner(
-        ILogger<CommandSpawner> logger,
-        IServiceProvider serviceProvider)
+    public CommandSpawner(ILogger<CommandSpawner> logger, IServiceProvider serviceProvider)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
     }
 
-    public ChatMessage? SpawnAndExecuteCommand(CommandInfo commandInfo, CommandInstruction instruction)
+    public ChatMessage? SpawnAndExecuteCommand(
+        CommandInfo commandInfo,
+        CommandInstruction instruction
+    )
     {
         using var logScope = _logger.BeginScope(instruction.Context!.SourceMessage.Identifier);
         using var scope = _serviceProvider.CreateScope();
@@ -47,7 +48,10 @@ public class CommandSpawner : ICommandSpawner
         object? host = null;
         if (!commandInfo.IsStatic)
         {
-            _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
+            _logger.LogDebug(
+                "Creating instance of host class {HostType}",
+                commandInfo.ImplementingType
+            );
             try
             {
                 host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
@@ -57,24 +61,32 @@ public class CommandSpawner : ICommandSpawner
                 _logger.LogError(
                     ex,
                     "Failed to create host class {HostType} due to an exception",
-                    commandInfo.ImplementingType);
+                    commandInfo.ImplementingType
+                );
                 throw;
             }
         }
         else
         {
-            _logger.LogDebug("Skipped creating host class instance because command is declared as static");
+            _logger.LogDebug(
+                "Skipped creating host class instance because command is declared as static"
+            );
         }
 
         _logger.LogDebug("Running pre-execution tasks");
         IPreExecutionTask? failedPreExecutionTask = TryExtensions.TryOr(
             () => scope.RunPreExecutionTasks(commandInfo, instruction),
-            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
+            e =>
+            {
+                _logger.LogWarning(e, "Post-execution tasks failed due to an exception");
+            }
+        );
         if (failedPreExecutionTask != null)
         {
             _logger.LogInformation(
                 "Pre-execution task {TaskName} has failed, command is not executed",
-                failedPreExecutionTask.GetType());
+                failedPreExecutionTask.GetType()
+            );
             return null;
         }
 
@@ -88,21 +100,24 @@ public class CommandSpawner : ICommandSpawner
         {
             _logger.LogInformation(
                 ex,
-                "Could not parse arguments due to an exception (possibly not enough arguments supplied)");
+                "Could not parse arguments due to an exception (possibly not enough arguments supplied)"
+            );
             return null;
         }
         catch (InvalidCastException ex)
         {
             _logger.LogInformation(
                 ex,
-                "Could not cast data to arguments (possibly wrong data type for argument)");
+                "Could not cast data to arguments (possibly wrong data type for argument)"
+            );
             return null;
         }
 
         _logger.LogInformation(
             "Executing command {@CommandHandler} with {CommandArgsCount} arguments",
             commandInfo.HandlerMethod,
-            commandArguments.Length);
+            commandArguments.Length
+        );
 
         object? returnValue = commandInfo.HandlerMethod.Invoke(host, commandArguments);
         CommandResult result = ProcessReturnValue(returnValue);
@@ -110,12 +125,17 @@ public class CommandSpawner : ICommandSpawner
         _logger.LogDebug("Running post-execution tasks");
         IPostExecutionTask? failedPostExecutionTask = TryExtensions.TryOr(
             () => scope.RunPostExecutionTasks(commandInfo, instruction, result),
-            e => { _logger.LogWarning(e, "Post-execution tasks failed due to an exception"); });
+            e =>
+            {
+                _logger.LogWarning(e, "Post-execution tasks failed due to an exception");
+            }
+        );
         if (failedPostExecutionTask != null)
         {
             _logger.LogInformation(
                 "Post-execution task {TaskName} has failed, response is dropped",
-                failedPostExecutionTask.GetType());
+                failedPostExecutionTask.GetType()
+            );
             return null;
         }
 
@@ -123,7 +143,10 @@ public class CommandSpawner : ICommandSpawner
         return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
     }
 
-    public bool CanExecuteVariableCommand(VariableCommandInfo commandInfo, CommandInstruction instruction)
+    public bool CanExecuteVariableCommand(
+        VariableCommandInfo commandInfo,
+        CommandInstruction instruction
+    )
     {
         using var logScope = _logger.BeginScope(instruction.Context!.SourceMessage.Identifier);
         using var scope = _serviceProvider.CreateScope();
@@ -132,21 +155,24 @@ public class CommandSpawner : ICommandSpawner
         object? host = null;
         if (!commandInfo.IsStatic)
         {
-            _logger.LogDebug("Creating instance of host class {HostType}", commandInfo.ImplementingType);
+            _logger.LogDebug(
+                "Creating instance of host class {HostType}",
+                commandInfo.ImplementingType
+            );
             host = scope.ServiceProvider.GetRequiredService(commandInfo.ImplementingType);
         }
         else
         {
-            _logger.LogDebug("Skipped creating host class instance because command is declared as static");
+            _logger.LogDebug(
+                "Skipped creating host class instance because command is declared as static"
+            );
         }
 
         _logger.LogInformation(
             "Executing command assertion handler {@CommandHandler}",
-            commandInfo.TestHandlerMethod);
-        return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[]
-        {
-            instruction
-        })!;
+            commandInfo.TestHandlerMethod
+        );
+        return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[] { instruction })!;
     }
 
     private CommandResult ProcessReturnValue(object? returnValue)
@@ -183,21 +209,27 @@ public class CommandSpawner : ICommandSpawner
                 return result;
             case ChatMessage chatMessage:
                 _logger.LogWarning(
-                    "Return value was chat message (deprecated), returning its content as successful outcome");
+                    "Return value was chat message (deprecated), returning its content as successful outcome"
+                );
                 return new CommandResult(CommandOutcome.Success, chatMessage.Content);
             default:
-                _logger.LogError("Return value was of type {ReturnValueType}, which is not supported",
-                    returnValueToProcess.GetType());
+                _logger.LogError(
+                    "Return value was of type {ReturnValueType}, which is not supported",
+                    returnValueToProcess.GetType()
+                );
                 throw new InvalidDataException(
-                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported");
+                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
+                );
         }
     }
 
     private static object?[] ConstructArguments(
         MethodInfo methodInfo,
-        CommandInstruction instruction)
+        CommandInstruction instruction
+    )
     {
-        return methodInfo.GetParameters()
+        return methodInfo
+            .GetParameters()
             .Select(p =>
             {
                 var argValue = ConstructArgument(p, instruction);
@@ -211,7 +243,10 @@ public class CommandSpawner : ICommandSpawner
             .ToArray();
     }
 
-    private static object? ConstructArgument(ParameterInfo parameterInfo, CommandInstruction instruction)
+    private static object? ConstructArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction instruction
+    )
     {
         if (parameterInfo.ParameterType == typeof(CommandInstruction))
         {
@@ -222,7 +257,8 @@ public class CommandSpawner : ICommandSpawner
         if (argumentAttribute == null)
         {
             throw new ArgumentException(
-                $"Don't know how to extract argument {parameterInfo}. Have you added an attribute?");
+                $"Don't know how to extract argument {parameterInfo}. Have you added an attribute?"
+            );
         }
 
         return argumentAttribute.ExtractArgument(parameterInfo, instruction);
@@ -250,6 +286,8 @@ public class CommandSpawner : ICommandSpawner
             throw new InvalidCastException($"Cannot (yet) convert from string to {targetType}");
         }
 
-        throw new InvalidCastException($"Cannot yet convert from {sourceValue.GetType()} to {targetType}");
+        throw new InvalidCastException(
+            $"Cannot yet convert from {sourceValue.GetType()} to {targetType}"
+        );
     }
 }

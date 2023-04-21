@@ -21,39 +21,41 @@ public class CustomCommandExecutorTests
 {
     private static readonly DateTimeOffset RefTime = DateTimeOffset.Parse("2022-11-01T12:30:00Z");
 
-    private static readonly CustomCommandDescription CommandDescription = new()
-    {
-        Id = "id",
-        Name = "mycommand",
-        Aliases = Enumerable.Empty<string>().ToImmutableHashSetWithValueSemantics(),
-        Owners = new[] { "Mock/Channel" }.ToImmutableHashSetWithValueSemantics(),
-        Limitations = new CommandLimitation
+    private static readonly CustomCommandDescription CommandDescription =
+        new()
         {
-            Cooldown = new CooldownDescription[]
+            Id = "id",
+            Name = "mycommand",
+            Aliases = Enumerable.Empty<string>().ToImmutableHashSetWithValueSemantics(),
+            Owners = new[] { "Mock/Channel" }.ToImmutableHashSetWithValueSemantics(),
+            Limitations = new CommandLimitation
             {
-                new(PrivilegeLevel.Moderator, 0),
-                new(PrivilegeLevel.Viewer, 15 * 1000)
-            }.ToImmutableHashSetWithValueSemantics()
-        },
-        ResponseMode = CommandResponseMode.First,
-        Responses = new CommandResponse[]
-        {
-            new(ResponseType.Text, "Hello World")
-        }.ToImmutableListWithValueSemantics()
-    };
+                Cooldown = new CooldownDescription[]
+                {
+                    new(PrivilegeLevel.Moderator, 0),
+                    new(PrivilegeLevel.Viewer, 15 * 1000)
+                }.ToImmutableHashSetWithValueSemantics()
+            },
+            ResponseMode = CommandResponseMode.First,
+            Responses = new CommandResponse[]
+            {
+                new(ResponseType.Text, "Hello World")
+            }.ToImmutableListWithValueSemantics()
+        };
 
-    private static readonly CommandInstruction CommandInstruction = new(
-        "mycommand",
-        Enumerable.Empty<string>().ToImmutableListWithValueSemantics(),
-        new CommandContext(
-            new ChatMessage(
-                "Mock/Channel/abcdefg",
-                new ChatUser(
-                    "Mock/User",
-                    "Mock User",
-                    PrivilegeLevel.Viewer),
-                SharedEventTypes.CHAT_MESSAGE,
-                "content")));
+    private static readonly CommandInstruction CommandInstruction =
+        new(
+            "mycommand",
+            Enumerable.Empty<string>().ToImmutableListWithValueSemantics(),
+            new CommandContext(
+                new ChatMessage(
+                    "Mock/Channel/abcdefg",
+                    new ChatUser("Mock/User", "Mock User", PrivilegeLevel.Viewer),
+                    SharedEventTypes.CHAT_MESSAGE,
+                    "content"
+                )
+            )
+        );
 
     [DataTestMethod]
     [DataRow(0, false)]
@@ -70,10 +72,14 @@ public class CustomCommandExecutorTests
 
         var cooldownServiceMock = new Mock<ICooldownService>();
         cooldownServiceMock
-            .Setup(c => c.GetLastExecution(
-                It.Is<string>(c => c == "Mock/Channel"),
-                It.Is<string>(u => u == "Mock/User"),
-                It.Is<string>(c => c == "mycommand")))
+            .Setup(
+                c =>
+                    c.GetLastExecution(
+                        It.Is<string>(c => c == "Mock/Channel"),
+                        It.Is<string>(u => u == "Mock/User"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
             .Returns<string, string, string>((_, _, _) => RefTime);
 
         var executor = new CustomCommandExecutor(
@@ -82,15 +88,13 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
             Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>());
+            Mock.Of<ISoundCommandInvocationSender>()
+        );
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
         if (expectResult)
         {
-            CollectionAssert.AreEqual(new[]
-            {
-                "Hello World"
-            }, reply);
+            CollectionAssert.AreEqual(new[] { "Hello World" }, reply);
         }
         else
         {
@@ -104,16 +108,21 @@ public class CustomCommandExecutorTests
     [DataRow(PrivilegeLevel.Viewer, false)]
     public void HandlesCooldownWithPrivilegeLevelsCorrectly(
         PrivilegeLevel userPrivilegeLevel,
-        bool expectResult)
+        bool expectResult
+    )
     {
         var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
 
         var cooldownServiceMock = new Mock<ICooldownService>();
         cooldownServiceMock
-            .Setup(c => c.GetLastExecution(
-                It.Is<string>(ch => ch == "Mock/Channel"),
-                It.Is<string>(u => u == "Mock/User"),
-                It.Is<string>(cmd => cmd == "mycommand")))
+            .Setup(
+                c =>
+                    c.GetLastExecution(
+                        It.Is<string>(ch => ch == "Mock/Channel"),
+                        It.Is<string>(u => u == "Mock/User"),
+                        It.Is<string>(cmd => cmd == "mycommand")
+                    )
+            )
             .Returns<string, string, string>((_, _, _) => RefTime);
 
         var executor = new CustomCommandExecutor(
@@ -122,26 +131,29 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
             Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>());
+            Mock.Of<ISoundCommandInvocationSender>()
+        );
 
-        string?[] reply = executor.Execute(CommandInstruction with
-            {
-                Context = new CommandContext(
-                    CommandInstruction.Context!.SourceMessage with
-                    {
-                        Author = CommandInstruction.Context!.SourceMessage.Author with
+        string?[] reply = executor
+            .Execute(
+                CommandInstruction with
+                {
+                    Context = new CommandContext(
+                        CommandInstruction.Context!.SourceMessage with
                         {
-                            PrivilegeLevel = userPrivilegeLevel
+                            Author = CommandInstruction.Context!.SourceMessage.Author with
+                            {
+                                PrivilegeLevel = userPrivilegeLevel
+                            }
                         }
-                    })
-            }, CommandDescription)
+                    )
+                },
+                CommandDescription
+            )
             .ToArray();
         if (expectResult)
         {
-            CollectionAssert.AreEqual(new[]
-            {
-                "Hello World"
-            }, reply);
+            CollectionAssert.AreEqual(new[] { "Hello World" }, reply);
         }
         else
         {
@@ -167,30 +179,37 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
             counterMock.Object,
-            Mock.Of<ISoundCommandInvocationSender>());
+            Mock.Of<ISoundCommandInvocationSender>()
+        );
 
-        string?[] reply = executor.Execute(CommandInstruction, CommandDescription with
-            {
-                Responses = new[]
+        string?[] reply = executor
+            .Execute(
+                CommandInstruction,
+                CommandDescription with
                 {
-                    new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                }.ToImmutableListWithValueSemantics()
-            })
+                    Responses = new[]
+                    {
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                    }.ToImmutableListWithValueSemantics()
+                }
+            )
             .ToArray();
 
-        counterMock.Verify(
-            s => s.Next(It.Is<string>(c => c == CommandDescription.Id)),
-            Times.Once);
+        counterMock.Verify(s => s.Next(It.Is<string>(c => c == CommandDescription.Id)), Times.Once);
         Assert.AreEqual("I am at level 1 now!", reply.First());
 
         // Repeat
-        reply = executor.Execute(CommandInstruction, CommandDescription with
-            {
-                Responses = new[]
+        reply = executor
+            .Execute(
+                CommandInstruction,
+                CommandDescription with
                 {
-                    new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                }.ToImmutableListWithValueSemantics()
-            })
+                    Responses = new[]
+                    {
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                    }.ToImmutableListWithValueSemantics()
+                }
+            )
             .ToArray();
         Assert.AreEqual("I am at level 2 now!", reply.First());
     }
@@ -210,33 +229,37 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownServiceMock.Object,
             Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>());
+            Mock.Of<ISoundCommandInvocationSender>()
+        );
 
-        string?[] reply = executor.Execute(CommandInstruction with
-            {
-                Context = new CommandContext(
-                    CommandInstruction.Context!.SourceMessage with
-                    {
-                        Author = CommandInstruction.Context!.SourceMessage.Author with
-                        {
-                            Identifier = inputUser
-                        }
-                    })
-            }, CommandDescription with
-            {
-                Limitations = CommandDescription.Limitations with
+        string?[] reply = executor
+            .Execute(
+                CommandInstruction with
                 {
-                    LimitedToUsers = ImmutableHashSet.Create<string>()
-                        .Add("CoolUser".ToLowerInvariant())
+                    Context = new CommandContext(
+                        CommandInstruction.Context!.SourceMessage with
+                        {
+                            Author = CommandInstruction.Context!.SourceMessage.Author with
+                            {
+                                Identifier = inputUser
+                            }
+                        }
+                    )
+                },
+                CommandDescription with
+                {
+                    Limitations = CommandDescription.Limitations with
+                    {
+                        LimitedToUsers = ImmutableHashSet
+                            .Create<string>()
+                            .Add("CoolUser".ToLowerInvariant())
+                    }
                 }
-            })
+            )
             .ToArray();
         if (expectResult)
         {
-            CollectionAssert.AreEqual(new[]
-            {
-                "Hello World"
-            }, reply);
+            CollectionAssert.AreEqual(new[] { "Hello World" }, reply);
         }
         else
         {
@@ -249,43 +272,37 @@ public class CustomCommandExecutorTests
     {
         var counterMock = new Mock<ICounterStorageService>();
         var counter = 0;
-        counterMock
-            .Setup(s => s.Next(It.IsAny<string>()))
-            .Returns((string _) => ++counter);
+        counterMock.Setup(s => s.Next(It.IsAny<string>())).Returns((string _) => ++counter);
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterMock.Object);
+            counterMock.Object
+        );
 
         // Access counter
         Assert.AreEqual(1, placeholder.Counter);
-        counterMock
-            .Verify(s => s.Next(It.IsAny<string>()), Times.Once);
+        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Once);
 
         // Access counter again (ensure it has not been called twice)
         Assert.AreEqual(1, placeholder.Counter);
-        counterMock
-            .Verify(s => s.Next(It.IsAny<string>()), Times.Once);
+        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Once);
     }
 
     [TestMethod]
     public void PeekCounterWillNotIncreaseCounterValue()
     {
         var counterMock = new Mock<ICounterStorageService>();
-        counterMock
-            .Setup(s => s.Peek(It.IsAny<string>()))
-            .Returns((string _) => 1);
-        counterMock
-            .Setup(s => s.Next(It.IsAny<string>()))
-            .Verifiable();
+        counterMock.Setup(s => s.Peek(It.IsAny<string>())).Returns((string _) => 1);
+        counterMock.Setup(s => s.Next(It.IsAny<string>())).Verifiable();
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterMock.Object);
+            counterMock.Object
+        );
 
         // Access counter
         Assert.AreEqual(1, placeholder.PeekCounter);

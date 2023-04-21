@@ -15,11 +15,12 @@ internal static class Units
         ConstructDefaultUnit(UNIT_CM, "centimetre", allowNegative: false),
         ConstructDefaultUnit(UNIT_M, "metre", allowNegative: false),
         ConstructDefaultUnit(UNIT_KM, "kilometre", allowNegative: false),
-
         // - Imperial
         ConstructDefaultUnit(UNIT_INCH, "inch", allowNegative: false),
         ConstructDefaultUnit(UNIT_FT, "foot", allowNegative: false),
-        new(UNIT_FT_INCH, "feet / inches",
+        new(
+            UNIT_FT_INCH,
+            "feet / inches",
             "^((\\d){1,}ft)(\\d{0,}(\\.?\\d{1,})?)in$",
             (_, m) =>
             {
@@ -36,35 +37,30 @@ internal static class Units
                 var feet = Math.Floor(inches / 12);
                 var restInches = inches % 12;
                 return $"{feet} ft {restInches:0.##} in";
-            }),
+            }
+        ),
         ConstructDefaultUnit(UNIT_YD, "yard", allowNegative: false),
         ConstructDefaultUnit(UNIT_MI, "mile", allowNegative: false),
-
         // - Fun
         ConstructDefaultUnit(UNIT_PINS, "pins length", allowNegative: false),
         ConstructDefaultUnit(UNIT_SOPH, "soph length", allowNegative: false),
         ConstructDefaultUnit(UNIT_SPOH, "spoh length", allowNegative: false),
-
         // Temperature
         ConstructSuffixedUnit(UNIT_CELSIUS, "Degrees Celsius", "°?C"),
         ConstructSuffixedUnit(UNIT_FAHRENHEIT, "Degrees Fahrenheit", "°?F"),
         ConstructDefaultUnit(UNIT_KELVIN, "Kelvin"),
-
         // Speed
         ConstructSuffixedUnit(UNIT_KMH, "Kilometres per hour", "km\\/?h", false),
         ConstructDefaultUnit(UNIT_MPH, "Miles per hour", false),
         ConstructDefaultUnit(UNIT_MPS, "Meters per second", false),
-
         // Weight
         // - Metric
         ConstructDefaultUnit(UNIT_G, "gram", false),
         ConstructDefaultUnit(UNIT_KG, "kilogram", false),
         ConstructDefaultUnit(UNIT_T, "tonne", false),
-
         // - Imperial
         ConstructDefaultUnit(UNIT_LB, "pound", false),
         ConstructDefaultUnit(UNIT_ST, "stone", false),
-
         // Volume
         // - Metric
         ConstructDefaultUnit(UNIT_HL, "Hectolitre", false),
@@ -72,19 +68,40 @@ internal static class Units
         ConstructDefaultUnit(UNIT_DL, "Decilitre", false),
         ConstructDefaultUnit(UNIT_CL, "Centilitre", false),
         ConstructDefaultUnit(UNIT_ML, "Millilitre", false),
-
-        ConstructSuffixedUnit(UNIT_M3, "Cubic metre", "m[³3]", false,
-            customFormatMethod: v => $"{v:0.##} m³"),
-        ConstructSuffixedUnit(UNIT_DM3, "Cubic decimetre", "dm[³3]", false,
-            customFormatMethod: v => $"{v:0.##} dm³"),
-        ConstructSuffixedUnit(UNIT_MM3, "Cubic millimetre", "mm[³3]", false,
-            customFormatMethod: v => $"{v:0.##} mm³"),
-
+        ConstructSuffixedUnit(
+            UNIT_M3,
+            "Cubic metre",
+            "m[³3]",
+            false,
+            customFormatMethod: v => $"{v:0.##} m³"
+        ),
+        ConstructSuffixedUnit(
+            UNIT_DM3,
+            "Cubic decimetre",
+            "dm[³3]",
+            false,
+            customFormatMethod: v => $"{v:0.##} dm³"
+        ),
+        ConstructSuffixedUnit(
+            UNIT_MM3,
+            "Cubic millimetre",
+            "mm[³3]",
+            false,
+            customFormatMethod: v => $"{v:0.##} mm³"
+        ),
         // - Imperial
-        ConstructDefaultUnit(UNIT_FLOZ, "fluid ounce (US)", false,
-            customFormatMethod: v => $"{v:0.##} fl oz"),
-        ConstructDefaultUnit(UNIT_GAL, "gallon (US)", false,
-            customFormatMethod: v => $"{v:0.##} gal"),
+        ConstructDefaultUnit(
+            UNIT_FLOZ,
+            "fluid ounce (US)",
+            false,
+            customFormatMethod: v => $"{v:0.##} fl oz"
+        ),
+        ConstructDefaultUnit(
+            UNIT_GAL,
+            "gallon (US)",
+            false,
+            customFormatMethod: v => $"{v:0.##} gal"
+        ),
         ConstructDefaultUnit(UNIT_CUP, "cup (US)", false),
         ConstructDefaultUnit(UNIT_TBS, "tablespoon (US)", false),
         ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false)
@@ -104,71 +121,53 @@ internal static class Units
             { (UNIT_KM, UNIT_M), Factor(1000f) },
             { (UNIT_M, UNIT_CM), Factor(100f) },
             { (UNIT_CM, UNIT_MM), Factor(10f) },
-
             // - Imperial <-> Imperial
             { (UNIT_FT_INCH, UNIT_INCH), Same() },
             { (UNIT_MI, UNIT_YD), Factor(1760f) },
             { (UNIT_YD, UNIT_FT), Factor(3f) },
             { (UNIT_FT, UNIT_INCH), Factor(12f) },
-
             // - Imperial <-> Metrical
             { (UNIT_MI, UNIT_KM), Factor(1.609344f) },
             { (UNIT_YD, UNIT_M), Factor(0.9144f) },
             { (UNIT_FT, UNIT_M), Factor(0.3048f) },
             { (UNIT_INCH, UNIT_CM), Factor(2.54f) },
-
             // - Fun
             { (UNIT_PINS, UNIT_CM), Factor(173f) },
             { (UNIT_SOPH, UNIT_CM), Factor(160f) },
             { (UNIT_SOPH, UNIT_PINS), Same() },
             { (UNIT_SOPH, UNIT_SPOH), Same() },
-
             // Temperatures
             { (UNIT_KELVIN, UNIT_CELSIUS), Offset(-273.15f) },
             {
-                (UNIT_KELVIN, UNIT_FAHRENHEIT), Formula(
-                    k => k * (9 / 5f) - 459.67f,
-                    f => (f + 459.67f) * (5 / 9f))
+                (UNIT_KELVIN, UNIT_FAHRENHEIT),
+                Formula(k => k * (9 / 5f) - 459.67f, f => (f + 459.67f) * (5 / 9f))
             },
-            {
-                (UNIT_CELSIUS, UNIT_FAHRENHEIT), Formula(
-                    c => c * 1.8f + 32,
-                    f => (f - 32) / 1.8f)
-            },
-
+            { (UNIT_CELSIUS, UNIT_FAHRENHEIT), Formula(c => c * 1.8f + 32, f => (f - 32) / 1.8f) },
             // Speed
             { (UNIT_MPH, UNIT_KMH), Factor(1.609344f) },
             { (UNIT_MPS, UNIT_KMH), Factor(3.6f) },
-
             // Weight
             // - Metric
             { (UNIT_T, UNIT_KG), Factor(1000f) },
             { (UNIT_KG, UNIT_G), Factor(1000f) },
-
             // - Imperial
             { (UNIT_ST, UNIT_LB), Factor(14f) },
-
             // - Imperial <-> Metrical
             { (UNIT_KG, UNIT_LB), Factor(2.20462f) },
-
             // Volume
             // - Metric
             { (UNIT_HL, UNIT_L), Factor(100f) },
             { (UNIT_L, UNIT_DL), Factor(10f) },
             { (UNIT_DL, UNIT_CL), Factor(10f) },
             { (UNIT_CL, UNIT_ML), Factor(10f) },
-
             { (UNIT_M3, UNIT_DM3), Factor(1000f) },
             { (UNIT_DM3, UNIT_MM3), Factor(1000000f) },
-
             { (UNIT_L, UNIT_DM3), Same() },
-
             // - Imperial
             { (UNIT_GAL, UNIT_FLOZ), Factor(128f) },
             { (UNIT_GAL, UNIT_CUP), Factor(16f) },
             { (UNIT_FLOZ, UNIT_TBS), Factor(2f) },
             { (UNIT_TBS, UNIT_TSP), Factor(3f) },
-
             // - Imperial <-> Metrical
             { (UNIT_FLOZ, UNIT_ML), Factor(29.5735295625f) },
             { (UNIT_GAL, UNIT_L), Factor(3.785411784f) }
@@ -194,15 +193,20 @@ internal static class Units
         string unitName,
         bool allowNegative = true,
         bool allowDecimal = true,
-        Func<float, string>? customFormatMethod = null)
+        Func<float, string>? customFormatMethod = null
+    )
     {
-        var formatMethod = customFormatMethod ?? (Func<float, string>)
-            (allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
+        var formatMethod =
+            customFormatMethod
+            ?? (Func<float, string>)(allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
 
-        return new DTOs.Unit(unit, unitName,
+        return new DTOs.Unit(
+            unit,
+            unitName,
             GetDefaultNumberRegex(unit, allowNegative, allowDecimal),
             (_, m) => float.Parse(m[0].Groups[1].Value),
-            formatMethod);
+            formatMethod
+        );
     }
 
     private static DTOs.Unit ConstructSuffixedUnit(
@@ -211,25 +215,33 @@ internal static class Units
         string suffixRegex,
         bool allowNegative = true,
         bool allowDecimal = true,
-        Func<float, string>? customFormatMethod = null)
+        Func<float, string>? customFormatMethod = null
+    )
     {
-        var formatMethod = customFormatMethod ?? (Func<float, string>)
-            (allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
-        return new DTOs.Unit(unit, unitName,
+        var formatMethod =
+            customFormatMethod
+            ?? (Func<float, string>)(allowDecimal ? v => $"{v:0.##} {unit}" : v => $"{v:0} {unit}");
+        return new DTOs.Unit(
+            unit,
+            unitName,
             GetSuffixedNumberRegex(suffixRegex, allowNegative, allowDecimal),
             (_, m) => float.Parse(m[0].Groups[1].Value),
-            formatMethod);
+            formatMethod
+        );
     }
 
     private static string GetDefaultNumberRegex(
         string unit,
         bool allowNegative = true,
-        bool allowDecimal = true)
+        bool allowDecimal = true
+    )
     {
         var r = "^(";
-        if (allowNegative) r += "-?";
+        if (allowNegative)
+            r += "-?";
         r += "\\d{1,}";
-        if (allowDecimal) r += "(\\.?\\d{1,})?";
+        if (allowDecimal)
+            r += "(\\.?\\d{1,})?";
         r += $"){Regex.Escape(unit)}$";
         return r;
     }
@@ -237,30 +249,38 @@ internal static class Units
     private static string GetSuffixedNumberRegex(
         string suffixRegex,
         bool allowNegative = true,
-        bool allowDecimal = true)
+        bool allowDecimal = true
+    )
     {
         var r = "^(";
-        if (allowNegative) r += "-?";
+        if (allowNegative)
+            r += "-?";
         r += "\\d{1,}";
-        if (allowDecimal) r += "(\\.?\\d{1,})?";
+        if (allowDecimal)
+            r += "(\\.?\\d{1,})?";
         r += $"){suffixRegex}$";
         return r;
     }
 
     private static IUnitConversion Same() => new NoneConversion();
+
     private static IUnitConversion Factor(float factor) => new FactorBasedUnitConversion(factor);
+
     private static IUnitConversion Offset(float offset) => new OffsetUnitConversion(offset);
 
-    private static IUnitConversion Formula(Expression<Func<float, float>> to, Expression<Func<float, float>> from)
-        => new FormulaUnitConversion(to, from);
+    private static IUnitConversion Formula(
+        Expression<Func<float, float>> to,
+        Expression<Func<float, float>> from
+    ) => new FormulaUnitConversion(to, from);
 
-    private static IUnitConversion Lambda(Func<float, float> to, Func<float, float> from)
-        => new LambdaUnitConversion(to, from);
+    private static IUnitConversion Lambda(Func<float, float> to, Func<float, float> from) =>
+        new LambdaUnitConversion(to, from);
 
-    private static IUnitConversion Invert(IUnitConversion conversion) => new InvertedUnitConversion(conversion);
+    private static IUnitConversion Invert(IUnitConversion conversion) =>
+        new InvertedUnitConversion(conversion);
 
-    private static IUnitConversion Chain(params IUnitConversion[] conversions)
-        => new ChainedUnitConversion(conversions);
+    private static IUnitConversion Chain(params IUnitConversion[] conversions) =>
+        new ChainedUnitConversion(conversions);
 
     private static (string from, string to)[] Chain(params string[] steps)
     {
@@ -331,5 +351,3 @@ internal static class Units
 
     #endregion
 }
-
-

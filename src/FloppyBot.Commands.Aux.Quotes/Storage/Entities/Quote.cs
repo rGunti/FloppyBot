@@ -11,14 +11,12 @@ public record Quote(
     string QuoteText,
     string QuoteContext,
     DateTimeOffset CreatedAt,
-    string CreatedBy) : IEntity<Quote>
+    string CreatedBy
+) : IEntity<Quote>
 {
     public Quote WithId(string newId)
     {
-        return this with
-        {
-            Id = newId
-        };
+        return this with { Id = newId };
     }
 
     public override string ToString()

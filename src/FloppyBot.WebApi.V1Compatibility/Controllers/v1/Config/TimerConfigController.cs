@@ -21,7 +21,8 @@ public class TimerConfigController : ControllerBase
     public TimerConfigController(
         IMapper mapper,
         IUserService userService,
-        ITimerMessageConfigurationService timerMessageConfigurationService)
+        ITimerMessageConfigurationService timerMessageConfigurationService
+    )
     {
         _mapper = mapper;
         _userService = userService;
@@ -30,10 +31,15 @@ public class TimerConfigController : ControllerBase
 
     private ChannelIdentifier EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
-        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString()))
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
         {
-            throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
         }
 
         return channelIdentifier;
@@ -48,13 +54,16 @@ public class TimerConfigController : ControllerBase
     [HttpGet]
     public TimerMessageConfig[] GetAll()
     {
-        return _userService.GetAccessibleChannelsForUser(User.GetUserId())
-            .Select(channelId => _timerMessageConfigurationService.GetConfigForChannel(channelId)
-                .SingleOrDefault(new TimerMessageConfiguration(
-                    channelId,
-                    Array.Empty<string>(),
-                    5,
-                    0)))
+        return _userService
+            .GetAccessibleChannelsForUser(User.GetUserId())
+            .Select(
+                channelId =>
+                    _timerMessageConfigurationService
+                        .GetConfigForChannel(channelId)
+                        .SingleOrDefault(
+                            new TimerMessageConfiguration(channelId, Array.Empty<string>(), 5, 0)
+                        )
+            )
             .Select(_mapper.Map<TimerMessageConfig>)
             .ToArray();
     }
@@ -63,16 +72,15 @@ public class TimerConfigController : ControllerBase
     public IActionResult UpdateAll([FromBody] TimerMessageConfig[] configs)
     {
         // Ensuring access to all channels
-        var _ = configs
-            .Select(i => EnsureChannelAccess(i.Id))
-            .ToArray();
+        var _ = configs.Select(i => EnsureChannelAccess(i.Id)).ToArray();
 
-        foreach (TimerMessageConfiguration config in configs
-                     .Select(_mapper.Map<TimerMessageConfiguration>))
+        foreach (
+            TimerMessageConfiguration config in configs.Select(
+                _mapper.Map<TimerMessageConfiguration>
+            )
+        )
         {
-            _timerMessageConfigurationService.UpdateConfigurationForChannel(
-                config.Id,
-                config);
+            _timerMessageConfigurationService.UpdateConfigurationForChannel(config.Id, config);
         }
 
         return NoContent();
@@ -82,14 +90,12 @@ public class TimerConfigController : ControllerBase
     public IActionResult UpdateConfig(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
-        [FromBody] TimerMessageConfig config)
+        [FromBody] TimerMessageConfig config
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         var convertedConfig = _mapper.Map<TimerMessageConfiguration>(config);
-        _timerMessageConfigurationService.UpdateConfigurationForChannel(
-            channelId,
-            convertedConfig);
+        _timerMessageConfigurationService.UpdateConfigurationForChannel(channelId, convertedConfig);
         return NoContent();
     }
 }
-

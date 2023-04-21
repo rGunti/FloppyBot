@@ -12,10 +12,12 @@ public class MongoDbRepositoryFactory : IRepositoryFactory
         _database = database;
     }
 
-    public IRepository<T> GetRepository<T>() where T : class, IEntity<T>
-        => GetRepository<T>(RepositoryFactoryUtils.DetermineCollectionName<T>());
+    public IRepository<T> GetRepository<T>()
+        where T : class, IEntity<T> =>
+        GetRepository<T>(RepositoryFactoryUtils.DetermineCollectionName<T>());
 
-    public IRepository<T> GetRepository<T>(string collectionName) where T : class, IEntity<T>
+    public IRepository<T> GetRepository<T>(string collectionName)
+        where T : class, IEntity<T>
     {
         return new MongoDbRepository<T>(_database.GetCollection<T>(collectionName));
     }

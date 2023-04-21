@@ -19,28 +19,25 @@ public static class Registration
     {
         return services
             // - Configuration
-            .AddSingleton<TwitchConfiguration>(p => p.GetRequiredService<IConfiguration>()
-                .GetSection("Twitch")
-                .Get<TwitchConfiguration>())
+            .AddSingleton<TwitchConfiguration>(
+                p =>
+                    p.GetRequiredService<IConfiguration>()
+                        .GetSection("Twitch")
+                        .Get<TwitchConfiguration>()
+            )
             .AddSingleton<ConnectionCredentials>(p =>
             {
                 var config = p.GetRequiredService<TwitchConfiguration>();
-                return new ConnectionCredentials(
-                    config.Username,
-                    config.Token);
+                return new ConnectionCredentials(config.Username, config.Token);
             })
             .AddSingleton<ClientOptions>(p => new ClientOptions())
             // - Twitch Client
-            .AddSingleton<IClient>(p => new WebSocketClient(
-                p.GetRequiredService<ClientOptions>()))
+            .AddSingleton<IClient>(p => new WebSocketClient(p.GetRequiredService<ClientOptions>()))
             .AddSingleton<ITwitchClient>(p =>
             {
                 var config = p.GetRequiredService<TwitchConfiguration>();
-                var client = new TwitchClient(
-                    p.GetRequiredService<IClient>());
-                client.Initialize(
-                    p.GetRequiredService<ConnectionCredentials>(),
-                    config.Channel);
+                var client = new TwitchClient(p.GetRequiredService<IClient>());
+                client.Initialize(p.GetRequiredService<ConnectionCredentials>(), config.Channel);
                 return client;
             })
             // - Twitch API
@@ -59,9 +56,7 @@ public static class Registration
             {
                 var api = p.GetRequiredService<ITwitchAPI>();
                 var config = p.GetRequiredService<TwitchConfiguration>();
-                return new LiveStreamMonitorService(
-                    api,
-                    config.MonitorInterval);
+                return new LiveStreamMonitorService(api, config.MonitorInterval);
             })
             .AddSingleton<ITwitchChannelOnlineMonitor, TwitchChannelOnlineMonitor>()
             // - Chat Interface

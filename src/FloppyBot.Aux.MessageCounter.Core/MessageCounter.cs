@@ -16,12 +16,14 @@ public class MessageCounter : IDisposable
         INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
         IMessageOccurrenceService messageOccurrenceService,
-        ILogger<MessageCounter> logger)
+        ILogger<MessageCounter> logger
+    )
     {
         _messageOccurrenceService = messageOccurrenceService;
         _logger = logger;
         _chatMessageReceiver = receiverFactory.GetNewReceiver<ChatMessage>(
-            configuration.GetParsedConnectionString("MessageInput"));
+            configuration.GetParsedConnectionString("MessageInput")
+        );
         _chatMessageReceiver.NotificationReceived += OnMessageReceived;
     }
 
@@ -33,16 +35,16 @@ public class MessageCounter : IDisposable
     private void OnMessageReceived(ChatMessage chatMessage)
     {
 #if DEBUG
-        _logger.LogInformation(
-            "Received chat message to count: {@ChatMessage}",
-            chatMessage);
+        _logger.LogInformation("Received chat message to count: {@ChatMessage}", chatMessage);
 #endif
         _messageOccurrenceService.StoreMessage(chatMessage);
     }
 
     public void Start()
     {
-        _logger.LogInformation("Connecting to message input to start listening for incoming messages");
+        _logger.LogInformation(
+            "Connecting to message input to start listening for incoming messages"
+        );
         _chatMessageReceiver.StartListening();
     }
 
@@ -52,5 +54,3 @@ public class MessageCounter : IDisposable
         _chatMessageReceiver.StopListening();
     }
 }
-
-

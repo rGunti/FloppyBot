@@ -8,10 +8,9 @@ namespace FloppyBot.Base.TextFormatting;
 
 public static class TextFormatExtensions
 {
-    private static readonly SmartFormatter Formatter = Smart.CreateDefaultSmartFormat()
-        .AddExtensions(
-            new TimeFormatter(),
-            new DateTimeFormatter());
+    private static readonly SmartFormatter Formatter = Smart
+        .CreateDefaultSmartFormat()
+        .AddExtensions(new TimeFormatter(), new DateTimeFormatter());
 
     public static string Format(this string format, object obj)
     {
@@ -34,14 +33,14 @@ public static class TextFormatExtensions
             hexSequence
                 .SplitIntoChunksOf(2)
                 .Select(hex => byte.Parse(hex, NumberStyles.HexNumber))
-                .ToArray());
+                .ToArray()
+        );
     }
 
     private static IEnumerable<string> SplitIntoChunksOf(this string s, int chunkSize)
     {
-        return Enumerable.Range(0, s.Length / chunkSize)
+        return Enumerable
+            .Range(0, s.Length / chunkSize)
             .Select(i => s.Substring(i * chunkSize, chunkSize));
     }
 }
-
-

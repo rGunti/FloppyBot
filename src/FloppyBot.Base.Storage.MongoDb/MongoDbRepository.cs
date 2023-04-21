@@ -2,7 +2,8 @@
 
 namespace FloppyBot.Base.Storage.MongoDb;
 
-public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
+public class MongoDbRepository<TEntity> : IRepository<TEntity>
+    where TEntity : class, IEntity<TEntity>
 {
     private readonly IMongoCollection<TEntity> _collection;
 
@@ -12,7 +13,6 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
     }
 
     private FilterDefinitionBuilder<TEntity> Filter => Builders<TEntity>.Filter;
-
 
     public IEnumerable<TEntity> GetAll()
     {
@@ -59,9 +59,7 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
 
     public int Delete(IEnumerable<string> ids)
     {
-        return (int)_collection
-            .DeleteMany(Filter.In(i => i.Id, ids.ToHashSet()))
-            .DeletedCount;
+        return (int)_collection.DeleteMany(Filter.In(i => i.Id, ids.ToHashSet())).DeletedCount;
     }
 
     public int Delete(IEnumerable<TEntity> entities)
@@ -69,6 +67,5 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity> where TEntity : c
         return Delete(entities.Select(i => i.Id));
     }
 
-    private FilterDefinition<TEntity> GetIdFilter(string id) =>
-        Filter.Eq(i => i.Id, id);
+    private FilterDefinition<TEntity> GetIdFilter(string id) => Filter.Eq(i => i.Id, id);
 }

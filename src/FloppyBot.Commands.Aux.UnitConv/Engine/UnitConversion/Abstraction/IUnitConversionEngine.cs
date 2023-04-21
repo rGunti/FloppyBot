@@ -14,4 +14,3 @@ public interface IUnitConversionEngine
 
     IUnitConversion? FindConversion(string from, string to);
 }
-

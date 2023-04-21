@@ -15,7 +15,8 @@ public record CommandAbstract(
     bool NoParameters,
     bool Hidden,
     CommandParameterAbstract[] Parameters,
-    Dictionary<string, string> AllMetadata);
+    Dictionary<string, string> AllMetadata
+);
 
 /// <remarks>Impure!</remarks>
 public record CommandParameterAbstract(
@@ -24,7 +25,8 @@ public record CommandParameterAbstract(
     CommandParameterAbstractType Type,
     bool Required,
     string? Description,
-    string[]? PossibleValues);
+    string[]? PossibleValues
+);
 
 public enum CommandParameterAbstractType
 {

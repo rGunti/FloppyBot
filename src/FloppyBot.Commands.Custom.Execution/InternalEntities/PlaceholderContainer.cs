@@ -29,7 +29,8 @@ public class PlaceholderContainer : IPlaceholderContainer
         CustomCommandDescription commandDescription,
         DateTimeOffset now,
         int newRandomNumber,
-        ICounterStorageService counterStorageService)
+        ICounterStorageService counterStorageService
+    )
     {
         _commandInstruction = instruction;
         _commandDescription = commandDescription;
@@ -55,8 +56,7 @@ public class PlaceholderContainer : IPlaceholderContainer
         {
             if (!_newCounterValue.HasValue)
             {
-                _newCounterValue = _counterStorageService.Next(
-                    _commandDescription.Id);
+                _newCounterValue = _counterStorageService.Next(_commandDescription.Id);
             }
 
             return _newCounterValue!.Value;

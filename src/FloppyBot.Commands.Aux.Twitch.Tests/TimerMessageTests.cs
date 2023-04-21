@@ -19,15 +19,8 @@ public class TimerMessageTests
 {
     private static readonly DateTimeOffset RefTime = DateTimeOffset.Parse("2022-12-12T12:00:00Z");
 
-    private static readonly TimerMessageConfiguration RefConfig = new(
-        "Mock/Channel",
-        new[]
-        {
-            "Hello World",
-            "This is a test"
-        },
-        5,
-        5);
+    private static readonly TimerMessageConfiguration RefConfig =
+        new("Mock/Channel", new[] { "Hello World", "This is a test" }, 5, 5);
 
     private readonly IRepository<TimerMessageConfiguration> _configRepo;
 
@@ -51,9 +44,7 @@ public class TimerMessageTests
         _messageReplierMock
             .Setup(s => s.SendMessage(It.IsAny<ChatMessage>()))
             .Callback<ChatMessage>(chatMessage => _sentMessages.Add(chatMessage));
-        _messageOccurrenceService = new MessageOccurrenceService(
-            db,
-            _timeProvider);
+        _messageOccurrenceService = new MessageOccurrenceService(db, _timeProvider);
         _messageConfigService = new TimerMessageConfigurationService(db);
 
         _occurrenceRepo = db.GetRepository<MessageOccurrence>();
@@ -65,17 +56,23 @@ public class TimerMessageTests
             _messageOccurrenceService,
             _messageReplierMock.Object,
             _messageConfigService,
-            _timeProvider);
+            _timeProvider
+        );
     }
 
     private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
     {
-        var _ = Enumerable.Range(startId, amount)
-            .Select(i => new MessageOccurrence(
-                $"Mock/Channel/Message{i}",
-                "Mock/Channel",
-                "Mock/User",
-                _timeProvider.GetCurrentUtcTime() - (i - startId) * gap))
+        var _ = Enumerable
+            .Range(startId, amount)
+            .Select(
+                i =>
+                    new MessageOccurrence(
+                        $"Mock/Channel/Message{i}",
+                        "Mock/Channel",
+                        "Mock/User",
+                        _timeProvider.GetCurrentUtcTime() - (i - startId) * gap
+                    )
+            )
             .Select(_occurrenceRepo.Insert)
             .ToArray();
     }
@@ -84,12 +81,11 @@ public class TimerMessageTests
     public void SendNoMessageWhenNothingIsAvailable()
     {
         _cronJob.Run();
-        CollectionAssert.AreEqual(
-            Array.Empty<ChatMessage>(),
-            _sentMessages.ToArray());
+        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
         CollectionAssert.AreEqual(
             Array.Empty<TimerMessageExecution>(),
-            _executionRepo.GetAll().ToArray());
+            _executionRepo.GetAll().ToArray()
+        );
     }
 
     [TestMethod]
@@ -97,12 +93,11 @@ public class TimerMessageTests
     {
         _configRepo.Insert(RefConfig);
         _cronJob.Run();
-        CollectionAssert.AreEqual(
-            Array.Empty<ChatMessage>(),
-            _sentMessages.ToArray());
+        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
         CollectionAssert.AreEqual(
             Array.Empty<TimerMessageExecution>(),
-            _executionRepo.GetAll().ToArray());
+            _executionRepo.GetAll().ToArray()
+        );
     }
 
     [TestMethod]
@@ -112,12 +107,11 @@ public class TimerMessageTests
         _configRepo.Insert(RefConfig);
         _cronJob.Run();
 
-        CollectionAssert.AreEqual(
-            Array.Empty<ChatMessage>(),
-            _sentMessages.ToArray());
+        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
         CollectionAssert.AreEqual(
             Array.Empty<TimerMessageExecution>(),
-            _executionRepo.GetAll().ToArray());
+            _executionRepo.GetAll().ToArray()
+        );
     }
 
     [TestMethod]
@@ -135,15 +129,15 @@ public class TimerMessageTests
                     ChatMessageIdentifier.NewFor("Mock/Channel"),
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
-                    RefConfig.Messages[0])
+                    RefConfig.Messages[0]
+                )
             },
-            _sentMessages.ToArray());
+            _sentMessages.ToArray()
+        );
         Assert.AreEqual(
-            new TimerMessageExecution(
-                "Mock/Channel",
-                RefTime,
-                0),
-            _executionRepo.GetAll().Single());
+            new TimerMessageExecution("Mock/Channel", RefTime, 0),
+            _executionRepo.GetAll().Single()
+        );
 
         _timeProvider.AdvanceTimeBy(10.Minutes());
         _sentMessages.Clear();
@@ -158,14 +152,14 @@ public class TimerMessageTests
                     ChatMessageIdentifier.NewFor("Mock/Channel"),
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
-                    RefConfig.Messages[1])
+                    RefConfig.Messages[1]
+                )
             },
-            _sentMessages.ToArray());
+            _sentMessages.ToArray()
+        );
         Assert.AreEqual(
-            new TimerMessageExecution(
-                "Mock/Channel",
-                RefTime + 10.Minutes(),
-                1),
-            _executionRepo.GetAll().Single());
+            new TimerMessageExecution("Mock/Channel", RefTime + 10.Minutes(), 1),
+            _executionRepo.GetAll().Single()
+        );
     }
 }

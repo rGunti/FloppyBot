@@ -7,7 +7,8 @@ public record VariableCommandInfo : CommandInfo
     public VariableCommandInfo(
         string identifier,
         MethodInfo handlerMethod,
-        MethodInfo testHandlerMethod)
+        MethodInfo testHandlerMethod
+    )
         : base(Enumerable.Empty<string>(), handlerMethod)
     {
         CommandId = identifier;
@@ -15,7 +16,11 @@ public record VariableCommandInfo : CommandInfo
     }
 
     public VariableCommandInfo(string identifier, VariableCommandInfo variableCommandInfo)
-        : this(variableCommandInfo.CommandId, variableCommandInfo.HandlerMethod, variableCommandInfo.TestHandlerMethod)
+        : this(
+            variableCommandInfo.CommandId,
+            variableCommandInfo.HandlerMethod,
+            variableCommandInfo.TestHandlerMethod
+        )
     {
         CommandId = identifier;
         Temporary = true;

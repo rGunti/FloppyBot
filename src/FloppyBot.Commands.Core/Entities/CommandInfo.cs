@@ -42,9 +42,8 @@ public record CommandInfo
     /// <summary>
     /// Returns the primary name of this command
     /// </summary>
-    public virtual string PrimaryCommandName
-        => HandlerMethod.GetCustomAttribute<PrimaryCommandNameAttribute>()?.Value
-           ?? Names.First();
+    public virtual string PrimaryCommandName =>
+        HandlerMethod.GetCustomAttribute<PrimaryCommandNameAttribute>()?.Value ?? Names.First();
 
     /// <summary>
     /// Returns true, if the command is variable
@@ -53,7 +52,6 @@ public record CommandInfo
 
     public override string ToString()
     {
-        return
-            $"Cmd {PrimaryCommandName} [Alias={string.Join(",", Names)}]{(IsStatic ? " (static)" : "")} => {HandlerMethod}";
+        return $"Cmd {PrimaryCommandName} [Alias={string.Join(",", Names)}]{(IsStatic ? " (static)" : "")} => {HandlerMethod}";
     }
 }

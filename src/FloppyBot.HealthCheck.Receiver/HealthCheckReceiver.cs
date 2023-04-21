@@ -16,12 +16,14 @@ public class HealthCheckReceiver : IHealthCheckReceiver, IDisposable
     public HealthCheckReceiver(
         ILogger<HealthCheckReceiver> logger,
         INotificationReceiverFactory receiverFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         _logger = logger;
 
         _receiver = receiverFactory.GetNewReceiver<HealthCheckData>(
-            configuration.GetHealthCheckConnectionString());
+            configuration.GetHealthCheckConnectionString()
+        );
         _receiver.NotificationReceived += ReceiverOnNotificationReceived;
         _receiver.StartListening();
 
@@ -40,9 +42,6 @@ public class HealthCheckReceiver : IHealthCheckReceiver, IDisposable
     private void ReceiverOnNotificationReceived(HealthCheckData notification)
     {
         _logger.LogTrace("Received health check data ...");
-        _data.AddOrUpdate(
-            notification.InstanceId,
-            _ => notification,
-            (_, _) => notification);
+        _data.AddOrUpdate(notification.InstanceId, _ => notification, (_, _) => notification);
     }
 }

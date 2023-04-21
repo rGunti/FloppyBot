@@ -14,10 +14,12 @@ public class SupportsFeatureAttribute : BaseArgumentAttribute
 
     public ChatInterfaceFeatures Feature { get; }
 
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
         parameterInfo.AssertType<bool>();
         return commandInstruction.Context!.SourceMessage.SupportedFeatures.HasFlag(Feature);
     }
 }
-

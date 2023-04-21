@@ -20,7 +20,7 @@ public class RedisNotificationReceiver<T> : INotificationReceiver<T>
 
     public string Channel => _channel;
     public bool IsStarted => _isStarted;
-    
+
     public void StartListening()
     {
         if (_isStarted)

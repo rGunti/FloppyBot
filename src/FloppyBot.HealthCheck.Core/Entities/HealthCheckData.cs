@@ -5,4 +5,5 @@ public record HealthCheckData(
     string InstanceId,
     string HostName,
     AppInfo App,
-    ProcessInfo Process);
+    ProcessInfo Process
+);

@@ -7,19 +7,18 @@ public static class ConversionMapBuilder
 {
     public static ConversionMap BuildMap(
         IEnumerable<DTOs.Unit> knownUnits,
-        IImmutableDictionary<(string from, string to), IUnitConversion> knownConversions)
+        IImmutableDictionary<(string from, string to), IUnitConversion> knownConversions
+    )
     {
-        return BuildMap(
-            knownUnits.Select(u => u.Symbol),
-            knownConversions.Keys.ToHashSet());
+        return BuildMap(knownUnits.Select(u => u.Symbol), knownConversions.Keys.ToHashSet());
     }
 
     public static ConversionMap BuildMap(
         IEnumerable<string> knownNodes,
-        ISet<(string a, string b)> knownRelations)
+        ISet<(string a, string b)> knownRelations
+    )
     {
-        var nodes = knownNodes.Distinct()
-            .ToDictionary(u => u, u => new ConversionNode(u));
+        var nodes = knownNodes.Distinct().ToDictionary(u => u, u => new ConversionNode(u));
 
         foreach (var (fromUnit, toUnit) in knownRelations)
         {
@@ -33,4 +32,3 @@ public static class ConversionMapBuilder
         return new ConversionMap(nodes.Values.ToImmutableHashSet());
     }
 }
-

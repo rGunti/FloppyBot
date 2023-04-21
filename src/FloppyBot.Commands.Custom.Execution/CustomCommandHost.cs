@@ -25,7 +25,8 @@ public class CustomCommandHost
     public CustomCommandHost(
         ILogger<CustomCommandHost> logger,
         ICustomCommandExecutor commandExecutor,
-        ICustomCommandService commandService)
+        ICustomCommandService commandService
+    )
     {
         _logger = logger;
         _commandExecutor = commandExecutor;
@@ -34,16 +35,19 @@ public class CustomCommandHost
 
     private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
     {
-        return _commandService.GetCommand(
+        return _commandService
+            .GetCommand(
                 instruction.Context!.SourceMessage!.Identifier.GetChannel(),
-                instruction.CommandName)
+                instruction.CommandName
+            )
             .Wrap();
     }
 
     private Exception CreateCommandNotFoundException(CommandInstruction instruction)
     {
         return new KeyNotFoundException(
-            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}");
+            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
+        );
     }
 
     public bool CanHandleCommand(CommandInstruction instruction)
@@ -51,15 +55,14 @@ public class CustomCommandHost
         return GetCommand(instruction).HasValue;
     }
 
-    [VariableCommandHandler(
-        nameof(CanHandleCommand),
-        identifier: "Custom Commands")]
+    [VariableCommandHandler(nameof(CanHandleCommand), identifier: "Custom Commands")]
     // ReSharper disable once UnusedMember.Global
     public CommandResult? RunCustomCommand(CommandInstruction instruction)
     {
         CustomCommandDescription customCommand = GetCommand(instruction)
             .OrThrow(() => CreateCommandNotFoundException(instruction));
-        ImmutableList<string?> replies = _commandExecutor.Execute(instruction, customCommand)
+        ImmutableList<string?> replies = _commandExecutor
+            .Execute(instruction, customCommand)
             .ToImmutableList();
 
         if (!replies.Any())
@@ -68,9 +71,7 @@ public class CustomCommandHost
         }
 
         // TODO: Supply multiple results
-        return new CommandResult(
-            CommandOutcome.Success,
-            replies.Join("\n\n"));
+        return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
     }
 
     [DependencyRegistration]

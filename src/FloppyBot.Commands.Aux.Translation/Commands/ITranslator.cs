@@ -10,4 +10,3 @@ public interface ITranslator
     IEnumerable<string> ListSupportedLanguages();
     IEnumerable<string> ListSupportedLanguageCodes();
 }
-

@@ -15,22 +15,19 @@ internal record CronJobInfo(
     ICronJob Implementation,
     int Interval,
     bool RunOnStartup,
-    Type ThreadType);
+    Type ThreadType
+);
 
 public class CronManager : ICronManager
 {
     private readonly IImmutableList<CronJobInfo> _cronJobs;
     private readonly ILogger<CronManager> _logger;
 
-    public CronManager(
-        ILogger<CronManager> logger,
-        IEnumerable<ICronJob> cronThreads)
+    public CronManager(ILogger<CronManager> logger, IEnumerable<ICronJob> cronThreads)
     {
         logger.LogDebug($"Creating {nameof(CronManager)} ...");
         _logger = logger;
-        _cronJobs = cronThreads
-            .Select(CreateCronJob)
-            .ToImmutableList();
+        _cronJobs = cronThreads.Select(CreateCronJob).ToImmutableList();
     }
 
     public void Launch()
@@ -55,7 +52,8 @@ public class CronManager : ICronManager
                     {
                         s.ToRunEvery(cronJob.Interval).Milliseconds();
                     }
-                });
+                }
+            );
         }
 
         JobManager.Start();
@@ -65,7 +63,8 @@ public class CronManager : ICronManager
     {
         _logger.LogInformation(
             "Stopping {CronJobCount} cron job threads to dispose ...",
-            _cronJobs.Count);
+            _cronJobs.Count
+        );
         JobManager.StopAndBlock();
     }
 
@@ -76,16 +75,12 @@ public class CronManager : ICronManager
         {
             throw new ArgumentException(
                 $"The provided type {type} does not have a {nameof(CronIntervalAttribute)} attached.",
-                nameof(type));
+                nameof(type)
+            );
         }
 
-        var settings = type.GetCustomAttributes<CronIntervalAttribute>()
-            .First();
+        var settings = type.GetCustomAttributes<CronIntervalAttribute>().First();
 
-        return new CronJobInfo(
-            cronJob,
-            settings.Milliseconds,
-            settings.RunOnStartup,
-            type);
+        return new CronJobInfo(cronJob, settings.Milliseconds, settings.RunOnStartup, type);
     }
 }

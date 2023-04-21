@@ -32,10 +32,7 @@ public class UserService : IUserService
         var user = _repository.GetById(userId);
         if (user == null && createIfMissing)
         {
-            user = new User(
-                userId,
-                new List<string>(),
-                new Dictionary<string, string>());
+            user = new User(userId, new List<string>(), new Dictionary<string, string>());
             user = _repository.Insert(user);
         }
 
@@ -44,10 +41,10 @@ public class UserService : IUserService
             // Ensure all channel IDs are available as channel alias
             user = user with
             {
-                ChannelAliases = user.OwnerOf
-                    .ToDictionary(
-                        c => c,
-                        c => user.ChannelAliases.GetValueOrDefault(c) ?? "")
+                ChannelAliases = user.OwnerOf.ToDictionary(
+                    c => c,
+                    c => user.ChannelAliases.GetValueOrDefault(c) ?? ""
+                )
             };
         }
 
@@ -66,9 +63,6 @@ public class UserService : IUserService
             }
         }
 
-        _repository.Update(user with
-        {
-            ChannelAliases = newAliases
-        });
+        _repository.Update(user with { ChannelAliases = newAliases });
     }
 }

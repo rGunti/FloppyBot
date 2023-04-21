@@ -23,4 +23,3 @@ internal class FactorBasedUnitConversion : IUnitConversion
 
     public override string ToString() => $"Factor({Factor})";
 }
-

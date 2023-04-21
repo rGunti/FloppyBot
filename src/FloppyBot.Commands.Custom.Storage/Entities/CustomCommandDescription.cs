@@ -9,7 +9,8 @@ public record CustomCommandDescription : IEntity<CustomCommandDescription>
 {
     private readonly IImmutableSet<string> _aliases = ImmutableSetWithValueSemantics<string>.Empty;
     private readonly IImmutableSet<string> _owner = ImmutableSetWithValueSemantics<string>.Empty;
-    private readonly IImmutableList<CommandResponse> _responses = ImmutableList<CommandResponse>.Empty;
+    private readonly IImmutableList<CommandResponse> _responses =
+        ImmutableList<CommandResponse>.Empty;
 
     public string Id { get; init; }
 

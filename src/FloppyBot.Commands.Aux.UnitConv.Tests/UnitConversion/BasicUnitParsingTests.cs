@@ -37,7 +37,11 @@
         [DataRow("5.4l", "l", 5.4f)]
         [DataRow("25floz", "floz", 25f)]
         [DataRow("69gal", "gal", 69f)]
-        public void CanParseKnownUnits(string input, string expectedUnitSymbol, float expectedOutput)
+        public void CanParseKnownUnits(
+            string input,
+            string expectedUnitSymbol,
+            float expectedOutput
+        )
         {
             var val = _unitParsingEngine.ParseUnit(input);
             Assert.IsNotNull(val);

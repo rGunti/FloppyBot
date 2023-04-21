@@ -24,7 +24,8 @@ public class SubAlertConfigController : ControllerBase
     public IActionResult UpdateConfig(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
-        [FromBody] SubAlertConfig config)
+        [FromBody] SubAlertConfig config
+    )
     {
         throw this.NotImplemented();
     }

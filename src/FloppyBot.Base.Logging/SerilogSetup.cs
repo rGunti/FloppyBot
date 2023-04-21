@@ -12,31 +12,30 @@ public static class SerilogSetup
 
     public static IHostBuilder SetupSerilog(this IHostBuilder hostBuilder)
     {
-        return hostBuilder
-            .UseSerilog((ctx, lc) => lc.ConfigureSerilog(ctx.Configuration));
+        return hostBuilder.UseSerilog((ctx, lc) => lc.ConfigureSerilog(ctx.Configuration));
     }
 
     internal static LoggerConfiguration ConfigureCommonSerilogSettings(
-        this LoggerConfiguration loggerConfig)
+        this LoggerConfiguration loggerConfig
+    )
     {
-        return loggerConfig
-            .Enrich.FromLogContext()
-            .Enrich.WithThreadId();
+        return loggerConfig.Enrich.FromLogContext().Enrich.WithThreadId();
     }
 
     internal static LoggerConfiguration CommonConsoleOutput(this LoggerSinkConfiguration sinkConfig)
     {
-        return sinkConfig
-            .Console(outputTemplate: OUTPUT_TEMPLATE);
+        return sinkConfig.Console(outputTemplate: OUTPUT_TEMPLATE);
     }
 
-    public static LoggerConfiguration ConfigureSerilog(this LoggerConfiguration loggerConfig, IConfiguration hostConfig)
+    public static LoggerConfiguration ConfigureSerilog(
+        this LoggerConfiguration loggerConfig,
+        IConfiguration hostConfig
+    )
     {
         return loggerConfig
             // - Default Log Configuration
             .ConfigureCommonSerilogSettings()
-            .WriteTo.Async(s => s
-                .CommonConsoleOutput())
+            .WriteTo.Async(s => s.CommonConsoleOutput())
 #if DEBUG
             .MinimumLevel.Verbose()
 #else
@@ -46,7 +45,9 @@ public static class SerilogSetup
             .ReadFrom.Configuration(hostConfig);
     }
 
-    public static LoggerConfiguration ConfigureSerilogForTesting(this LoggerConfiguration loggerConfig)
+    public static LoggerConfiguration ConfigureSerilogForTesting(
+        this LoggerConfiguration loggerConfig
+    )
     {
         return loggerConfig
             .ConfigureCommonSerilogSettings()

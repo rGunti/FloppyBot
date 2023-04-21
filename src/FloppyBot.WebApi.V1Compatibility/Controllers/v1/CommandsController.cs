@@ -21,8 +21,6 @@ public class CommandsController : ControllerBase
     [HttpGet]
     public CommandInfo[] GetCommands()
     {
-        return _commandConverter.GetAllKnownCommands()
-            .OrderBy(c => c.Name)
-            .ToArray();
+        return _commandConverter.GetAllKnownCommands().OrderBy(c => c.Name).ToArray();
     }
 }

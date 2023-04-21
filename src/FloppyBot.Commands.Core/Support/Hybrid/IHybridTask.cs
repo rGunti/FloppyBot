@@ -3,6 +3,4 @@ using FloppyBot.Commands.Core.Support.PreExecution;
 
 namespace FloppyBot.Commands.Core.Support.Hybrid;
 
-public interface IHybridTask : IPreExecutionTask, IPostExecutionTask
-{
-}
+public interface IHybridTask : IPreExecutionTask, IPostExecutionTask { }

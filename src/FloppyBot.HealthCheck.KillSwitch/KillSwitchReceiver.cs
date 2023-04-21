@@ -16,12 +16,14 @@ public class KillSwitchReceiver : IDisposable
         ILogger<KillSwitchReceiver> logger,
         INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
-        IHostApplicationLifetime appLifetime)
+        IHostApplicationLifetime appLifetime
+    )
     {
         _logger = logger;
         _appLifetime = appLifetime;
         _receiver = receiverFactory.GetNewReceiver<KillSwitchMessage>(
-            configuration.GetKillSwitchConnectionString());
+            configuration.GetKillSwitchConnectionString()
+        );
         _receiver.NotificationReceived += OnKillSwitchMessageReceived;
 
         _logger.LogInformation("Start listening for Kill Switch messages");
@@ -42,11 +44,12 @@ public class KillSwitchReceiver : IDisposable
         }
 
         _logger.LogWarning("Will terminate this instance in 2.5 seconds");
-        Task.Delay(2500).ContinueWith(_ =>
-        {
-            _logger.LogWarning("Invoking shutdown ...");
-            _appLifetime.StopApplication();
-        });
+        Task.Delay(2500)
+            .ContinueWith(_ =>
+            {
+                _logger.LogWarning("Invoking shutdown ...");
+                _appLifetime.StopApplication();
+            });
 
         _logger.LogInformation("Stopping receiver ...");
         _receiver.StopListening();

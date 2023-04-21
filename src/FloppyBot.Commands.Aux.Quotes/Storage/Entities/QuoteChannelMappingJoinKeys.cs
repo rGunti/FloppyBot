@@ -6,7 +6,8 @@ public record QuoteChannelMappingJoinKeys(
     string Id,
     string MappingId,
     string ChannelId,
-    DateTime ExpiresAt) : IEntity<QuoteChannelMappingJoinKeys>
+    DateTime ExpiresAt
+) : IEntity<QuoteChannelMappingJoinKeys>
 {
     public QuoteChannelMappingJoinKeys WithId(string newId)
     {

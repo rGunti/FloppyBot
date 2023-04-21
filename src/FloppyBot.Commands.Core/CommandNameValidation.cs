@@ -22,10 +22,13 @@ public static class CommandNameValidation
     private static void ThrowInvalidCommandName(string? commandName)
     {
         throw new ArgumentException(
-            $"{(commandName != null ? $"\"{commandName}\"" : "<null>")} is not a valid command name");
+            $"{(commandName != null ? $"\"{commandName}\"" : "<null>")} is not a valid command name"
+        );
     }
 
-    public static IEnumerable<string> AreAllValidCommandNamesOrThrow(this IEnumerable<string> commandNames)
+    public static IEnumerable<string> AreAllValidCommandNamesOrThrow(
+        this IEnumerable<string> commandNames
+    )
     {
         foreach (var commandName in commandNames)
         {

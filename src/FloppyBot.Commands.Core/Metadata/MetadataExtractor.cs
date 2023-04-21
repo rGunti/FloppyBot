@@ -24,16 +24,12 @@ public class MetadataExtractor : IMetadataExtractor
         var dict = new Dictionary<string, string>();
         foreach (var (type, values) in classAttributes)
         {
-            dict[type] = values
-                .Select(v => v.Value)
-                .Join("\n\n");
+            dict[type] = values.Select(v => v.Value).Join("\n\n");
         }
 
         foreach (var (type, values) in methodAttributes)
         {
-            dict[type] = values
-                .Select(v => v.Value)
-                .Join("\n\n");
+            dict[type] = values.Select(v => v.Value).Join("\n\n");
         }
 
         ExtractAdditionalMetadata(commandInfo, dict);
@@ -41,7 +37,10 @@ public class MetadataExtractor : IMetadataExtractor
         return new CommandMetadata(dict);
     }
 
-    private void ExtractAdditionalMetadata(CommandInfo commandInfo, Dictionary<string, string> existingMetadata)
+    private void ExtractAdditionalMetadata(
+        CommandInfo commandInfo,
+        Dictionary<string, string> existingMetadata
+    )
     {
         // If no minimum privilege has been defined, check if a guard exists and extract it from there
         if (!existingMetadata.ContainsKey(CommandMetadataTypes.MIN_PRIVILEGE))
@@ -58,7 +57,10 @@ public class MetadataExtractor : IMetadataExtractor
             var interfaceLimits = TryExtractInterfaceLimit(commandInfo);
             if (interfaceLimits.Any())
             {
-                existingMetadata[CommandMetadataTypes.INTERFACES] = string.Join(",", interfaceLimits);
+                existingMetadata[CommandMetadataTypes.INTERFACES] = string.Join(
+                    ",",
+                    interfaceLimits
+                );
             }
         }
     }
@@ -89,10 +91,10 @@ public class MetadataExtractor : IMetadataExtractor
         if (methodLevel == null)
         {
             return commandInfo.ImplementingType
-                .GetCustomAttributes<SourceInterfaceGuardAttribute>()
-                .Select(g => g.AllowedMessageInterfaces)
-                .FirstOrDefault()?
-                .ToArray() ?? Array.Empty<string>();
+                    .GetCustomAttributes<SourceInterfaceGuardAttribute>()
+                    .Select(g => g.AllowedMessageInterfaces)
+                    .FirstOrDefault()
+                    ?.ToArray() ?? Array.Empty<string>();
         }
 
         return methodLevel.ToArray();

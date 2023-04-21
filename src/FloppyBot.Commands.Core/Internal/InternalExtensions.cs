@@ -4,12 +4,14 @@ namespace FloppyBot.Commands.Core.Internal;
 
 internal static class InternalExtensions
 {
-    public static bool HasCustomAttribute<T>(this Type type) where T : Attribute
+    public static bool HasCustomAttribute<T>(this Type type)
+        where T : Attribute
     {
         return type.GetCustomAttributes<T>().Any();
     }
 
-    public static bool HasCustomAttribute<T>(this MethodBase method) where T : Attribute
+    public static bool HasCustomAttribute<T>(this MethodBase method)
+        where T : Attribute
     {
         return method.GetCustomAttributes<T>().Any();
     }
@@ -42,7 +44,9 @@ internal static class InternalExtensions
     {
         if (type != typeof(T) && !type.IsAssignableFrom(typeof(T)))
         {
-            throw new InvalidCastException($"Parameter of type {type} cannot be assigned to {typeof(T)}");
+            throw new InvalidCastException(
+                $"Parameter of type {type} cannot be assigned to {typeof(T)}"
+            );
         }
     }
 }

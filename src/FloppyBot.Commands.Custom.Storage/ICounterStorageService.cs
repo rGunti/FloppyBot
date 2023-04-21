@@ -23,9 +23,7 @@ public class CounterStorageService : ICounterStorageService
 
     public int Peek(string commandId)
     {
-        return GetCounter(commandId)
-            .Select(i => i.Value)
-            .FirstOrDefault();
+        return GetCounter(commandId).Select(i => i.Value).FirstOrDefault();
     }
 
     public int Next(string commandId)
@@ -37,10 +35,7 @@ public class CounterStorageService : ICounterStorageService
         }
 
         CounterEo counter = wrappedCounter.Value;
-        return UpdateCounter(counter with
-        {
-            Value = counter.Value + 1
-        });
+        return UpdateCounter(counter with { Value = counter.Value + 1 });
     }
 
     public void Set(string commandId, int value)
@@ -52,10 +47,7 @@ public class CounterStorageService : ICounterStorageService
         }
         else
         {
-            UpdateCounter(counter.Value with
-            {
-                Value = value
-            });
+            UpdateCounter(counter.Value with { Value = value });
         }
     }
 
@@ -63,19 +55,14 @@ public class CounterStorageService : ICounterStorageService
     {
         NullableObject<CounterEo> counter = GetCounter(commandId);
         bool needsInsert = !counter.HasValue;
-        int newValue = counter
-            .Select(c => c.Value)
-            .FirstOrDefault() + increment;
+        int newValue = counter.Select(c => c.Value).FirstOrDefault() + increment;
         if (needsInsert)
         {
             CreateCounter(commandId, newValue);
         }
         else
         {
-            UpdateCounter(counter.Value with
-            {
-                Value = newValue
-            });
+            UpdateCounter(counter.Value with { Value = newValue });
         }
 
         return newValue;

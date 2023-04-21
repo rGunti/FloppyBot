@@ -36,9 +36,7 @@ public class TimerCommands
     // ReSharper disable once UnusedMember.Global
     public static void DiSetup(IServiceCollection services)
     {
-        services
-            .AddTransient<ITimerService, TimerService>()
-            .AddCronJob<TimerCronJob>();
+        services.AddTransient<ITimerService, TimerService>().AddCronJob<TimerCronJob>();
     }
 
     [Command("timer")]
@@ -48,12 +46,10 @@ public class TimerCommands
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     public CommandResult CreateTimer(
         [ArgumentIndex(0)] string timeExpression,
-        [ArgumentRange(1)]
-        string timerMessage,
-        [Author]
-        ChatUser author,
-        [SourceMessageIdentifier]
-        ChatMessageIdentifier sourceMessageId)
+        [ArgumentRange(1)] string timerMessage,
+        [Author] ChatUser author,
+        [SourceMessageIdentifier] ChatMessageIdentifier sourceMessageId
+    )
     {
         TimeSpan? timespan = TimeExpressionParser.ParseTimeExpression(timeExpression);
         if (timespan == null)
@@ -61,14 +57,7 @@ public class TimerCommands
             return CommandResult.FailedWith(REPLY_FAILED_TIMESPAN);
         }
 
-        _timerService.CreateTimer(
-            sourceMessageId,
-            author.Identifier,
-            timespan.Value,
-            timerMessage);
-        return CommandResult.SuccessWith(REPLY_CREATED.Format(new
-        {
-            Time = timespan
-        }));
+        _timerService.CreateTimer(sourceMessageId, author.Identifier, timespan.Value, timerMessage);
+        return CommandResult.SuccessWith(REPLY_CREATED.Format(new { Time = timespan }));
     }
 }

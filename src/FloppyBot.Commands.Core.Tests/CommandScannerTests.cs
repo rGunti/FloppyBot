@@ -19,8 +19,7 @@ public class CommandScannerTests
     [TestMethod]
     public void DiscoversHandlersCorrectly()
     {
-        var commands = _scanner.ScanTypeForCommandHandlers(typeof(SampleCommands))
-            .ToArray();
+        var commands = _scanner.ScanTypeForCommandHandlers(typeof(SampleCommands)).ToArray();
 
         foreach (var commandInfo in commands)
         {
@@ -32,57 +31,74 @@ public class CommandScannerTests
             {
                 new CommandInfo(
                     new[] { "ping" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Ping))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Ping))!
+                ),
                 new CommandInfo(
                     new[] { "sping" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.StaticPing))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.StaticPing))!
+                ),
                 new CommandInfo(
                     new[] { "simple" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Simple))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Simple))!
+                ),
                 new CommandInfo(
                     new[] { "noargs" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.NoArgsCommand))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.NoArgsCommand))!
+                ),
                 new CommandInfo(
                     new[] { "args" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.ArgsCommand))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.ArgsCommand))!
+                ),
                 new CommandInfo(
                     new[] { "add" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Add))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Add))!
+                ),
                 new CommandInfo(
                     new[] { "list" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.List))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.List))!
+                ),
                 new CommandInfo(
                     new[] { "allargs" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgs))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgs))!
+                ),
                 new CommandInfo(
                     new[] { "allargs1" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgsAsString))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AllArgsAsString))!
+                ),
                 new CommandInfo(
                     new[] { "enum" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Enum))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.Enum))!
+                ),
                 new CommandInfo(
                     new[] { "author" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AuthorName))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AuthorName))!
+                ),
                 new CommandInfo(
                     new[] { "feature" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.SupportFeatures))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.SupportFeatures))!
+                ),
                 new CommandInfo(
                     new[] { "async" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommand))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommand))!
+                ),
                 new CommandInfo(
                     new[] { "cmdresult" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.CommandResult))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.CommandResult))!
+                ),
                 new CommandInfo(
                     new[] { "asynccmdresult" }.ToImmutableListWithValueSemantics(),
-                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommandResult))!),
+                    typeof(SampleCommands).GetMethod(nameof(SampleCommands.AsyncCommandResult))!
+                ),
             },
-            commands);
+            commands
+        );
     }
 
     [TestMethod]
     public void DiscoversVariableHandlersCorrectly()
     {
-        VariableCommandInfo[] handlers = _scanner.ScanTypeForVariableCommandHandlers(typeof(VariableCommands))
+        VariableCommandInfo[] handlers = _scanner
+            .ScanTypeForVariableCommandHandlers(typeof(VariableCommands))
             .ToArray();
 
         CollectionAssert.AreEquivalent(
@@ -90,10 +106,14 @@ public class CommandScannerTests
             {
                 new VariableCommandInfo(
                     "MyCustomHandler",
-                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.HandleVariableCommands))!,
-                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.CanHandle))!)
+                    typeof(VariableCommands).GetMethod(
+                        nameof(VariableCommands.HandleVariableCommands)
+                    )!,
+                    typeof(VariableCommands).GetMethod(nameof(VariableCommands.CanHandle))!
+                )
             },
-            handlers);
+            handlers
+        );
     }
 
     [TestMethod]
@@ -117,11 +137,9 @@ public class CommandScannerTests
     [TestMethod]
     public void IgnoresClassesWhenNotMarkedAsCommandHost()
     {
-        var commands = _scanner.ScanTypesForCommandHandlers(new[]
-        {
-            typeof(SampleCommands),
-            typeof(NotACommandHost)
-        });
+        var commands = _scanner.ScanTypesForCommandHandlers(
+            new[] { typeof(SampleCommands), typeof(NotACommandHost) }
+        );
 
         Assert.IsFalse(commands.Any(c => c.ImplementingType == typeof(NotACommandHost)));
     }

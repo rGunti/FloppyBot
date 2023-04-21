@@ -17,39 +17,48 @@ public class TimerCommandsTests
         _timerServiceMock = new Mock<ITimerService>();
         _host = new TimerCommands(
             LoggingUtils.GetLogger<TimerCommands>(),
-            _timerServiceMock.Object);
+            _timerServiceMock.Object
+        );
     }
 
     [TestMethod]
     public void CreateNewTimer()
     {
         _timerServiceMock
-            .Setup(s => s.CreateTimer(
-                It.IsAny<string>(),
-                It.IsAny<string>(),
-                It.IsAny<TimeSpan>(),
-                It.IsAny<string>()))
+            .Setup(
+                s =>
+                    s.CreateTimer(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<TimeSpan>(),
+                        It.IsAny<string>()
+                    )
+            )
             .Verifiable();
 
         CommandResult result = _host.CreateTimer(
             "12m",
             "Hello World",
-            new ChatUser(
-                "Mock/User",
-                "User",
-                PrivilegeLevel.Moderator),
-            "Mock/Channel/Message");
+            new ChatUser("Mock/User", "User", PrivilegeLevel.Moderator),
+            "Mock/Channel/Message"
+        );
 
         Assert.AreEqual(
-            CommandResult.SuccessWith("Created new timer. Your message should be there in about 12 minutes."),
-            result);
-        _timerServiceMock
-            .Verify(s => s.CreateTimer(
+            CommandResult.SuccessWith(
+                "Created new timer. Your message should be there in about 12 minutes."
+            ),
+            result
+        );
+        _timerServiceMock.Verify(
+            s =>
+                s.CreateTimer(
                     It.Is<string>(i => i == "Mock/Channel/Message"),
                     It.Is<string>(i => i == "Mock/User"),
                     It.Is<TimeSpan>(t => t == TimeSpan.FromMinutes(12)),
-                    It.Is<string>(i => i == "Hello World")),
-                Times.Once);
+                    It.Is<string>(i => i == "Hello World")
+                ),
+            Times.Once
+        );
     }
 
     [DataTestMethod]
@@ -63,7 +72,8 @@ public class TimerCommandsTests
                 input,
                 "Some Text",
                 new ChatUser("Mock/User", "User", PrivilegeLevel.Moderator),
-                "Mock/Channel/Message"));
+                "Mock/Channel/Message"
+            )
+        );
     }
 }
-

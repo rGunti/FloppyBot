@@ -13,7 +13,8 @@ public class MockChatInterface : IChatInterface
 
     public MockChatInterface(
         ChatInterfaceFeatures features = ChatInterfaceFeatures.None,
-        string channelName = "MyChannel")
+        string channelName = "MyChannel"
+    )
     {
         SupportedFeatures = features;
         MessageReceived += OnMessageReceived;
@@ -62,22 +63,21 @@ public class MockChatInterface : IChatInterface
 
     private ChatMessageIdentifier CreateNewIdentifier()
     {
-        return new ChatMessageIdentifier(
-            Name,
-            _channelName,
-            Guid.NewGuid().ToString());
+        return new ChatMessageIdentifier(Name, _channelName, Guid.NewGuid().ToString());
     }
 
-    public void InvokeReceivedMessage(string username, string message, PrivilegeLevel privilegeLevel)
+    public void InvokeReceivedMessage(
+        string username,
+        string message,
+        PrivilegeLevel privilegeLevel
+    )
     {
         var msg = new ChatMessage(
             CreateNewIdentifier(),
-            new ChatUser(
-                new ChannelIdentifier(IF_NAME, username),
-                username,
-                privilegeLevel),
+            new ChatUser(new ChannelIdentifier(IF_NAME, username), username, privilegeLevel),
             SharedEventTypes.CHAT_MESSAGE,
-            message);
+            message
+        );
         MessageReceived?.Invoke(this, msg);
     }
 

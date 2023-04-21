@@ -10,4 +10,5 @@ public record CustomCommand(
     IImmutableList<string>? ResponseVariants,
     bool LimitedToMod,
     IImmutableList<string> LimitedToUsers,
-    int Timeout);
+    int Timeout
+);

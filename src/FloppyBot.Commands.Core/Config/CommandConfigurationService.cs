@@ -12,25 +12,33 @@ public class CommandConfigurationService : ICommandConfigurationService
         _repository = repositoryFactory.GetRepository<CommandConfiguration>();
     }
 
-    public NullableObject<CommandConfiguration> GetCommandConfiguration(string channelId, string commandName)
+    public NullableObject<CommandConfiguration> GetCommandConfiguration(
+        string channelId,
+        string commandName
+    )
     {
-        return _repository.GetAll()
+        return _repository
+            .GetAll()
             .FirstOrDefault(c => c.ChannelId == channelId && c.CommandName == commandName)
             .Wrap();
     }
 
     public IEnumerable<CommandConfiguration> GetCommandConfigurationsForChannel(string channelId)
     {
-        return _repository.GetAll()
-            .Where(c => c.ChannelId == channelId);
+        return _repository.GetAll().Where(c => c.ChannelId == channelId);
     }
 
     public void SetCommandConfiguration(CommandConfiguration commandConfiguration)
     {
-        _repository.Insert(commandConfiguration with
-        {
-            Id = GenerateCommandConfigurationId(commandConfiguration.ChannelId, commandConfiguration.CommandName)
-        });
+        _repository.Insert(
+            commandConfiguration with
+            {
+                Id = GenerateCommandConfigurationId(
+                    commandConfiguration.ChannelId,
+                    commandConfiguration.CommandName
+                )
+            }
+        );
     }
 
     public void DeleteCommandConfiguration(string channelId, string commandName)

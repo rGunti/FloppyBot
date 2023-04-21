@@ -11,7 +11,7 @@ public class TimeExpressionParserTests
     {
         Assert.AreEqual(
             TimeSpan.FromSeconds(expectedNumberOfSeconds),
-            TimeExpressionParser.ParseTimeExpression(input));
+            TimeExpressionParser.ParseTimeExpression(input)
+        );
     }
 }
-

@@ -18,10 +18,12 @@ public class SoundCommandInvocationCollector : IDisposable
         INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
         IHubContext<V1SoundCommandHub> hubContext,
-        IMapper mapper)
+        IMapper mapper
+    )
     {
         _receiver = receiverFactory.GetNewReceiver<SoundCommandInvocation>(
-            configuration.GetSoundCommandInvocationConfigString());
+            configuration.GetSoundCommandInvocationConfigString()
+        );
         _hubContext = hubContext;
         _mapper = mapper;
 
@@ -37,7 +39,8 @@ public class SoundCommandInvocationCollector : IDisposable
 
     private void OnNotificationReceived(SoundCommandInvocation notification)
     {
-        _hubContext.Clients.Group(notification.InvokedFrom)
+        _hubContext.Clients
+            .Group(notification.InvokedFrom)
             .SendAsync("SoundCommandInvoked", _mapper.Map<InvokeSoundCommandEvent>(notification));
     }
 }

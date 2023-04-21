@@ -21,19 +21,13 @@ public class TimerServiceTests
         _timeProvider = new FixedTimeProvider(RefTime);
         _repositoryFactory = LiteDbRepositoryFactory.CreateMemoryInstance();
         _repository = _repositoryFactory.GetRepository<TimerRecord>();
-        _service = new TimerService(
-            _repositoryFactory,
-            _timeProvider);
+        _service = new TimerService(_repositoryFactory, _timeProvider);
     }
 
     [TestMethod]
     public void CreateNewRecord()
     {
-        _service.CreateTimer(
-            "Mock/Channel/Message",
-            "Mock/User",
-            5.Minutes(),
-            "Hello World");
+        _service.CreateTimer("Mock/Channel/Message", "Mock/User", 5.Minutes(), "Hello World");
 
         Assert.AreEqual(
             new TimerRecord(
@@ -42,10 +36,10 @@ public class TimerServiceTests
                 "Hello World",
                 DateTimeOffset.Parse("2022-12-12T12:05:00Z"),
                 RefTime,
-                "Mock/User"),
-            _repository.GetAll()
-                .Select(t => t.WithId("test"))
-                .Single());
+                "Mock/User"
+            ),
+            _repository.GetAll().Select(t => t.WithId("test")).Single()
+        );
     }
 
     [TestMethod]
@@ -57,28 +51,24 @@ public class TimerServiceTests
             "Expected",
             DateTimeOffset.Parse("2022-12-12T12:05:00Z"),
             RefTime,
-            "Mock/User");
+            "Mock/User"
+        );
         var unexpectedMessage = new TimerRecord(
             "not_test",
             "Mock/Channel/Message2",
             "Unexpected",
             DateTimeOffset.Parse("2022-12-13T12:34:56Z"),
             RefTime,
-            "Mock/AnotherUser");
+            "Mock/AnotherUser"
+        );
         _repository.Insert(expectedMessage);
         _repository.Insert(unexpectedMessage);
 
         _timeProvider.AdvanceTimeBy(5.Minutes());
 
-        TimerRecord[] expiredMessages = _service.GetExpiredTimers(false)
-            .ToArray();
+        TimerRecord[] expiredMessages = _service.GetExpiredTimers(false).ToArray();
 
-        CollectionAssert.AreEquivalent(
-            new[]
-            {
-                expectedMessage
-            },
-            expiredMessages);
+        CollectionAssert.AreEquivalent(new[] { expectedMessage }, expiredMessages);
 
         Assert.IsNotNull(_repository.GetById("test"), "Timer has been deleted unexpectedly");
     }
@@ -92,30 +82,25 @@ public class TimerServiceTests
             "Expected",
             DateTimeOffset.Parse("2022-12-12T12:05:00Z"),
             RefTime,
-            "Mock/User");
+            "Mock/User"
+        );
         var unexpectedMessage = new TimerRecord(
             "not_test",
             "Mock/Channel/Message2",
             "Unexpected",
             DateTimeOffset.Parse("2022-12-13T12:34:56Z"),
             RefTime,
-            "Mock/AnotherUser");
+            "Mock/AnotherUser"
+        );
         _repository.Insert(expectedMessage);
         _repository.Insert(unexpectedMessage);
 
         _timeProvider.AdvanceTimeBy(5.Minutes());
 
-        TimerRecord[] expiredMessages = _service.GetExpiredTimers(true)
-            .ToArray();
+        TimerRecord[] expiredMessages = _service.GetExpiredTimers(true).ToArray();
 
-        CollectionAssert.AreEquivalent(
-            new[]
-            {
-                expectedMessage
-            },
-            expiredMessages);
+        CollectionAssert.AreEquivalent(new[] { expectedMessage }, expiredMessages);
 
         Assert.IsNull(_repository.GetById("test"), "Timer has not been deleted unexpectedly");
     }
 }
-

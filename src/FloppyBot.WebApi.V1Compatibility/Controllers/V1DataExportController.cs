@@ -15,4 +15,3 @@ public class V1DataExportController : ControllerBase
         throw new NotImplementedException("V1 Data Export is not supported on V2");
     }
 }
-

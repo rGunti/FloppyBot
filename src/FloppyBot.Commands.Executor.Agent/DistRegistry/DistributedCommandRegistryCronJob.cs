@@ -4,9 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Commands.Executor.Agent.DistRegistry;
 
-[CronInterval(
-    Milliseconds = 300_000,
-    RunOnStartup = true)] // Run every 9 minutes instead, since records should expire after 10 minutes
+[CronInterval(Milliseconds = 300_000, RunOnStartup = true)] // Run every 9 minutes instead, since records should expire after 10 minutes
 public class DistributedCommandRegistryCronJob : ICronJob
 {
     private readonly ILogger<DistributedCommandRegistryCronJob> _logger;
@@ -14,7 +12,8 @@ public class DistributedCommandRegistryCronJob : ICronJob
 
     public DistributedCommandRegistryCronJob(
         ILogger<DistributedCommandRegistryCronJob> logger,
-        DistributedCommandRegistryAdapter registryAdapter)
+        DistributedCommandRegistryAdapter registryAdapter
+    )
     {
         _logger = logger;
         _registryAdapter = registryAdapter;

@@ -12,7 +12,8 @@ public record TwitchStream(
     int ViewerCount,
     DateTimeOffset StartedAt,
     string Language,
-    bool IsMature);
+    bool IsMature
+);
 
 public static class StreamExtensions
 {
@@ -28,6 +29,7 @@ public static class StreamExtensions
             stream.ViewerCount,
             stream.StartedAt,
             stream.Language,
-            stream.IsMature);
+            stream.IsMature
+        );
     }
 }

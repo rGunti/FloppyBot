@@ -31,11 +31,13 @@ public class ExecutorAgent : BackgroundService
         ICommandExecutor commandExecutor,
         IndexInitializer indexInitializer,
         DistributedCommandRegistryAdapter distributedCommandRegistryAdapter,
-        IMessageReplier replier)
+        IMessageReplier replier
+    )
     {
         _logger = logger;
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
-            configuration.GetParsedConnectionString("CommandInput"));
+            configuration.GetParsedConnectionString("CommandInput")
+        );
 
         _instructionReceiver.NotificationReceived += OnCommandReceived;
 
@@ -48,10 +50,9 @@ public class ExecutorAgent : BackgroundService
 
     private void OnCommandReceived(CommandInstruction commandInstruction)
     {
-        #if DEBUG
-        _logger.LogDebug("Received command instruction {@CommandInstruction}",
-            commandInstruction);
-        #endif
+#if DEBUG
+        _logger.LogDebug("Received command instruction {@CommandInstruction}", commandInstruction);
+#endif
 
         ChatMessage? reply = _commandExecutor.ExecuteCommand(commandInstruction);
         if (reply == null || string.IsNullOrWhiteSpace(reply.Content))

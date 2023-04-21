@@ -6,9 +6,14 @@ namespace FloppyBot.Commands.Core.Guard;
 
 public class SourceInterfaceGuard : BaseGuard<SourceInterfaceGuardAttribute>
 {
-    public override bool CanExecute(CommandInstruction instruction, CommandInfo command,
-        SourceInterfaceGuardAttribute settings)
+    public override bool CanExecute(
+        CommandInstruction instruction,
+        CommandInfo command,
+        SourceInterfaceGuardAttribute settings
+    )
     {
-        return settings.AllowedMessageInterfaces.Contains(instruction.Context!.SourceMessage.Identifier.Interface);
+        return settings.AllowedMessageInterfaces.Contains(
+            instruction.Context!.SourceMessage.Identifier.Interface
+        );
     }
 }

@@ -3,7 +3,5 @@
 public class CommandSyntaxAttribute : SingleUseCommandOnlyMetadataAttribute
 {
     public CommandSyntaxAttribute(params string[] syntax)
-        : base(CommandMetadataTypes.SYNTAX, string.Join('\n', syntax))
-    {
-    }
+        : base(CommandMetadataTypes.SYNTAX, string.Join('\n', syntax)) { }
 }

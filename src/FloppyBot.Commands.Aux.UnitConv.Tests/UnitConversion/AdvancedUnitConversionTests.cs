@@ -31,18 +31,28 @@
             float value,
             string unitName,
             float expectedConvertedValue,
-            string convertedUnit)
+            string convertedUnit
+        )
         {
-            CanDoSimpleUnitConversions(value, unitName, expectedConvertedValue, convertedUnit, 0.1f);
+            CanDoSimpleUnitConversions(
+                value,
+                unitName,
+                expectedConvertedValue,
+                convertedUnit,
+                0.1f
+            );
         }
 
         [TestMethod]
-        public void CanConvertFromKmToYdAndBack() => CanConvertThroughMultipleUnits(1, "km", 1093.613f, "yd");
+        public void CanConvertFromKmToYdAndBack() =>
+            CanConvertThroughMultipleUnits(1, "km", 1093.613f, "yd");
 
         [TestMethod]
-        public void CanConvertFromKmToFtAndBack() => CanConvertThroughMultipleUnits(1, "km", 3280.84f, "ft");
+        public void CanConvertFromKmToFtAndBack() =>
+            CanConvertThroughMultipleUnits(1, "km", 3280.84f, "ft");
 
         [TestMethod]
-        public void CanConvertFromMiToCmAndBack() => CanConvertThroughMultipleUnits(1, "mi", 160934.4f, "cm");
+        public void CanConvertFromMiToCmAndBack() =>
+            CanConvertThroughMultipleUnits(1, "mi", 160934.4f, "cm");
     }
 }

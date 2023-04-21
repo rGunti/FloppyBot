@@ -25,9 +25,7 @@ public static class SupportingTaskExtensions
     public static IServiceCollection AddHybridExecutionTask<TTask>(this IServiceCollection services)
         where TTask : class, IHybridTask
     {
-        return services
-            .AddPreExecutionTask<TTask>()
-            .AddPostExecutionTask<TTask>();
+        return services.AddPreExecutionTask<TTask>().AddPostExecutionTask<TTask>();
     }
 
     internal static IServiceCollection AddTasks(this IServiceCollection services)
@@ -43,14 +41,17 @@ public static class SupportingTaskExtensions
     {
         return provider
             .GetRequiredService<IEnumerable<T>>()
-            .OrderBy(t => t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue)
+            .OrderBy(
+                t => t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue
+            )
             .ThenBy(t => t!.GetType().FullName);
     }
 
     internal static IPreExecutionTask? RunPreExecutionTasks(
         this IServiceScope scope,
         CommandInfo info,
-        CommandInstruction instruction)
+        CommandInstruction instruction
+    )
     {
         return scope.ServiceProvider
             .GetSupportingTasks<IPreExecutionTask>()
@@ -61,7 +62,8 @@ public static class SupportingTaskExtensions
         this IServiceScope scope,
         CommandInfo info,
         CommandInstruction instruction,
-        CommandResult result)
+        CommandResult result
+    )
     {
         return scope.ServiceProvider
             .GetSupportingTasks<IPostExecutionTask>()

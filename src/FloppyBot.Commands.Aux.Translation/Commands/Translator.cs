@@ -12,21 +12,20 @@ public class Translator : ITranslator
 {
     private const string LANGUAGE_CODE = "[a-z]{2}(-[A-Z]{2})?";
 
-    private static readonly Regex LanguageCodeSelector = new(
-        $"^{LANGUAGE_CODE}$",
-        RegexOptions.Compiled);
+    private static readonly Regex LanguageCodeSelector =
+        new($"^{LANGUAGE_CODE}$", RegexOptions.Compiled);
 
-    private static readonly Regex LanguageSelector = new(
-        $"^({LANGUAGE_CODE})>({LANGUAGE_CODE})$",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex LanguageSelector =
+        new(
+            $"^({LANGUAGE_CODE})>({LANGUAGE_CODE})$",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase
+        );
 
-    private static readonly Regex NaturalTextToSelector = new(
-        "^(.+) (to ([A-Za-z-]+))$",
-        RegexOptions.Compiled);
+    private static readonly Regex NaturalTextToSelector =
+        new("^(.+) (to ([A-Za-z-]+))$", RegexOptions.Compiled);
 
-    private static readonly Regex NaturalTextFromToSelector = new(
-        "^(.+) (from ([A-Za-z-]+)) (to ([A-Za-z-]+))$",
-        RegexOptions.Compiled);
+    private static readonly Regex NaturalTextFromToSelector =
+        new("^(.+) (from ([A-Za-z-]+)) (to ([A-Za-z-]+))$", RegexOptions.Compiled);
 
     private static readonly ImmutableDictionary<string, string> LanguageCodeDictionary;
     private static readonly ImmutableDictionary<string, string> LanguageNameDictionary;
@@ -40,18 +39,18 @@ public class Translator : ITranslator
             .GetFields(BindingFlags.Public | BindingFlags.Static)
             .Where(f => f.IsLiteral && f.FieldType == typeof(string))
             .ToArray();
-        LanguageCodeDictionary = langFields
-            .ToImmutableDictionary(
-                f => ((string)f.GetRawConstantValue()!).ToLowerInvariant(),
-                f => (string)f.GetRawConstantValue()!);
-        LanguageNameDictionary = langFields
-            .ToImmutableDictionary(
-                f => f.Name.ToLowerInvariant(),
-                f => (string)f.GetRawConstantValue()!);
-        LanguageCodeToNameDictionary = langFields
-            .ToImmutableDictionary(
-                f => (string)f.GetRawConstantValue()!,
-                f => f.Name);
+        LanguageCodeDictionary = langFields.ToImmutableDictionary(
+            f => ((string)f.GetRawConstantValue()!).ToLowerInvariant(),
+            f => (string)f.GetRawConstantValue()!
+        );
+        LanguageNameDictionary = langFields.ToImmutableDictionary(
+            f => f.Name.ToLowerInvariant(),
+            f => (string)f.GetRawConstantValue()!
+        );
+        LanguageCodeToNameDictionary = langFields.ToImmutableDictionary(
+            f => (string)f.GetRawConstantValue()!,
+            f => f.Name
+        );
     }
 
     public Translator(DeepL.ITranslator deepLTranslator)
@@ -134,10 +133,8 @@ public class Translator : ITranslator
 
     public TranslationResponse Translate(TranslationRequest request)
     {
-        TextResult translation = _deepLTranslator.TranslateTextAsync(
-                request.Text,
-                request.InputLanguage,
-                request.OutputLanguage)
+        TextResult translation = _deepLTranslator
+            .TranslateTextAsync(request.Text, request.InputLanguage, request.OutputLanguage)
             .ConfigureAwait(false)
             .GetAwaiter()
             .GetResult();
@@ -145,7 +142,8 @@ public class Translator : ITranslator
         return new TranslationResponse(
             request,
             translation.Text,
-            TranslateLanguageCodeToName(translation.DetectedSourceLanguageCode));
+            TranslateLanguageCodeToName(translation.DetectedSourceLanguageCode)
+        );
     }
 
     public IEnumerable<string> ListSupportedLanguages()
@@ -170,12 +168,19 @@ public class Translator : ITranslator
 
     private static string ParseLanguageString(string languageString)
     {
-        if (LanguageCodeDictionary.TryGetValue(languageString.ToLowerInvariant(), out string? langCodeA))
+        if (
+            LanguageCodeDictionary.TryGetValue(
+                languageString.ToLowerInvariant(),
+                out string? langCodeA
+            )
+        )
         {
             return langCodeA;
         }
 
-        if (LanguageNameDictionary.TryGetValue(languageString.ToLowerInvariant(), out var langCodeB))
+        if (
+            LanguageNameDictionary.TryGetValue(languageString.ToLowerInvariant(), out var langCodeB)
+        )
         {
             return langCodeB;
         }

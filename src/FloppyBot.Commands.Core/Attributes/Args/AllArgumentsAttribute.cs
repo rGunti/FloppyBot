@@ -16,7 +16,10 @@ public class AllArgumentsAttribute : BaseArgumentAttribute
 
     public string JoinWith { get; }
 
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
         return parameterInfo.ParameterType == typeof(string)
             ? string.Join(JoinWith, commandInstruction.Parameters)

@@ -5,11 +5,12 @@ namespace FloppyBot.Chat.Entities;
 public record ChatUser(
     ChannelIdentifier Identifier,
     string DisplayName,
-    PrivilegeLevel PrivilegeLevel)
+    PrivilegeLevel PrivilegeLevel
+)
 {
     public static readonly ChatUser Anonymous = new ChatUser(
         "Anonymous/User",
         "Anonymous",
-        PrivilegeLevel.Unknown);
+        PrivilegeLevel.Unknown
+    );
 }
-

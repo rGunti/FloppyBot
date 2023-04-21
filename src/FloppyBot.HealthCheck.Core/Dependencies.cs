@@ -6,8 +6,7 @@ namespace FloppyBot.HealthCheck.Core;
 
 public static class Dependencies
 {
-    public static IServiceCollection AddHealthCheck(
-        this IServiceCollection services)
+    public static IServiceCollection AddHealthCheck(this IServiceCollection services)
     {
         return services
             .AddSingleton<IHealthCheckProducer, HealthCheckProducer>()

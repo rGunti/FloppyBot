@@ -8,9 +8,7 @@ public class CooldownService : ICooldownService
     private readonly IRepository<CooldownRecord> _repository;
     private readonly ITimeProvider _timeProvider;
 
-    public CooldownService(
-        IRepositoryFactory repositoryFactory,
-        ITimeProvider timeProvider)
+    public CooldownService(IRepositoryFactory repositoryFactory, ITimeProvider timeProvider)
     {
         _repository = repositoryFactory.GetRepository<CooldownRecord>();
         _timeProvider = timeProvider;
@@ -18,7 +16,8 @@ public class CooldownService : ICooldownService
 
     public DateTimeOffset GetLastExecution(string channelId, string userId, string commandId)
     {
-        return _repository.GetById(GetRecordId(channelId, userId, commandId))?.ExecutedAt ?? DateTimeOffset.MinValue;
+        return _repository.GetById(GetRecordId(channelId, userId, commandId))?.ExecutedAt
+            ?? DateTimeOffset.MinValue;
     }
 
     public void StoreExecution(string channelId, string userId, string commandId)

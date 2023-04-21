@@ -24,7 +24,8 @@ public class TimerCronJob : ICronJob
     public TimerCronJob(
         ILogger<TimerCronJob> logger,
         ITimerService timerService,
-        IMessageReplier replier)
+        IMessageReplier replier
+    )
     {
         _logger = logger;
         _timerService = timerService;
@@ -34,7 +35,8 @@ public class TimerCronJob : ICronJob
     public void Run()
     {
         _logger.LogTrace("Checking for expired timers");
-        ImmutableArray<TimerRecord> expiredTimers = _timerService.GetExpiredTimers(false)
+        ImmutableArray<TimerRecord> expiredTimers = _timerService
+            .GetExpiredTimers(false)
             .ToImmutableArray();
 
         if (!expiredTimers.Any())
@@ -43,7 +45,10 @@ public class TimerCronJob : ICronJob
             return;
         }
 
-        _logger.LogInformation("Sending messages for {TimerCount} expired timers", expiredTimers.Length);
+        _logger.LogInformation(
+            "Sending messages for {TimerCount} expired timers",
+            expiredTimers.Length
+        );
         foreach (ChatMessage message in expiredTimers.Select(ConvertToMessage))
         {
             _logger.LogTrace("Sending timer message for {MessageIdentifier}", message.Identifier);
@@ -58,13 +63,9 @@ public class TimerCronJob : ICronJob
     {
         return new ChatMessage(
             timerRecord.SourceMessage,
-            new ChatUser(
-                timerRecord.CreatedBy,
-                string.Empty,
-                PrivilegeLevel.Unknown),
+            new ChatUser(timerRecord.CreatedBy, string.Empty, PrivilegeLevel.Unknown),
             SharedEventTypes.CHAT_MESSAGE,
-            $"{BellEmoji} {timerRecord.TimerMessage}");
+            $"{BellEmoji} {timerRecord.TimerMessage}"
+        );
     }
 }
-
-

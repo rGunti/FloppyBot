@@ -45,10 +45,13 @@ public class UserController : ControllerBase
     [HttpGet("me/channels/{messageInterface}/{channel}")]
     public ChannelAliasDto GetChannelAlias(
         [FromRoute] string messageInterface,
-        [FromRoute] string channel)
+        [FromRoute] string channel
+    )
     {
         var userInfo = _userService.GetUserInfo(User.GetUserId());
-        var channelAlias = userInfo?.ChannelAliases.GetValueOrDefault(new ChannelIdentifier(messageInterface, channel));
+        var channelAlias = userInfo?.ChannelAliases.GetValueOrDefault(
+            new ChannelIdentifier(messageInterface, channel)
+        );
 
         if (channelAlias == null)
         {

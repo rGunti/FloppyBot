@@ -19,6 +19,7 @@ internal class UnitParsingEngine : IUnitParsingEngine
     public Unit DefaultUnit { get; }
 
     public Unit GetUnit(string name) => _units[name];
+
     public bool HasUnit(string name) => _units.ContainsKey(name);
 
     public bool TryGetUnit(string name, out Unit unit)
@@ -40,13 +41,10 @@ internal class UnitParsingEngine : IUnitParsingEngine
             var expr = unit.ParsingExpression;
             if (expr.IsMatch(input))
             {
-                return new UnitValue(
-                    unit.ParsingFunction(input, expr.Matches(input)),
-                    unit);
+                return new UnitValue(unit.ParsingFunction(input, expr.Matches(input)), unit);
             }
         }
 
         return null;
     }
 }
-

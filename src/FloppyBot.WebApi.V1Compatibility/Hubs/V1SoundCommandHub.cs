@@ -17,15 +17,21 @@ public class V1SoundCommandHub : Hub<IV1SoundCommandHub>
 
     public async void Login(string channelId)
     {
-        _logger.LogDebug("Connecting {ConnectionId} to Channel {ChannelId}",
-            Context.ConnectionId, channelId);
+        _logger.LogDebug(
+            "Connecting {ConnectionId} to Channel {ChannelId}",
+            Context.ConnectionId,
+            channelId
+        );
         await Groups.AddToGroupAsync(Context.ConnectionId, channelId);
     }
 
     public async void Logout(string channelId)
     {
-        _logger.LogDebug("Disconnecting {ConnectionId} from Channel {ChannelId}",
-            Context.ConnectionId, channelId);
+        _logger.LogDebug(
+            "Disconnecting {ConnectionId} from Channel {ChannelId}",
+            Context.ConnectionId,
+            channelId
+        );
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, channelId);
     }
 

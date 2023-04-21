@@ -13,7 +13,8 @@ public class MessageOccurrenceService : IMessageOccurrenceService
 
     public MessageOccurrenceService(
         IRepositoryFactory repositoryFactory,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider
+    )
     {
         _timeProvider = timeProvider;
         _repository = repositoryFactory.GetRepository<MessageOccurrence>();
@@ -21,16 +22,17 @@ public class MessageOccurrenceService : IMessageOccurrenceService
 
     public void StoreMessage(ChatMessage chatMessage)
     {
-        _repository.Insert(new MessageOccurrence(
-            chatMessage.Identifier,
-            chatMessage.Identifier.GetChannel(),
-            chatMessage.Author.Identifier,
-            _timeProvider.GetCurrentUtcTime()));
+        _repository.Insert(
+            new MessageOccurrence(
+                chatMessage.Identifier,
+                chatMessage.Identifier.GetChannel(),
+                chatMessage.Author.Identifier,
+                _timeProvider.GetCurrentUtcTime()
+            )
+        );
     }
 
-    public int GetMessageCountInChannel(
-        string channelId,
-        TimeSpan maxTimeAgo)
+    public int GetMessageCountInChannel(string channelId, TimeSpan maxTimeAgo)
     {
         DateTimeOffset timeLimit = _timeProvider.GetCurrentUtcTime() - maxTimeAgo;
         return _repository
@@ -38,4 +40,3 @@ public class MessageOccurrenceService : IMessageOccurrenceService
             .Count(o => o.ChannelId == channelId && o.OccurredAt >= timeLimit);
     }
 }
-

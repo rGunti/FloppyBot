@@ -10,9 +10,7 @@ using FloppyBot.HealthCheck.KillSwitch;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args)
-    .SetupConfiguration()
-    .SetupSerilog();
+IHostBuilder hostBuilder = Host.CreateDefaultBuilder(args).SetupConfiguration().SetupSerilog();
 
 IHost host = hostBuilder
     .ConfigureServices(services =>
@@ -30,7 +28,4 @@ IHost host = hostBuilder
     })
     .Build();
 
-await host
-    .BootCronJobs()
-    .ArmKillSwitch()
-    .LogAndRun();
+await host.BootCronJobs().ArmKillSwitch().LogAndRun();

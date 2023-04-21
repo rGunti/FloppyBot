@@ -8,4 +8,5 @@ public record CommandConfig(
     PrivilegeLevel? PrivilegeLevelOverride,
     bool Disabled,
     bool Cooldown,
-    CooldownConfig CooldownConfig);
+    CooldownConfig CooldownConfig
+);

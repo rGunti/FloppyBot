@@ -19,16 +19,19 @@ internal class ConsoleChatAgent : BackgroundService
         INotificationSenderFactory senderFactory,
         INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
-        ConsoleChatInterface chatInterface)
+        ConsoleChatInterface chatInterface
+    )
     {
         _logger = logger;
         _chatInterface = chatInterface;
         _chatInterface.MessageReceived += OnMessageReceived;
 
         _sender = senderFactory.GetNewSender(
-            configuration.GetParsedConnectionString("MessageOutput"));
+            configuration.GetParsedConnectionString("MessageOutput")
+        );
         _receiver = receiverFactory.GetNewReceiver<ChatMessage>(
-            configuration.GetParsedConnectionString("MessageInput"));
+            configuration.GetParsedConnectionString("MessageInput")
+        );
         _receiver.NotificationReceived += OnMessageReceived;
     }
 
@@ -36,8 +39,7 @@ internal class ConsoleChatAgent : BackgroundService
     {
         if (notification.Identifier.Interface == _chatInterface.Name)
         {
-            _chatInterface.SendMessage(
-                notification.Content);
+            _chatInterface.SendMessage(notification.Content);
         }
     }
 
@@ -50,8 +52,9 @@ internal class ConsoleChatAgent : BackgroundService
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogWarning(
-            "Welcome to the FloppyBot Console Agent! " +
-            "Please note that this is a development tool and not meant to be run in production environments!");
+            "Welcome to the FloppyBot Console Agent! "
+                + "Please note that this is a development tool and not meant to be run in production environments!"
+        );
         _logger.LogInformation("Starting Console Agent ...");
         _chatInterface.Connect();
         _receiver.StartListening();

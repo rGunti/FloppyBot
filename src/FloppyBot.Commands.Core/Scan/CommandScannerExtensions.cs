@@ -40,37 +40,31 @@ public static class CommandScannerExtensions
 
     private static IServiceCollection ScanAndAddCommandHandlers(this IServiceCollection services)
     {
-        IImmutableDictionary<string, CommandInfo> handlers = CommandScanner.ScanForCommandHandlers();
+        IImmutableDictionary<string, CommandInfo> handlers =
+            CommandScanner.ScanForCommandHandlers();
 
-        foreach (var type in handlers
-                     .Select(i => i.Value.ImplementingType)
-                     .Distinct())
+        foreach (var type in handlers.Select(i => i.Value.ImplementingType).Distinct())
         {
-            services
-                .AddScoped(type)
-                .ScanForCommandDependencies(type);
+            services.AddScoped(type).ScanForCommandDependencies(type);
         }
 
-        return services
-            .AddSingleton(handlers);
+        return services.AddSingleton(handlers);
     }
 
-    private static IServiceCollection ScanAndAddVariableCommandHandlers(this IServiceCollection services)
+    private static IServiceCollection ScanAndAddVariableCommandHandlers(
+        this IServiceCollection services
+    )
     {
-        ImmutableList<VariableCommandInfo> handlers = CommandScanner.ScanForVariableCommandHandlers()
+        ImmutableList<VariableCommandInfo> handlers = CommandScanner
+            .ScanForVariableCommandHandlers()
             .ToImmutableList();
 
-        foreach (Type type in handlers
-                     .Select(i => i.ImplementingType)
-                     .Distinct())
+        foreach (Type type in handlers.Select(i => i.ImplementingType).Distinct())
         {
-            services
-                .AddScoped(type)
-                .ScanForCommandDependencies(type);
+            services.AddScoped(type).ScanForCommandDependencies(type);
         }
 
-        return services
-            .AddSingleton<IImmutableList<VariableCommandInfo>>(handlers);
+        return services.AddSingleton<IImmutableList<VariableCommandInfo>>(handlers);
     }
 
     private static IServiceCollection AddGuards(this IServiceCollection services)
@@ -81,7 +75,9 @@ public static class CommandScannerExtensions
             .AddGuard<SourceInterfaceGuard, SourceInterfaceGuardAttribute>();
     }
 
-    public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(this ICommandScanner scanner)
+    public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(
+        this ICommandScanner scanner
+    )
     {
         return scanner.ScanTypeForCommandHandlers(typeof(T));
     }
@@ -89,14 +85,18 @@ public static class CommandScannerExtensions
     public static IServiceCollection AddCommandListSupplier<T>(this IServiceCollection services)
         where T : class, ICommandListSupplier
     {
-        return services
-            .AddSingleton<ICommandListSupplier, T>();
+        return services.AddSingleton<ICommandListSupplier, T>();
     }
 
-    private static void ScanForCommandDependencies(this IServiceCollection serviceCollection, Type type)
+    private static void ScanForCommandDependencies(
+        this IServiceCollection serviceCollection,
+        Type type
+    )
     {
-        foreach (var diRegistrationMethod in type.GetMethods(BindingFlags.Static | BindingFlags.Public)
-                     .Where(m => m.IsStatic && m.HasCustomAttribute<DependencyRegistrationAttribute>()))
+        foreach (
+            var diRegistrationMethod in type.GetMethods(BindingFlags.Static | BindingFlags.Public)
+                .Where(m => m.IsStatic && m.HasCustomAttribute<DependencyRegistrationAttribute>())
+        )
         {
             var parameters = diRegistrationMethod.GetParameters();
             if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IServiceCollection))
@@ -106,8 +106,9 @@ public static class CommandScannerExtensions
             else
             {
                 throw new InvalidOperationException(
-                    $"A method marked with [{nameof(DependencyRegistrationAttribute)}] must be static and " +
-                    $"must only contain one parameter of type {typeof(IServiceCollection)}.");
+                    $"A method marked with [{nameof(DependencyRegistrationAttribute)}] must be static and "
+                        + $"must only contain one parameter of type {typeof(IServiceCollection)}."
+                );
             }
         }
     }

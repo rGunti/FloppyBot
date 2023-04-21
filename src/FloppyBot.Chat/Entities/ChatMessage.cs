@@ -8,4 +8,5 @@ public record ChatMessage(
     string EventName,
     string Content,
     string? Context = null,
-    ChatInterfaceFeatures SupportedFeatures = ChatInterfaceFeatures.None);
+    ChatInterfaceFeatures SupportedFeatures = ChatInterfaceFeatures.None
+);

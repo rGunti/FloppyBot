@@ -15,7 +15,8 @@ public class V1CommandConverter
 
     public V1CommandConverter(
         IDistributedCommandRegistry distributedCommandRegistry,
-        ILogger<V1CommandConverter> logger)
+        ILogger<V1CommandConverter> logger
+    )
     {
         _distributedCommandRegistry = distributedCommandRegistry;
         _logger = logger;
@@ -23,13 +24,13 @@ public class V1CommandConverter
 
     public IEnumerable<CommandInfo> GetAllKnownCommands()
     {
-        return _distributedCommandRegistry.GetAllCommands()
-            .Select(ConvertToCommandInfo);
+        return _distributedCommandRegistry.GetAllCommands().Select(ConvertToCommandInfo);
     }
 
     public NullableObject<CommandInfo> GetCommand(string name)
     {
-        return _distributedCommandRegistry.GetCommand(name)
+        return _distributedCommandRegistry
+            .GetCommand(name)
             .Wrap()
             .Select(ConvertToCommandInfo)
             .Wrap();
@@ -41,18 +42,25 @@ public class V1CommandConverter
         return new CommandInfo(
             commandAbstract.Name,
             commandAbstract.Description ?? string.Empty,
-            commandAbstract.Aliases.Except(new[] { commandAbstract.Name }).ToImmutableListWithValueSemantics(),
+            commandAbstract.Aliases
+                .Except(new[] { commandAbstract.Name })
+                .ToImmutableListWithValueSemantics(),
             commandAbstract.AvailableOnInterfaces.ToImmutableListWithValueSemantics(),
             commandAbstract.MinPrivilegeLevel ?? PrivilegeLevel.Unknown,
             false,
             // TODO: Implement once available
             new CooldownInfo("None", null, null, null),
             (commandAbstract.Syntax ?? Array.Empty<string>())
-            .Select(s => new CommandSyntax(
-                s,
-                string.Empty,
-                Array.Empty<string>().ToImmutableListWithValueSemantics()))
-            .ToImmutableListWithValueSemantics(),
-            false);
+                .Select(
+                    s =>
+                        new CommandSyntax(
+                            s,
+                            string.Empty,
+                            Array.Empty<string>().ToImmutableListWithValueSemantics()
+                        )
+                )
+                .ToImmutableListWithValueSemantics(),
+            false
+        );
     }
 }

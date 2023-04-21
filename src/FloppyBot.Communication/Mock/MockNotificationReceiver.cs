@@ -11,13 +11,9 @@ public class MockNotificationReceiver<T> : INotificationReceiver<T>
 
     public event NotificationReceivedDelegate<T>? NotificationReceived;
 
-    public void StartListening()
-    {
-    }
+    public void StartListening() { }
 
-    public void StopListening()
-    {
-    }
+    public void StopListening() { }
 
     public override string ToString()
     {

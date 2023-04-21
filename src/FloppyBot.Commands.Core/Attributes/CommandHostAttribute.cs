@@ -6,6 +6,4 @@
 /// to your host class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
-public class CommandHostAttribute : Attribute
-{
-}
+public class CommandHostAttribute : Attribute { }

@@ -6,7 +6,7 @@ namespace FloppyBot.Commands.Parser.Entities;
 public record CommandInstruction(
     string CommandName,
     IImmutableList<string> Parameters,
-    CommandContext? Context = null);
+    CommandContext? Context = null
+);
 
-public record CommandContext(
-    ChatMessage SourceMessage);
+public record CommandContext(ChatMessage SourceMessage);

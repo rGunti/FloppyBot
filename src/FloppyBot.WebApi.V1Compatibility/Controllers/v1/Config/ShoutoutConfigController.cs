@@ -23,7 +23,8 @@ public class ShoutoutConfigController : ControllerBase
     public ShoutoutConfigController(
         IShoutoutMessageSettingService shoutoutMessageSettingService,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper
+    )
     {
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
         _userService = userService;
@@ -33,11 +34,14 @@ public class ShoutoutConfigController : ControllerBase
     [HttpGet]
     public ShoutoutMessageConfig[] GetAllConfigs()
     {
-        return _userService.GetAccessibleChannelsForUser(User.GetUserId())
+        return _userService
+            .GetAccessibleChannelsForUser(User.GetUserId())
             .Where(channelId => channelId.StartsWith("Twitch/"))
-            .Select(channelId => _shoutoutMessageSettingService.GetSettings(channelId) ?? new ShoutoutMessageSetting(
-                channelId,
-                string.Empty))
+            .Select(
+                channelId =>
+                    _shoutoutMessageSettingService.GetSettings(channelId)
+                    ?? new ShoutoutMessageSetting(channelId, string.Empty)
+            )
             .Select(settings => _mapper.Map<ShoutoutMessageConfig>(settings))
             .ToArray();
     }
@@ -65,10 +69,15 @@ public class ShoutoutConfigController : ControllerBase
     public IActionResult UpdateConfig(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
-        [FromBody] ShoutoutMessageConfig config)
+        [FromBody] ShoutoutMessageConfig config
+    )
     {
         var channelId = new ChannelIdentifier(messageInterface, channel);
-        if (_userService.GetAccessibleChannelsForUser(User.GetUserId()).All(c => c != channelId.ToString()))
+        if (
+            _userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .All(c => c != channelId.ToString())
+        )
         {
             throw new ForbiddenException("You don't have access to this channel");
         }

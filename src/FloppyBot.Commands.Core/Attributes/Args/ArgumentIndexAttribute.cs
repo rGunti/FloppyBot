@@ -18,16 +18,18 @@ public class ArgumentIndexAttribute : BaseArgumentAttribute
     public int Index { get; }
     public bool StopIfMissing { get; }
 
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
-        var scopedArgs = commandInstruction.Parameters
-            .Skip(Index)
-            .ToArray();
+        var scopedArgs = commandInstruction.Parameters.Skip(Index).ToArray();
         if (!scopedArgs.Any() && StopIfMissing)
         {
             throw new ArgumentOutOfRangeException(
                 parameterInfo.Name!,
-                $"Argument {parameterInfo.Name} was not supplied");
+                $"Argument {parameterInfo.Name} was not supplied"
+            );
         }
 
         return scopedArgs.FirstOrDefault();

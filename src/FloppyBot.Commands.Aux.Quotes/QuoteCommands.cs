@@ -32,16 +32,27 @@ public class QuoteCommands
     public const string REPLY_QUOTE_ID_INVALID = "Quote number has to be a number";
 
     private static readonly IImmutableSet<string> OpAdd = new[] { "add", "+" }.ToImmutableHashSet();
-    private static readonly IImmutableSet<string> OpEdit = new[] { "edit", "*" }.ToImmutableHashSet();
-    private static readonly IImmutableSet<string> OpEditContext = new[] { "editcontext", "ec" }.ToImmutableHashSet();
-    private static readonly IImmutableSet<string> OpDelete = new[] { "del", "delete", "-" }.ToImmutableHashSet();
+    private static readonly IImmutableSet<string> OpEdit = new[]
+    {
+        "edit",
+        "*"
+    }.ToImmutableHashSet();
+    private static readonly IImmutableSet<string> OpEditContext = new[]
+    {
+        "editcontext",
+        "ec"
+    }.ToImmutableHashSet();
+    private static readonly IImmutableSet<string> OpDelete = new[]
+    {
+        "del",
+        "delete",
+        "-"
+    }.ToImmutableHashSet();
 
     private readonly ILogger<QuoteCommands> _logger;
     private readonly IQuoteService _quoteService;
 
-    public QuoteCommands(
-        ILogger<QuoteCommands> logger,
-        IQuoteService quoteService)
+    public QuoteCommands(ILogger<QuoteCommands> logger, IQuoteService quoteService)
     {
         _logger = logger;
         _quoteService = quoteService;
@@ -50,36 +61,21 @@ public class QuoteCommands
     [Command("quote", "q")]
     [PrimaryCommandName("quote")]
     [CommandDescription("Returns a random quote or a specific one, if a quote number is given")]
-    [CommandSyntax(
-        "[<Quote No.>]",
-        "",
-        "123")]
+    [CommandSyntax("[<Quote No.>]", "", "123")]
     [CommandParameterHint(1, "input", CommandParameterType.String, false)]
     public string? Quote(
         [SourceChannel] string sourceChannel,
-        [SourceContext]
-        string sourceContext,
-        [Author]
-        ChatUser author,
-        [ArgumentIndex(0, stopIfMissing: false)]
-        string? op,
-        [ArgumentIndex(1, stopIfMissing: false)]
-        string? subOp,
-        [ArgumentRange(1, stopIfMissing: false)]
-        string? text,
-        [ArgumentRange(2, stopIfMissing: false)]
-        string? subOpText)
+        [SourceContext] string sourceContext,
+        [Author] ChatUser author,
+        [ArgumentIndex(0, stopIfMissing: false)] string? op,
+        [ArgumentIndex(1, stopIfMissing: false)] string? subOp,
+        [ArgumentRange(1, stopIfMissing: false)] string? text,
+        [ArgumentRange(2, stopIfMissing: false)] string? subOpText
+    )
     {
         try
         {
-            return DoQuote(
-                sourceChannel,
-                sourceContext,
-                author,
-                op,
-                subOp,
-                text,
-                subOpText);
+            return DoQuote(sourceChannel, sourceContext, author, op, subOp, text, subOpText);
         }
         catch (MissingPrivilegeException)
         {
@@ -94,23 +90,19 @@ public class QuoteCommands
         string? op,
         string? subOp,
         string? text,
-        string? subOpText)
+        string? subOpText
+    )
     {
         if (string.IsNullOrWhiteSpace(op))
         {
             var randomQuote = _quoteService.GetRandomQuote(sourceChannel);
-            return randomQuote != null
-                ? randomQuote.ToString()
-                : REPLY_NO_QUOTES;
+            return randomQuote != null ? randomQuote.ToString() : REPLY_NO_QUOTES;
         }
 
         if (int.TryParse(op, out int quoteId))
         {
             return _quoteService.GetQuote(sourceChannel, quoteId)?.ToString()
-                   ?? REPLY_QUOTE_NOT_FOUND.Format(new
-                   {
-                       QuoteId = quoteId
-                   });
+                ?? REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
         }
 
         if (OpAdd.Contains(op))
@@ -120,11 +112,7 @@ public class QuoteCommands
                 return REPLY_TEXT_MISSING;
             }
 
-            return AddQuote(
-                sourceChannel,
-                sourceContext,
-                author,
-                text);
+            return AddQuote(sourceChannel, sourceContext, author, text);
         }
 
         if (OpEdit.Contains(op))
@@ -141,10 +129,7 @@ public class QuoteCommands
                 return REPLY_TEXT_MISSING;
             }
 
-            return EditQuote(
-                sourceChannel,
-                editQuoteId,
-                subOpText);
+            return EditQuote(sourceChannel, editQuoteId, subOpText);
         }
 
         if (OpEditContext.Contains(op))
@@ -161,10 +146,7 @@ public class QuoteCommands
                 return REPLY_CONTEXT_MISSING;
             }
 
-            return EditQuoteContext(
-                sourceChannel,
-                editQuoteId,
-                subOpText);
+            return EditQuoteContext(sourceChannel, editQuoteId, subOpText);
         }
 
         if (OpDelete.Contains(op))
@@ -176,16 +158,15 @@ public class QuoteCommands
                 return REPLY_QUOTE_ID_INVALID;
             }
 
-            return DeleteQuote(
-                sourceChannel,
-                deleteQuoteId);
+            return DeleteQuote(sourceChannel, deleteQuoteId);
         }
 
         _logger.LogInformation(
             "Ran into an unhandled quote command: {SourceChannel} {OperatorCode} {Text}",
             sourceChannel,
             op,
-            text);
+            text
+        );
         return null;
     }
 
@@ -196,22 +177,18 @@ public class QuoteCommands
     [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
     public string AddQuote(
         [SourceChannel] ChannelIdentifier sourceChannel,
-        [SourceContext]
-        string? sourceContext,
-        [Author]
-        ChatUser author,
-        [AllArguments]
-        string quoteText)
+        [SourceContext] string? sourceContext,
+        [Author] ChatUser author,
+        [AllArguments] string quoteText
+    )
     {
         var quote = _quoteService.AddQuote(
             sourceChannel,
             quoteText,
             sourceContext ?? sourceChannel.Interface,
-            author.DisplayName);
-        return REPLY_CREATED.Format(new
-        {
-            Quote = quote
-        });
+            author.DisplayName
+        );
+        return REPLY_CREATED.Format(new { Quote = quote });
     }
 
     [Command("quoteedit", "qe", "q*")]
@@ -223,27 +200,17 @@ public class QuoteCommands
     [CommandParameterHint(2, "newText", CommandParameterType.String)]
     public string EditQuote(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        int quoteId,
-        [ArgumentRange(1)]
-        string newQuoteText)
+        [ArgumentIndex(0)] int quoteId,
+        [ArgumentRange(1)] string newQuoteText
+    )
     {
-        var editedQuote = _quoteService.EditQuote(
-            sourceChannel,
-            quoteId,
-            newQuoteText);
+        var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
         if (editedQuote == null)
         {
-            return REPLY_QUOTE_NOT_FOUND.Format(new
-            {
-                QuoteId = quoteId
-            });
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
         }
 
-        return REPLY_EDITED.Format(new
-        {
-            Quote = editedQuote
-        });
+        return REPLY_EDITED.Format(new { Quote = editedQuote });
     }
 
     [Command("quoteeditcontext", "qec", "q*c")]
@@ -255,27 +222,17 @@ public class QuoteCommands
     [CommandParameterHint(2, "newContext", CommandParameterType.String)]
     public string EditQuoteContext(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        int quoteId,
-        [ArgumentRange(1)]
-        string newQuoteContext)
+        [ArgumentIndex(0)] int quoteId,
+        [ArgumentRange(1)] string newQuoteContext
+    )
     {
-        var editedQuote = _quoteService.EditQuoteContext(
-            sourceChannel,
-            quoteId,
-            newQuoteContext);
+        var editedQuote = _quoteService.EditQuoteContext(sourceChannel, quoteId, newQuoteContext);
         if (editedQuote == null)
         {
-            return REPLY_QUOTE_NOT_FOUND.Format(new
-            {
-                QuoteId = quoteId
-            });
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
         }
 
-        return REPLY_EDITED.Format(new
-        {
-            Quote = editedQuote
-        });
+        return REPLY_EDITED.Format(new { Quote = editedQuote });
     }
 
     [Command("quotedel", "q-")]
@@ -284,20 +241,11 @@ public class QuoteCommands
     [CommandSyntax("<Quote No.>", "123")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    public string DeleteQuote(
-        [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        int quoteId)
+    public string DeleteQuote([SourceChannel] string sourceChannel, [ArgumentIndex(0)] int quoteId)
     {
         return _quoteService.DeleteQuote(sourceChannel, quoteId)
-            ? REPLY_DELETED.Format(new
-            {
-                QuoteId = quoteId
-            })
-            : REPLY_QUOTE_NOT_FOUND.Format(new
-            {
-                QuoteId = quoteId
-            });
+            ? REPLY_DELETED.Format(new { QuoteId = quoteId })
+            : REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
     }
 
     [DependencyRegistration]

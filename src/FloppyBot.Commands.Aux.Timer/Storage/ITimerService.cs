@@ -11,7 +11,8 @@ public interface ITimerService
         string sourceMessage,
         string author,
         TimeSpan timerLength,
-        string timerMessage);
+        string timerMessage
+    );
 
     IEnumerable<TimerRecord> GetExpiredTimers(bool delete);
     void DeleteTimers(IEnumerable<TimerRecord> timers);
@@ -29,7 +30,12 @@ public class TimerService : ITimerService
         _repository = repositoryFactory.GetRepository<TimerRecord>();
     }
 
-    public void CreateTimer(string sourceMessage, string author, TimeSpan timerLength, string timerMessage)
+    public void CreateTimer(
+        string sourceMessage,
+        string author,
+        TimeSpan timerLength,
+        string timerMessage
+    )
     {
         DateTimeOffset now = _timeProvider.GetCurrentUtcTime();
         var timer = new TimerRecord(
@@ -38,14 +44,16 @@ public class TimerService : ITimerService
             timerMessage,
             now + timerLength,
             now,
-            author);
+            author
+        );
         _repository.Insert(timer);
     }
 
     public IEnumerable<TimerRecord> GetExpiredTimers(bool delete)
     {
         DateTimeOffset now = _timeProvider.GetCurrentUtcTime();
-        ImmutableArray<TimerRecord> timers = _repository.GetAll()
+        ImmutableArray<TimerRecord> timers = _repository
+            .GetAll()
             .Where(t => t.TargetTime <= now)
             .ToImmutableArray();
 
@@ -67,5 +75,3 @@ public class TimerService : ITimerService
         _repository.Delete(timer);
     }
 }
-
-

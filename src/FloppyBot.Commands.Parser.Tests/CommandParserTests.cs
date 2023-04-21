@@ -15,23 +15,22 @@ public class CommandParserTests
     public void ParsesCommandsCorrectly(
         string input,
         string expectedCommand,
-        params string[] arguments)
+        params string[] arguments
+    )
     {
         var expected = new CommandInstruction(
             expectedCommand,
-            arguments.ToImmutableListWithValueSemantics());
+            arguments.ToImmutableListWithValueSemantics()
+        );
 
-        Assert.AreEqual(
-            expected,
-            _parser.ParseCommandFromString(input));
+        Assert.AreEqual(expected, _parser.ParseCommandFromString(input));
     }
 
     [DataTestMethod]
     [DataRow("")]
     [DataRow("hello world")]
     [DataRow("?notacommand")]
-    public void DoesNotParseCommandsWithoutPrefix(
-        string input)
+    public void DoesNotParseCommandsWithoutPrefix(string input)
     {
         Assert.IsNull(_parser.ParseCommandFromString(input));
     }

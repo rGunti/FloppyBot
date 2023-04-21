@@ -11,9 +11,12 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
         CommandParameterType type,
         bool required = true,
         string? description = null,
-        params string[] possibleValues)
-        : base(CommandMetadataTypes.PARAMETER_HINTS,
-            ConvertToString(order, paramName, type, required, description, possibleValues))
+        params string[] possibleValues
+    )
+        : base(
+            CommandMetadataTypes.PARAMETER_HINTS,
+            ConvertToString(order, paramName, type, required, description, possibleValues)
+        )
     {
         Order = order;
         ParamName = paramName;
@@ -30,13 +33,8 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
     public string? Description { get; }
     public string[] PossibleValues { get; }
 
-    public string ConvertToString() => ConvertToString(
-        Order,
-        ParamName,
-        Type,
-        Required,
-        Description,
-        PossibleValues);
+    public string ConvertToString() =>
+        ConvertToString(Order, ParamName, Type, Required, Description, PossibleValues);
 
     public static string ConvertToString(
         int order,
@@ -44,7 +42,8 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
         CommandParameterType type,
         bool required,
         string? description,
-        IEnumerable<string> possibleValues)
+        IEnumerable<string> possibleValues
+    )
     {
         return new[]
         {

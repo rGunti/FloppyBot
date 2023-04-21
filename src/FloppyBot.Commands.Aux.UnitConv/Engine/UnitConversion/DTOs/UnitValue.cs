@@ -1,8 +1,6 @@
 ﻿namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion.DTOs;
 
-public record UnitValue(
-    float Value,
-    Unit? Unit)
+public record UnitValue(float Value, Unit? Unit)
 {
     public string DebugString => $"{this} ({Unit})";
 
@@ -13,4 +11,3 @@ public record UnitValue(
         return $"{Value} of unknown unit";
     }
 }
-

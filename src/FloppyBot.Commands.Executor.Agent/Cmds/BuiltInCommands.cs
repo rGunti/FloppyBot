@@ -20,7 +20,9 @@ public class BuiltInCommands
 
     [Command("ping")]
     [PrimaryCommandName("ping")]
-    [CommandDescription("Returns a test message. Useful to check if FloppyBot responds to commands.")]
+    [CommandDescription(
+        "Returns a test message. Useful to check if FloppyBot responds to commands."
+    )]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
     [CommandNoParametersHint]
     public static string Ping() => REPLY_PING;

@@ -13,4 +13,3 @@ public interface IUnitParsingEngine
 
     UnitValue? ParseUnit(string input);
 }
-

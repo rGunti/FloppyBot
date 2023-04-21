@@ -9,16 +9,17 @@ internal class LambdaUnitConversion : IUnitConversion
 
     public LambdaUnitConversion(
         Func<float, float> conversionFunc,
-        Func<float, float> backConversionFunc)
+        Func<float, float> backConversionFunc
+    )
     {
         _conversionFunc = conversionFunc;
         _backConversionFunc = backConversionFunc;
     }
 
     public float Convert(float input) => _conversionFunc(input);
+
     public float ConvertBack(float input) => _backConversionFunc(input);
 
-    public override string ToString()
-        => $"Lambda(<native code#{_conversionFunc.Method.MetadataToken}>, <native code#{_backConversionFunc.Method.MetadataToken}>)";
+    public override string ToString() =>
+        $"Lambda(<native code#{_conversionFunc.Method.MetadataToken}>, <native code#{_backConversionFunc.Method.MetadataToken}>)";
 }
-

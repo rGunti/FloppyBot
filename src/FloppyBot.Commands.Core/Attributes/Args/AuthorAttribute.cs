@@ -7,7 +7,10 @@ namespace FloppyBot.Commands.Core.Attributes.Args;
 
 public class AuthorAttribute : BaseArgumentAttribute
 {
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
         parameterInfo.AssertType<ChatUser>();
         return commandInstruction.Context!.SourceMessage.Author;

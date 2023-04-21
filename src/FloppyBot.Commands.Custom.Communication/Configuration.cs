@@ -14,7 +14,6 @@ public static class Configuration
         return configuration.GetParsedConnectionString(SOUND_CMD);
     }
 
-
     public static THost StartSoundCommandInvocationReceiver<THost>(this THost host)
         where THost : IHost
     {

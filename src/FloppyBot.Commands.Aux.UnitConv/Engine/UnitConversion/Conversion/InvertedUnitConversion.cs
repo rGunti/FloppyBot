@@ -12,8 +12,8 @@ internal class InvertedUnitConversion : IUnitConversion
     }
 
     public float Convert(float input) => _baseConversion.ConvertBack(input);
+
     public float ConvertBack(float input) => _baseConversion.Convert(input);
 
     public override string ToString() => $"Invert({_baseConversion})";
 }
-

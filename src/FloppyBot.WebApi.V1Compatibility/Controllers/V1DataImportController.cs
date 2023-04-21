@@ -20,9 +20,7 @@ public class V1DataImportController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult ImportData(
-        IFormFile? file,
-        [FromQuery] bool simulate = true)
+    public IActionResult ImportData(IFormFile? file, [FromQuery] bool simulate = true)
     {
         if (file == null)
         {
@@ -38,7 +36,8 @@ public class V1DataImportController : ControllerBase
         {
             throw new HttpStatusCodeException(
                 StatusCodes.Status500InternalServerError,
-                "Failed to import file");
+                "Failed to import file"
+            );
         }
 
         return NoContent();

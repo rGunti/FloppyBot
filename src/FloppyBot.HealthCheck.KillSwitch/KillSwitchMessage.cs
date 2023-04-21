@@ -1,4 +1,3 @@
 ﻿namespace FloppyBot.HealthCheck.KillSwitch;
 
-public record KillSwitchMessage(
-    string InstanceId);
+public record KillSwitchMessage(string InstanceId);

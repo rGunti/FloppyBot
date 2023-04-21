@@ -12,12 +12,11 @@ public class IdentifierTests
     public void ConvertStringToChannelId(
         string inputChannelId,
         string expectedInterface,
-        string expectedChannel)
+        string expectedChannel
+    )
     {
         ChannelIdentifier channelId = inputChannelId;
-        var expectedChannelId = new ChannelIdentifier(
-            expectedInterface,
-            expectedChannel);
+        var expectedChannelId = new ChannelIdentifier(expectedInterface, expectedChannel);
 
         Assert.AreEqual(expectedChannelId, channelId);
         Assert.AreEqual(inputChannelId, (string)channelId);
@@ -40,13 +39,15 @@ public class IdentifierTests
         string inputChannelId,
         string expectedInterface,
         string expectedChannel,
-        params string[] expectedAdditionalInfo)
+        params string[] expectedAdditionalInfo
+    )
     {
         ExtendedChannelIdentifier channelId = inputChannelId;
         var expectedChannelId = new ExtendedChannelIdentifier(
             expectedInterface,
             expectedChannel,
-            expectedAdditionalInfo);
+            expectedAdditionalInfo
+        );
         Assert.AreEqual(expectedChannelId, channelId);
         Assert.AreEqual(inputChannelId, (string)channelId);
     }
@@ -67,13 +68,15 @@ public class IdentifierTests
         string inputMessageId,
         string expectedInterface,
         string expectedChannel,
-        string expectedMessage)
+        string expectedMessage
+    )
     {
         ChatMessageIdentifier messageId = inputMessageId;
         var expectedMessageId = new ChatMessageIdentifier(
             expectedInterface,
             expectedChannel,
-            expectedMessage);
+            expectedMessage
+        );
 
         Assert.AreEqual(expectedMessageId, messageId);
         Assert.AreEqual(inputMessageId, (string)messageId);
@@ -92,9 +95,7 @@ public class IdentifierTests
 
     [DataTestMethod]
     [DataRow("Twitch/pinsrltrex/1234", "Twitch/pinsrltrex")]
-    public void GetChannelOfMessageIdentifier(
-        string inputMessageId,
-        string expectedChannelId)
+    public void GetChannelOfMessageIdentifier(string inputMessageId, string expectedChannelId)
     {
         ChatMessageIdentifier messageId = inputMessageId;
         Assert.AreEqual((ChannelIdentifier)expectedChannelId, messageId.GetChannel());

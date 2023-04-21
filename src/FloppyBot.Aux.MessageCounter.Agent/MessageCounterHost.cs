@@ -8,7 +8,10 @@ public class MessageCounterHost : BackgroundService
     private readonly ILogger<MessageCounterHost> _logger;
     private readonly Core.MessageCounter _messageCounter;
 
-    public MessageCounterHost(ILogger<MessageCounterHost> logger, Core.MessageCounter messageCounter)
+    public MessageCounterHost(
+        ILogger<MessageCounterHost> logger,
+        Core.MessageCounter messageCounter
+    )
     {
         _logger = logger;
         _messageCounter = messageCounter;
@@ -35,5 +38,3 @@ public class MessageCounterHost : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 }
-
-

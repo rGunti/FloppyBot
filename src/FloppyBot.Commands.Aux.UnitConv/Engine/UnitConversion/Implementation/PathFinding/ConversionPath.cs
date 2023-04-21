@@ -2,23 +2,22 @@ namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion.Implementation.P
 
 public class ConversionPath : Stack<ConversionNode>
 {
-    public override string ToString()
-        => string.Join(">",
-            this.Select(i => i.Name).Reverse());
+    public override string ToString() => string.Join(">", this.Select(i => i.Name).Reverse());
 
     public bool IsSamePath(ConversionPath path)
     {
-        if (Count != path.Count) return false;
+        if (Count != path.Count)
+            return false;
 
         var me = ToArray();
         var them = path.ToArray();
 
         for (var i = 0; i < Count; i++)
         {
-            if (me[i] != them[i]) return false;
+            if (me[i] != them[i])
+                return false;
         }
 
         return true;
     }
 }
-

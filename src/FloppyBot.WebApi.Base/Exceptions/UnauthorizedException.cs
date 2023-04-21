@@ -4,7 +4,6 @@ namespace FloppyBot.WebApi.Base.Exceptions;
 
 public class UnauthorizedException : HttpStatusCodeException
 {
-    public UnauthorizedException(string message) : base(StatusCodes.Status401Unauthorized, message)
-    {
-    }
+    public UnauthorizedException(string message)
+        : base(StatusCodes.Status401Unauthorized, message) { }
 }

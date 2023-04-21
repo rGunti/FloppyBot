@@ -17,15 +17,18 @@ public class CommandParsingAgent : BackgroundService
         IConfiguration configuration,
         INotificationReceiverFactory receiverFactory,
         INotificationSenderFactory senderFactory,
-        ICommandParser commandParser)
+        ICommandParser commandParser
+    )
     {
         _logger = logger;
         _commandParser = commandParser;
         _chatMessageReceiver = receiverFactory.GetNewReceiver<ChatMessage>(
-            configuration.GetParsedConnectionString("MessageInput"));
+            configuration.GetParsedConnectionString("MessageInput")
+        );
         _chatMessageReceiver.NotificationReceived += OnNotificationReceived;
         _commandMessageSender = senderFactory.GetNewSender(
-            configuration.GetParsedConnectionString("CommandOutput"));
+            configuration.GetParsedConnectionString("CommandOutput")
+        );
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -46,16 +49,23 @@ public class CommandParsingAgent : BackgroundService
     private void OnNotificationReceived(ChatMessage notification)
     {
 #if DEBUG
-        _logger.LogInformation(
-            "Received chat message to parse: {@ChatMessage}",
-            notification);
+        _logger.LogInformation("Received chat message to parse: {@ChatMessage}", notification);
 #endif
 
-        CommandInstruction? instruction = _commandParser.ParseCommandFromString(notification.Content);
+        CommandInstruction? instruction = _commandParser.ParseCommandFromString(
+            notification.Content
+        );
         if (instruction != null)
         {
-            _logger.LogInformation("Message was parsed to a command successfully, sending to output");
-            _commandMessageSender.Send(instruction with { Context = new CommandContext(notification) });
+            _logger.LogInformation(
+                "Message was parsed to a command successfully, sending to output"
+            );
+            _commandMessageSender.Send(
+                instruction with
+                {
+                    Context = new CommandContext(notification)
+                }
+            );
         }
     }
 

@@ -10,15 +10,18 @@ public static class Registration
 {
     public static IServiceCollection AddLiteDbStorage(
         this IServiceCollection services,
-        string connectionStringName = "LiteDb")
+        string connectionStringName = "LiteDb"
+    )
     {
         return services
             .AddSingleton<LiteDbInstanceFactory>()
             .AddSingleton<ILiteDatabase>(s =>
             {
                 var inst = s.GetRequiredService<LiteDbInstanceFactory>()
-                    .ConstructDatabaseInstance(s.GetRequiredService<IConfiguration>()
-                        .GetConnectionString(connectionStringName));
+                    .ConstructDatabaseInstance(
+                        s.GetRequiredService<IConfiguration>()
+                            .GetConnectionString(connectionStringName)
+                    );
                 inst.Pragma("UTC_DATE", true);
                 return inst;
             })
@@ -29,8 +32,9 @@ public static class Registration
     {
         return services
             .AddSingleton<LiteDbInstanceFactory>()
-            .AddSingleton<ILiteDatabase>(s => s.GetRequiredService<LiteDbInstanceFactory>()
-                .ConstructMemoryDbInstance())
+            .AddSingleton<ILiteDatabase>(
+                s => s.GetRequiredService<LiteDbInstanceFactory>().ConstructMemoryDbInstance()
+            )
             .AddStorageImplementation<LiteDbRepositoryFactory, LiteDbIndexManager>();
     }
 }

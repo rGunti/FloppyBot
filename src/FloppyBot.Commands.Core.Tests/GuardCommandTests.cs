@@ -30,9 +30,12 @@ public class GuardCommandTests
         var scanner = new CommandScanner();
         _serviceProvider = new ServiceCollection()
             .AddLogging(lb => lb.AddSerilog(LoggingUtils.SerilogLogger.Value))
-            .AddSingleton(scanner.IndexCommands(
-                scanner.ScanTypeForCommandHandlers<GuardedCommands>()))
-            .AddSingleton<IImmutableList<VariableCommandInfo>>(Array.Empty<VariableCommandInfo>().ToImmutableList())
+            .AddSingleton(
+                scanner.IndexCommands(scanner.ScanTypeForCommandHandlers<GuardedCommands>())
+            )
+            .AddSingleton<IImmutableList<VariableCommandInfo>>(
+                Array.Empty<VariableCommandInfo>().ToImmutableList()
+            )
             .AddScoped<GuardedCommands>()
             .AddInMemoryStorage()
             .AddScoped<ICommandConfigurationService, CommandConfigurationService>()
@@ -44,10 +47,11 @@ public class GuardCommandTests
             .BuildServiceProvider();
     }
 
-    private ICommandExecutor CommandExecutor => _serviceProvider.GetRequiredService<ICommandExecutor>();
+    private ICommandExecutor CommandExecutor =>
+        _serviceProvider.GetRequiredService<ICommandExecutor>();
 
-    private ICommandConfigurationService CommandConfigurationService
-        => _serviceProvider.GetRequiredService<ICommandConfigurationService>();
+    private ICommandConfigurationService CommandConfigurationService =>
+        _serviceProvider.GetRequiredService<ICommandConfigurationService>();
 
     [DataTestMethod]
     [DataRow(PrivilegeLevel.Unknown, false)]
@@ -55,14 +59,15 @@ public class GuardCommandTests
     [DataRow(PrivilegeLevel.Moderator, false)]
     [DataRow(PrivilegeLevel.Administrator, true)]
     [DataRow(PrivilegeLevel.Superuser, true)]
-    public void PrivilegeGuardWorks(
-        PrivilegeLevel privilegeLevelToTest,
-        bool expectExecution)
+    public void PrivilegeGuardWorks(PrivilegeLevel privilegeLevelToTest, bool expectExecution)
     {
-        var reply = CommandExecutor.ExecuteCommand(MockCommandFactory.NewInstruction(
-            "adminonly",
-            Array.Empty<string>(),
-            privilegeLevelToTest));
+        var reply = CommandExecutor.ExecuteCommand(
+            MockCommandFactory.NewInstruction(
+                "adminonly",
+                Array.Empty<string>(),
+                privilegeLevelToTest
+            )
+        );
 
         if (expectExecution)
         {
@@ -103,22 +108,26 @@ public class GuardCommandTests
     public void PrivilegeGuardWorksWithConfiguredOverride(
         PrivilegeLevel userPrivilegeLevel,
         PrivilegeLevel? configuredPrivilegeLevel,
-        bool expectExecution)
+        bool expectExecution
+    )
     {
         CommandInstruction instructions = MockCommandFactory.NewInstruction(
             "adminonly",
             Array.Empty<string>(),
-            userPrivilegeLevel);
-        CommandConfigurationService.SetCommandConfiguration(new CommandConfiguration
-        {
-            Id = "no-id",
-            ChannelId = instructions.Context!.SourceMessage.Identifier.GetChannel(),
-            CommandName = instructions.CommandName,
-            RequiredPrivilegeLevel = configuredPrivilegeLevel,
-            Disabled = false,
-            CustomCooldown = false,
-            CustomCooldownConfiguration = Array.Empty<CooldownConfiguration>(),
-        });
+            userPrivilegeLevel
+        );
+        CommandConfigurationService.SetCommandConfiguration(
+            new CommandConfiguration
+            {
+                Id = "no-id",
+                ChannelId = instructions.Context!.SourceMessage.Identifier.GetChannel(),
+                CommandName = instructions.CommandName,
+                RequiredPrivilegeLevel = configuredPrivilegeLevel,
+                Disabled = false,
+                CustomCooldown = false,
+                CustomCooldownConfiguration = Array.Empty<CooldownConfiguration>(),
+            }
+        );
 
         ChatMessage? reply = CommandExecutor.ExecuteCommand(instructions);
 

@@ -17,7 +17,11 @@ public class GuardTask : IPreExecutionTask
     private readonly ILogger<GuardTask> _logger;
     private readonly IServiceProvider _provider;
 
-    public GuardTask(ILogger<GuardTask> logger, IServiceProvider provider, ICommandGuardRegistry guardRegistry)
+    public GuardTask(
+        ILogger<GuardTask> logger,
+        IServiceProvider provider,
+        ICommandGuardRegistry guardRegistry
+    )
     {
         _logger = logger;
         _provider = provider;
@@ -29,16 +33,23 @@ public class GuardTask : IPreExecutionTask
         _logger.LogDebug("Fetching guard tasks to execute");
         var guards = info.ImplementingType
             .GetCustomAttributes<GuardAttribute>()
-            .Concat(info.HandlerMethod
-                .GetCustomAttributes<GuardAttribute>())
-            .SelectMany(attribute => _guardRegistry.FindGuardImplementation(attribute)
-                .Select(guardType => new
-                {
-                    // ReSharper disable once AccessToDisposedClosure
-                    GuardImpl = (ICommandGuard)_provider.GetRequiredService(guardType),
-                    GuardType = guardType,
-                    Settings = attribute,
-                }))
+            .Concat(info.HandlerMethod.GetCustomAttributes<GuardAttribute>())
+            .SelectMany(
+                attribute =>
+                    _guardRegistry
+                        .FindGuardImplementation(attribute)
+                        .Select(
+                            guardType =>
+                                new
+                                {
+                                    // ReSharper disable once AccessToDisposedClosure
+                                    GuardImpl = (ICommandGuard)
+                                        _provider.GetRequiredService(guardType),
+                                    GuardType = guardType,
+                                    Settings = attribute,
+                                }
+                        )
+            )
             .ToArray();
 
         _logger.LogDebug("Found {GuardCount} guards to execute", guards.Length);
@@ -49,7 +60,8 @@ public class GuardTask : IPreExecutionTask
                     // ReSharper disable once ComplexObjectDestructuringProblem
                     "Running guard {GuardType} with settings {GuardSettings}",
                     guard.GuardType,
-                    guard.Settings);
+                    guard.Settings
+                );
                 return !guard.GuardImpl.CanExecute(instruction, info, guard.Settings);
             })
             .ToArray();
@@ -59,11 +71,13 @@ public class GuardTask : IPreExecutionTask
             _logger.LogInformation(
                 "{FailedGuardCount} of {GuardCount} guard(s) have failed, command is not executed",
                 failedGuards.Length,
-                guards.Length);
+                guards.Length
+            );
             _logger.LogDebug(
                 "The following guards have failed: {FailedGuards}",
                 // ReSharper disable once CoVariantArrayConversion
-                failedGuards.Select(g => g.Settings).ToArray());
+                failedGuards.Select(g => g.Settings).ToArray()
+            );
         }
         else
         {

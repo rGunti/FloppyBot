@@ -14,7 +14,9 @@ internal class ChainedUnitConversion : IUnitConversion
 
     public ChainedUnitConversion(
         IEnumerable<IUnitConversion> conversions,
-        string customLabel = null) : this(conversions.ToArray())
+        string customLabel = null
+    )
+        : this(conversions.ToArray())
     {
         _customLabel = customLabel;
     }
@@ -41,7 +43,6 @@ internal class ChainedUnitConversion : IUnitConversion
         return input;
     }
 
-    public override string ToString()
-        => $"Chain({(string.IsNullOrEmpty(_customLabel) ? ChainDescription : _customLabel)})";
+    public override string ToString() =>
+        $"Chain({(string.IsNullOrEmpty(_customLabel) ? ChainDescription : _customLabel)})";
 }
-

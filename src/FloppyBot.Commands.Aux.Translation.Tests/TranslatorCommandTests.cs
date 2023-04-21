@@ -14,10 +14,7 @@ public class TranslatorCommandTests
     public TranslatorCommandTests()
     {
         _translatorMock = new Mock<ITranslator>();
-        _host = new DeepLCommands(
-            LoggingUtils.GetLogger<DeepLCommands>(),
-            _translatorMock.Object);
-
+        _host = new DeepLCommands(LoggingUtils.GetLogger<DeepLCommands>(), _translatorMock.Object);
 
         _translatorMock
             .Setup(s => s.ListSupportedLanguages())
@@ -35,29 +32,42 @@ public class TranslatorCommandTests
     {
         Assert.AreEqual(
             CommandResult.SuccessWith(DeepLCommands.REPLY_HELP),
-            _host.Translate(input, false));
+            _host.Translate(input, false)
+        );
     }
 
     [TestMethod]
     public void ReturnsListOfLanguages()
     {
         Assert.AreEqual(
-            CommandResult.SuccessWith("The following languages are supported: English, French, German, and Swedish"),
-            _host.Translate("languages", false));
+            CommandResult.SuccessWith(
+                "The following languages are supported: English, French, German, and Swedish"
+            ),
+            _host.Translate("languages", false)
+        );
         Assert.AreEqual(
-            CommandResult.SuccessWith("The following languages are supported: `English, French, German, and Swedish`"),
-            _host.Translate("languages", true));
+            CommandResult.SuccessWith(
+                "The following languages are supported: `English, French, German, and Swedish`"
+            ),
+            _host.Translate("languages", true)
+        );
     }
 
     [TestMethod]
     public void ReturnsListOfLanguageCodes()
     {
         Assert.AreEqual(
-            CommandResult.SuccessWith("The following language codes are supported: de, en, fr, sv, and zh"),
-            _host.Translate("codes", false));
+            CommandResult.SuccessWith(
+                "The following language codes are supported: de, en, fr, sv, and zh"
+            ),
+            _host.Translate("codes", false)
+        );
         Assert.AreEqual(
-            CommandResult.SuccessWith("The following language codes are supported: `de, en, fr, sv, and zh`"),
-            _host.Translate("codes", true));
+            CommandResult.SuccessWith(
+                "The following language codes are supported: `de, en, fr, sv, and zh`"
+            ),
+            _host.Translate("codes", true)
+        );
     }
 
     [TestMethod]
@@ -65,23 +75,21 @@ public class TranslatorCommandTests
     {
         _translatorMock
             .Setup(t => t.ParseRequest(It.IsAny<string>()))
-            .Returns<string>(_ => new TranslationRequest(
-                "en",
-                "de",
-                "Hello World"));
+            .Returns<string>(_ => new TranslationRequest("en", "de", "Hello World"));
         _translatorMock
             .Setup(t => t.Translate(It.IsAny<TranslationRequest>()))
-            .Returns<TranslationRequest>(req => new TranslationResponse(
-                req,
-                "Hallo Welt",
-                "German"));
+            .Returns<TranslationRequest>(
+                req => new TranslationResponse(req, "Hallo Welt", "German")
+            );
 
         Assert.AreEqual(
             CommandResult.SuccessWith("\"Hallo Welt\" (translated from German)"),
-            _host.Translate("Hello World from English to German", false));
+            _host.Translate("Hello World from English to German", false)
+        );
         Assert.AreEqual(
             CommandResult.SuccessWith("> Hallo Welt\n_(translated from German)_"),
-            _host.Translate("Hello World from English to German", true));
+            _host.Translate("Hello World from English to German", true)
+        );
     }
 
     [TestMethod]
@@ -92,8 +100,11 @@ public class TranslatorCommandTests
             .Throws(new TranslationException("I didn't understand your query"));
 
         Assert.AreEqual(
-            CommandResult.FailedWith("Whops! I couldn't translate this because I didn't understand your query."),
-            _host.Translate("Hello World from English to German", false));
+            CommandResult.FailedWith(
+                "Whops! I couldn't translate this because I didn't understand your query."
+            ),
+            _host.Translate("Hello World from English to German", false)
+        );
     }
 
     [TestMethod]
@@ -101,17 +112,14 @@ public class TranslatorCommandTests
     {
         _translatorMock
             .Setup(t => t.ParseRequest(It.IsAny<string>()))
-            .Returns<string>(_ => new TranslationRequest(
-                "en",
-                "de",
-                "Hello World"));
+            .Returns<string>(_ => new TranslationRequest("en", "de", "Hello World"));
         _translatorMock
             .Setup(t => t.Translate(It.IsAny<TranslationRequest>()))
             .Throws(new Exception("something happened"));
 
         Assert.AreEqual(
             CommandResult.FailedWith("Whops! I couldn't translate this."),
-            _host.Translate("Hello World from English to German", false));
+            _host.Translate("Hello World from English to German", false)
+        );
     }
 }
-

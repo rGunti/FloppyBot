@@ -40,7 +40,8 @@ public class ShoutoutCommand
     public ShoutoutCommand(
         ITwitchApiService twitchApiService,
         IShoutoutMessageSettingService shoutoutMessageSettingService,
-        ILogger<ShoutoutCommand> logger)
+        ILogger<ShoutoutCommand> logger
+    )
     {
         _twitchApiService = twitchApiService;
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
@@ -48,15 +49,15 @@ public class ShoutoutCommand
     }
 
     [Command("shoutout", "so")]
-    [CommandDescription("Shouts out a Twitch channel with a customized message defined for the channel")]
-    [CommandSyntax(
-        "<Channel Name>",
-        "Avinnus",
-        "pinsrltrex")]
+    [CommandDescription(
+        "Shouts out a Twitch channel with a customized message defined for the channel"
+    )]
+    [CommandSyntax("<Channel Name>", "Avinnus", "pinsrltrex")]
     // ReSharper disable once UnusedMember.Global
     public async Task<string?> Shoutout(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] string channel)
+        [ArgumentIndex(0)] string channel
+    )
     {
         var setting = _shoutoutMessageSettingService.GetSettings(sourceChannel);
         if (setting == null || string.IsNullOrEmpty(setting.Message))
@@ -79,32 +80,36 @@ public class ShoutoutCommand
             _logger.LogWarning(
                 ex,
                 "Failed to format message. Message template was {MessageTemplate}",
-                setting.Message);
+                setting.Message
+            );
             return REPLY_ERR_FORMATTING;
         }
     }
 
     [Command("setshoutout")]
-    [CommandDescription("Sets the shoutout template for the requesting channel. " +
-                        "The following placeholders are supported, when surrounded by {}: " +
-                        $"{nameof(TwitchUserLookupResult.AccountName)}, " +
-                        $"{nameof(TwitchUserLookupResult.DisplayName)}, " +
-                        $"{nameof(TwitchUserLookupResult.LastGame)}, " +
-                        $"{nameof(TwitchUserLookupResult.Link)}")]
+    [CommandDescription(
+        "Sets the shoutout template for the requesting channel. "
+            + "The following placeholders are supported, when surrounded by {}: "
+            + $"{nameof(TwitchUserLookupResult.AccountName)}, "
+            + $"{nameof(TwitchUserLookupResult.DisplayName)}, "
+            + $"{nameof(TwitchUserLookupResult.LastGame)}, "
+            + $"{nameof(TwitchUserLookupResult.Link)}"
+    )]
     [CommandSyntax(
         "<Message>",
-        "Shoutout to {DisplayName} at {Link}. They last played {LastGame}!")]
+        "Shoutout to {DisplayName} at {Link}. They last played {LastGame}!"
+    )]
     // ReSharper disable once UnusedMember.Global
-    public string SetShoutout(
-        [SourceChannel] string sourceChannel,
-        [AllArguments] string template)
+    public string SetShoutout([SourceChannel] string sourceChannel, [AllArguments] string template)
     {
         _shoutoutMessageSettingService.SetShoutoutMessage(sourceChannel, template);
         return REPLY_SAVE;
     }
 
     [Command("clearshoutout")]
-    [CommandDescription("Clears the channels shoutout message, effectively disabling the shoutout command")]
+    [CommandDescription(
+        "Clears the channels shoutout message, effectively disabling the shoutout command"
+    )]
     // ReSharper disable once UnusedMember.Global
     public string ClearShoutout([SourceChannel] string sourceChannel)
     {
@@ -116,20 +121,18 @@ public class ShoutoutCommand
     public static void RegisterDependencies(IServiceCollection services)
     {
         services
-            .AddSingleton<TwitchApiConfig>(s => s
-                .GetRequiredService<IConfiguration>()
-                .GetSection("TwitchApi")
-                .Get<TwitchApiConfig>())
+            .AddSingleton<TwitchApiConfig>(
+                s =>
+                    s.GetRequiredService<IConfiguration>()
+                        .GetSection("TwitchApi")
+                        .Get<TwitchApiConfig>()
+            )
             .AddSingleton<ITwitchAPI>(s =>
             {
                 var config = s.GetRequiredService<TwitchApiConfig>();
                 var api = new TwitchAPI(s.GetRequiredService<ILoggerFactory>())
                 {
-                    Settings =
-                    {
-                        ClientId = config.ClientId,
-                        Secret = config.Secret
-                    }
+                    Settings = { ClientId = config.ClientId, Secret = config.Secret }
                 };
                 return api;
             })
@@ -142,8 +145,7 @@ public class ShoutoutCommand
     public static void SetupTimerMessageDependencies(IServiceCollection services)
     {
         SetupTimerMessageDbDependencies(services);
-        services
-            .AddCronJob<TimerMessageCronJob>();
+        services.AddCronJob<TimerMessageCronJob>();
     }
 
     public static void SetupTimerMessageDbDependencies(IServiceCollection services)

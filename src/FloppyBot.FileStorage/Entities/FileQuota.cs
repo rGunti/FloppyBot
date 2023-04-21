@@ -2,18 +2,11 @@ using FloppyBot.Base.Storage;
 
 namespace FloppyBot.FileStorage.Entities;
 
-public record FileQuota(
-        string Id,
-        double MaxStorageQuota,
-        int MaxFileNumber)
-    : IEntity<FileQuota>
+public record FileQuota(string Id, double MaxStorageQuota, int MaxFileNumber) : IEntity<FileQuota>
 {
     public FileQuota WithId(string newId)
     {
-        return this with
-        {
-            Id = newId
-        };
+        return this with { Id = newId };
     }
 
     /// <summary>

@@ -8,31 +8,34 @@ public static class CommandGuardRegistryExtensions
 {
     public static IServiceCollection AddGuardRegistry(this IServiceCollection services)
     {
-        return services
-            .AddSingleton<ICommandGuardRegistry, CommandGuardRegistry>(s =>
+        return services.AddSingleton<ICommandGuardRegistry, CommandGuardRegistry>(s =>
+        {
+            var inst = new CommandGuardRegistry(
+                s.GetRequiredService<ILogger<CommandGuardRegistry>>()
+            );
+            foreach (
+                var (attributeType, implementationType) in s.GetRequiredService<
+                    IEnumerable<CommandGuardTypePair>
+                >()
+            )
             {
-                var inst = new CommandGuardRegistry(
-                    s.GetRequiredService<ILogger<CommandGuardRegistry>>());
-                foreach (var (attributeType, implementationType) in s
-                             .GetRequiredService<IEnumerable<CommandGuardTypePair>>())
-                {
-                    inst.RegisterGuard(attributeType, implementationType);
-                }
+                inst.RegisterGuard(attributeType, implementationType);
+            }
 
-                return inst;
-            });
+            return inst;
+        });
     }
 
     public static IServiceCollection AddGuard<TGuard, TGuardAttribute>(
-        this IServiceCollection services)
+        this IServiceCollection services
+    )
         where TGuard : class, ICommandGuard<TGuardAttribute>
         where TGuardAttribute : GuardAttribute
     {
         return services
             .AddSingleton<CommandGuardTypePair>(
-                new CommandGuardTypePair(
-                    typeof(TGuardAttribute),
-                    typeof(TGuard)))
+                new CommandGuardTypePair(typeof(TGuardAttribute), typeof(TGuard))
+            )
             .AddScoped<TGuard>();
     }
 }

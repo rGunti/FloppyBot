@@ -14,26 +14,30 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
 {
     private const string GLOBAL_KEY = "FloppyBot.Commands";
 
-    private static readonly TimeSpan ExpiryTime = TimeSpan.FromMinutes(5) + TimeSpan.FromSeconds(15);
+    private static readonly TimeSpan ExpiryTime =
+        TimeSpan.FromMinutes(5) + TimeSpan.FromSeconds(15);
 
     private readonly IDatabase _database;
     private readonly string _globalKey;
 
     public DistributedCommandRegistry(
         IConfiguration configuration,
-        IRedisConnectionFactory connectionFactory)
+        IRedisConnectionFactory connectionFactory
+    )
     {
-        var connectionString = configuration.GetParsedConnectionString("DistributedCommandRegistry");
+        var connectionString = configuration.GetParsedConnectionString(
+            "DistributedCommandRegistry"
+        );
         var config = connectionString.ParseToConnectionConfig();
         _globalKey = config.Channel ?? GLOBAL_KEY;
 
-        _database = connectionFactory.GetMultiplexer(connectionString)
-            .GetDatabase();
+        _database = connectionFactory.GetMultiplexer(connectionString).GetDatabase();
     }
 
     public IImmutableList<string> GetCommands()
     {
-        return _database.HashKeys(_globalKey)
+        return _database
+            .HashKeys(_globalKey)
             .Where(v => !v.IsNull)
             .Select(v => v.ToString())
             .ToImmutableListWithValueSemantics();
@@ -41,7 +45,8 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
 
     public IImmutableList<CommandAbstract> GetAllCommands()
     {
-        return _database.HashValues(_globalKey)
+        return _database
+            .HashValues(_globalKey)
             .Where(v => !v.IsNull)
             .Select(v => JsonSerializer.Deserialize<CommandAbstract>(v.ToString())!)
             .ToImmutableList();
@@ -64,9 +69,7 @@ public class DistributedCommandRegistry : IDistributedCommandRegistry
 
     private IEnumerable<string> GetCommandNames()
     {
-        return _database.HashKeys(_globalKey)
-            .Where(v => !v.IsNull)
-            .Select(v => v.ToString());
+        return _database.HashKeys(_globalKey).Where(v => !v.IsNull).Select(v => v.ToString());
     }
 
     private CommandAbstract? GetCommandFromDb(string commandName)

@@ -5,4 +5,5 @@ public record SoundCommandInvocation(
     string InvokedFrom,
     string CommandName,
     string PayloadToPlay,
-    DateTimeOffset InvokedAt);
+    DateTimeOffset InvokedAt
+);

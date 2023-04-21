@@ -7,7 +7,6 @@ public class StaticNumberGenerator : IRandomNumberGenerator
     private int _currentIndex;
     private IImmutableList<int> _numbers;
 
-
     public StaticNumberGenerator(params int[] numbers)
     {
         _numbers = numbers.ToImmutableList();

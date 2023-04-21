@@ -10,8 +10,7 @@ public class CurrencyConverter : ICurrencyConverter
 
     public CurrencyConverter(IConfiguration configuration)
     {
-        _currencyCommandConfig = configuration.GetSection("Currency")
-            .Get<CurrencyCommandConfig>();
+        _currencyCommandConfig = configuration.GetSection("Currency").Get<CurrencyCommandConfig>();
         _restClient = new RestClient(_currencyCommandConfig.SourceUrl);
     }
 
@@ -34,9 +33,6 @@ public class CurrencyConverter : ICurrencyConverter
             throw new InvalidOperationException("Could not load data as requested");
         }
 
-        return new CurrencyConversionRecord(
-            from,
-            to,
-            responseData[$"{from}_{to}"]);
+        return new CurrencyConversionRecord(from, to, responseData[$"{from}_{to}"]);
     }
 }

@@ -6,9 +6,14 @@ namespace FloppyBot.Chat.Discord;
 
 internal static class IdentifierExtensions
 {
-    public static SocketChannel? GetChannel(this DiscordSocketClient client, ChatMessageIdentifier identifier)
+    public static SocketChannel? GetChannel(
+        this DiscordSocketClient client,
+        ChatMessageIdentifier identifier
+    )
     {
-        return !ulong.TryParse(identifier.Channel, out var channelId) ? null : client.GetChannel(channelId);
+        return !ulong.TryParse(identifier.Channel, out var channelId)
+            ? null
+            : client.GetChannel(channelId);
     }
 
     public static MessageReference? ToMessageReference(this ChatMessageIdentifier id)
@@ -18,9 +23,6 @@ internal static class IdentifierExtensions
             return null;
         if (ulong.TryParse(id.MessageId, out var msgRefIdVal))
             msgRefId = msgRefIdVal;
-        return new MessageReference(
-            messageId: msgRefId,
-            failIfNotExists: false);
+        return new MessageReference(messageId: msgRefId, failIfNotExists: false);
     }
 }
-

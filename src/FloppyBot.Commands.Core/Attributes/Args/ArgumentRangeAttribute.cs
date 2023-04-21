@@ -16,7 +16,8 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
         int endIndex = int.MaxValue,
         string joinWith = " ",
         bool stopIfMissing = true,
-        bool outputAsArray = false)
+        bool outputAsArray = false
+    )
     {
         StartIndex = startIndex;
         StopIfMissing = stopIfMissing;
@@ -31,7 +32,10 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
     public bool StopIfMissing { get; }
     public bool OutputAsArray { get; }
 
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
         var scopedArgs = commandInstruction.Parameters
             .Skip(StartIndex)
@@ -41,7 +45,8 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
         {
             throw new ArgumentOutOfRangeException(
                 parameterInfo.Name!,
-                $"Argument {parameterInfo.Name} was not supplied (looked at index between {StartIndex} - {EndIndex})");
+                $"Argument {parameterInfo.Name} was not supplied (looked at index between {StartIndex} - {EndIndex})"
+            );
         }
 
         if (OutputAsArray)
@@ -49,8 +54,6 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
             return scopedArgs.ToImmutableArray();
         }
 
-        return string.Join(
-            JoinWith,
-            scopedArgs);
+        return string.Join(JoinWith, scopedArgs);
     }
 }

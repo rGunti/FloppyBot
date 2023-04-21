@@ -20,7 +20,11 @@ public class SoundCommandsController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
 
-    public SoundCommandsController(IUserService userService, ICustomCommandService customCommandService, IMapper mapper)
+    public SoundCommandsController(
+        IUserService userService,
+        ICustomCommandService customCommandService,
+        IMapper mapper
+    )
     {
         _userService = userService;
         _customCommandService = customCommandService;
@@ -29,10 +33,15 @@ public class SoundCommandsController : ControllerBase
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
-        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString()))
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
         {
-            throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
         }
     }
 
@@ -52,11 +61,12 @@ public class SoundCommandsController : ControllerBase
     [HttpGet("{messageInterface}/{channel}")]
     public SoundCommand[] GetCommandsForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel)
+        [FromRoute] string channel
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        return _customCommandService.GetCommandsOfChannel(channelId)
+        return _customCommandService
+            .GetCommandsOfChannel(channelId)
             .Where(V1CompatibilityProfile.IsConvertableForSoundCommand)
             .Select(c => _mapper.Map<SoundCommand>(c))
             .ToArray();
@@ -65,38 +75,35 @@ public class SoundCommandsController : ControllerBase
     [HttpGet("{messageInterface}/{channel}/{command}")]
     public SoundCommand GetCommandForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command)
+        [FromRoute] string channel,
+        [FromRoute] string command
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
-            .GetCommand(channelId, command)
-            .Wrap()
-            .Where(V1CompatibilityProfile.IsConvertableForSoundCommand)
-            .Select(c => _mapper.Map<SoundCommand>(c))
-            .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
+                .GetCommand(channelId, command)
+                .Wrap()
+                .Where(V1CompatibilityProfile.IsConvertableForSoundCommand)
+                .Select(c => _mapper.Map<SoundCommand>(c))
+                .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
     }
 
     [HttpPost("{messageInterface}/{channel}")]
     public IActionResult CreateCommandForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromBody]
-        SoundCommand newCommand)
+        [FromRoute] string channel,
+        [FromBody] SoundCommand newCommand
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        newCommand = newCommand with
-        {
-            ChannelId = channelId
-        };
+        newCommand = newCommand with { ChannelId = channelId };
 
         var convertedCommand = _mapper.Map<CustomCommandDescription>(newCommand);
         if (!_customCommandService.CreateCommand(convertedCommand))
         {
-            throw new BadRequestException($"Command with name {newCommand.CommandName} already exists");
+            throw new BadRequestException(
+                $"Command with name {newCommand.CommandName} already exists"
+            );
         }
 
         return NoContent();
@@ -105,30 +112,30 @@ public class SoundCommandsController : ControllerBase
     [HttpPut("{messageInterface}/{channel}/{command}")]
     public IActionResult UpdateCommandForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command,
-        [FromBody]
-        SoundCommand updatedCommand)
+        [FromRoute] string channel,
+        [FromRoute] string command,
+        [FromBody] SoundCommand updatedCommand
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        updatedCommand = updatedCommand with
-        {
-            ChannelId = channelId
-        };
+        updatedCommand = updatedCommand with { ChannelId = channelId };
 
         // Check if command is allowed to be updated over legacy API
-        NullableObject<CustomCommandDescription> existingCommand = _customCommandService.GetCommand(channelId, command)
+        NullableObject<CustomCommandDescription> existingCommand = _customCommandService
+            .GetCommand(channelId, command)
             .Wrap();
         if (!existingCommand.HasValue)
         {
             throw new NotFoundException($"Command with name {command} does not exist");
         }
 
-        if (existingCommand.Select(V1CompatibilityProfile.IsConvertableForSoundCommand).Any(v => !v))
+        if (
+            existingCommand.Select(V1CompatibilityProfile.IsConvertableForSoundCommand).Any(v => !v)
+        )
         {
-            throw new BadRequestException($"Command {channelId},{command} cannot be updated using the legacy API");
+            throw new BadRequestException(
+                $"Command {channelId},{command} cannot be updated using the legacy API"
+            );
         }
 
         var convertedCommand = _mapper.Map<CustomCommandDescription>(updatedCommand);
@@ -139,10 +146,9 @@ public class SoundCommandsController : ControllerBase
     [HttpDelete("{messageInterface}/{channel}/{command}")]
     public IActionResult DeleteCommandFromChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command)
+        [FromRoute] string channel,
+        [FromRoute] string command
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         if (!_customCommandService.DeleteCommand(channelId, command))
@@ -156,12 +162,10 @@ public class SoundCommandsController : ControllerBase
     [HttpPut("{messageInterface}/{channel}/{command}/rename")]
     public IActionResult RenameCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command,
-        [FromBody]
-        string newCommandName)
+        [FromRoute] string channel,
+        [FromRoute] string command,
+        [FromBody] string newCommandName
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         NullableObject<CustomCommandDescription> wrappedCommand = _customCommandService

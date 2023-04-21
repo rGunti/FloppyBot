@@ -28,7 +28,8 @@ public class DiscordChatInterface : IChatInterface
 
     private readonly ILogger<DiscordChatInterface> _logger;
 
-    private readonly ConcurrentDictionary<string, SocketSlashCommand> _slashCommandExecutions = new();
+    private readonly ConcurrentDictionary<string, SocketSlashCommand> _slashCommandExecutions =
+        new();
 
     public DiscordChatInterface(
         ILogger<DiscordChatInterface> logger,
@@ -36,7 +37,8 @@ public class DiscordChatInterface : IChatInterface
         ILogger<DiscordSocketClient> clientLogger,
         DiscordConfiguration configuration,
         DiscordSocketClient discordClient,
-        IDistributedCommandRegistry commandRegistry)
+        IDistributedCommandRegistry commandRegistry
+    )
     {
         _logger = logger;
         _clientLogger = clientLogger;
@@ -50,37 +52,28 @@ public class DiscordChatInterface : IChatInterface
         _discordClient.SlashCommandExecuted += DiscordClientSlashCommandExecuted;
         _discordClient.ApplicationCommandCreated += (c) =>
         {
-            _logger.LogDebug(
-                "Registered new command {CommandName} [{CommandId}]",
-                c.Name,
-                c.Id);
+            _logger.LogDebug("Registered new command {CommandName} [{CommandId}]", c.Name, c.Id);
             return Task.CompletedTask;
         };
         _discordClient.ApplicationCommandUpdated += (c) =>
         {
-            _logger.LogDebug(
-                "Updated existing command {CommandName} [{CommandId}]",
-                c.Name,
-                c.Id);
+            _logger.LogDebug("Updated existing command {CommandName} [{CommandId}]", c.Name, c.Id);
             return Task.CompletedTask;
         };
         _discordClient.ApplicationCommandDeleted += (c) =>
         {
-            _logger.LogDebug(
-                "Deleted existing command {CommandName} [{CommandId}]",
-                c.Name,
-                c.Id);
+            _logger.LogDebug("Deleted existing command {CommandName} [{CommandId}]", c.Name, c.Id);
             return Task.CompletedTask;
         };
     }
 
     public string Name => IF_NAME;
 
-    public ChatInterfaceFeatures SupportedFeatures
-        => ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+    public ChatInterfaceFeatures SupportedFeatures =>
+        ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
 
-    public string ConnectUrl
-        => $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
+    public string ConnectUrl =>
+        $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public void Connect()
     {
@@ -96,8 +89,13 @@ public class DiscordChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
-        if (_slashCommandExecutions.ContainsKey(referenceMessage.MessageId)
-            && _slashCommandExecutions.Remove(referenceMessage.MessageId, out var socketSlashCommand))
+        if (
+            _slashCommandExecutions.ContainsKey(referenceMessage.MessageId)
+            && _slashCommandExecutions.Remove(
+                referenceMessage.MessageId,
+                out var socketSlashCommand
+            )
+        )
         {
             socketSlashCommand.FollowupAsync(message);
             return;
@@ -106,7 +104,10 @@ public class DiscordChatInterface : IChatInterface
         var channel = _discordClient.GetChannel(referenceMessage);
         if (channel == null)
         {
-            _logger.LogWarning("Could not find channel with ID {ChannelId}", referenceMessage.Channel);
+            _logger.LogWarning(
+                "Could not find channel with ID {ChannelId}",
+                referenceMessage.Channel
+            );
             return;
         }
 
@@ -114,13 +115,15 @@ public class DiscordChatInterface : IChatInterface
         {
             textChannel.SendMessageAsync(
                 message,
-                messageReference: referenceMessage.ToMessageReference());
+                messageReference: referenceMessage.ToMessageReference()
+            );
         }
         else
         {
             _logger.LogWarning(
                 "Channel found is not a text channel, cannot send message (was {ChannelType})",
-                channel.GetType());
+                channel.GetType()
+            );
         }
     }
 
@@ -162,15 +165,18 @@ public class DiscordChatInterface : IChatInterface
 
         var slashCommands = _commandRegistry
             .GetAllCommands()
-            .Where(c => c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME))
+            .Where(
+                c =>
+                    c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME)
+            )
             .Where(c => !c.Hidden)
             .Select(c =>
             {
-                _logger.LogTrace(
-                    "Building slash command for {CommandName}",
-                    c.Name);
-                var description = (c.Description ??
-                                   "No description was provided for this command, but I'm sure it's lovely");
+                _logger.LogTrace("Building slash command for {CommandName}", c.Name);
+                var description = (
+                    c.Description
+                    ?? "No description was provided for this command, but I'm sure it's lovely"
+                );
                 if (description.Length >= 100)
                 {
                     description = description[..96] + "...";
@@ -182,18 +188,19 @@ public class DiscordChatInterface : IChatInterface
 
                 if (c.MinPrivilegeLevel != null)
                 {
-                    cmd = cmd
-                        .WithDefaultMemberPermissions(ConvertToGuildPermission(c.MinPrivilegeLevel));
+                    cmd = cmd.WithDefaultMemberPermissions(
+                        ConvertToGuildPermission(c.MinPrivilegeLevel)
+                    );
                 }
 
                 if (!c.NoParameters && c.Parameters.Length == 0)
                 {
-                    cmd = cmd
-                        .AddOption(
-                            "arguments",
-                            ApplicationCommandOptionType.String,
-                            "Additional arguments for the command (depends on the command used)",
-                            isRequired: false);
+                    cmd = cmd.AddOption(
+                        "arguments",
+                        ApplicationCommandOptionType.String,
+                        "Additional arguments for the command (depends on the command used)",
+                        isRequired: false
+                    );
                 }
                 else if (!c.NoParameters)
                 {
@@ -207,18 +214,21 @@ public class DiscordChatInterface : IChatInterface
                                     .WithDescription(p.Description ?? "An undocumented parameter")
                                     .WithType(ConvertParamType(p.Type))
                                     .WithRequired(p.Required);
-                                if (p.Type == CommandParameterAbstractType.Enum && p.PossibleValues != null)
+                                if (
+                                    p.Type == CommandParameterAbstractType.Enum
+                                    && p.PossibleValues != null
+                                )
                                 {
                                     foreach (var possibleValue in p.PossibleValues)
                                     {
-                                        cmdParam = cmdParam
-                                            .AddChoice(possibleValue, possibleValue);
+                                        cmdParam = cmdParam.AddChoice(possibleValue, possibleValue);
                                     }
                                 }
 
                                 return cmdParam;
                             })
-                            .ToArray());
+                            .ToArray()
+                    );
                 }
 
                 return cmd;
@@ -228,8 +238,7 @@ public class DiscordChatInterface : IChatInterface
 
         try
         {
-            await _discordClient.BulkOverwriteGlobalApplicationCommandsAsync(
-                slashCommands);
+            await _discordClient.BulkOverwriteGlobalApplicationCommandsAsync(slashCommands);
         }
         catch (HttpException ex)
         {
@@ -238,15 +247,20 @@ public class DiscordChatInterface : IChatInterface
     }
 
     private static ApplicationCommandOptionType ConvertParamType(
-        CommandParameterAbstractType commandParameterAbstractType)
+        CommandParameterAbstractType commandParameterAbstractType
+    )
     {
         return commandParameterAbstractType switch
         {
             CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
             CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
             CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
-            _ => throw new ArgumentOutOfRangeException(nameof(commandParameterAbstractType),
-                commandParameterAbstractType, "This value is not supported!"),
+            _
+                => throw new ArgumentOutOfRangeException(
+                    nameof(commandParameterAbstractType),
+                    commandParameterAbstractType,
+                    "This value is not supported!"
+                ),
         };
     }
 
@@ -274,23 +288,25 @@ public class DiscordChatInterface : IChatInterface
             return Task.CompletedTask;
         }
 
-        _logger.LogTrace("Received message from {Username}@{Channel}: {Message}",
+        _logger.LogTrace(
+            "Received message from {Username}@{Channel}: {Message}",
             socketMessage.Author.ToString(),
             socketMessage.Channel.Name,
-            socketMessage.Content);
+            socketMessage.Content
+        );
 
         var message = new ChatMessage(
             NewChatMessageIdentifier(socketMessage.Channel.Id, socketMessage.Id),
             new ChatUser(
-                new ChannelIdentifier(
-                    IF_NAME,
-                    $"{socketMessage.Author.Id}"),
+                new ChannelIdentifier(IF_NAME, $"{socketMessage.Author.Id}"),
                 socketMessage.Author.Username,
-                DeterminePrivilegeLevel(socketMessage.Author)),
+                DeterminePrivilegeLevel(socketMessage.Author)
+            ),
             SharedEventTypes.CHAT_MESSAGE,
             socketMessage.Content,
             null,
-            SupportedFeatures);
+            SupportedFeatures
+        );
 
         MessageReceived?.Invoke(this, message);
 
@@ -330,14 +346,9 @@ public class DiscordChatInterface : IChatInterface
         };
     }
 
-    private ChatMessageIdentifier NewChatMessageIdentifier(
-        ulong channelId,
-        ulong messageId)
+    private ChatMessageIdentifier NewChatMessageIdentifier(ulong channelId, ulong messageId)
     {
-        return new ChatMessageIdentifier(
-            IF_NAME,
-            $"{channelId}",
-            $"{messageId}");
+        return new ChatMessageIdentifier(IF_NAME, $"{channelId}", $"{messageId}");
     }
 
     private static LogLevel TranslateLogLevel(LogSeverity severity)
@@ -374,25 +385,29 @@ public class DiscordChatInterface : IChatInterface
             arg.User.ToString(),
             arg.Channel.Name,
             arg.Data.Name,
-            arg.Data.Options);
+            arg.Data.Options
+        );
 
         string? commandName = arg.Data.Name[SLASH_COMMAND_PREFIX.Length..];
 
         var message = new ChatMessage(
             NewChatMessageIdentifier(arg.Channel.Id, arg.Id),
             new ChatUser(
-                new ChannelIdentifier(
-                    IF_NAME,
-                    $"{arg.User.Id}"),
+                new ChannelIdentifier(IF_NAME, $"{arg.User.Id}"),
                 arg.User.Username,
-                DeterminePrivilegeLevel(arg.User)),
+                DeterminePrivilegeLevel(arg.User)
+            ),
             SharedEventTypes.CHAT_MESSAGE,
-            string.Join(' ', Enumerable.Empty<string>()
-                .Append($"{_configuration.CommandPrefix}{commandName}")
-                .Concat(arg.Data.Options
-                    .Select(o => o.Value))),
+            string.Join(
+                ' ',
+                Enumerable
+                    .Empty<string>()
+                    .Append($"{_configuration.CommandPrefix}{commandName}")
+                    .Concat(arg.Data.Options.Select(o => o.Value))
+            ),
             null,
-            SupportedFeatures);
+            SupportedFeatures
+        );
 
         MessageReceived?.Invoke(this, message);
         _slashCommandExecutions.TryAdd($"{arg.Id}", arg);

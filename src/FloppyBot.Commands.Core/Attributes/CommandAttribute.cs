@@ -17,14 +17,10 @@ public class CommandAttribute : Attribute
     {
         if (!names.Any())
         {
-            throw new ArgumentException(
-                "At least one name has to be provided",
-                nameof(names));
+            throw new ArgumentException("At least one name has to be provided", nameof(names));
         }
 
-        Names = names
-            .AreAllValidCommandNamesOrThrow()
-            .ToImmutableSortedSetWithValueSemantics();
+        Names = names.AreAllValidCommandNamesOrThrow().ToImmutableSortedSetWithValueSemantics();
     }
 
     /// <summary>

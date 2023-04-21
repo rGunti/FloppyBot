@@ -11,24 +11,23 @@ internal static class CommandUtils
         return string.Join(" ", stringEnumerable);
     }
 
-    public static ChatMessage Reply(
-        this CommandInstruction commandInstruction,
-        string reply)
+    public static ChatMessage Reply(this CommandInstruction commandInstruction, string reply)
     {
-        return commandInstruction.Context!.SourceMessage with
-        {
-            Content = reply
-        };
+        return commandInstruction.Context!.SourceMessage with { Content = reply };
     }
 
     public static ChatMessage? ReplyIfNotEmpty(
         this CommandInstruction commandInstruction,
-        string? reply)
+        string? reply
+    )
     {
         return !string.IsNullOrWhiteSpace(reply) ? commandInstruction.Reply(reply) : null;
     }
 
-    public static bool SourceSupports(this CommandInstruction commandInstruction, ChatInterfaceFeatures feature)
+    public static bool SourceSupports(
+        this CommandInstruction commandInstruction,
+        ChatInterfaceFeatures feature
+    )
     {
         return commandInstruction.Context!.SourceMessage.SupportedFeatures.Supports(feature);
     }
@@ -37,7 +36,8 @@ internal static class CommandUtils
         this CommandInstruction commandInstruction,
         ChatInterfaceFeatures features,
         string messageTemplate,
-        string defaultTemplate)
+        string defaultTemplate
+    )
     {
         return commandInstruction.SourceSupports(features) ? messageTemplate : defaultTemplate;
     }

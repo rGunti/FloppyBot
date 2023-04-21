@@ -47,21 +47,14 @@ public class SampleCommands
     [Command("args")]
     public static string ArgsCommand(
         [ArgumentRange(1, 3)] string arg1,
-        [ArgumentIndex(0)]
-        string arg0)
+        [ArgumentIndex(0)] string arg0
+    )
     {
-        return JsonSerializer.Serialize(new
-        {
-            arg0,
-            arg1,
-        });
+        return JsonSerializer.Serialize(new { arg0, arg1, });
     }
 
     [Command("add")]
-    public static string Add(
-        [ArgumentIndex(0)] int a,
-        [ArgumentIndex(1)]
-        int b)
+    public static string Add([ArgumentIndex(0)] int a, [ArgumentIndex(1)] int b)
     {
         return $"{a + b}";
     }
@@ -112,17 +105,13 @@ public class SampleCommands
     [Command("cmdresult")]
     public static CommandResult CommandResult()
     {
-        return new CommandResult(
-            CommandOutcome.Failed,
-            "Some content");
+        return new CommandResult(CommandOutcome.Failed, "Some content");
     }
 
     [Command("asynccmdresult")]
     public static async Task<CommandResult> AsyncCommandResult()
     {
         await Task.Delay(500);
-        return new CommandResult(
-            CommandOutcome.Success,
-            "Some content");
+        return new CommandResult(CommandOutcome.Success, "Some content");
     }
 }

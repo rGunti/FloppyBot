@@ -6,8 +6,5 @@ public interface IMessageOccurrenceService
 {
     void StoreMessage(ChatMessage chatMessage);
 
-    int GetMessageCountInChannel(
-        string channelId,
-        TimeSpan maxTimeAgo);
+    int GetMessageCountInChannel(string channelId, TimeSpan maxTimeAgo);
 }
-

@@ -7,7 +7,6 @@ public static class Dependencies
 {
     public static IServiceCollection AddAuthDependencies(this IServiceCollection services)
     {
-        return services
-            .AddScoped<IUserService, UserService>();
+        return services.AddScoped<IUserService, UserService>();
     }
 }

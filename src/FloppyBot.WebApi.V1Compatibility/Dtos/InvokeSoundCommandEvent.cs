@@ -4,4 +4,5 @@ public record InvokeSoundCommandEvent(
     string InvokedBy,
     string InvokedFrom,
     string CommandName,
-    DateTimeOffset InvokedAt);
+    DateTimeOffset InvokedAt
+);

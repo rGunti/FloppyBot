@@ -33,8 +33,6 @@ public static class NullableExtensions
     public static NullableObject<T> Wrap<T>(this IEnumerable<T> enumerable)
         where T : class
     {
-        return enumerable
-            .SingleOrDefault()
-            .Wrap();
+        return enumerable.SingleOrDefault().Wrap();
     }
 }

@@ -4,9 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FloppyBot.Base.Tests.EquatableCollections;
 
-record SampleRecord(
-    string Name,
-    IImmutableList<string> AList);
+record SampleRecord(string Name, IImmutableList<string> AList);
 
 [TestClass]
 public class EquatableCollectionsTests
@@ -35,10 +33,12 @@ public class EquatableCollectionsTests
     {
         var recordA = new SampleRecord(
             "A Record",
-            new[] { "Hello World" }.ToImmutableListWithValueSemantics());
+            new[] { "Hello World" }.ToImmutableListWithValueSemantics()
+        );
         var recordB = new SampleRecord(
             "A Record",
-            new[] { "Hello World" }.ToImmutableListWithValueSemantics());
+            new[] { "Hello World" }.ToImmutableListWithValueSemantics()
+        );
 
         Assert.AreEqual(recordA, recordB);
     }

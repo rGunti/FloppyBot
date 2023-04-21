@@ -27,7 +27,8 @@ public class TwitchChatInterface : IChatInterface
         ILogger<TwitchClient> clientLogger,
         ITwitchClient client,
         TwitchConfiguration configuration,
-        ITwitchChannelOnlineMonitor onlineMonitor)
+        ITwitchChannelOnlineMonitor onlineMonitor
+    )
     {
         _logger = logger;
         _clientLogger = clientLogger;
@@ -68,10 +69,7 @@ public class TwitchChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
-        _client.SendReply(
-            referenceMessage.Channel,
-            referenceMessage.MessageId,
-            message);
+        _client.SendReply(referenceMessage.Channel, referenceMessage.MessageId, message);
     }
 
     public event ChatMessageReceivedDelegate? MessageReceived;
@@ -101,7 +99,8 @@ public class TwitchChatInterface : IChatInterface
         return new ChatMessageIdentifier(
             IF_NAME,
             _configuration.Channel,
-            messageId ?? Guid.NewGuid().ToString());
+            messageId ?? Guid.NewGuid().ToString()
+        );
     }
 
     private void Client_OnLog(object? _, OnLogArgs e)
@@ -112,9 +111,7 @@ public class TwitchChatInterface : IChatInterface
 
     private void Client_OnConnectionError(object? sender, OnConnectionErrorArgs e)
     {
-        _logger.LogError(
-            "Connection Error occurred: {ErrorMessage}",
-            e.Error.Message);
+        _logger.LogError("Connection Error occurred: {ErrorMessage}", e.Error.Message);
     }
 
     private void Client_OnConnected(object? sender, OnConnectedArgs e)
@@ -122,14 +119,13 @@ public class TwitchChatInterface : IChatInterface
         _logger.LogInformation(
             "Connected to Twitch using {BotUsername} (auto-joining to {AutoJoinChannel})",
             e.BotUsername,
-            e.AutoJoinChannel);
+            e.AutoJoinChannel
+        );
     }
 
     private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
     {
-        _logger.LogInformation(
-            "Joined channel {TwitchChannel}",
-            e.Channel);
+        _logger.LogInformation("Joined channel {TwitchChannel}", e.Channel);
     }
 
     private void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs e)
@@ -140,10 +136,10 @@ public class TwitchChatInterface : IChatInterface
             "Received message from {TwitchUser}@{TwitchChannel}: {TwitchMessage}",
             e.ChatMessage.Username,
             chatMessage.Channel,
-            chatMessage.Message);
+            chatMessage.Message
+        );
 
-        if (_configuration.DisableWhenChannelIsOffline
-            && !_onlineMonitor.IsChannelOnline())
+        if (_configuration.DisableWhenChannelIsOffline && !_onlineMonitor.IsChannelOnline())
         {
             return;
         }
@@ -151,20 +147,22 @@ public class TwitchChatInterface : IChatInterface
         var message = new ChatMessage(
             NewChatMessageIdentifier(e.ChatMessage.Id),
             new ChatUser(
-                new ChannelIdentifier(
-                    IF_NAME,
-                    chatMessage.Username),
+                new ChannelIdentifier(IF_NAME, chatMessage.Username),
                 chatMessage.DisplayName,
-                DeterminePrivilegeLevel(chatMessage)),
+                DeterminePrivilegeLevel(chatMessage)
+            ),
             SharedEventTypes.CHAT_MESSAGE,
             chatMessage.Message,
             null,
-            SupportedFeatures);
+            SupportedFeatures
+        );
 
         MessageReceived?.Invoke(this, message);
     }
 
-    private static PrivilegeLevel DeterminePrivilegeLevel(TwitchLib.Client.Models.ChatMessage chatMessage)
+    private static PrivilegeLevel DeterminePrivilegeLevel(
+        TwitchLib.Client.Models.ChatMessage chatMessage
+    )
     {
         if (chatMessage.IsBroadcaster)
             return PrivilegeLevel.Administrator;
