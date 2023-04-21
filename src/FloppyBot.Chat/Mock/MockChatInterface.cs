@@ -25,9 +25,9 @@ public class MockChatInterface : IChatInterface
     public Stack<string> SentMessages => _sentMessages;
 
     public string Name => IF_NAME;
+    public ChatInterfaceFeatures SupportedFeatures { get; }
 
     private ChannelIdentifier ChannelIdentifier => new(Name, _channelName);
-    public ChatInterfaceFeatures SupportedFeatures { get; }
 
     public void Connect()
     {

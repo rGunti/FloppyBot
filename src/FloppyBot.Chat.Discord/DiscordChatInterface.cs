@@ -179,6 +179,22 @@ public class DiscordChatInterface : IChatInterface
         return PrivilegeLevel.Unknown;
     }
 
+    private static GuildPermission? ConvertToGuildPermission(PrivilegeLevel? level)
+    {
+        if (level == null)
+        {
+            return null;
+        }
+
+        return level switch
+        {
+            PrivilegeLevel.Administrator => GuildPermission.Administrator,
+            PrivilegeLevel.Moderator => GuildPermission.ManageChannels,
+            PrivilegeLevel.Viewer => GuildPermission.SendMessages,
+            _ => null,
+        };
+    }
+
     private async void ConnectAsync()
     {
         _logger.LogTrace("Logging in with Bot Token ...");
@@ -336,22 +352,6 @@ public class DiscordChatInterface : IChatInterface
         MessageReceived?.Invoke(this, message);
 
         return Task.CompletedTask;
-    }
-
-    private static GuildPermission? ConvertToGuildPermission(PrivilegeLevel? level)
-    {
-        if (level == null)
-        {
-            return null;
-        }
-
-        return level switch
-        {
-            PrivilegeLevel.Administrator => GuildPermission.Administrator,
-            PrivilegeLevel.Moderator => GuildPermission.ManageChannels,
-            PrivilegeLevel.Viewer => GuildPermission.SendMessages,
-            _ => null,
-        };
     }
 
     private static LogLevel TranslateLogLevel(LogSeverity severity)

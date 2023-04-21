@@ -34,6 +34,17 @@ public class QuotesController : ControllerBase
         throw this.Obsolete();
     }
 
+    [HttpGet("{messageInterface}/{channel}")]
+    public QuoteDto[] GetQuotesForChannel(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel
+    )
+    {
+        var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelIdentifier);
+        return GetQuotesForChannel(channelIdentifier).ToArray();
+    }
+
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
         if (
@@ -56,17 +67,6 @@ public class QuotesController : ControllerBase
         return _quoteService
             .GetQuotes(channelIdentifier)
             .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
-    }
-
-    [HttpGet("{messageInterface}/{channel}")]
-    public QuoteDto[] GetQuotesForChannel(
-        [FromRoute] string messageInterface,
-        [FromRoute] string channel
-    )
-    {
-        var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelIdentifier);
-        return GetQuotesForChannel(channelIdentifier).ToArray();
     }
 
     [HttpGet("{messageInterface}/{channel}/{quoteNumber}")]

@@ -13,6 +13,8 @@ public static class NumberExtensions
 {
     public static double Bytes(this double bytes) => bytes.AsSiSize(FileSizeUnit.B);
 
+    public static double KiloBytes(this double kiloBytes) => kiloBytes.AsSiSize(FileSizeUnit.Kilo);
+
     private static double AsSiSize(this double size, FileSizeUnit unit) =>
         size * Math.Pow(1000, (int)unit);
 
@@ -24,8 +26,6 @@ public static class NumberExtensions
 
     private static double AsBinarySize(this int size, FileSizeUnit unit) =>
         size * Math.Pow(1024, (int)unit);
-
-    public static double KiloBytes(this double kiloBytes) => kiloBytes.AsSiSize(FileSizeUnit.Kilo);
 
     public static double MegaBytes(this double megaBytes) => megaBytes.AsSiSize(FileSizeUnit.Mega);
 

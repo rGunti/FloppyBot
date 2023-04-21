@@ -195,6 +195,27 @@ public class CommandSpawner : ICommandSpawner
             .ToArray();
     }
 
+    private static object? ConstructArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction instruction
+    )
+    {
+        if (parameterInfo.ParameterType == typeof(CommandInstruction))
+        {
+            return instruction;
+        }
+
+        var argumentAttribute = parameterInfo.GetCustomAttribute<BaseArgumentAttribute>();
+        if (argumentAttribute == null)
+        {
+            throw new ArgumentException(
+                $"Don't know how to extract argument {parameterInfo}. Have you added an attribute?"
+            );
+        }
+
+        return argumentAttribute.ExtractArgument(parameterInfo, instruction);
+    }
+
     private CommandResult ProcessReturnValue(object? returnValue)
     {
         if (returnValue == null)
@@ -241,27 +262,6 @@ public class CommandSpawner : ICommandSpawner
                     $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
                 );
         }
-    }
-
-    private static object? ConstructArgument(
-        ParameterInfo parameterInfo,
-        CommandInstruction instruction
-    )
-    {
-        if (parameterInfo.ParameterType == typeof(CommandInstruction))
-        {
-            return instruction;
-        }
-
-        var argumentAttribute = parameterInfo.GetCustomAttribute<BaseArgumentAttribute>();
-        if (argumentAttribute == null)
-        {
-            throw new ArgumentException(
-                $"Don't know how to extract argument {parameterInfo}. Have you added an attribute?"
-            );
-        }
-
-        return argumentAttribute.ExtractArgument(parameterInfo, instruction);
     }
 
     private static object? ConvertArgumentTo(object? sourceValue, Type targetType)

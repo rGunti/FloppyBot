@@ -108,7 +108,7 @@ services
                         {
                             Id = "Bearer",
                             Type = ReferenceType.SecurityScheme
-                        }
+                        },
                     },
                     Array.Empty<string>()
                 },

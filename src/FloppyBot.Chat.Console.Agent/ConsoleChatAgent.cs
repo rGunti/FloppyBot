@@ -54,6 +54,14 @@ internal class ConsoleChatAgent : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            await Task.Delay(500, stoppingToken);
+        }
+    }
+
     private void OnMessageReceived(ChatMessage notification)
     {
         if (notification.Identifier.Interface == _chatInterface.Name)
@@ -66,13 +74,5 @@ internal class ConsoleChatAgent : BackgroundService
     {
         _logger.LogDebug("Sending message {@Message}", chatMessage);
         _sender.Send(chatMessage);
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
-        {
-            await Task.Delay(500, stoppingToken);
-        }
     }
 }

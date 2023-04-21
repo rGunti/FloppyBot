@@ -33,6 +33,16 @@ public static class SerilogSetup
             .ReadFrom.Configuration(hostConfig);
     }
 
+    public static LoggerConfiguration ConfigureSerilogForTesting(
+        this LoggerConfiguration loggerConfig
+    )
+    {
+        return loggerConfig
+            .ConfigureCommonSerilogSettings()
+            .WriteTo.CommonConsoleOutput()
+            .MinimumLevel.Verbose();
+    }
+
     internal static LoggerConfiguration ConfigureCommonSerilogSettings(
         this LoggerConfiguration loggerConfig
     )
@@ -43,15 +53,5 @@ public static class SerilogSetup
     internal static LoggerConfiguration CommonConsoleOutput(this LoggerSinkConfiguration sinkConfig)
     {
         return sinkConfig.Console(outputTemplate: OUTPUT_TEMPLATE);
-    }
-
-    public static LoggerConfiguration ConfigureSerilogForTesting(
-        this LoggerConfiguration loggerConfig
-    )
-    {
-        return loggerConfig
-            .ConfigureCommonSerilogSettings()
-            .WriteTo.CommonConsoleOutput()
-            .MinimumLevel.Verbose();
     }
 }

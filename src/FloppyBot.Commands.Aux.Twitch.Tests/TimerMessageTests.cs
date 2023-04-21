@@ -71,6 +71,18 @@ public class TimerMessageTests
         );
     }
 
+    [TestMethod]
+    public void SendNoMessageWhenNotMessageOcc()
+    {
+        _configRepo.Insert(RefConfig);
+        _cronJob.Run();
+        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
+        CollectionAssert.AreEqual(
+            Array.Empty<TimerMessageExecution>(),
+            _executionRepo.GetAll().ToArray()
+        );
+    }
+
     private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
     {
         var _ = Enumerable
@@ -86,18 +98,6 @@ public class TimerMessageTests
             )
             .Select(_occurrenceRepo.Insert)
             .ToArray();
-    }
-
-    [TestMethod]
-    public void SendNoMessageWhenNotMessageOcc()
-    {
-        _configRepo.Insert(RefConfig);
-        _cronJob.Run();
-        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
-        CollectionAssert.AreEqual(
-            Array.Empty<TimerMessageExecution>(),
-            _executionRepo.GetAll().ToArray()
-        );
     }
 
     [TestMethod]

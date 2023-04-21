@@ -33,13 +33,13 @@ public class CustomCommandExecutorTests
                 Cooldown = new CooldownDescription[]
                 {
                     new(PrivilegeLevel.Moderator, 0),
-                    new(PrivilegeLevel.Viewer, 15 * 1000)
+                    new(PrivilegeLevel.Viewer, 15 * 1000),
                 }.ToImmutableHashSetWithValueSemantics(),
             },
             ResponseMode = CommandResponseMode.First,
             Responses = new CommandResponse[]
             {
-                new(ResponseType.Text, "Hello World")
+                new(ResponseType.Text, "Hello World"),
             }.ToImmutableListWithValueSemantics(),
         };
 
@@ -144,7 +144,7 @@ public class CustomCommandExecutorTests
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
                                 PrivilegeLevel = userPrivilegeLevel
-                            }
+                            },
                         }
                     ),
                 },
@@ -189,7 +189,7 @@ public class CustomCommandExecutorTests
                 {
                     Responses = new[]
                     {
-                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!"),
                     }.ToImmutableListWithValueSemantics(),
                 }
             )
@@ -206,7 +206,7 @@ public class CustomCommandExecutorTests
                 {
                     Responses = new[]
                     {
-                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!"),
                     }.ToImmutableListWithValueSemantics(),
                 }
             )
@@ -242,7 +242,7 @@ public class CustomCommandExecutorTests
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
                                 Identifier = inputUser
-                            }
+                            },
                         }
                     ),
                 },
@@ -252,7 +252,7 @@ public class CustomCommandExecutorTests
                     {
                         LimitedToUsers = ImmutableHashSet
                             .Create<string>()
-                            .Add("CoolUser".ToLowerInvariant())
+                            .Add("CoolUser".ToLowerInvariant()),
                     },
                 }
             )

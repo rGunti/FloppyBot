@@ -71,6 +71,14 @@ public class ShoutoutCommand
             .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
     }
 
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void SetupTimerMessageDependencies(IServiceCollection services)
+    {
+        SetupTimerMessageDbDependencies(services);
+        services.AddCronJob<TimerMessageCronJob>();
+    }
+
     [Command("shoutout", "so")]
     [CommandDescription(
         "Shouts out a Twitch channel with a customized message defined for the channel"
@@ -138,14 +146,6 @@ public class ShoutoutCommand
     {
         _shoutoutMessageSettingService.ClearSettings(sourceChannel);
         return REPLY_CLEAR;
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void SetupTimerMessageDependencies(IServiceCollection services)
-    {
-        SetupTimerMessageDbDependencies(services);
-        services.AddCronJob<TimerMessageCronJob>();
     }
 
     public static void SetupTimerMessageDbDependencies(IServiceCollection services)

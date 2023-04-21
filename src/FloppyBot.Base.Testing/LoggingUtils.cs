@@ -21,16 +21,16 @@ public static class LoggingUtils
         return GetLoggerFactory().CreateLogger<T>();
     }
 
+    public static ILoggerFactory GetLoggerFactory()
+    {
+        return (UseRealLogger ? LoggerFactory : NullLoggerFac).Value;
+    }
+
     private static ILoggerFactory InitRealLogger()
     {
         return Microsoft.Extensions.Logging.LoggerFactory.Create(loggingBuilder =>
         {
             loggingBuilder.AddSerilog(SerilogLogger.Value);
         });
-    }
-
-    public static ILoggerFactory GetLoggerFactory()
-    {
-        return (UseRealLogger ? LoggerFactory : NullLoggerFac).Value;
     }
 }

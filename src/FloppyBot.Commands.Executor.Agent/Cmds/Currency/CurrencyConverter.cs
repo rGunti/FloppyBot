@@ -20,6 +20,11 @@ public class CurrencyConverter : ICurrencyConverter, IDisposable
         return rate.ConvertFrom(input);
     }
 
+    public void Dispose()
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<CurrencyConversionRecord> GetConversionRate(string from, string to)
     {
         RestRequest request = new RestRequest($"/api/v7/convert")
@@ -34,10 +39,5 @@ public class CurrencyConverter : ICurrencyConverter, IDisposable
         }
 
         return new CurrencyConversionRecord(from, to, responseData[$"{from}_{to}"]);
-    }
-
-    public void Dispose()
-    {
-        throw new NotImplementedException();
     }
 }

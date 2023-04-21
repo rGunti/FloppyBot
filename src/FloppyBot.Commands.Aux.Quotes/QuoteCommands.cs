@@ -115,6 +115,28 @@ public class QuoteCommands
         return REPLY_CREATED.Format(new { Quote = quote });
     }
 
+    [Command("quoteedit", "qe", "q*")]
+    [PrimaryCommandName("quoteedit")]
+    [CommandDescription("Edits the text of an existing quote")]
+    [CommandSyntax("<Quote No.> <New Text>")]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    [CommandParameterHint(2, "newText", CommandParameterType.String)]
+    public string EditQuote(
+        [SourceChannel] string sourceChannel,
+        [ArgumentIndex(0)] int quoteId,
+        [ArgumentRange(1)] string newQuoteText
+    )
+    {
+        var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
+        if (editedQuote == null)
+        {
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
+        }
+
+        return REPLY_EDITED.Format(new { Quote = editedQuote });
+    }
+
     private string? DoQuote(
         string sourceChannel,
         string sourceContext,
@@ -200,28 +222,6 @@ public class QuoteCommands
             text
         );
         return null;
-    }
-
-    [Command("quoteedit", "qe", "q*")]
-    [PrimaryCommandName("quoteedit")]
-    [CommandDescription("Edits the text of an existing quote")]
-    [CommandSyntax("<Quote No.> <New Text>")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
-    [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    [CommandParameterHint(2, "newText", CommandParameterType.String)]
-    public string EditQuote(
-        [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteText
-    )
-    {
-        var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
-        if (editedQuote == null)
-        {
-            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
-        }
-
-        return REPLY_EDITED.Format(new { Quote = editedQuote });
     }
 
     [Command("quoteeditcontext", "qec", "q*c")]

@@ -40,6 +40,20 @@ public class CustomCommandsController : ControllerBase
         throw this.UnsupportedFeature("Requesting all commands is not supported");
     }
 
+    [HttpGet("{messageInterface}/{channel}")]
+    public CustomCommand[] GetCommandsForChannel(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel
+    )
+    {
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        return _customCommandService
+            .GetCommandsOfChannel(channelId)
+            .Where(V1CompatibilityProfile.IsConvertableForTextCommand)
+            .Select(c => _mapper.Map<CustomCommand>(c))
+            .ToArray();
+    }
+
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
         if (
@@ -59,20 +73,6 @@ public class CustomCommandsController : ControllerBase
         var channelId = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelId);
         return channelId;
-    }
-
-    [HttpGet("{messageInterface}/{channel}")]
-    public CustomCommand[] GetCommandsForChannel(
-        [FromRoute] string messageInterface,
-        [FromRoute] string channel
-    )
-    {
-        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        return _customCommandService
-            .GetCommandsOfChannel(channelId)
-            .Where(V1CompatibilityProfile.IsConvertableForTextCommand)
-            .Select(c => _mapper.Map<CustomCommand>(c))
-            .ToArray();
     }
 
     [HttpGet("{messageInterface}/{channel}/{command}")]

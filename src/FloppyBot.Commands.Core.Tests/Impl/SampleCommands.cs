@@ -32,6 +32,15 @@ public class SampleCommands
         return "No args at all";
     }
 
+    [Command("args")]
+    public static string ArgsCommand(
+        [ArgumentRange(1, 3)] string arg1,
+        [ArgumentIndex(0)] string arg0
+    )
+    {
+        return JsonSerializer.Serialize(new { arg0, arg1, });
+    }
+
     [Command("ping")]
     public ChatMessage? Ping(CommandInstruction instruction)
     {
@@ -42,15 +51,6 @@ public class SampleCommands
     public string Simple(CommandInstruction _)
     {
         return "Simple Response";
-    }
-
-    [Command("args")]
-    public static string ArgsCommand(
-        [ArgumentRange(1, 3)] string arg1,
-        [ArgumentIndex(0)] string arg0
-    )
-    {
-        return JsonSerializer.Serialize(new { arg0, arg1, });
     }
 
     [Command("add")]

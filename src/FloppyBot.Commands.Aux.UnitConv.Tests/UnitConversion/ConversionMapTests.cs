@@ -9,6 +9,8 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
 
         private const string A = "A";
 
+        private const string B = "B";
+
         private readonly ConversionMap _map;
 
         public ConversionMapTests()
@@ -49,7 +51,6 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
         }
 
-        private const string B = "B";
         private const string C = "C";
         private const string D = "D";
         private const string E = "E";

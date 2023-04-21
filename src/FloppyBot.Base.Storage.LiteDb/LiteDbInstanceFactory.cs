@@ -13,7 +13,7 @@ public class LiteDbInstanceFactory
             : new LiteDatabase(connectionString);
     }
 
-    private Stream ConstructMemoryStream() => new MemoryStream();
-
     public ILiteDatabase ConstructMemoryDbInstance() => new LiteDatabase(ConstructMemoryStream());
+
+    private Stream ConstructMemoryStream() => new MemoryStream();
 }

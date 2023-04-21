@@ -36,6 +36,12 @@ public class V1CompatibilityProfile : Profile
             && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
     }
 
+    public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)
+    {
+        return commandDescription.Aliases.Count == 0
+            && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
+    }
+
     private static IEnumerable<CooldownConfiguration> ConvertCooldownConfig(
         CooldownConfig cooldownConfig
     )
@@ -55,6 +61,22 @@ public class V1CompatibilityProfile : Profile
             PrivilegeLevel = PrivilegeLevel.Viewer,
             CooldownMs = cooldownConfig.Cooldown,
         };
+    }
+
+    private static CooldownConfig ConvertCooldownConfig(CooldownConfiguration[] configs)
+    {
+        return new CooldownConfig(
+            configs
+                .Where(c => c.PrivilegeLevel <= PrivilegeLevel.Viewer)
+                .MaxBy(c => c.PrivilegeLevel)
+                ?.CooldownMs ?? 0,
+            configs.FirstOrDefault(c => c.PrivilegeLevel == PrivilegeLevel.Moderator)?.CooldownMs
+                ?? 0,
+            configs
+                .Where(c => c.PrivilegeLevel >= PrivilegeLevel.Administrator)
+                .MinBy(c => c.PrivilegeLevel)
+                ?.CooldownMs ?? 0
+        );
     }
 
     private void MapTimerMessageConfig()
@@ -195,7 +217,7 @@ public class V1CompatibilityProfile : Profile
                                 c.LimitedToUsers.ToImmutableHashSetWithValueSemantics(),
                             Cooldown = new[]
                             {
-                                new CooldownDescription(PrivilegeLevel.Unknown, c.Timeout)
+                                new CooldownDescription(PrivilegeLevel.Unknown, c.Timeout),
                             }.ToImmutableHashSetWithValueSemantics(),
                         },
                         ResponseMode = CommandResponseMode.PickOneRandom,
@@ -273,7 +295,7 @@ public class V1CompatibilityProfile : Profile
                                 c.LimitedToUsers.ToImmutableHashSetWithValueSemantics(),
                             Cooldown = new[]
                             {
-                                new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)
+                                new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown),
                             }.ToImmutableHashSetWithValueSemantics(),
                         },
                         ResponseMode = CommandResponseMode.PickOneRandom,
@@ -341,27 +363,5 @@ public class V1CompatibilityProfile : Profile
                         ConvertCooldownConfig(i.CustomCooldownConfiguration)
                     )
             );
-    }
-
-    private static CooldownConfig ConvertCooldownConfig(CooldownConfiguration[] configs)
-    {
-        return new CooldownConfig(
-            configs
-                .Where(c => c.PrivilegeLevel <= PrivilegeLevel.Viewer)
-                .MaxBy(c => c.PrivilegeLevel)
-                ?.CooldownMs ?? 0,
-            configs.FirstOrDefault(c => c.PrivilegeLevel == PrivilegeLevel.Moderator)?.CooldownMs
-                ?? 0,
-            configs
-                .Where(c => c.PrivilegeLevel >= PrivilegeLevel.Administrator)
-                .MinBy(c => c.PrivilegeLevel)
-                ?.CooldownMs ?? 0
-        );
-    }
-
-    public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)
-    {
-        return commandDescription.Aliases.Count == 0
-            && commandDescription.Responses.All(r => r.Type == ResponseType.Sound);
     }
 }

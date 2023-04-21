@@ -20,6 +20,15 @@ public class AppConfigurationTests
         );
     }
 
+    [TestMethod]
+    public void ConnectionStringsParsedCorrectly()
+    {
+        IConfiguration config = BuildTestConfig();
+        Assert.AreEqual("aConnectionStringWithB", config.GetParsedConnectionString("B"));
+        Assert.AreEqual("aConnectionStringWith{SomeValue}", config.GetParsedConnectionString("C"));
+        Assert.AreEqual("aConnectionStringWithCValue", config.GetParsedConnectionString("C", true));
+    }
+
     private static IConfiguration BuildTestConfig()
     {
         return new ConfigurationBuilder()
@@ -34,15 +43,6 @@ public class AppConfigurationTests
                 }
             )
             .Build();
-    }
-
-    [TestMethod]
-    public void ConnectionStringsParsedCorrectly()
-    {
-        IConfiguration config = BuildTestConfig();
-        Assert.AreEqual("aConnectionStringWithB", config.GetParsedConnectionString("B"));
-        Assert.AreEqual("aConnectionStringWith{SomeValue}", config.GetParsedConnectionString("C"));
-        Assert.AreEqual("aConnectionStringWithCValue", config.GetParsedConnectionString("C", true));
     }
 
     [TestMethod]

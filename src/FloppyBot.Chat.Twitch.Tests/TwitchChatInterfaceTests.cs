@@ -48,6 +48,15 @@ public class TwitchChatInterfaceTests
         );
     }
 
+    [TestMethod]
+    public void ModeratorHasModRights()
+    {
+        CheckPrivilegeLevel(
+            CreateChatMessage("atwitchviewer", "hello world", isModerator: true),
+            PrivilegeLevel.Moderator
+        );
+    }
+
     private TwitchChatInterface CreateInterface(TwitchConfiguration? configuration = null)
     {
         if (configuration != null)
@@ -140,15 +149,6 @@ public class TwitchChatInterfaceTests
                 messageReceivedArgs.ChatMessage.Message
             ),
             messages.First()
-        );
-    }
-
-    [TestMethod]
-    public void ModeratorHasModRights()
-    {
-        CheckPrivilegeLevel(
-            CreateChatMessage("atwitchviewer", "hello world", isModerator: true),
-            PrivilegeLevel.Moderator
         );
     }
 

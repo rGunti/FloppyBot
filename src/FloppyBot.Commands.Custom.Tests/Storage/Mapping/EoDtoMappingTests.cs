@@ -45,10 +45,20 @@ public class EoDtoMappingTests
                         {
                             new CooldownDescription(PrivilegeLevel.Moderator, 2500),
                             new CooldownDescription(PrivilegeLevel.Administrator, 0),
-                        }.ToImmutableHashSet()
+                        }.ToImmutableHashSet(),
                     },
                 }
             )
+        );
+    }
+
+    [TestMethod]
+    public void CommandResponseDtoAndEo()
+    {
+        Assert.IsTrue(
+            Enum.GetValues<ResponseType>()
+                .Select(t => new CommandResponse(t, "Hello World"))
+                .All(TestConversion<CommandResponse, CommandResponseEo>)
         );
     }
 
@@ -81,16 +91,6 @@ public class EoDtoMappingTests
         Assert.AreEqual(dto, backDto);
 
         return true;
-    }
-
-    [TestMethod]
-    public void CommandResponseDtoAndEo()
-    {
-        Assert.IsTrue(
-            Enum.GetValues<ResponseType>()
-                .Select(t => new CommandResponse(t, "Hello World"))
-                .All(TestConversion<CommandResponse, CommandResponseEo>)
-        );
     }
 
     [TestMethod]

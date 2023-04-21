@@ -44,6 +44,11 @@ public class CommandMetadata
         return RawData.ContainsKey(key);
     }
 
+    public string? GetValueOrDefault(string key)
+    {
+        return RawData.GetValueOrDefault(key);
+    }
+
     private void Init()
     {
         if (RawData.ContainsKey(CommandMetadataTypes.MIN_PRIVILEGE))
@@ -71,11 +76,6 @@ public class CommandMetadata
                 .OrderBy(p => p.Order)
                 .ToArray();
         }
-    }
-
-    public string? GetValueOrDefault(string key)
-    {
-        return RawData.GetValueOrDefault(key);
     }
 
     public Dictionary<string, string> GetRawDataAsDictionary()

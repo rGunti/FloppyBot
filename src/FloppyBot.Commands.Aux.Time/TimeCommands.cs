@@ -70,6 +70,31 @@ public class TimeCommands
             );
     }
 
+    [Command("dectime", "dt")]
+    [PrimaryCommandName("dectime")]
+    [CommandDescription("What is the current decimal time")]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
+    public CommandResult ShowCurrentDecimalTime(
+        [Author] ChatUser author,
+        [AllArguments("_")] string? timeZoneId
+    )
+    {
+        return GetTime(author.Identifier, timeZoneId)
+            .Select(
+                t =>
+                    REPLY_TIME_DEC.Format(
+                        t with
+                        {
+                            TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm"),
+                        }
+                    )
+            )
+            .Select(CommandResult.SuccessWith)
+            .FirstOrDefault(
+                CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId }))
+            );
+    }
+
     private static TimeZoneInfo FindTimeZoneWithLinuxId(string timeZoneId)
     {
         string? tzId = timeZoneId;
@@ -118,31 +143,6 @@ public class TimeCommands
         DateTimeOffset currentTimeAtTz = TimeZoneInfo.ConvertTime(currentUtcTime, timeZone);
 
         return new TimeCommandOutput(currentTimeAtTz, currentTimeAtTz.ToString("HH:mm"), timeZone);
-    }
-
-    [Command("dectime", "dt")]
-    [PrimaryCommandName("dectime")]
-    [CommandDescription("What is the current decimal time")]
-    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
-    public CommandResult ShowCurrentDecimalTime(
-        [Author] ChatUser author,
-        [AllArguments("_")] string? timeZoneId
-    )
-    {
-        return GetTime(author.Identifier, timeZoneId)
-            .Select(
-                t =>
-                    REPLY_TIME_DEC.Format(
-                        t with
-                        {
-                            TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm"),
-                        }
-                    )
-            )
-            .Select(CommandResult.SuccessWith)
-            .FirstOrDefault(
-                CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId }))
-            );
     }
 
     [Command("timeset")]

@@ -49,23 +49,6 @@ public class CustomCommandHost
         return GetCommand(instruction).HasValue;
     }
 
-    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
-    {
-        return _commandService
-            .GetCommand(
-                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
-                instruction.CommandName
-            )
-            .Wrap();
-    }
-
-    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
-    {
-        return new KeyNotFoundException(
-            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
-        );
-    }
-
     [VariableCommandHandler(nameof(CanHandleCommand), identifier: "Custom Commands")]
     // ReSharper disable once UnusedMember.Global
     public CommandResult? RunCustomCommand(CommandInstruction instruction)
@@ -83,6 +66,23 @@ public class CustomCommandHost
 
         // TODO: Supply multiple results
         return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
+    }
+
+    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
+    {
+        return _commandService
+            .GetCommand(
+                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
+                instruction.CommandName
+            )
+            .Wrap();
+    }
+
+    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
+    {
+        return new KeyNotFoundException(
+            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
+        );
     }
 
     public static void WebDiSetup(IServiceCollection services)

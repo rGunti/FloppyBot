@@ -64,6 +64,11 @@ public class ExecutorAgent : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        return Task.CompletedTask;
+    }
+
     private void OnCommandReceived(CommandInstruction commandInstruction)
     {
 #if DEBUG
@@ -78,10 +83,5 @@ public class ExecutorAgent : BackgroundService
         }
 
         _replier.SendMessage(reply);
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
     }
 }

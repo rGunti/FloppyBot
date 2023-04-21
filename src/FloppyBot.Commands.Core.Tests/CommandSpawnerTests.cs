@@ -28,6 +28,23 @@ public class CommandSpawnerTests
         Assert.AreEqual("Pong!", returnValue!.Content);
     }
 
+    [TestMethod]
+    public void ReturnsReplyWithString()
+    {
+        var instruction = MockCommandFactory.NewInstruction("string", Array.Empty<string>());
+        var command = GetCommandInfo(
+            "string",
+            typeof(SampleCommands),
+            nameof(SampleCommands.Simple)
+        );
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual("Simple Response", returnValue!.Content);
+    }
+
     private static ICommandSpawner GetCommandSpawner<T>()
         where T : class
     {
@@ -45,23 +62,6 @@ public class CommandSpawnerTests
             new[] { commandName }.ToImmutableListWithValueSemantics(),
             commandHostType.GetMethod(methodName)!
         );
-    }
-
-    [TestMethod]
-    public void ReturnsReplyWithString()
-    {
-        var instruction = MockCommandFactory.NewInstruction("string", Array.Empty<string>());
-        var command = GetCommandInfo(
-            "string",
-            typeof(SampleCommands),
-            nameof(SampleCommands.Simple)
-        );
-        var spawner = GetCommandSpawner<SampleCommands>();
-
-        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
-
-        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
-        Assert.AreEqual("Simple Response", returnValue!.Content);
     }
 
     [TestMethod]
@@ -248,7 +248,7 @@ public class CommandSpawnerTests
             Context = new CommandContext(
                 SourceMessage: instruction.Context!.SourceMessage with
                 {
-                    SupportedFeatures = features
+                    SupportedFeatures = features,
                 }
             ),
         };
