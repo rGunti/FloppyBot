@@ -43,7 +43,7 @@
             float expectedOutput
         )
         {
-            var val = _unitParsingEngine.ParseUnit(input);
+            var val = UnitParsingEngine.ParseUnit(input);
             Assert.IsNotNull(val);
             Assert.AreEqual(expectedOutput, val.Value);
             Assert.AreEqual(expectedUnitSymbol, val.Unit.Symbol);
@@ -57,7 +57,7 @@
         [DataRow("17y", DisplayName = "Yard is not abbreviated with \"y\"")]
         public void DontParseUnknownUnits(string input)
         {
-            var val = _unitParsingEngine.ParseUnit(input);
+            var val = UnitParsingEngine.ParseUnit(input);
             Assert.IsNull(val);
         }
     }
