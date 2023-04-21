@@ -16,9 +16,7 @@ using Microsoft.Extensions.Hosting;
 // Force-load all dependencies
 AssemblyPreloader.LoadAssembliesFromDirectory();
 
-IHostBuilder builder = Host.CreateDefaultBuilder(args)
-    .SetupConfiguration()
-    .SetupSerilog();
+IHostBuilder builder = Host.CreateDefaultBuilder(args).SetupConfiguration().SetupSerilog();
 
 IHost host = builder
     .ConfigureServices(services =>
@@ -37,7 +35,4 @@ IHost host = builder
     })
     .Build();
 
-await host
-    .BootCronJobs()
-    .ArmKillSwitch()
-    .LogAndRun();
+await host.BootCronJobs().ArmKillSwitch().LogAndRun();

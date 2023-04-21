@@ -9,7 +9,8 @@ public static class MockCommandFactory
     public static CommandInstruction NewInstruction(
         string commandName,
         string[] commandArgs,
-        PrivilegeLevel privilegeLevel = PrivilegeLevel.Unknown)
+        PrivilegeLevel privilegeLevel = PrivilegeLevel.Unknown
+    )
     {
         return new CommandInstruction(
             commandName,
@@ -17,15 +18,13 @@ public static class MockCommandFactory
             new CommandContext(
                 MockMessageFactory.NewChatMessage(
                     $"{commandName} {string.Join(' ', commandArgs)}",
-                    user: MockMessageFactory.NewChatUser(
-                        "MockUser",
-                        "Mock User",
-                        privilegeLevel))));
+                    user: MockMessageFactory.NewChatUser("MockUser", "Mock User", privilegeLevel)
+                )
+            )
+        );
     }
 
-    public static ChatMessage CreateReply(
-        this CommandInstruction instruction,
-        string reply)
+    public static ChatMessage CreateReply(this CommandInstruction instruction, string reply)
     {
         return instruction.Context!.SourceMessage with { Content = reply };
     }

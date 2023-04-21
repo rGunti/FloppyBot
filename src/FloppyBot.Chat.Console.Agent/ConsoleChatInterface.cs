@@ -17,7 +17,8 @@ internal class ConsoleChatInterface : IChatInterface
 
     public ConsoleChatInterface(
         ILogger<ConsoleChatInterface> logger,
-        ConsoleAgentUserConfiguration userConfig)
+        ConsoleAgentUserConfiguration userConfig
+    )
     {
         _userConfig = userConfig;
         _logger = logger;
@@ -65,9 +66,7 @@ internal class ConsoleChatInterface : IChatInterface
 
     public void Dispose()
     {
-        if (_consoleInputThread.IsAlive)
-        {
-        }
+        if (_consoleInputThread.IsAlive) { }
     }
 
     private void ConsoleLoop()
@@ -80,9 +79,7 @@ internal class ConsoleChatInterface : IChatInterface
             string? chatMessage = System.Console.ReadLine();
             if (!string.IsNullOrWhiteSpace(chatMessage))
             {
-                MessageReceived?.Invoke(
-                    this,
-                    CreateMessage(chatMessage));
+                MessageReceived?.Invoke(this, CreateMessage(chatMessage));
             }
         }
 
@@ -92,17 +89,14 @@ internal class ConsoleChatInterface : IChatInterface
     private ChatMessage CreateMessage(string message)
     {
         return new ChatMessage(
-            new ChatMessageIdentifier(
-                IF_NAME,
-                "Main",
-                Guid.NewGuid().ToString()),
+            new ChatMessageIdentifier(IF_NAME, "Main", Guid.NewGuid().ToString()),
             new ChatUser(
-                new ChannelIdentifier(
-                    IF_NAME,
-                    _userConfig.Username),
+                new ChannelIdentifier(IF_NAME, _userConfig.Username),
                 _userConfig.Username,
-                _userConfig.PrivilegeLevel),
+                _userConfig.PrivilegeLevel
+            ),
             SharedEventTypes.CHAT_MESSAGE,
-            message);
+            message
+        );
     }
 }

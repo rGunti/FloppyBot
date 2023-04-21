@@ -13,7 +13,8 @@ public class MockChatInterface : IChatInterface
 
     public MockChatInterface(
         ChatInterfaceFeatures features = ChatInterfaceFeatures.None,
-        string channelName = "MyChannel")
+        string channelName = "MyChannel"
+    )
     {
         SupportedFeatures = features;
         MessageReceived += OnMessageReceived;
@@ -23,10 +24,10 @@ public class MockChatInterface : IChatInterface
     public IEnumerable<ChatMessage> ReceivedMessages => _receivedMessages;
     public Stack<string> SentMessages => _sentMessages;
 
-    private ChannelIdentifier ChannelIdentifier => new(Name, _channelName);
-
     public string Name => IF_NAME;
     public ChatInterfaceFeatures SupportedFeatures { get; }
+
+    private ChannelIdentifier ChannelIdentifier => new(Name, _channelName);
 
     public void Connect()
     {
@@ -60,25 +61,24 @@ public class MockChatInterface : IChatInterface
         // but nothing happened
     }
 
-    private ChatMessageIdentifier CreateNewIdentifier()
-    {
-        return new ChatMessageIdentifier(
-            Name,
-            _channelName,
-            Guid.NewGuid().ToString());
-    }
-
-    public void InvokeReceivedMessage(string username, string message, PrivilegeLevel privilegeLevel)
+    public void InvokeReceivedMessage(
+        string username,
+        string message,
+        PrivilegeLevel privilegeLevel
+    )
     {
         var msg = new ChatMessage(
             CreateNewIdentifier(),
-            new ChatUser(
-                new ChannelIdentifier(IF_NAME, username),
-                username,
-                privilegeLevel),
+            new ChatUser(new ChannelIdentifier(IF_NAME, username), username, privilegeLevel),
             SharedEventTypes.CHAT_MESSAGE,
-            message);
+            message
+        );
         MessageReceived?.Invoke(this, msg);
+    }
+
+    private ChatMessageIdentifier CreateNewIdentifier()
+    {
+        return new ChatMessageIdentifier(Name, _channelName, Guid.NewGuid().ToString());
     }
 
     private void OnMessageReceived(IChatInterface _, ChatMessage chatMessage)

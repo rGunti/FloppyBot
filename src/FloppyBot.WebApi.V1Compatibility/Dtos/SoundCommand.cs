@@ -12,5 +12,5 @@ public record SoundCommand(
     int Cooldown,
     string? Response,
     IImmutableList<string> SoundFiles,
-    string? PayloadId);
-
+    string? PayloadId
+);

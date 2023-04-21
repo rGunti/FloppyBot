@@ -5,4 +5,5 @@ public record FileHeader(
     string ChannelId,
     string FileName,
     long FileSize,
-    string MimeType);
+    string MimeType
+);

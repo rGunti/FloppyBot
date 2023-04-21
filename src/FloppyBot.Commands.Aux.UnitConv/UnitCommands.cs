@@ -20,8 +20,8 @@ namespace FloppyBot.Commands.Aux.UnitConv;
 public class UnitCommands
 {
     private const string PARAM_HELP = "help";
-    //private const string PARAM_DEBUG = "debug";
 
+    // private const string PARAM_DEBUG = "debug";
     private const string REPLY_CONVERTED = "{Original} are about {Converted}";
     private const string REPLY_CONVERTED_MD = "_{Original}_ are about _{Converted}_";
 
@@ -31,10 +31,13 @@ public class UnitCommands
     private const string REPLY_HELP_MD =
         "Converts one unit to another. Try this command as an example: `unit 10m in cm`. The following units are supported: `{Units:list:{}|, }`";
 
-    private const string REPLY_ERROR_PARSE_SOURCE = "Sorry but I didn't understand what you want to convert.";
-    private const string REPLY_ERROR_DESTINATION_UNIT = "Sorry but I don't know the unit you want to convert to.";
+    private const string REPLY_ERROR_PARSE_SOURCE =
+        "Sorry but I didn't understand what you want to convert.";
+    private const string REPLY_ERROR_DESTINATION_UNIT =
+        "Sorry but I don't know the unit you want to convert to.";
     private const string REPLY_ERROR_SAME_UNIT = "Did you just...?";
-    private const string REPLY_ERROR_PARSE_EMPTY = "Sorry but you didn't provide anything to convert.";
+    private const string REPLY_ERROR_PARSE_EMPTY =
+        "Sorry but you didn't provide anything to convert.";
     private const string REPLY_ERROR_UNIT_EMPTY = "Sorry but you didn't provide a unit.";
     private const string REPLY_ERROR_UNITS_EMPTY = "Sorry but you didn't provide two units.";
 
@@ -53,7 +56,8 @@ public class UnitCommands
         "**About Unit `{Unit.Symbol}`**\nFull Name: **{Unit.FullName}**\nSymbol: `{Unit.Symbol}`\nParsing Expression: `{Unit.ParsingExpression}`";
 
     private const string REPLY_DEBUG_PARSE = "Parsed to {Value.DebugString}";
-    private const string REPLY_DEBUG_PARSE_MD = "Parsed to _{Value}_\nDetected unit was _{Value.Unit.MdDebugString}_";
+    private const string REPLY_DEBUG_PARSE_MD =
+        "Parsed to _{Value}_\nDetected unit was _{Value.Unit.MdDebugString}_";
 
     private const string REPLY_DEBUG_CONVERT =
         "Can convert from {SourceUnit} to {DestinationUnit} using conversion {Conversion}";
@@ -61,12 +65,15 @@ public class UnitCommands
     private const string REPLY_DEBUG_CONVERT_MD =
         "Can convert from **{SourceUnit}** to **{DestinationUnit}** using conversion `{Conversion}`";
 
-    private const string REPLY_DEBUG_NO_CONVERT = "Cannot convert from {SourceUnit} to {DestinationUnit}";
-    private const string REPLY_DEBUG_NO_CONVERT_MD = "Cannot convert from **{SourceUnit}** to **{DestinationUnit}**";
+    private const string REPLY_DEBUG_NO_CONVERT =
+        "Cannot convert from {SourceUnit} to {DestinationUnit}";
+    private const string REPLY_DEBUG_NO_CONVERT_MD =
+        "Cannot convert from **{SourceUnit}** to **{DestinationUnit}**";
 
     private const int DEBUG_PAGE_SIZE = 10;
 
-    private static readonly ImmutableArray<string> AllowedFillerWords = ImmutableArray.Create<string>()
+    private static readonly ImmutableArray<string> AllowedFillerWords = ImmutableArray
+        .Create<string>()
         .Add("in")
         .Add("to");
 
@@ -89,39 +96,51 @@ public class UnitCommands
     }
 
     [Command("unit")]
-    [CommandParameterHint(0, "sourceValueAndUnit", CommandParameterType.String,
+    [CommandParameterHint(
+        0,
+        "sourceValueAndUnit",
+        CommandParameterType.String,
         true,
-        "The source value and unit to convert from")]
-    [CommandParameterHint(1, "targetUnit", CommandParameterType.String,
+        "The source value and unit to convert from"
+    )]
+    [CommandParameterHint(
+        1,
+        "targetUnit",
+        CommandParameterType.String,
         true,
-        "The unit to convert to")]
+        "The unit to convert to"
+    )]
     public CommandResult ConvertUnit(
-        [ArgumentIndex(0, stopIfMissing: false)]
-        string? commandOrSourceValueInput,
-        [ArgumentIndex(1, stopIfMissing: false)]
-        string? fillerWordOrDestinationUnitInput,
-        [ArgumentIndex(2, stopIfMissing: false)]
-        string? destinationUnitInput,
-        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)]
-        bool supportsMarkdown)
+        [ArgumentIndex(0, stopIfMissing: false)] string? commandOrSourceValueInput,
+        [ArgumentIndex(1, stopIfMissing: false)] string? fillerWordOrDestinationUnitInput,
+        [ArgumentIndex(2, stopIfMissing: false)] string? destinationUnitInput,
+        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)] bool supportsMarkdown
+    )
     {
         if (commandOrSourceValueInput is null or PARAM_HELP)
         {
-            return CommandResult.SuccessWith((supportsMarkdown ? REPLY_HELP_MD : REPLY_HELP).Format(new
-            {
-                Units = _parsingEngine.RegisteredUnits
-                    .OrderBy(u => u.FullName)
-                    .Select(u => u.Symbol)
-                    .OrderBy(i => i)
-                    .ToArray()
-            }));
+            return CommandResult.SuccessWith(
+                (supportsMarkdown ? REPLY_HELP_MD : REPLY_HELP).Format(
+                    new
+                    {
+                        Units = _parsingEngine.RegisteredUnits
+                            .OrderBy(u => u.FullName)
+                            .Select(u => u.Symbol)
+                            .OrderBy(i => i)
+                            .ToArray(),
+                    }
+                )
+            );
         }
 
-        string destinationUnit = fillerWordOrDestinationUnitInput.OrThrow(()
-            => new ArgumentNullException(nameof(fillerWordOrDestinationUnitInput)));
+        string destinationUnit = fillerWordOrDestinationUnitInput.OrThrow(
+            () => new ArgumentNullException(nameof(fillerWordOrDestinationUnitInput))
+        );
         if (AllowedFillerWords.Contains(destinationUnit))
         {
-            destinationUnit = destinationUnitInput ?? throw new ArgumentNullException(nameof(destinationUnitInput));
+            destinationUnit =
+                destinationUnitInput
+                ?? throw new ArgumentNullException(nameof(destinationUnitInput));
         }
 
         UnitValue? sourceValue = _parsingEngine.ParseUnit(commandOrSourceValueInput);
@@ -140,41 +159,42 @@ public class UnitCommands
             return CommandResult.FailedWith(REPLY_ERROR_SAME_UNIT);
         }
 
-        return _conversionEngine.FindConversion(sourceValue.Unit, parsedUnit)
+        return _conversionEngine
+            .FindConversion(sourceValue.Unit, parsedUnit)
             .Wrap()
             .Select(conversion => conversion.ConvertToUnit(sourceValue, parsedUnit))
-            .Select(convertedValue => CommandResult.SuccessWith(
-                (supportsMarkdown ? REPLY_CONVERTED_MD : REPLY_CONVERTED).Format(new
-                {
-                    Original = sourceValue,
-                    Converted = convertedValue
-                })))
-            .FirstOrDefault(CommandResult.FailedWith(REPLY_ERROR_CONVERSION.Format(new
-            {
-                Original = sourceValue,
-                DestinationUnit = parsedUnit
-            })));
+            .Select(
+                convertedValue =>
+                    CommandResult.SuccessWith(
+                        (supportsMarkdown ? REPLY_CONVERTED_MD : REPLY_CONVERTED).Format(
+                            new { Original = sourceValue, Converted = convertedValue }
+                        )
+                    )
+            )
+            .FirstOrDefault(
+                CommandResult.FailedWith(
+                    REPLY_ERROR_CONVERSION.Format(
+                        new { Original = sourceValue, DestinationUnit = parsedUnit }
+                    )
+                )
+            );
     }
 
     [Command("unitdebug")]
     [CommandCategory("Diagnostics")]
     [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public CommandResult ShowUnitConversion(
-        [ArgumentIndex(0, stopIfMissing: false)]
-        string? subCommand,
-        [ArgumentIndex(1, stopIfMissing: false)]
-        string? subCommandParam1,
-        [ArgumentIndex(2, stopIfMissing: false)]
-        string? subCommandParam2,
-        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)]
-        bool supportsMarkdown)
+        [ArgumentIndex(0, stopIfMissing: false)] string? subCommand,
+        [ArgumentIndex(1, stopIfMissing: false)] string? subCommandParam1,
+        [ArgumentIndex(2, stopIfMissing: false)] string? subCommandParam2,
+        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)] bool supportsMarkdown
+    )
     {
         switch (subCommand)
         {
             case "unit":
                 return PrintUnit(subCommandParam1, supportsMarkdown);
             case "units":
-                ;
                 return PrintUnitList(subCommandParam1, supportsMarkdown);
             case "convert":
                 return PrintConversion(subCommandParam1, subCommandParam2, supportsMarkdown);
@@ -182,7 +202,8 @@ public class UnitCommands
                 return PrintParse(subCommandParam1, supportsMarkdown);
             default:
                 return CommandResult.FailedWith(
-                    "Available debug commands are: unit <Unit>, units [<Page>], convert [<Source Unit> <Target Unit>], parse <Value>");
+                    "Available debug commands are: unit <Unit>, units [<Page>], convert [<Source Unit> <Target Unit>], parse <Value>"
+                );
         }
     }
 
@@ -198,10 +219,15 @@ public class UnitCommands
             return CommandResult.FailedWith(REPLY_ERROR_DESTINATION_UNIT);
         }
 
-        return _parsingEngine.GetUnit(unitSymbol)
+        return _parsingEngine
+            .GetUnit(unitSymbol)
             .Wrap()
-            .Select(unit => (supportsMarkdown ? REPLY_DEBUG_UNIT_MD : REPLY_DEBUG_UNIT)
-                .Format(new { Unit = unit }))
+            .Select(
+                unit =>
+                    (supportsMarkdown ? REPLY_DEBUG_UNIT_MD : REPLY_DEBUG_UNIT).Format(
+                        new { Unit = unit }
+                    )
+            )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(CommandResult.FailedWith("failed"));
     }
@@ -209,7 +235,8 @@ public class UnitCommands
     private CommandResult PrintUnitList(string? pageStr, bool supportsMarkdown)
     {
         IList<Unit> units = _parsingEngine.RegisteredUnits;
-        int totalPages = (int)Math.Ceiling((decimal)_parsingEngine.RegisteredUnits.Count / DEBUG_PAGE_SIZE);
+        int totalPages = (int)
+            Math.Ceiling((decimal)_parsingEngine.RegisteredUnits.Count / DEBUG_PAGE_SIZE);
         int page = 0;
         if (pageStr != null && int.TryParse(pageStr, out page))
         {
@@ -219,49 +246,66 @@ public class UnitCommands
 
         page = Math.Max(0, Math.Min(page, totalPages - 1));
 
-        return CommandResult.SuccessWith((supportsMarkdown ? REPLY_DEBUG_UNITS_MD : REPLY_DEBUG_UNITS).Format(
-            new
-            {
-                Units = units
-                    .OrderBy(u => u.FullName.ToLowerInvariant())
-                    .Skip(page * DEBUG_PAGE_SIZE)
-                    .Take(DEBUG_PAGE_SIZE)
-                    .Select(u => supportsMarkdown ? u.MdDebugString : u.DebugString),
-                CurrentPage = page + 1,
-                MaxPage = totalPages
-            }));
+        return CommandResult.SuccessWith(
+            (supportsMarkdown ? REPLY_DEBUG_UNITS_MD : REPLY_DEBUG_UNITS).Format(
+                new
+                {
+                    Units = units
+                        .OrderBy(u => u.FullName.ToLowerInvariant())
+                        .Skip(page * DEBUG_PAGE_SIZE)
+                        .Take(DEBUG_PAGE_SIZE)
+                        .Select(u => supportsMarkdown ? u.MdDebugString : u.DebugString),
+                    CurrentPage = page + 1,
+                    MaxPage = totalPages,
+                }
+            )
+        );
     }
 
-    private CommandResult PrintConversion(string? sourceUnitStr, string? destinationUnitStr, bool supportsMarkdown)
+    private CommandResult PrintConversion(
+        string? sourceUnitStr,
+        string? destinationUnitStr,
+        bool supportsMarkdown
+    )
     {
-        if (string.IsNullOrWhiteSpace(sourceUnitStr) || string.IsNullOrWhiteSpace(destinationUnitStr))
+        if (
+            string.IsNullOrWhiteSpace(sourceUnitStr)
+            || string.IsNullOrWhiteSpace(destinationUnitStr)
+        )
         {
             return CommandResult.FailedWith(REPLY_ERROR_UNITS_EMPTY);
         }
 
-        if (!_parsingEngine.TryGetUnit(sourceUnitStr, out Unit sourceUnit)
-            || !_parsingEngine.TryGetUnit(destinationUnitStr, out Unit destinationUnit))
+        if (
+            !_parsingEngine.TryGetUnit(sourceUnitStr, out Unit sourceUnit)
+            || !_parsingEngine.TryGetUnit(destinationUnitStr, out Unit destinationUnit)
+        )
         {
             return CommandResult.FailedWith(REPLY_ERROR_DESTINATION_UNIT);
         }
 
-        return _conversionEngine.FindConversion(sourceUnit, destinationUnit)
+        return _conversionEngine
+            .FindConversion(sourceUnit, destinationUnit)
             .Wrap()
-            .Select(conversion => (supportsMarkdown ? REPLY_DEBUG_CONVERT_MD : REPLY_DEBUG_CONVERT)
-                .Format(new
-                {
-                    SourceUnit = sourceUnit,
-                    DestinationUnit = destinationUnit,
-                    Conversion = conversion
-                }))
+            .Select(
+                conversion =>
+                    (supportsMarkdown ? REPLY_DEBUG_CONVERT_MD : REPLY_DEBUG_CONVERT).Format(
+                        new
+                        {
+                            SourceUnit = sourceUnit,
+                            DestinationUnit = destinationUnit,
+                            Conversion = conversion,
+                        }
+                    )
+            )
             .Select(CommandResult.SuccessWith)
-            .FirstOrDefault(CommandResult.FailedWith((supportsMarkdown
-                ? REPLY_DEBUG_NO_CONVERT_MD
-                : REPLY_DEBUG_NO_CONVERT).Format(new
-            {
-                SourceUnit = sourceUnit,
-                DestinationUnit = destinationUnit,
-            })));
+            .FirstOrDefault(
+                CommandResult.FailedWith(
+                    (supportsMarkdown ? REPLY_DEBUG_NO_CONVERT_MD : REPLY_DEBUG_NO_CONVERT).Format(
+                        new { SourceUnit = sourceUnit, DestinationUnit = destinationUnit, }
+                    )
+                )
+            );
     }
 
     private CommandResult PrintParse(string? inputString, bool supportsMarkdown)
@@ -271,12 +315,15 @@ public class UnitCommands
             return CommandResult.FailedWith(REPLY_ERROR_PARSE_EMPTY);
         }
 
-        return _parsingEngine.ParseUnit(inputString)
+        return _parsingEngine
+            .ParseUnit(inputString)
             .Wrap()
-            .Select(parsedValue => (supportsMarkdown ? REPLY_DEBUG_PARSE_MD : REPLY_DEBUG_PARSE).Format(new
-            {
-                Value = parsedValue
-            }))
+            .Select(
+                parsedValue =>
+                    (supportsMarkdown ? REPLY_DEBUG_PARSE_MD : REPLY_DEBUG_PARSE).Format(
+                        new { Value = parsedValue }
+                    )
+            )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(CommandResult.FailedWith(REPLY_ERROR_PARSE_SOURCE));
     }

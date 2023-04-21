@@ -9,7 +9,8 @@ public record Unit
         string fullName,
         string? regex,
         Func<string, MatchCollection, float> parsingFunction,
-        Func<float, string>? formatMethod = null)
+        Func<float, string>? formatMethod = null
+    )
     {
         Symbol = symbol;
         FullName = fullName;
@@ -25,12 +26,11 @@ public record Unit
     public Func<float, string> FormatFunction { get; }
 
     public string DebugString => $"{this} (Expr: {ParsingExpression})";
-    public string MdDebugString => $"Unit **{FullName}** [`{Symbol}`] (Expr: `{ParsingExpression}`)";
+    public string MdDebugString =>
+        $"Unit **{FullName}** [`{Symbol}`] (Expr: `{ParsingExpression}`)";
 
     public override string ToString()
     {
         return $"Unit {FullName} [{Symbol}]";
     }
 }
-
-

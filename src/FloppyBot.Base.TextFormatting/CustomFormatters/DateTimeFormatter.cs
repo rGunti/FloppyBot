@@ -21,9 +21,7 @@ public class DateTimeFormatter : IFormatter
             formatStr = formatStr.Substring(1, formatStr.Length - 2);
         }
 
-        formattingInfo.Write(
-            dateTimeOffset.ToString(formatStr));
+        formattingInfo.Write(dateTimeOffset.ToString(formatStr));
         return true;
     }
 }
-

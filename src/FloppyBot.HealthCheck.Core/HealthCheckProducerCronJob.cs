@@ -17,20 +17,20 @@ public class HealthCheckProducerCronJob : ICronJob
         ILogger<HealthCheckProducerCronJob> logger,
         IHealthCheckProducer healthCheckProducer,
         INotificationSenderFactory notificationSenderFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         _logger = logger;
         _healthCheckProducer = healthCheckProducer;
         _notificationSender = notificationSenderFactory.GetNewSender(
-            configuration.GetHealthCheckConnectionString());
+            configuration.GetHealthCheckConnectionString()
+        );
     }
 
     public void Run()
     {
         var healthCheckData = _healthCheckProducer.GetHealthCheckData();
-        _logger.LogTrace(
-            "Collected Health Check data: {@HealthCheckData}",
-            healthCheckData);
+        _logger.LogTrace("Collected Health Check data: {@HealthCheckData}", healthCheckData);
         _notificationSender.Send(healthCheckData);
     }
 }

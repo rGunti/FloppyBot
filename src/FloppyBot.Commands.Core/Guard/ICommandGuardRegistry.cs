@@ -4,9 +4,7 @@ namespace FloppyBot.Commands.Core.Guard;
 
 public interface ICommandGuardRegistry
 {
-    void RegisterGuard(
-        Type attributeType,
-        Type guardImplType);
+    void RegisterGuard(Type attributeType, Type guardImplType);
 
     void RegisterGuard<TGuard, TGuardAttribute>()
         where TGuard : ICommandGuard<TGuardAttribute>

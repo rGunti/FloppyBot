@@ -11,14 +11,11 @@ public class AboutThisApp
             "FloppyBot",
             assembly.GetProductName()!,
             assembly.GetProductVersion()!,
-            Guid.NewGuid().ToString());
+            Guid.NewGuid().ToString()
+        );
     }
 
-    private AboutThisApp(
-        string name,
-        string serviceName,
-        string version,
-        string instanceId)
+    private AboutThisApp(string name, string serviceName, string version, string instanceId)
     {
         Name = name;
         ServiceName = serviceName;
@@ -52,19 +49,20 @@ public class AboutThisApp
 
 internal static class AssemblyExtensions
 {
-    internal static string? GetProductName(this Assembly assembly)
-        => assembly.GetAssemblyAttribute<AssemblyProductAttribute>(v => v.Product);
+    internal static string? GetProductName(this Assembly assembly) =>
+        assembly.GetAssemblyAttribute<AssemblyProductAttribute>(v => v.Product);
 
-    internal static string? GetProductVersion(this Assembly assembly)
-        => assembly.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(v => v.InformationalVersion);
+    internal static string? GetProductVersion(this Assembly assembly) =>
+        assembly.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(
+            v => v.InformationalVersion
+        );
 
     private static string? GetAssemblyAttribute<T>(
         this Assembly assembly,
-        Func<T, string> valueSelectorFn) where T : Attribute
+        Func<T, string> valueSelectorFn
+    )
+        where T : Attribute
     {
-        return assembly
-            .GetCustomAttributes<T>()
-            .Select(valueSelectorFn)
-            .FirstOrDefault();
+        return assembly.GetCustomAttributes<T>().Select(valueSelectorFn).FirstOrDefault();
     }
 }

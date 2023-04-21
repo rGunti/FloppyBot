@@ -17,7 +17,8 @@ public class TimerMessageConfigurationService : ITimerMessageConfigurationServic
 
     public IEnumerable<TimerMessageConfiguration> GetAllConfigs()
     {
-        return _timerMessageConfigRepo.GetAll()
+        return _timerMessageConfigRepo
+            .GetAll()
             // ReSharper disable once MergeIntoPattern
             .Where(c => c.Interval > 0 && c.Messages.Length > 0);
     }
@@ -32,14 +33,15 @@ public class TimerMessageConfigurationService : ITimerMessageConfigurationServic
         return _executionRepo.GetById(channelId).Wrap();
     }
 
-    public void UpdateConfigurationForChannel(string channelId, TimerMessageConfiguration configuration)
+    public void UpdateConfigurationForChannel(
+        string channelId,
+        TimerMessageConfiguration configuration
+    )
     {
         TimerMessageConfiguration existingConfig = GetConfigForChannel(channelId)
-            .FirstOrDefault(new TimerMessageConfiguration(
-                string.Empty,
-                Array.Empty<string>(),
-                -1,
-                0));
+            .FirstOrDefault(
+                new TimerMessageConfiguration(string.Empty, Array.Empty<string>(), -1, 0)
+            );
 
         existingConfig = existingConfig with
         {
@@ -57,13 +59,14 @@ public class TimerMessageConfigurationService : ITimerMessageConfigurationServic
         }
     }
 
-    public void UpdateLastExecutionTime(string channelId, DateTimeOffset executionTime, int messageIndex)
+    public void UpdateLastExecutionTime(
+        string channelId,
+        DateTimeOffset executionTime,
+        int messageIndex
+    )
     {
         TimerMessageExecution lastExecution = GetLastExecution(channelId)
-            .FirstOrDefault(new TimerMessageExecution(
-                string.Empty,
-                DateTimeOffset.MinValue,
-                0));
+            .FirstOrDefault(new TimerMessageExecution(string.Empty, DateTimeOffset.MinValue, 0));
         lastExecution = lastExecution with
         {
             LastExecutedAt = executionTime,
@@ -80,4 +83,3 @@ public class TimerMessageConfigurationService : ITimerMessageConfigurationServic
         }
     }
 }
-

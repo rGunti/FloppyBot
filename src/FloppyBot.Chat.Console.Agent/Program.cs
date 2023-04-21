@@ -9,18 +9,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-IHostBuilder builder = Host.CreateDefaultBuilder(args)
-    .SetupConfiguration()
-    .SetupSerilog();
+IHostBuilder builder = Host.CreateDefaultBuilder(args).SetupConfiguration().SetupSerilog();
 
 IHost host = builder
     .ConfigureServices(services =>
     {
         services
             .AddRedisCommunication()
-            .AddSingleton(s => s.GetRequiredService<IConfiguration>()
-                .GetSection("UserConfig")
-                .Get<ConsoleAgentUserConfiguration>())
+            .AddSingleton(
+                s =>
+                    s.GetRequiredService<IConfiguration>()
+                        .GetSection("UserConfig")
+                        .Get<ConsoleAgentUserConfiguration>()
+            )
             .AddCronJobSupport()
             .AddHealthCheck()
             .AddSingleton<IChatInterface, ConsoleChatInterface>()
@@ -29,6 +30,4 @@ IHost host = builder
     })
     .Build();
 
-await host
-    .BootCronJobs()
-    .RunAsync();
+await host.BootCronJobs().RunAsync();

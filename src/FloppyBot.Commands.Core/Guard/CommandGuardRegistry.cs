@@ -19,7 +19,8 @@ public class CommandGuardRegistry : ICommandGuardRegistry
         _logger.LogDebug(
             "Registering {GuardImplType} for attribute {GuardAttributeType}",
             guardImplType,
-            attributeType);
+            attributeType
+        );
         if (!_guardTypeDictionary.ContainsKey(attributeType))
         {
             _guardTypeDictionary[attributeType] = new HashSet<Type>();
@@ -39,6 +40,6 @@ public class CommandGuardRegistry : ICommandGuardRegistry
     {
         var guardAttributeType = guardAttribute.GetType();
         return _guardTypeDictionary.GetValueOrDefault(guardAttributeType)
-               ?? throw new MissingGuardException(guardAttributeType);
+            ?? throw new MissingGuardException(guardAttributeType);
     }
 }

@@ -6,7 +6,8 @@ namespace FloppyBot.Commands.Core.Tests.Impl;
 public class InvalidCommandSignature
 {
     [Command("string")]
-    public string StringAsReturnType( /* no args are supported */)
+    public string StringAsReturnType( /* no args are supported */
+    )
     {
         return "this should compute";
     }

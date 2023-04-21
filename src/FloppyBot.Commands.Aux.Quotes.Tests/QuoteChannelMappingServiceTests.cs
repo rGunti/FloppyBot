@@ -27,21 +27,10 @@ public class QuoteChannelMappingServiceTests
     public void GetQuoteChannelMapping()
     {
         _repository.InsertMany(
-            new QuoteChannelMapping(
-                null!,
-                "AnMappingId",
-                "Mock/Channel",
-                true),
-            new QuoteChannelMapping(
-                null!,
-                "AnMappingId",
-                "Mock/OtherChannel",
-                true),
-            new QuoteChannelMapping(
-                null!,
-                "AnMappingId",
-                "Mock/AdditionalChannel",
-                false));
+            new QuoteChannelMapping(null!, "AnMappingId", "Mock/Channel", true),
+            new QuoteChannelMapping(null!, "AnMappingId", "Mock/OtherChannel", true),
+            new QuoteChannelMapping(null!, "AnMappingId", "Mock/AdditionalChannel", false)
+        );
 
         Assert.AreEqual("AnMappingId", _service.GetQuoteChannelMapping("Mock/Channel"));
         Assert.AreEqual("AnMappingId", _service.GetQuoteChannelMapping("Mock/OtherChannel"));
@@ -54,15 +43,10 @@ public class QuoteChannelMappingServiceTests
     {
         var mappingId = _service.GetQuoteChannelMapping("Mock/Channel", true);
         Assert.IsTrue(
-            _repository.GetAll()
-                .Any(m => m.MappingId == mappingId
-                          && m.ChannelId == "Mock/Channel"
-                          && m.Confirmed));
-    }
-
-    private string CreateMapping(string channelId)
-    {
-        return _service.GetQuoteChannelMapping(channelId, true)!;
+            _repository
+                .GetAll()
+                .Any(m => m.MappingId == mappingId && m.ChannelId == "Mock/Channel" && m.Confirmed)
+        );
     }
 
     [TestMethod]
@@ -76,24 +60,44 @@ public class QuoteChannelMappingServiceTests
         Assert.IsNotNull(confirmCode);
 
         // Ensure record has been created
-        Assert.IsTrue(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && !m.Confirmed));
-        Assert.IsTrue(_joinKeyRepo.GetAll()
-            .Any(k => k.Id == confirmCode
-                      && k.MappingId == mappingId
-                      && k.ChannelId == "Mock/Channel2"));
+        Assert.IsTrue(
+            _repository
+                .GetAll()
+                .Any(
+                    m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && !m.Confirmed
+                )
+        );
+        Assert.IsTrue(
+            _joinKeyRepo
+                .GetAll()
+                .Any(
+                    k =>
+                        k.Id == confirmCode
+                        && k.MappingId == mappingId
+                        && k.ChannelId == "Mock/Channel2"
+                )
+        );
 
         // Advance time a bit
         _timeProvider.AdvanceTimeBy(1.Minute());
 
         // Confirm with code given
         Assert.IsTrue(_service.ConfirmJoinProcess(mappingId, "Mock/Channel2", confirmCode));
-        Assert.IsTrue(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed));
-        Assert.IsFalse(_joinKeyRepo.GetAll()
-            .Any(k => k.Id == confirmCode
-                      && k.MappingId == mappingId
-                      && k.ChannelId == "Mock/Channel2"));
+        Assert.IsTrue(
+            _repository
+                .GetAll()
+                .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed)
+        );
+        Assert.IsFalse(
+            _joinKeyRepo
+                .GetAll()
+                .Any(
+                    k =>
+                        k.Id == confirmCode
+                        && k.MappingId == mappingId
+                        && k.ChannelId == "Mock/Channel2"
+                )
+        );
     }
 
     [TestMethod]
@@ -111,12 +115,21 @@ public class QuoteChannelMappingServiceTests
 
         // Confirm with code given
         Assert.IsFalse(_service.ConfirmJoinProcess(mappingId, "Mock/Channel2", confirmCode));
-        Assert.IsFalse(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId));
-        Assert.IsFalse(_joinKeyRepo.GetAll()
-            .Any(k => k.Id == confirmCode
-                      && k.MappingId == mappingId
-                      && k.ChannelId == "Mock/Channel2"));
+        Assert.IsFalse(
+            _repository
+                .GetAll()
+                .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId)
+        );
+        Assert.IsFalse(
+            _joinKeyRepo
+                .GetAll()
+                .Any(
+                    k =>
+                        k.Id == confirmCode
+                        && k.MappingId == mappingId
+                        && k.ChannelId == "Mock/Channel2"
+                )
+        );
     }
 
     [TestMethod]
@@ -134,13 +147,22 @@ public class QuoteChannelMappingServiceTests
 
         // Confirm with code given
         Assert.IsFalse(_service.ConfirmJoinProcess(mappingId, "Mock/Channel2", "InvalidCode"));
-        Assert.IsFalse(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed));
+        Assert.IsFalse(
+            _repository
+                .GetAll()
+                .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed)
+        );
         // Key is kept
-        Assert.IsTrue(_joinKeyRepo.GetAll()
-            .Any(k => k.Id == confirmCode
-                      && k.MappingId == mappingId
-                      && k.ChannelId == "Mock/Channel2"));
+        Assert.IsTrue(
+            _joinKeyRepo
+                .GetAll()
+                .Any(
+                    k =>
+                        k.Id == confirmCode
+                        && k.MappingId == mappingId
+                        && k.ChannelId == "Mock/Channel2"
+                )
+        );
     }
 
     [TestMethod]
@@ -157,13 +179,29 @@ public class QuoteChannelMappingServiceTests
         _timeProvider.AdvanceTimeBy(1.Minute());
 
         // Confirm with code given
-        Assert.IsFalse(_service.ConfirmJoinProcess(mappingId, "Mock/NotTheRightChannel", confirmCode));
-        Assert.IsFalse(_repository.GetAll()
-            .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed));
+        Assert.IsFalse(
+            _service.ConfirmJoinProcess(mappingId, "Mock/NotTheRightChannel", confirmCode)
+        );
+        Assert.IsFalse(
+            _repository
+                .GetAll()
+                .Any(m => m.ChannelId == "Mock/Channel2" && m.MappingId == mappingId && m.Confirmed)
+        );
         // Key is kept
-        Assert.IsTrue(_joinKeyRepo.GetAll()
-            .Any(k => k.Id == confirmCode
-                      && k.MappingId == mappingId
-                      && k.ChannelId == "Mock/Channel2"));
+        Assert.IsTrue(
+            _joinKeyRepo
+                .GetAll()
+                .Any(
+                    k =>
+                        k.Id == confirmCode
+                        && k.MappingId == mappingId
+                        && k.ChannelId == "Mock/Channel2"
+                )
+        );
+    }
+
+    private string CreateMapping(string channelId)
+    {
+        return _service.GetQuoteChannelMapping(channelId, true)!;
     }
 }

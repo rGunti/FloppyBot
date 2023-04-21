@@ -14,8 +14,6 @@ public class CommandListSupplierAggregator : ICommandListSupplier
 
     public IEnumerable<string> GetCommandList(CommandInstruction commandInstruction)
     {
-        return _suppliers
-            .SelectMany(s => s.GetCommandList(commandInstruction))
-            .Distinct();
+        return _suppliers.SelectMany(s => s.GetCommandList(commandInstruction)).Distinct();
     }
 }

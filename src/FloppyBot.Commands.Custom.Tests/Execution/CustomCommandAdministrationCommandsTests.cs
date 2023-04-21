@@ -20,57 +20,88 @@ public class CustomCommandAdministrationCommandsTests
         _counterStorageServiceMock = new Mock<ICounterStorageService>();
         _host = new CustomCommandAdministrationCommands(
             _customCommandServiceMock.Object,
-            _counterStorageServiceMock.Object);
+            _counterStorageServiceMock.Object
+        );
     }
 
     [TestMethod]
     public void CreateCommand()
     {
         _customCommandServiceMock
-            .Setup(s => s.CreateSimpleCommand(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .Setup(
+                s =>
+                    s.CreateSimpleCommand(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>()
+                    )
+            )
             .Returns<string, string, string>((channelId, commandName, response) => true);
 
-        CommandResult result = _host.CreateCommand("Mock/UnitTest", "mycommand", "This is my cool command");
+        CommandResult result = _host.CreateCommand(
+            "Mock/UnitTest",
+            "mycommand",
+            "This is my cool command"
+        );
 
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_CREATE_SUCCESS.Format(new
-                {
-                    CommandName = "mycommand"
-                })),
-            result);
-        _customCommandServiceMock
-            .Verify(s => s.CreateSimpleCommand(
+                CustomCommandAdministrationCommands.REPLY_CREATE_SUCCESS.Format(
+                    new { CommandName = "mycommand" }
+                )
+            ),
+            result
+        );
+        _customCommandServiceMock.Verify(
+            s =>
+                s.CreateSimpleCommand(
                     It.Is<string>(c => c == "Mock/UnitTest"),
                     It.Is<string>(c => c == "mycommand"),
-                    It.Is<string>(c => c == "This is my cool command")),
-                Times.Once);
+                    It.Is<string>(c => c == "This is my cool command")
+                ),
+            Times.Once
+        );
     }
 
     [TestMethod]
     public void CreateExisting()
     {
         _customCommandServiceMock
-            .Setup(s => s.CreateSimpleCommand(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            .Setup(
+                s =>
+                    s.CreateSimpleCommand(
+                        It.IsAny<string>(),
+                        It.IsAny<string>(),
+                        It.IsAny<string>()
+                    )
+            )
             .Returns<string, string, string>((channelId, commandName, response) => false);
 
-        CommandResult result = _host.CreateCommand("Mock/UnitTest", "mycommand", "This is my cool command");
+        CommandResult result = _host.CreateCommand(
+            "Mock/UnitTest",
+            "mycommand",
+            "This is my cool command"
+        );
 
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_CREATE_FAILED.Format(new
-                {
-                    CommandName = "mycommand"
-                })),
-            result);
-        _customCommandServiceMock
-            .Verify(s => s.CreateSimpleCommand(
+                CustomCommandAdministrationCommands.REPLY_CREATE_FAILED.Format(
+                    new { CommandName = "mycommand" }
+                )
+            ),
+            result
+        );
+        _customCommandServiceMock.Verify(
+            s =>
+                s.CreateSimpleCommand(
                     It.Is<string>(c => c == "Mock/UnitTest"),
                     It.Is<string>(c => c == "mycommand"),
-                    It.Is<string>(c => c == "This is my cool command")),
-                Times.Once);
+                    It.Is<string>(c => c == "This is my cool command")
+                ),
+            Times.Once
+        );
     }
 
     [TestMethod]
@@ -84,11 +115,12 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_DELETE_SUCCESS.Format(new
-                {
-                    CommandName = "mycommand"
-                })),
-            result);
+                CustomCommandAdministrationCommands.REPLY_DELETE_SUCCESS.Format(
+                    new { CommandName = "mycommand" }
+                )
+            ),
+            result
+        );
     }
 
     [TestMethod]
@@ -102,47 +134,47 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_DELETE_FAILED.Format(new
-                {
-                    CommandName = "mycommand"
-                })),
-            result);
+                CustomCommandAdministrationCommands.REPLY_DELETE_FAILED.Format(
+                    new { CommandName = "mycommand" }
+                )
+            ),
+            result
+        );
     }
 
     [TestMethod]
     public void SetCounterAbsolute()
     {
         _customCommandServiceMock
-            .Setup(s => s.GetCommand(
-                It.Is<string>(c => c == "Mock/UnitTest"),
-                It.Is<string>(c => c == "mycommand")))
-            .Returns<string, string>((_, _) => new CustomCommandDescription
-            {
-                Id = "abc123"
-            });
+            .Setup(
+                s =>
+                    s.GetCommand(
+                        It.Is<string>(c => c == "Mock/UnitTest"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
+            .Returns<string, string>((_, _) => new CustomCommandDescription { Id = "abc123" });
         _counterStorageServiceMock
             .Setup(s => s.Set(It.IsAny<string>(), It.IsAny<int>()))
             .Verifiable();
         _counterStorageServiceMock
-            .Setup(s => s.Peek(
-                It.Is<string>(c => c == "abc123")))
+            .Setup(s => s.Peek(It.Is<string>(c => c == "abc123")))
             .Returns<string>(_ => 5);
 
         CommandResult result = _host.SetCounter("Mock/UnitTest", "mycommand", "5");
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(new
-                {
-                    CommandName = "mycommand",
-                    Counter = 5
-                })),
-            result);
-        _counterStorageServiceMock
-            .Verify(s => s.Set(
-                    It.Is<string>(c => c == "abc123"),
-                    It.Is<int>(c => c == 5)),
-                Times.Once);
+                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
+                    new { CommandName = "mycommand", Counter = 5 }
+                )
+            ),
+            result
+        );
+        _counterStorageServiceMock.Verify(
+            s => s.Set(It.Is<string>(c => c == "abc123"), It.Is<int>(c => c == 5)),
+            Times.Once
+        );
     }
 
     [DataTestMethod]
@@ -151,13 +183,14 @@ public class CustomCommandAdministrationCommandsTests
     public void SetCounterRelative(string input, int expectedIncrement)
     {
         _customCommandServiceMock
-            .Setup(s => s.GetCommand(
-                It.Is<string>(c => c == "Mock/UnitTest"),
-                It.Is<string>(c => c == "mycommand")))
-            .Returns<string, string>((_, _) => new CustomCommandDescription
-            {
-                Id = "abc123"
-            });
+            .Setup(
+                s =>
+                    s.GetCommand(
+                        It.Is<string>(c => c == "Mock/UnitTest"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
+            .Returns<string, string>((_, _) => new CustomCommandDescription { Id = "abc123" });
         _counterStorageServiceMock
             .Setup(s => s.Set(It.IsAny<string>(), It.IsAny<int>()))
             .Verifiable();
@@ -167,36 +200,41 @@ public class CustomCommandAdministrationCommandsTests
 
         CommandResult result = _host.SetCounter("Mock/UnitTest", "mycommand", input);
         Assert.AreEqual(
-            new CommandResult(CommandOutcome.Success, CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(new
-            {
-                CommandName = "mycommand",
-                Counter = 10 + expectedIncrement
-            })),
-            result);
+            new CommandResult(
+                CommandOutcome.Success,
+                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
+                    new { CommandName = "mycommand", Counter = 10 + expectedIncrement }
+                )
+            ),
+            result
+        );
 
-        _counterStorageServiceMock
-            .Verify(s => s.Increase(
+        _counterStorageServiceMock.Verify(
+            s =>
+                s.Increase(
                     It.Is<string>(c => c == "abc123"),
-                    It.Is<int>(i => i == expectedIncrement)),
-                Times.Once);
-        _counterStorageServiceMock
-            .Verify(s => s.Set(
-                    It.Is<string>(c => c == "abc123"),
-                    It.IsAny<int>()),
-                Times.Never);
+                    It.Is<int>(i => i == expectedIncrement)
+                ),
+            Times.Once
+        );
+        _counterStorageServiceMock.Verify(
+            s => s.Set(It.Is<string>(c => c == "abc123"), It.IsAny<int>()),
+            Times.Never
+        );
     }
 
     [TestMethod]
     public void SetCounterClear()
     {
         _customCommandServiceMock
-            .Setup(s => s.GetCommand(
-                It.Is<string>(c => c == "Mock/UnitTest"),
-                It.Is<string>(c => c == "mycommand")))
-            .Returns<string, string>((_, _) => new CustomCommandDescription
-            {
-                Id = "abc123"
-            });
+            .Setup(
+                s =>
+                    s.GetCommand(
+                        It.Is<string>(c => c == "Mock/UnitTest"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
+            .Returns<string, string>((_, _) => new CustomCommandDescription { Id = "abc123" });
         _counterStorageServiceMock
             .Setup(s => s.Set(It.IsAny<string>(), It.IsAny<int>()))
             .Verifiable();
@@ -205,66 +243,71 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(new
-                {
-                    CommandName = "mycommand",
-                    Counter = 0
-                })),
-            result);
-        _counterStorageServiceMock
-            .Verify(s => s.Set(
-                    It.Is<string>(c => c == "abc123"),
-                    It.Is<int>(c => c == 0)),
-                Times.Once);
+                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
+                    new { CommandName = "mycommand", Counter = 0 }
+                )
+            ),
+            result
+        );
+        _counterStorageServiceMock.Verify(
+            s => s.Set(It.Is<string>(c => c == "abc123"), It.Is<int>(c => c == 0)),
+            Times.Once
+        );
     }
 
     [TestMethod]
     public void SetUnknownCommand()
     {
         _customCommandServiceMock
-            .Setup(s => s.GetCommand(
-                It.Is<string>(c => c == "Mock/UnitTest"),
-                It.Is<string>(c => c == "mycommand")))
+            .Setup(
+                s =>
+                    s.GetCommand(
+                        It.Is<string>(c => c == "Mock/UnitTest"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
             .Returns<string, string>((_, _) => null);
 
         CommandResult result = _host.SetCounter("Mock/UnitTest", "mycommand", "clear");
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_COMMAND_NOT_FOUND.Format(new
-                {
-                    CommandName = "mycommand"
-                })),
-            result);
-        _counterStorageServiceMock
-            .Verify(s => s.Set(
-                    It.IsAny<string>(),
-                    It.IsAny<int>()),
-                Times.Never);
+                CustomCommandAdministrationCommands.REPLY_COMMAND_NOT_FOUND.Format(
+                    new { CommandName = "mycommand" }
+                )
+            ),
+            result
+        );
+        _counterStorageServiceMock.Verify(
+            s => s.Set(It.IsAny<string>(), It.IsAny<int>()),
+            Times.Never
+        );
     }
 
     [TestMethod]
     public void SetCommandFailed()
     {
         _customCommandServiceMock
-            .Setup(s => s.GetCommand(
-                It.Is<string>(c => c == "Mock/UnitTest"),
-                It.Is<string>(c => c == "mycommand")))
-            .Returns<string, string>((_, _) => new CustomCommandDescription
-            {
-                Id = "abc123"
-            });
+            .Setup(
+                s =>
+                    s.GetCommand(
+                        It.Is<string>(c => c == "Mock/UnitTest"),
+                        It.Is<string>(c => c == "mycommand")
+                    )
+            )
+            .Returns<string, string>((_, _) => new CustomCommandDescription { Id = "abc123" });
 
         CommandResult result = _host.SetCounter("Mock/UnitTest", "mycommand", "notAThing");
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_PARAMS_UNKNOWN),
-            result);
-        _counterStorageServiceMock
-            .Verify(s => s.Set(
-                    It.IsAny<string>(),
-                    It.IsAny<int>()),
-                Times.Never);
+                CustomCommandAdministrationCommands.REPLY_COUNTER_PARAMS_UNKNOWN
+            ),
+            result
+        );
+        _counterStorageServiceMock.Verify(
+            s => s.Set(It.IsAny<string>(), It.IsAny<int>()),
+            Times.Never
+        );
     }
 }

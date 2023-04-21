@@ -3,8 +3,7 @@ using FloppyBot.Chat.Entities;
 
 namespace FloppyBot.Commands.Core.Config;
 
-public record CommandConfiguration
-    : IEntity<CommandConfiguration>
+public record CommandConfiguration : IEntity<CommandConfiguration>
 {
     public string Id { get; init; }
     public string ChannelId { get; init; }
@@ -16,9 +15,6 @@ public record CommandConfiguration
 
     public CommandConfiguration WithId(string newId)
     {
-        return this with
-        {
-            Id = newId
-        };
+        return this with { Id = newId };
     }
 }

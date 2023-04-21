@@ -16,22 +16,20 @@ public class ChatAgent : BackgroundService
         IChatInterface chatInterface,
         INotificationSenderFactory senderFactory,
         INotificationReceiverFactory receiverFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         _logger = logger;
         _chatInterface = chatInterface;
         _chatInterface.MessageReceived += OnMessageReceived;
 
         _notificationSender = senderFactory.GetNewSender(
-            configuration.GetParsedConnectionString("MessageOutput"));
+            configuration.GetParsedConnectionString("MessageOutput")
+        );
         _replyReceiver = receiverFactory.GetNewReceiver<ChatMessage>(
-            configuration.GetParsedConnectionString("MessageInput", true));
+            configuration.GetParsedConnectionString("MessageInput", true)
+        );
         _replyReceiver.NotificationReceived += OnReplyReceived;
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -42,12 +40,28 @@ public class ChatAgent : BackgroundService
         return Task.CompletedTask;
     }
 
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Chat Agent ...");
+        _replyReceiver.StartListening();
+        _chatInterface.MessageReceived -= OnMessageReceived;
+        _chatInterface.Disconnect();
+        return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        return Task.CompletedTask;
+    }
+
     private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
     {
 #if DEBUG
-        _logger.LogInformation("Received chat message from {SourceInterface}: {ChatMessage}",
+        _logger.LogInformation(
+            "Received chat message from {SourceInterface}: {ChatMessage}",
             sourceInterface,
-            chatMessage);
+            chatMessage
+        );
 #endif
         _notificationSender.Send(chatMessage);
     }
@@ -56,14 +70,5 @@ public class ChatAgent : BackgroundService
     {
         _logger.LogTrace("Received reply message {@Message}", message);
         _chatInterface.SendMessage(message.Identifier, message.Content);
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Shutting down Chat Agent ...");
-        _replyReceiver.StartListening();
-        _chatInterface.MessageReceived -= OnMessageReceived;
-        _chatInterface.Disconnect();
-        return base.StopAsync(cancellationToken);
     }
 }

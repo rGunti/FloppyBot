@@ -9,7 +9,7 @@ namespace FloppyBot.WebApi.V1Compatibility.Controllers;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/import")]
-//[Authorize(Permissions.READ_BOT)]
+// [Authorize(Permissions.READ_BOT)]
 public class V1DataImportController : ControllerBase
 {
     private readonly V1DataImportService _importService;
@@ -20,9 +20,7 @@ public class V1DataImportController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult ImportData(
-        IFormFile? file,
-        [FromQuery] bool simulate = true)
+    public IActionResult ImportData(IFormFile? file, [FromQuery] bool simulate = true)
     {
         if (file == null)
         {
@@ -38,7 +36,8 @@ public class V1DataImportController : ControllerBase
         {
             throw new HttpStatusCodeException(
                 StatusCodes.Status500InternalServerError,
-                "Failed to import file");
+                "Failed to import file"
+            );
         }
 
         return NoContent();

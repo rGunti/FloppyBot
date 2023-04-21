@@ -7,11 +7,7 @@ public interface IQuoteService
     Quote? GetRandomQuote(string channelId);
     Quote? GetQuote(string channelId, int quoteId);
 
-    Quote AddQuote(
-        string channelId,
-        string quoteText,
-        string? context,
-        string author);
+    Quote AddQuote(string channelId, string quoteText, string? context, string author);
 
     Quote ImportQuote(Quote quote);
 
@@ -22,4 +18,3 @@ public interface IQuoteService
     IEnumerable<Quote> GetQuotes(string channelId);
     bool UpdateQuote(string channelId, int quoteId, Quote quote);
 }
-

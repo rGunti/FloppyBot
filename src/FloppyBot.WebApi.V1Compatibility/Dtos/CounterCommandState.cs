@@ -5,4 +5,5 @@ public record CounterCommandState(
     string ChannelId,
     string Name,
     string Response,
-    int State);
+    int State
+);

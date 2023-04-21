@@ -1,8 +1,6 @@
 namespace FloppyBot.Commands.Core.Entities;
 
-public record CommandResult(
-    CommandOutcome Outcome,
-    string? ResponseContent = null)
+public record CommandResult(CommandOutcome Outcome, string? ResponseContent = null)
 {
     public static readonly CommandResult Success = new(CommandOutcome.Success);
     public static readonly CommandResult Failed = new(CommandOutcome.Failed);
@@ -31,5 +29,3 @@ public record CommandResult(
         return Success with { ResponseContent = content };
     }
 }
-
-

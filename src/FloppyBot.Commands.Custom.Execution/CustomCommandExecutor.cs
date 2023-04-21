@@ -17,7 +17,10 @@ namespace FloppyBot.Commands.Custom.Execution;
 
 public interface ICustomCommandExecutor
 {
-    IEnumerable<string?> Execute(CommandInstruction instruction, CustomCommandDescription description);
+    IEnumerable<string?> Execute(
+        CommandInstruction instruction,
+        CustomCommandDescription description
+    );
 }
 
 public class CustomCommandExecutor : ICustomCommandExecutor
@@ -37,7 +40,8 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         IRandomNumberGenerator randomNumberGenerator,
         ICooldownService cooldownService,
         ICounterStorageService counterStorageService,
-        ISoundCommandInvocationSender invocationSender)
+        ISoundCommandInvocationSender invocationSender
+    )
     {
         _logger = logger;
         _timeProvider = timeProvider;
@@ -47,21 +51,31 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         _invocationSender = invocationSender;
     }
 
-    public IEnumerable<string?> Execute(CommandInstruction instruction, CustomCommandDescription description)
+    public IEnumerable<string?> Execute(
+        CommandInstruction instruction,
+        CustomCommandDescription description
+    )
     {
         // Assert Privilege Level
         ChatUser author = instruction.Context!.SourceMessage.Author;
         author.AssertLevel(description.Limitations.MinLevel);
 
-        if (description.Limitations.LimitedToUsers.Any() &&
-            !description.Limitations.LimitedToUsers.Contains(author.Identifier.ToString().ToLowerInvariant()) &&
-            !description.Limitations.LimitedToUsers.Contains(author.Identifier.Channel.ToLowerInvariant()))
+        if (
+            description.Limitations.LimitedToUsers.Any()
+            && !description.Limitations.LimitedToUsers.Contains(
+                author.Identifier.ToString().ToLowerInvariant()
+            )
+            && !description.Limitations.LimitedToUsers.Contains(
+                author.Identifier.Channel.ToLowerInvariant()
+            )
+        )
         {
             _logger.LogDebug(
                 "User {UserId} is not whitelisted for command {CommandId} ({CommandName}), command execution skipped",
                 author.Identifier,
                 description.Id,
-                description.Name);
+                description.Name
+            );
             yield break;
         }
 
@@ -70,7 +84,8 @@ public class CustomCommandExecutor : ICustomCommandExecutor
             _logger.LogDebug(
                 "Command {CommandId} ({CommandName}) is currently on cooldown, command execution skipped",
                 description.Id,
-                description.Name);
+                description.Name
+            );
             yield break;
         }
 
@@ -79,9 +94,10 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         {
             case CommandResponseMode.First:
             case CommandResponseMode.PickOneRandom:
-                int index = description.ResponseMode == CommandResponseMode.PickOneRandom
-                    ? _randomNumberGenerator.Next(0, description.Responses.Count)
-                    : 0;
+                int index =
+                    description.ResponseMode == CommandResponseMode.PickOneRandom
+                        ? _randomNumberGenerator.Next(0, description.Responses.Count)
+                        : 0;
                 yield return Execute(instruction, description, description.Responses[index]);
                 break;
             case CommandResponseMode.All:
@@ -92,7 +108,9 @@ public class CustomCommandExecutor : ICustomCommandExecutor
 
                 break;
             default:
-                throw new NotImplementedException($"Response Mode {description.ResponseMode} not implemented");
+                throw new NotImplementedException(
+                    $"Response Mode {description.ResponseMode} not implemented"
+                );
         }
     }
 
@@ -110,15 +128,18 @@ public class CustomCommandExecutor : ICustomCommandExecutor
             return false;
         }
 
-        DateTimeOffset lastExecution =
-            GetCooldownFor(sourceMessage, description.Aliases.Concat(new[] { description.Name }));
+        DateTimeOffset lastExecution = GetCooldownFor(
+            sourceMessage,
+            description.Aliases.Concat(new[] { description.Name })
+        );
         TimeSpan delta = _timeProvider.GetCurrentUtcTime() - lastExecution;
         if (delta < cooldownTime)
         {
             _logger.LogDebug(
                 "Command did not pass cooldown check, delta was {CooldownDelta}, needed at least {Cooldown}",
                 delta,
-                cooldownTime);
+                cooldownTime
+            );
             return true;
         }
 
@@ -127,12 +148,18 @@ public class CustomCommandExecutor : ICustomCommandExecutor
 
     private DateTimeOffset GetCooldownFor(
         ChatMessage sourceMessage,
-        IEnumerable<string> commandNames)
+        IEnumerable<string> commandNames
+    )
     {
         return commandNames
-            .Select(commandName => _cooldownService.GetLastExecution(
-                sourceMessage.Identifier.GetChannel(),
-                sourceMessage.Author.Identifier, commandName))
+            .Select(
+                commandName =>
+                    _cooldownService.GetLastExecution(
+                        sourceMessage.Identifier.GetChannel(),
+                        sourceMessage.Author.Identifier,
+                        commandName
+                    )
+            )
             .OrderByDescending(i => i)
             .FirstOrDefault(DateTimeOffset.MinValue);
     }
@@ -140,28 +167,35 @@ public class CustomCommandExecutor : ICustomCommandExecutor
     private string? Execute(
         CommandInstruction instruction,
         CustomCommandDescription description,
-        CommandResponse response)
+        CommandResponse response
+    )
     {
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response.Content.Format(new PlaceholderContainer(
-                    instruction,
-                    description,
-                    _timeProvider.GetCurrentUtcTime(),
-                    _randomNumberGenerator.Next(0, 100),
-                    _counterStorageService));
+                return response.Content.Format(
+                    new PlaceholderContainer(
+                        instruction,
+                        description,
+                        _timeProvider.GetCurrentUtcTime(),
+                        _randomNumberGenerator.Next(0, 100),
+                        _counterStorageService
+                    )
+                );
             case ResponseType.Sound:
                 string[] split = response.Content.Split(SOUND_CMD_SPLIT_CHAR);
                 string payloadName = split[0];
                 string? reply = split.Length > 1 ? split[1] : null;
 
-                _invocationSender.InvokeSoundCommand(new SoundCommandInvocation(
-                    instruction.Context!.SourceMessage.Author.Identifier,
-                    instruction.Context!.SourceMessage.Identifier.GetChannel(),
-                    description.Name,
-                    payloadName,
-                    _timeProvider.GetCurrentUtcTime()));
+                _invocationSender.InvokeSoundCommand(
+                    new SoundCommandInvocation(
+                        instruction.Context!.SourceMessage.Author.Identifier,
+                        instruction.Context!.SourceMessage.Identifier.GetChannel(),
+                        description.Name,
+                        payloadName,
+                        _timeProvider.GetCurrentUtcTime()
+                    )
+                );
                 return reply;
             default:
                 throw new NotImplementedException($"Response Type {response.Type} not implemented");

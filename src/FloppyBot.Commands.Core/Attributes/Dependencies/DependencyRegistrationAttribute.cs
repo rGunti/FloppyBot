@@ -4,6 +4,4 @@
 /// This attribute denotes methods that registers dependencies
 /// </summary>
 [AttributeUsage(AttributeTargets.Method)]
-public class DependencyRegistrationAttribute : Attribute
-{
-}
+public class DependencyRegistrationAttribute : Attribute { }

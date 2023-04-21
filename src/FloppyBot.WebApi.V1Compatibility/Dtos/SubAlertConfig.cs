@@ -5,4 +5,5 @@ public record SubAlertConfig(
     string Message,
     string ReSubMessage,
     string CommunitySubMessage,
-    string GiftSubMessage);
+    string GiftSubMessage
+);

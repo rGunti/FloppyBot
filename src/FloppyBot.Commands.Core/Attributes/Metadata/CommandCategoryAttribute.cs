@@ -2,7 +2,6 @@
 
 public class CommandCategoryAttribute : CommandMetadataAttribute
 {
-    public CommandCategoryAttribute(string value) : base(CommandMetadataTypes.CATEGORY, value)
-    {
-    }
+    public CommandCategoryAttribute(string value)
+        : base(CommandMetadataTypes.CATEGORY, value) { }
 }

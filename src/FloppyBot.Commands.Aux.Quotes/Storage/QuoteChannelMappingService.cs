@@ -20,7 +20,8 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
     public QuoteChannelMappingService(
         IRepositoryFactory repositoryFactory,
-        ITimeProvider timeProvider)
+        ITimeProvider timeProvider
+    )
     {
         _timeProvider = timeProvider;
         _repository = repositoryFactory.GetRepository<QuoteChannelMapping>();
@@ -43,8 +44,7 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
     public string? StartJoinProcess(string mappingId, string newChannelId)
     {
-        var mappings = GetQuoteChannelMappings(mappingId)
-            .ToImmutableList();
+        var mappings = GetQuoteChannelMappings(mappingId).ToImmutableList();
 
         if (!mappings.Any() || mappings.Any(c => c.ChannelId == newChannelId))
         {
@@ -57,8 +57,7 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
     public bool ConfirmJoinProcess(string mappingId, string newChannelId, string joinCode)
     {
-        var mappings = GetQuoteChannelMappings(mappingId)
-            .Where(m => !m.Confirmed);
+        var mappings = GetQuoteChannelMappings(mappingId).Where(m => !m.Confirmed);
         if (!mappings.Any())
         {
             return false;
@@ -89,47 +88,40 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
     private IEnumerable<QuoteChannelMapping> GetQuoteChannelMappings(string mappingId)
     {
-        return _repository.GetAll()
-            .Where(m => m.MappingId == mappingId);
+        return _repository.GetAll().Where(m => m.MappingId == mappingId);
     }
 
     private string CreateJoinKey(string mappingId, string channelId)
     {
-        return _joinKeyRepository.Insert(new QuoteChannelMappingJoinKeys(
-            Guid.NewGuid().ToString(),
-            mappingId,
-            channelId,
-            _timeProvider.GetCurrentUtcTime().Add(MaxCodeAge).UtcDateTime)).Id;
+        return _joinKeyRepository
+            .Insert(
+                new QuoteChannelMappingJoinKeys(
+                    Guid.NewGuid().ToString(),
+                    mappingId,
+                    channelId,
+                    _timeProvider.GetCurrentUtcTime().Add(MaxCodeAge).UtcDateTime
+                )
+            )
+            .Id;
     }
 
     private QuoteChannelMapping CreateNewMapping(string channelId)
     {
-        var mapping = new QuoteChannelMapping(
-            null!,
-            Guid.NewGuid().ToString(),
-            channelId,
-            true);
+        var mapping = new QuoteChannelMapping(null!, Guid.NewGuid().ToString(), channelId, true);
         return _repository.Insert(mapping);
     }
 
     private void StageNewChannelToMapping(string mappingId, string channelId)
     {
-        _repository.Insert(new QuoteChannelMapping(
-            null!,
-            mappingId,
-            channelId,
-            false));
+        _repository.Insert(new QuoteChannelMapping(null!, mappingId, channelId, false));
     }
 
     private void ConfirmNewChannelToMapping(string mappingId, string channelId)
     {
-        var mapping = _repository.GetAll()
-            .First(m => m.MappingId == mappingId
-                        && m.ChannelId == channelId);
-        _repository.Update(mapping with
-        {
-            Confirmed = true
-        });
+        var mapping = _repository
+            .GetAll()
+            .First(m => m.MappingId == mappingId && m.ChannelId == channelId);
+        _repository.Update(mapping with { Confirmed = true });
     }
 
     private void DeleteJoinKey(QuoteChannelMappingJoinKeys key)
@@ -139,7 +131,8 @@ public class QuoteChannelMappingService : IQuoteChannelMappingService
 
     private void DeleteUnconfirmedChannelMappings(string mappingId)
     {
-        _repository.Delete(_repository.GetAll()
-            .Where(m => m.MappingId == mappingId && !m.Confirmed));
+        _repository.Delete(
+            _repository.GetAll().Where(m => m.MappingId == mappingId && !m.Confirmed)
+        );
     }
 }

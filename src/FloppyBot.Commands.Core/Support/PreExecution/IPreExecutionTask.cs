@@ -15,7 +15,5 @@ public interface IPreExecutionTask
     /// <param name="info"></param>
     /// <param name="instruction"></param>
     /// <returns></returns>
-    bool ExecutePre(
-        CommandInfo info,
-        CommandInstruction instruction);
+    bool ExecutePre(CommandInfo info, CommandInstruction instruction);
 }

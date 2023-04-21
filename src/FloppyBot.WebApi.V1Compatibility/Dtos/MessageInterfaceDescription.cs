@@ -8,4 +8,5 @@ public record MessageInterfaceDescription(
     string SupportedFeatures,
     int? CurrentBufferSize,
     int? MaxBufferSize,
-    int? ThreadId);
+    int? ThreadId
+);

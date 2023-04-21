@@ -1,8 +1,6 @@
 ﻿namespace FloppyBot.Commands.Executor.Agent.Cmds.Currency;
 
-public record CurrencyValue(
-    string Currency,
-    decimal Value)
+public record CurrencyValue(string Currency, decimal Value)
 {
     public override string ToString()
     {

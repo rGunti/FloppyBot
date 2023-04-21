@@ -4,7 +4,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion.Abstraction;
 
 public interface IUnitConversionEngine
 {
-    IImmutableDictionary<(string from, string to), IUnitConversion> RegisteredConversions { get; }
+    IImmutableDictionary<(string From, string To), IUnitConversion> RegisteredConversions { get; }
 
     bool HasDirectConversion(string from, string to);
     bool HasInvertedConversion(string from, string to);
@@ -14,4 +14,3 @@ public interface IUnitConversionEngine
 
     IUnitConversion? FindConversion(string from, string to);
 }
-

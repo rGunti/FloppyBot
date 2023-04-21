@@ -6,8 +6,6 @@ public class BuiltInCommandsTests
     [TestMethod]
     public void Ping()
     {
-        Assert.AreEqual(
-            BuiltInCommands.REPLY_PING,
-            BuiltInCommands.Ping());
+        Assert.AreEqual(BuiltInCommands.REPLY_PING, BuiltInCommands.Ping());
     }
 }

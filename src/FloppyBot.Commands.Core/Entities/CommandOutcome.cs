@@ -4,5 +4,5 @@ public enum CommandOutcome
 {
     NoResponse,
     Success,
-    Failed
+    Failed,
 }

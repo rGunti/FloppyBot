@@ -31,14 +31,16 @@ public class RedisNotificationInterfaceTests
 
         _interfaceFactory = new RedisNotificationInterfaceFactory(
             LoggingUtils.GetLogger<RedisNotificationInterfaceFactory>(),
-            factory.Object);
+            factory.Object
+        );
     }
 
     [TestMethod]
     public void ReceiverIsCreatedCorrectly()
     {
         INotificationReceiver<object> receiver = _interfaceFactory.GetNewReceiver<object>(
-            "redis.host.invalid|SomeChannel");
+            "redis.host.invalid|SomeChannel"
+        );
         Assert.IsInstanceOfType(receiver, typeof(RedisNotificationReceiver<object>));
         Assert.AreEqual("SomeChannel", ((RedisNotificationReceiver<object>)receiver).Channel);
     }
@@ -48,27 +50,38 @@ public class RedisNotificationInterfaceTests
     {
         Action<RedisChannel, RedisValue>? subFn = null;
         _subscriberMock
-            .Setup(s => s.Subscribe(
-                It.IsAny<RedisChannel>(),
-                It.IsAny<Action<RedisChannel, RedisValue>>(),
-                It.IsAny<CommandFlags>()))
-            .Callback<RedisChannel, Action<RedisChannel, RedisValue>, CommandFlags>((_, handler, _) =>
-            {
-                subFn = handler;
-            });
+            .Setup(
+                s =>
+                    s.Subscribe(
+                        It.IsAny<RedisChannel>(),
+                        It.IsAny<Action<RedisChannel, RedisValue>>(),
+                        It.IsAny<CommandFlags>()
+                    )
+            )
+            .Callback<RedisChannel, Action<RedisChannel, RedisValue>, CommandFlags>(
+                (_, handler, _) =>
+                {
+                    subFn = handler;
+                }
+            );
 
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
-            "redis.host.invalid|SomeChannel");
+            "redis.host.invalid|SomeChannel"
+        );
         receiver.StartListening();
 
         Assert.IsTrue(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         // Verify subscription has happened
-        _subscriberMock.Verify(s => s.Subscribe(
-                It.Is<RedisChannel>(c => c == "SomeChannel"),
-                It.IsAny<Action<RedisChannel, RedisValue>>(),
-                It.IsAny<CommandFlags>()),
-            Times.Once);
+        _subscriberMock.Verify(
+            s =>
+                s.Subscribe(
+                    It.Is<RedisChannel>(c => c == "SomeChannel"),
+                    It.IsAny<Action<RedisChannel, RedisValue>>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Once
+        );
 
         Assert.IsNotNull(subFn);
 
@@ -86,52 +99,69 @@ public class RedisNotificationInterfaceTests
     public void ReceiverIsNotSubscribingTwice()
     {
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
-            "redis.host.invalid|SomeChannel");
+            "redis.host.invalid|SomeChannel"
+        );
         receiver.StartListening();
         receiver.StartListening();
 
-        _subscriberMock.Verify(s => s.Subscribe(
-                It.Is<RedisChannel>(c => c == "SomeChannel"),
-                It.IsAny<Action<RedisChannel, RedisValue>>(),
-                It.IsAny<CommandFlags>()),
-            Times.Once);
+        _subscriberMock.Verify(
+            s =>
+                s.Subscribe(
+                    It.Is<RedisChannel>(c => c == "SomeChannel"),
+                    It.IsAny<Action<RedisChannel, RedisValue>>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Once
+        );
     }
 
     [TestMethod]
     public void ReceiverUnsubscribesCorrectly()
     {
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
-            "redis.host.invalid|SomeChannel");
+            "redis.host.invalid|SomeChannel"
+        );
         receiver.StartListening();
 
         receiver.StopListening();
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
-        _subscriberMock.Verify(s => s.Unsubscribe(
-                It.Is<RedisChannel>(c => c == "SomeChannel"),
-                It.IsAny<Action<RedisChannel, RedisValue>?>(),
-                It.IsAny<CommandFlags>()),
-            Times.Once);
+        _subscriberMock.Verify(
+            s =>
+                s.Unsubscribe(
+                    It.Is<RedisChannel>(c => c == "SomeChannel"),
+                    It.IsAny<Action<RedisChannel, RedisValue>?>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Once
+        );
     }
 
     [TestMethod]
     public void ReceiverUnsubscribesOnlyWhenConnected()
     {
         INotificationReceiver<int> receiver = _interfaceFactory.GetNewReceiver<int>(
-            "redis.host.invalid|SomeChannel");
+            "redis.host.invalid|SomeChannel"
+        );
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         receiver.StopListening();
-        _subscriberMock.Verify(s => s.Subscribe(
-                It.Is<RedisChannel>(c => c == "SomeChannel"),
-                It.IsAny<Action<RedisChannel, RedisValue>>(),
-                It.IsAny<CommandFlags>()),
-            Times.Never);
+        _subscriberMock.Verify(
+            s =>
+                s.Subscribe(
+                    It.Is<RedisChannel>(c => c == "SomeChannel"),
+                    It.IsAny<Action<RedisChannel, RedisValue>>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Never
+        );
     }
 
     [TestMethod]
     public void SenderIsCreatedCorrectly()
     {
-        INotificationSender sender = _interfaceFactory.GetNewSender("redis.host.invalid|SomeChannel");
+        INotificationSender sender = _interfaceFactory.GetNewSender(
+            "redis.host.invalid|SomeChannel"
+        );
         Assert.IsInstanceOfType(sender, typeof(RedisNotificationSender));
         Assert.AreEqual("SomeChannel", ((RedisNotificationSender)sender).Channel);
     }
@@ -139,14 +169,19 @@ public class RedisNotificationInterfaceTests
     [TestMethod]
     public void SenderIsCalledCorrectly()
     {
-        INotificationSender sender = _interfaceFactory.GetNewSender("redis.host.invalid|SomeChannel");
+        INotificationSender sender = _interfaceFactory.GetNewSender(
+            "redis.host.invalid|SomeChannel"
+        );
         sender.Send(new { Name = "Test", Value = 42 });
 
-        _subscriberMock
-            .Verify(s => s.Publish(
+        _subscriberMock.Verify(
+            s =>
+                s.Publish(
                     It.Is<RedisChannel>(c => c == "SomeChannel"),
                     It.Is<RedisValue>(v => v == "{\"Name\":\"Test\",\"Value\":42}"),
-                    It.IsAny<CommandFlags>()),
-                Times.Once);
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Once
+        );
     }
 }

@@ -25,52 +25,12 @@ public class CustomCommandHost
     public CustomCommandHost(
         ILogger<CustomCommandHost> logger,
         ICustomCommandExecutor commandExecutor,
-        ICustomCommandService commandService)
+        ICustomCommandService commandService
+    )
     {
         _logger = logger;
         _commandExecutor = commandExecutor;
         _commandService = commandService;
-    }
-
-    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
-    {
-        return _commandService.GetCommand(
-                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
-                instruction.CommandName)
-            .Wrap();
-    }
-
-    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
-    {
-        return new KeyNotFoundException(
-            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}");
-    }
-
-    public bool CanHandleCommand(CommandInstruction instruction)
-    {
-        return GetCommand(instruction).HasValue;
-    }
-
-    [VariableCommandHandler(
-        nameof(CanHandleCommand),
-        identifier: "Custom Commands")]
-    // ReSharper disable once UnusedMember.Global
-    public CommandResult? RunCustomCommand(CommandInstruction instruction)
-    {
-        CustomCommandDescription customCommand = GetCommand(instruction)
-            .OrThrow(() => CreateCommandNotFoundException(instruction));
-        ImmutableList<string?> replies = _commandExecutor.Execute(instruction, customCommand)
-            .ToImmutableList();
-
-        if (!replies.Any())
-        {
-            return new CommandResult(CommandOutcome.NoResponse);
-        }
-
-        // TODO: Supply multiple results
-        return new CommandResult(
-            CommandOutcome.Success,
-            replies.Join("\n\n"));
     }
 
     [DependencyRegistration]
@@ -91,5 +51,46 @@ public class CustomCommandHost
             .AddScoped<ICustomCommandService, CustomCommandService>()
             .AddScoped<ICounterStorageService, CounterStorageService>()
             .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
+    }
+
+    public bool CanHandleCommand(CommandInstruction instruction)
+    {
+        return GetCommand(instruction).HasValue;
+    }
+
+    [VariableCommandHandler(nameof(CanHandleCommand), identifier: "Custom Commands")]
+    // ReSharper disable once UnusedMember.Global
+    public CommandResult? RunCustomCommand(CommandInstruction instruction)
+    {
+        CustomCommandDescription customCommand = GetCommand(instruction)
+            .OrThrow(() => CreateCommandNotFoundException(instruction));
+        ImmutableList<string?> replies = _commandExecutor
+            .Execute(instruction, customCommand)
+            .ToImmutableList();
+
+        if (!replies.Any())
+        {
+            return new CommandResult(CommandOutcome.NoResponse);
+        }
+
+        // TODO: Supply multiple results
+        return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
+    }
+
+    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
+    {
+        return _commandService
+            .GetCommand(
+                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
+                instruction.CommandName
+            )
+            .Wrap();
+    }
+
+    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
+    {
+        return new KeyNotFoundException(
+            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
+        );
     }
 }

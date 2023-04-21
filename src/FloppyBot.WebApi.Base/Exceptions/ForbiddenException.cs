@@ -4,7 +4,6 @@ namespace FloppyBot.WebApi.Base.Exceptions;
 
 public class ForbiddenException : HttpStatusCodeException
 {
-    public ForbiddenException(string message) : base(StatusCodes.Status403Forbidden, message)
-    {
-    }
+    public ForbiddenException(string message)
+        : base(StatusCodes.Status403Forbidden, message) { }
 }

@@ -20,19 +20,26 @@ public class ShoutoutCommandTests
         _shoutoutCommand = new ShoutoutCommand(
             _twitchApiServiceMock.Object,
             _shoutoutMessageSettingServiceMock.Object,
-            Mock.Of<ILogger<ShoutoutCommand>>());
+            Mock.Of<ILogger<ShoutoutCommand>>()
+        );
 
         _twitchApiServiceMock
             .Setup(s => s.LookupUser(It.Is<string>(c => c == "somestreamer")))
-            .Returns((string _) => Task.FromResult(new TwitchUserLookupResult(
-                "somestreamer",
-                "SomeStreamer",
-                "Cool Game"))!);
+            .Returns(
+                (string _) =>
+                    Task.FromResult(
+                        new TwitchUserLookupResult("somestreamer", "SomeStreamer", "Cool Game")
+                    )!
+            );
         _shoutoutMessageSettingServiceMock
             .Setup(s => s.GetSettings(It.Is<string>(c => c == "Twitch/someuser")))
-            .Returns((string _) => new ShoutoutMessageSetting(
-                "Twitch/someuser",
-                "Check out {DisplayName} at {Link}! They last played {LastGame}!"));
+            .Returns(
+                (string _) =>
+                    new ShoutoutMessageSetting(
+                        "Twitch/someuser",
+                        "Check out {DisplayName} at {Link}! They last played {LastGame}!"
+                    )
+            );
     }
 
     [TestMethod]
@@ -41,7 +48,8 @@ public class ShoutoutCommandTests
         var reply = await _shoutoutCommand.Shoutout("Twitch/someuser", "somestreamer");
         Assert.AreEqual(
             "Check out SomeStreamer at https://twitch.tv/somestreamer! They last played Cool Game!",
-            reply);
+            reply
+        );
     }
 
     [TestMethod]
@@ -62,17 +70,17 @@ public class ShoutoutCommandTests
         _shoutoutMessageSettingServiceMock
             .Setup(s => s.SetShoutoutMessage(It.IsAny<string>(), It.IsAny<string>()))
             .Verifiable();
-        var reply = _shoutoutCommand.SetShoutout(
-            "Twitch/someuser",
-            "My new template");
+        var reply = _shoutoutCommand.SetShoutout("Twitch/someuser", "My new template");
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
-        _shoutoutMessageSettingServiceMock
-            .Verify(
-                s => s.SetShoutoutMessage(
+        _shoutoutMessageSettingServiceMock.Verify(
+            s =>
+                s.SetShoutoutMessage(
                     It.Is<string>(c => c == "Twitch/someuser"),
-                    It.Is<string>(m => m == "My new template")),
-                Times.Once);
+                    It.Is<string>(m => m == "My new template")
+                ),
+            Times.Once
+        );
     }
 
     [TestMethod]
@@ -84,9 +92,9 @@ public class ShoutoutCommandTests
         var reply = _shoutoutCommand.ClearShoutout("Twitch/someuser");
 
         Assert.AreEqual(ShoutoutCommand.REPLY_CLEAR, reply);
-        _shoutoutMessageSettingServiceMock
-            .Verify(
-                s => s.ClearSettings(It.Is<string>(c => c == "Twitch/someuser")),
-                Times.Once);
+        _shoutoutMessageSettingServiceMock.Verify(
+            s => s.ClearSettings(It.Is<string>(c => c == "Twitch/someuser")),
+            Times.Once
+        );
     }
 }

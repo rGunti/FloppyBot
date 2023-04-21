@@ -16,8 +16,5 @@ public interface IPostExecutionTask
     /// <param name="instruction"></param>
     /// <param name="result"></param>
     /// <returns></returns>
-    bool ExecutePost(
-        CommandInfo info,
-        CommandInstruction instruction,
-        CommandResult result);
+    bool ExecutePost(CommandInfo info, CommandInstruction instruction, CommandResult result);
 }

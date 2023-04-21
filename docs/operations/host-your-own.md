@@ -1,6 +1,7 @@
 # Host your own FloppyBot
 
 To host FloppyBot yourself, you require:
+
 - a server that can run Docker
 - a MongoDB database server
 - a Redis server
@@ -11,17 +12,26 @@ To host FloppyBot yourself, you require:
 
 ## Agents
 
-FloppyBot is divided into multiple parts ("microservices") called "Agents". Agents perform various tasks to make FloppyBot work. Currently, FloppyBot has 5 agents:
+FloppyBot is divided into multiple parts ("microservices") called "Agents". Agents perform various tasks to make
+FloppyBot work. Currently, FloppyBot has 5 agents:
 
-- Chat Agent: This agent connects to a single platform and serves messages back and forth. Depending on the configuration, it may for example connect to a certain Twitch channel and only serve this channel, while Discord is served by a single instance.
-- Command Parser: This agent analyses incoming messages for possible commands. If a command is found, it issues a control message that can be picked up by other agents to act upon.
-- Command Executor: This agent receives parsed command messages from the Command Parser and executes them. This is _The Core_ of FloppyBot.
+- Chat Agent: This agent connects to a single platform and serves messages back and forth. Depending on the
+  configuration, it may for example connect to a certain Twitch channel and only serve this channel, while Discord is
+  served by a single instance.
+- Command Parser: This agent analyses incoming messages for possible commands. If a command is found, it issues a
+  control message that can be picked up by other agents to act upon.
+- Command Executor: This agent receives parsed command messages from the Command Parser and executes them. This is _The
+  Core_ of FloppyBot.
 - Message Counter: This agent receives messages from Chat Agents and keeps count. This is used by other features.
-- Web API: This agent serves a Web API for the FloppyBot Admin Console and is connected to the other services. Certain commands can interact with the Web API, i.e. sound commands, which have to be executed in a browser running on the streamers computer to work.
+- Web API: This agent serves a Web API for the FloppyBot Admin Console and is connected to the other services. Certain
+  commands can interact with the Web API, i.e. sound commands, which have to be executed in a browser running on the
+  streamers computer to work.
 
 ## Docker Compose
 
-The easiest way to get FloppyBot running is to use a Docker Compose file. This not only makes it easy to spin FloppyBot up and down, it also allows your configuration to be reproducible. Below you can find an example for a FloppyBot cluster:
+The easiest way to get FloppyBot running is to use a Docker Compose file. This not only makes it easy to spin FloppyBot
+up and down, it also allows your configuration to be reproducible. Below you can find an example for a FloppyBot
+cluster:
 
 ```yml
 version: '3'
@@ -182,8 +192,10 @@ volumes:
 
 ## Folder Structure and `.env` files
 
-You may have noticed that this `docker-compose.yaml` file references several `.env` files. This is to ensure that this file doesn't contain any secrets.
-Additionally, versions are collected in environment variables, which you can also control with a root-level `.env` file. Below, you can find an example of how to setup a project folder for your `docker-compose.yaml` file:
+You may have noticed that this `docker-compose.yaml` file references several `.env` files. This is to ensure that this
+file doesn't contain any secrets.
+Additionally, versions are collected in environment variables, which you can also control with a root-level `.env` file.
+Below, you can find an example of how to setup a project folder for your `docker-compose.yaml` file:
 
 ```
 floppybot
@@ -222,4 +234,6 @@ VERSION_FLOPPYBOT_UI=2023.2.2
 
 ## FloppyBot Configuration
 
-FloppyBot uses Environment variables (and JSON files) for configuration. It is recommended to put your values in `.env` files as overriding JSON-based configuration can lead to issues during runtime. See [Configuration](operations/configuration.md) for more details about the available configuration values.
+FloppyBot uses Environment variables (and JSON files) for configuration. It is recommended to put your values in `.env`
+files as overriding JSON-based configuration can lead to issues during runtime.
+See [Configuration](operations/configuration.md) for more details about the available configuration values.

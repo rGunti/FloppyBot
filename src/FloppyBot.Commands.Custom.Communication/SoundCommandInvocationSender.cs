@@ -10,9 +10,12 @@ public class SoundCommandInvocationSender : ISoundCommandInvocationSender
 
     public SoundCommandInvocationSender(
         INotificationSenderFactory senderFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
-        _notificationSender = senderFactory.GetNewSender(configuration.GetSoundCommandInvocationConfigString());
+        _notificationSender = senderFactory.GetNewSender(
+            configuration.GetSoundCommandInvocationConfigString()
+        );
     }
 
     public void InvokeSoundCommand(SoundCommandInvocation invocation)
@@ -27,10 +30,12 @@ public class SoundCommandInvocationReceiver : ISoundCommandInvocationReceiver, I
 
     public SoundCommandInvocationReceiver(
         INotificationReceiverFactory receiverFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         _receiver = receiverFactory.GetNewReceiver<SoundCommandInvocation>(
-            configuration.GetSoundCommandInvocationConfigString());
+            configuration.GetSoundCommandInvocationConfigString()
+        );
         _receiver.NotificationReceived += OnNotificationReceived;
         _receiver.StartListening();
     }

@@ -5,4 +5,5 @@ public record FileStorageQuota(
     double MaxStorageQuota,
     int MaxFileNumber,
     double StorageUsed,
-    int FileCount);
+    int FileCount
+);

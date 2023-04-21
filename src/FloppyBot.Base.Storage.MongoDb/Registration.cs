@@ -12,25 +12,35 @@ namespace FloppyBot.Base.Storage.MongoDb;
 
 public static class Registration
 {
-    private static MongoUrl GetMongoUrl(this IServiceProvider provider) => provider.GetRequiredService<MongoUrl>();
-
-    private static IMongoClient GetMongoClient(this IServiceProvider provider)
-        => provider.GetRequiredService<IMongoClient>();
-
     public static IServiceCollection AddMongoDbStorage(
         this IServiceCollection services,
-        string connectionStringName = "MongoDb")
+        string connectionStringName = "MongoDb"
+    )
     {
         BsonSerializer.RegisterIdGenerator(typeof(string), StringObjectIdGenerator.Instance);
-        ConventionRegistry.Register("Enum2String", new ConventionPack
-        {
-            new EnumRepresentationConvention(BsonType.String)
-        }, _ => true);
+        ConventionRegistry.Register(
+            "Enum2String",
+            new ConventionPack { new EnumRepresentationConvention(BsonType.String) },
+            _ => true
+        );
         return services
-            .AddSingleton<MongoUrl>(s => MongoUrl.Create(s.GetRequiredService<IConfiguration>()
-                .GetConnectionString(connectionStringName)))
+            .AddSingleton<MongoUrl>(
+                s =>
+                    MongoUrl.Create(
+                        s.GetRequiredService<IConfiguration>()
+                            .GetConnectionString(connectionStringName)
+                    )
+            )
             .AddSingleton<IMongoClient>(s => new MongoClient(s.GetMongoUrl()))
-            .AddSingleton<IMongoDatabase>(s => s.GetMongoClient().GetDatabase(s.GetMongoUrl().DatabaseName))
+            .AddSingleton<IMongoDatabase>(
+                s => s.GetMongoClient().GetDatabase(s.GetMongoUrl().DatabaseName)
+            )
             .AddStorageImplementation<MongoDbRepositoryFactory, MongoDbIndexManager>();
     }
+
+    private static MongoUrl GetMongoUrl(this IServiceProvider provider) =>
+        provider.GetRequiredService<MongoUrl>();
+
+    private static IMongoClient GetMongoClient(this IServiceProvider provider) =>
+        provider.GetRequiredService<IMongoClient>();
 }

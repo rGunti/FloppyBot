@@ -16,9 +16,82 @@ public class EoDtoMappingTests
 
     public EoDtoMappingTests()
     {
-        _mapper = new MapperConfiguration(c => c.AddProfile<CustomCommandStorageProfile>())
-            .CreateMapper();
+        _mapper = new MapperConfiguration(
+            c => c.AddProfile<CustomCommandStorageProfile>()
+        ).CreateMapper();
         _repositoryFactory = LiteDbRepositoryFactory.CreateMemoryInstance();
+    }
+
+    [TestMethod]
+    public void CustomCommandDtoAndEo()
+    {
+        Assert.IsTrue(
+            TestConversionAndStorage<CustomCommandDescription, CustomCommandDescriptionEo>(
+                new CustomCommandDescription
+                {
+                    Id = "someId",
+                    Name = "someCommand",
+                    Aliases = new[] { "a", "b" }.ToImmutableHashSet(),
+                    Owners = new[] { "Mock/Channel1" }.ToImmutableHashSet(),
+                    Responses = new[]
+                    {
+                        new CommandResponse(ResponseType.Text, "Hello World"),
+                    }.ToImmutableList(),
+                    Limitations = new CommandLimitation
+                    {
+                        MinLevel = PrivilegeLevel.Moderator,
+                        LimitedToUsers = new[] { "Twitch/User" }.ToImmutableHashSet(),
+                        Cooldown = new[]
+                        {
+                            new CooldownDescription(PrivilegeLevel.Moderator, 2500),
+                            new CooldownDescription(PrivilegeLevel.Administrator, 0),
+                        }.ToImmutableHashSet(),
+                    },
+                }
+            )
+        );
+    }
+
+    [TestMethod]
+    public void CommandResponseDtoAndEo()
+    {
+        Assert.IsTrue(
+            Enum.GetValues<ResponseType>()
+                .Select(t => new CommandResponse(t, "Hello World"))
+                .All(TestConversion<CommandResponse, CommandResponseEo>)
+        );
+    }
+
+    [TestMethod]
+    public void CommandLimitationDtoAndEo()
+    {
+        Assert.IsTrue(
+            Enum.GetValues<PrivilegeLevel>()
+                .Select(
+                    l =>
+                        new CommandLimitation
+                        {
+                            MinLevel = l,
+                            Cooldown = new[]
+                            {
+                                new CooldownDescription(PrivilegeLevel.Superuser, 0),
+                                new CooldownDescription(PrivilegeLevel.Administrator, 100),
+                                new CooldownDescription(PrivilegeLevel.Moderator, 30000),
+                            }.ToImmutableHashSet(),
+                        }
+                )
+                .All(TestConversion<CommandLimitation, CommandLimitationEo>)
+        );
+    }
+
+    [TestMethod]
+    public void CooldownDescriptionDtoAndEo()
+    {
+        Assert.IsTrue(
+            Enum.GetValues<PrivilegeLevel>()
+                .Select(l => new CooldownDescription(l, 2301))
+                .All(TestConversion<CooldownDescription, CooldownDescriptionEo>)
+        );
     }
 
     private bool TestConversion<TDto, TEo>(TDto dto)
@@ -33,7 +106,8 @@ public class EoDtoMappingTests
         return true;
     }
 
-    private bool TestConversionAndStorage<TDto, TEo>(TDto dto) where TEo : class, IEntity<TEo>
+    private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
+        where TEo : class, IEntity<TEo>
     {
         var repo = _repositoryFactory.GetRepository<TEo>();
 
@@ -49,70 +123,5 @@ public class EoDtoMappingTests
         Assert.AreEqual(dto, backDto);
 
         return true;
-    }
-
-    [TestMethod]
-    public void CustomCommandDtoAndEo()
-    {
-        Assert.IsTrue(
-            TestConversionAndStorage<CustomCommandDescription, CustomCommandDescriptionEo>(new CustomCommandDescription
-            {
-                Id = "someId",
-                Name = "someCommand",
-                Aliases = new[] { "a", "b" }.ToImmutableHashSet(),
-                Owners = new[] { "Mock/Channel1" }.ToImmutableHashSet(),
-                Responses = new[]
-                {
-                    new CommandResponse(
-                        ResponseType.Text,
-                        "Hello World")
-                }.ToImmutableList(),
-                Limitations = new CommandLimitation
-                {
-                    MinLevel = PrivilegeLevel.Moderator,
-                    LimitedToUsers = new[]
-                    {
-                        "Twitch/User"
-                    }.ToImmutableHashSet(),
-                    Cooldown = new[]
-                    {
-                        new CooldownDescription(PrivilegeLevel.Moderator, 2500),
-                        new CooldownDescription(PrivilegeLevel.Administrator, 0),
-                    }.ToImmutableHashSet()
-                }
-            }));
-    }
-
-    [TestMethod]
-    public void CommandResponseDtoAndEo()
-    {
-        Assert.IsTrue(Enum.GetValues<ResponseType>()
-            .Select(t => new CommandResponse(t, "Hello World"))
-            .All(TestConversion<CommandResponse, CommandResponseEo>));
-    }
-
-    [TestMethod]
-    public void CommandLimitationDtoAndEo()
-    {
-        Assert.IsTrue(Enum.GetValues<PrivilegeLevel>()
-            .Select(l => new CommandLimitation
-            {
-                MinLevel = l,
-                Cooldown = new[]
-                {
-                    new CooldownDescription(PrivilegeLevel.Superuser, 0),
-                    new CooldownDescription(PrivilegeLevel.Administrator, 100),
-                    new CooldownDescription(PrivilegeLevel.Moderator, 30000),
-                }.ToImmutableHashSet()
-            })
-            .All(TestConversion<CommandLimitation, CommandLimitationEo>));
-    }
-
-    [TestMethod]
-    public void CooldownDescriptionDtoAndEo()
-    {
-        Assert.IsTrue(Enum.GetValues<PrivilegeLevel>()
-            .Select(l => new CooldownDescription(l, 2301))
-            .All(TestConversion<CooldownDescription, CooldownDescriptionEo>));
     }
 }

@@ -25,6 +25,13 @@ public class UrbanDictionaryCommands
         _urbanClient = urbanClient;
     }
 
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void DiSetup(IServiceCollection services)
+    {
+        services.AddSingleton<UrbanClient>();
+    }
+
     [Command("urbandictionary", "define")]
     [PrimaryCommandName("define")]
     [CommandCooldown(PrivilegeLevel.Viewer, 30000)]
@@ -34,20 +41,11 @@ public class UrbanDictionaryCommands
         WordDefine? definition = await _urbanClient.GetWordAsync(query);
         if (definition is { ResultType: ResultType.Exact } && definition.Definitions.Any())
         {
-            return CommandResult.SuccessWith(REPLY_DEFINITION.Format(definition.Definitions.First()));
+            return CommandResult.SuccessWith(
+                REPLY_DEFINITION.Format(definition.Definitions.First())
+            );
         }
 
-        return CommandResult.FailedWith(REPLY_NOT_FOUND.Format(new
-        {
-            Query = query
-        }));
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void DiSetup(IServiceCollection services)
-    {
-        services
-            .AddSingleton<UrbanClient>();
+        return CommandResult.FailedWith(REPLY_NOT_FOUND.Format(new { Query = query }));
     }
 }

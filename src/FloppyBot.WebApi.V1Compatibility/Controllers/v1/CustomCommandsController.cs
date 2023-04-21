@@ -10,7 +10,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/custom-commands")]
@@ -25,28 +25,13 @@ public class CustomCommandsController : ControllerBase
         ICustomCommandService customCommandService,
         IUserService userService,
         IMapper mapper,
-        ICounterStorageService counterStorageService)
+        ICounterStorageService counterStorageService
+    )
     {
         _customCommandService = customCommandService;
         _userService = userService;
         _mapper = mapper;
         _counterStorageService = counterStorageService;
-    }
-
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString()))
-        {
-            throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
     }
 
     [HttpGet]
@@ -58,8 +43,8 @@ public class CustomCommandsController : ControllerBase
     [HttpGet("{messageInterface}/{channel}")]
     public CustomCommand[] GetCommandsForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel)
+        [FromRoute] string channel
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
@@ -72,45 +57,41 @@ public class CustomCommandsController : ControllerBase
     [HttpGet("{messageInterface}/{channel}/{command}")]
     public CustomCommand GetCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command)
+        [FromRoute] string channel,
+        [FromRoute] string command
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
-            .GetCommand(channelId, command)
-            .Wrap()
-            .Where(V1CompatibilityProfile.IsConvertableForTextCommand)
-            .Select(c => _mapper.Map<CustomCommand>(c))
-            .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
+                .GetCommand(channelId, command)
+                .Wrap()
+                .Where(V1CompatibilityProfile.IsConvertableForTextCommand)
+                .Select(c => _mapper.Map<CustomCommand>(c))
+                .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
     }
 
     [HttpGet("{messageInterface}/{channel}/{command}/counter")]
     public int GetCommandCounter(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command)
+        [FromRoute] string channel,
+        [FromRoute] string command
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
-            .GetCommand(channelId, command)
-            .Wrap()
-            .Select(cmd => (int?)_counterStorageService.Peek(cmd.Id))
-            .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
+                .GetCommand(channelId, command)
+                .Wrap()
+                .Select(cmd => (int?)_counterStorageService.Peek(cmd.Id))
+                .FirstOrDefault() ?? throw new NotFoundException($"Command {command} not found");
     }
 
     [HttpPut("{messageInterface}/{channel}/{command}/counter")]
     public IActionResult UpdateCommandCounter(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command,
-        [FromBody]
-        int counterValue)
+        [FromRoute] string channel,
+        [FromRoute] string command,
+        [FromBody] int counterValue
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         string? commandId = _customCommandService
@@ -130,12 +111,10 @@ public class CustomCommandsController : ControllerBase
     [HttpPut("{messageInterface}/{channel}/{command}/rename")]
     public IActionResult RenameCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command,
-        [FromBody]
-        string newCommandName)
+        [FromRoute] string channel,
+        [FromRoute] string command,
+        [FromBody] string newCommandName
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         NullableObject<CustomCommandDescription> wrappedCommand = _customCommandService
@@ -153,7 +132,7 @@ public class CustomCommandsController : ControllerBase
 
         CustomCommandDescription customCommand = wrappedCommand.Value with
         {
-            Name = newCommandName
+            Name = newCommandName,
         };
         _customCommandService.UpdateCommand(customCommand);
         return NoContent();
@@ -162,16 +141,12 @@ public class CustomCommandsController : ControllerBase
     [HttpPost("{messageInterface}/{channel}")]
     public IActionResult CreateCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromBody]
-        CustomCommand newCommand)
+        [FromRoute] string channel,
+        [FromBody] CustomCommand newCommand
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        newCommand = newCommand with
-        {
-            Channel = channelId
-        };
+        newCommand = newCommand with { Channel = channelId };
 
         var convertedCommand = _mapper.Map<CustomCommandDescription>(newCommand);
         if (!_customCommandService.CreateCommand(convertedCommand))
@@ -185,21 +160,17 @@ public class CustomCommandsController : ControllerBase
     [HttpPut("{messageInterface}/{channel}/{command}")]
     public IActionResult UpdateCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command,
-        [FromBody]
-        CustomCommand updatedCommand)
+        [FromRoute] string channel,
+        [FromRoute] string command,
+        [FromBody] CustomCommand updatedCommand
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        updatedCommand = updatedCommand with
-        {
-            Channel = channelId
-        };
+        updatedCommand = updatedCommand with { Channel = channelId };
 
         // Check if command is allowed to be updated over legacy API
-        NullableObject<CustomCommandDescription> existingCommand = _customCommandService.GetCommand(channelId, command)
+        NullableObject<CustomCommandDescription> existingCommand = _customCommandService
+            .GetCommand(channelId, command)
             .Wrap();
         if (!existingCommand.HasValue)
         {
@@ -208,7 +179,9 @@ public class CustomCommandsController : ControllerBase
 
         if (existingCommand.Select(V1CompatibilityProfile.IsConvertableForTextCommand).Any(v => !v))
         {
-            throw new BadRequestException($"Command {channelId},{command} cannot be updated using the legacy API");
+            throw new BadRequestException(
+                $"Command {channelId},{command} cannot be updated using the legacy API"
+            );
         }
 
         var convertedCommand = _mapper.Map<CustomCommandDescription>(updatedCommand);
@@ -219,10 +192,9 @@ public class CustomCommandsController : ControllerBase
     [HttpDelete("{messageInterface}/{channel}/{command}")]
     public IActionResult DeleteCommand(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string command)
+        [FromRoute] string channel,
+        [FromRoute] string command
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         if (!_customCommandService.DeleteCommand(channelId, command))
@@ -231,5 +203,26 @@ public class CustomCommandsController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

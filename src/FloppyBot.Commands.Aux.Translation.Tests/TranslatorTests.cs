@@ -9,8 +9,7 @@ public class TranslatorTests
 
     public TranslatorTests()
     {
-        _translator = new Translator(
-            new Mock<DeepL.ITranslator>().Object);
+        _translator = new Translator(new Mock<DeepL.ITranslator>().Object);
     }
 
     [DataTestMethod]
@@ -22,15 +21,13 @@ public class TranslatorTests
         string input,
         string expectedInputLanguage,
         string expectedOutputLanguage,
-        string expectedText)
+        string expectedText
+    )
     {
         TranslationRequest request = _translator.ParseRequest(input);
         Assert.AreEqual(
-            new TranslationRequest(
-                expectedInputLanguage,
-                expectedOutputLanguage,
-                expectedText),
-            request);
+            new TranslationRequest(expectedInputLanguage, expectedOutputLanguage, expectedText),
+            request
+        );
     }
 }
-

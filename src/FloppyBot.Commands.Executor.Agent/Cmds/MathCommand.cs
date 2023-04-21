@@ -20,7 +20,8 @@ public class MathCommand
     public const string REPLY_DEFAULT = "The answer is {Answer}";
     public const string REPLY_MD = "The answer is `{Answer}`";
     public const string REPLY_ERR_PARSE = "Sorry, something in your expression doesn't make sense";
-    public const string REPLY_ERR_EXEC = "Sorry, something broke while I calculated that expression";
+    public const string REPLY_ERR_EXEC =
+        "Sorry, something broke while I calculated that expression";
 
     private readonly ILogger<MathCommand> _logger;
 
@@ -32,30 +33,29 @@ public class MathCommand
     [Command("math", "calc")]
     [PrimaryCommandName("math")]
     [CommandDescription("Calculate something using a calculator")]
-    [CommandSyntax(
-        "<Expression>",
-        "2+3")]
+    [CommandSyntax("<Expression>", "2+3")]
     [CommandParameterHint(1, "expression", CommandParameterType.String)]
     // ReSharper disable once UnusedMember.Global
     public string? CalculateMathExpression(
         CommandInstruction instruction,
-        [AllArguments]
-        string expression)
+        [AllArguments] string expression
+    )
     {
         try
         {
             var result = ExpressionEvaluator.EvaluateExpression(expression);
             if (result == null)
+            {
                 return null;
+            }
 
-            return instruction.DetermineMessageTemplate(
+            return instruction
+                .DetermineMessageTemplate(
                     ChatInterfaceFeatures.MarkdownText,
                     REPLY_MD,
-                    REPLY_DEFAULT)
-                .Format(new
-                {
-                    Answer = result.ToString()
-                });
+                    REPLY_DEFAULT
+                )
+                .Format(new { Answer = result.ToString() });
         }
         catch (UnexpectedTokenException ex)
         {

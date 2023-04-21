@@ -40,16 +40,13 @@ public class CommandList
             instruction.DetermineMessageTemplate(
                 ChatInterfaceFeatures.MarkdownText,
                 COMMAND_LIST_DELIMITER_MD,
-                COMMAND_LIST_DELIMITER_DEFAULT),
-            commands.Distinct().OrderBy(i => i));
+                COMMAND_LIST_DELIMITER_DEFAULT
+            ),
+            commands.Distinct().OrderBy(i => i)
+        );
 
-        return instruction.DetermineMessageTemplate(
-                ChatInterfaceFeatures.MarkdownText,
-                REPLY_MD,
-                REPLY_DEFAULT)
-            .Format(new
-            {
-                CommandList = commandList
-            });
+        return instruction
+            .DetermineMessageTemplate(ChatInterfaceFeatures.MarkdownText, REPLY_MD, REPLY_DEFAULT)
+            .Format(new { CommandList = commandList });
     }
 }

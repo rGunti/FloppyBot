@@ -18,11 +18,12 @@ namespace FloppyBot.Commands.Aux.Translation;
 [CommandHost]
 public class DeepLCommands
 {
-    private const string CONFIG_KEY = "DeepL:ApiKey";
+    public const string REPLY_HELP =
+        "Translate anything using DeepL! You can either ask it in a sentence"
+        + " (\"translate Hello World from English to German\") or a short syntax"
+        + " (\"translate en>de Hello World\").";
 
-    public const string REPLY_HELP = "Translate anything using DeepL! You can either ask it in a sentence" +
-                                     " (\"translate Hello World from English to German\") or a short syntax" +
-                                     " (\"translate en>de Hello World\").";
+    private const string CONFIG_KEY = "DeepL:ApiKey";
 
     private const string REPLY_SUPPORTED_LANGUAGES =
         "The following languages are supported: {SupportedLanguages:list:{}|, |, and }";
@@ -37,9 +38,11 @@ public class DeepLCommands
         "The following language codes are supported: `{SupportedLanguageCodes:list:{}|, |, and }`";
 
     private const string REPLY_SUCCESS = "\"{Reply}\" (translated from {DetectedInputLanguage})";
-    private const string REPLY_SUCCESS_MD = "> {Reply}\n_(translated from {DetectedInputLanguage})_";
+    private const string REPLY_SUCCESS_MD =
+        "> {Reply}\n_(translated from {DetectedInputLanguage})_";
     private const string REPLY_ERROR = "Whops! I couldn't translate this.";
-    private const string REPLY_ERROR_SPECIFIC = "Whops! I couldn't translate this because {Message}.";
+    private const string REPLY_ERROR_SPECIFIC =
+        "Whops! I couldn't translate this because {Message}.";
 
     private const string PARAM_LIST_LANGUAGES = "languages";
     private const string PARAM_LIST_LANGUAGE_CODES = "codes";
@@ -47,9 +50,7 @@ public class DeepLCommands
     private readonly ILogger<DeepLCommands> _logger;
     private readonly ITranslator _translator;
 
-    public DeepLCommands(
-        ILogger<DeepLCommands> logger,
-        ITranslator translator)
+    public DeepLCommands(ILogger<DeepLCommands> logger, ITranslator translator)
     {
         _logger = logger;
         _translator = translator;
@@ -61,8 +62,9 @@ public class DeepLCommands
     {
         services
             .AddTransient<ITranslator, Translator>()
-            .AddTransient<DeepL.ITranslator, DeepL.Translator>(p =>
-                new DeepL.Translator(p.GetRequiredService<IConfiguration>()[CONFIG_KEY]));
+            .AddTransient<DeepL.ITranslator, DeepL.Translator>(
+                p => new DeepL.Translator(p.GetRequiredService<IConfiguration>()[CONFIG_KEY])
+            );
     }
 
     [Command("translate")]
@@ -74,8 +76,8 @@ public class DeepLCommands
     // ReSharper disable once UnusedMember.Global
     public CommandResult Translate(
         [AllArguments] string? inputString,
-        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)]
-        bool supportsMarkdown)
+        [SupportsFeature(ChatInterfaceFeatures.MarkdownText)] bool supportsMarkdown
+    )
     {
         if (string.IsNullOrWhiteSpace(inputString))
         {
@@ -86,11 +88,11 @@ public class DeepLCommands
         {
             var languages = new
             {
-                SupportedLanguages = _translator.ListSupportedLanguages()
+                SupportedLanguages = _translator
+                    .ListSupportedLanguages()
                     .Select(language => language.Capitalize())
                     .OrderBy(i => i),
-                SupportedLanguageCodes = _translator.ListSupportedLanguageCodes()
-                    .OrderBy(i => i),
+                SupportedLanguageCodes = _translator.ListSupportedLanguageCodes().OrderBy(i => i),
             };
             string template = (inputString, supportsMarkdown) switch
             {
@@ -98,8 +100,10 @@ public class DeepLCommands
                 (PARAM_LIST_LANGUAGES, false) => REPLY_SUPPORTED_LANGUAGES,
                 (PARAM_LIST_LANGUAGE_CODES, true) => REPLY_SUPPORTED_LANGUAGE_CODES_MD,
                 (PARAM_LIST_LANGUAGE_CODES, false) => REPLY_SUPPORTED_LANGUAGE_CODES,
-                _ => throw new ArgumentOutOfRangeException(
-                    $"Combination of parameter {inputString} and markdown support {supportsMarkdown} is not implemented")
+                _
+                    => throw new ArgumentOutOfRangeException(
+                        $"Combination of parameter {inputString} and markdown support {supportsMarkdown} is not implemented"
+                    ),
             };
 
             return CommandResult.SuccessWith(template.Format(languages));
@@ -121,7 +125,11 @@ public class DeepLCommands
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to translate the following query: {TranslationQuery}", inputString);
+            _logger.LogError(
+                ex,
+                "Failed to translate the following query: {TranslationQuery}",
+                inputString
+            );
             return CommandResult.FailedWith(REPLY_ERROR);
         }
     }

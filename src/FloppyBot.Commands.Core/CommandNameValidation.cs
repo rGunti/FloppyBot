@@ -8,7 +8,7 @@ public static class CommandNameValidation
 
     public static bool IsValidCommandName(this string? commandName)
     {
-        return CommandNameRegex.IsMatch(commandName ?? "");
+        return CommandNameRegex.IsMatch(commandName ?? string.Empty);
     }
 
     public static void IsValidCommandNameOrThrow(this string? commandName)
@@ -19,18 +19,21 @@ public static class CommandNameValidation
         }
     }
 
-    private static void ThrowInvalidCommandName(string? commandName)
-    {
-        throw new ArgumentException(
-            $"{(commandName != null ? $"\"{commandName}\"" : "<null>")} is not a valid command name");
-    }
-
-    public static IEnumerable<string> AreAllValidCommandNamesOrThrow(this IEnumerable<string> commandNames)
+    public static IEnumerable<string> AreAllValidCommandNamesOrThrow(
+        this IEnumerable<string> commandNames
+    )
     {
         foreach (var commandName in commandNames)
         {
             IsValidCommandNameOrThrow(commandName);
             yield return commandName;
         }
+    }
+
+    private static void ThrowInvalidCommandName(string? commandName)
+    {
+        throw new ArgumentException(
+            $"{(commandName != null ? $"\"{commandName}\"" : "<null>")} is not a valid command name"
+        );
     }
 }

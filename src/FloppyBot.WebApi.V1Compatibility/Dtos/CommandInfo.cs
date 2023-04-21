@@ -12,4 +12,5 @@ public record CommandInfo(
     bool CustomCommand,
     CooldownInfo Cooldown,
     IImmutableList<CommandSyntax> Syntax,
-    bool Obsolete);
+    bool Obsolete
+);

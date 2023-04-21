@@ -1,6 +1,8 @@
 ﻿namespace FloppyBot.Communication.Mock;
 
-public class MockNotificationInterfaceFactory : INotificationReceiverFactory, INotificationSenderFactory
+public class MockNotificationInterfaceFactory
+    : INotificationReceiverFactory,
+        INotificationSenderFactory
 {
     public INotificationReceiver<T> GetNewReceiver<T>(string connectionString)
     {

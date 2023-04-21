@@ -3,7 +3,8 @@ using LiteDB;
 
 namespace FloppyBot.Base.Storage.LiteDb;
 
-public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity<TEntity>
+public class LiteDbRepository<TEntity> : IRepository<TEntity>
+    where TEntity : class, IEntity<TEntity>
 {
     private readonly ILiteCollection<TEntity> _collection;
 
@@ -36,9 +37,11 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity> where TEntity : cl
 
     public int InsertMany(params TEntity[] entities)
     {
-        return _collection.InsertBulk(entities
+        return _collection.InsertBulk(
+            entities
             // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
-            .Select(e => e.Id == null ? e.WithId(Guid.NewGuid().ToString()) : e));
+            .Select(e => e.Id == null ? e.WithId(Guid.NewGuid().ToString()) : e)
+        );
     }
 
     public int InsertMany(IEnumerable<TEntity> entities)

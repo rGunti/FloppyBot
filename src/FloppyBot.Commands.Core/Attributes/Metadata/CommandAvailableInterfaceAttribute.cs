@@ -2,8 +2,8 @@
 
 public class CommandAvailableInterfaceAttribute : SingleUseCommandOnlyMetadataAttribute
 {
-    public CommandAvailableInterfaceAttribute(params string[] messageInterfaces) : base(CommandMetadataTypes.INTERFACES,
-        string.Join(",", messageInterfaces))
+    public CommandAvailableInterfaceAttribute(params string[] messageInterfaces)
+        : base(CommandMetadataTypes.INTERFACES, string.Join(",", messageInterfaces))
     {
         Interfaces = messageInterfaces;
     }

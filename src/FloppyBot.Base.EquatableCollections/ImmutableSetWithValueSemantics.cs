@@ -3,7 +3,9 @@ using System.Collections.Immutable;
 
 namespace FloppyBot.Base.EquatableCollections;
 
-public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquatable<IImmutableSet<T>>
+public sealed class ImmutableSetWithValueSemantics<T>
+    : IImmutableSet<T>,
+        IEquatable<IImmutableSet<T>>
 {
     private readonly IImmutableSet<T> _set;
 
@@ -12,8 +14,11 @@ public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquat
         _set = set;
     }
 
-    public static IImmutableSet<T> Empty => Enumerable.Empty<T>().ToImmutableHashSetWithValueSemantics();
-    public bool Equals(IImmutableSet<T>? other) => this.SequenceEqual(other ?? ImmutableHashSet<T>.Empty);
+    public static IImmutableSet<T> Empty =>
+        Enumerable.Empty<T>().ToImmutableHashSetWithValueSemantics();
+
+    public bool Equals(IImmutableSet<T>? other) =>
+        this.SequenceEqual(other ?? ImmutableHashSet<T>.Empty);
 
     public override bool Equals(object? obj) => Equals(obj as IImmutableSet<T>);
 
@@ -21,14 +26,13 @@ public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquat
     {
         unchecked
         {
-            return this.Aggregate(19, (h, i) => h * 19 + i!.GetHashCode());
+            return this.Aggregate(19, (h, i) => (h * 19) + i!.GetHashCode());
         }
     }
 
     public override string ToString()
     {
-        return
-            $"ImmutableList<{typeof(T)}> ({Count}): [{string.Join(",", _set.Select(i => i?.ToString() ?? "<null>"))}]";
+        return $"ImmutableList<{typeof(T)}> ({Count}): [{string.Join(",", _set.Select(i => i?.ToString() ?? "<null>"))}]";
     }
 
     #region IImmutableSet implementation
@@ -45,7 +49,8 @@ public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquat
 
     public IImmutableSet<T> Except(IEnumerable<T> other) => _set.Except(other).WithValueSemantics();
 
-    public IImmutableSet<T> Intersect(IEnumerable<T> other) => _set.Intersect(other).WithValueSemantics();
+    public IImmutableSet<T> Intersect(IEnumerable<T> other) =>
+        _set.Intersect(other).WithValueSemantics();
 
     public bool IsProperSubsetOf(IEnumerable<T> other) => _set.IsProperSubsetOf(other);
 
@@ -61,9 +66,11 @@ public sealed class ImmutableSetWithValueSemantics<T> : IImmutableSet<T>, IEquat
 
     public bool SetEquals(IEnumerable<T> other) => _set.SetEquals(other);
 
-    public IImmutableSet<T> SymmetricExcept(IEnumerable<T> other) => _set.SymmetricExcept(other).WithValueSemantics();
+    public IImmutableSet<T> SymmetricExcept(IEnumerable<T> other) =>
+        _set.SymmetricExcept(other).WithValueSemantics();
 
-    public bool TryGetValue(T equalValue, out T actualValue) => _set.TryGetValue(equalValue, out actualValue);
+    public bool TryGetValue(T equalValue, out T actualValue) =>
+        _set.TryGetValue(equalValue, out actualValue);
 
     public IImmutableSet<T> Union(IEnumerable<T> other) => _set.Union(other).WithValueSemantics();
 

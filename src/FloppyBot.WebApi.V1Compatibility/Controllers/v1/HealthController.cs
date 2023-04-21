@@ -8,7 +8,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/health/bots")]
@@ -22,7 +22,8 @@ public class HealthController : ControllerBase
     public HealthController(
         IHealthCheckReceiver receiver,
         IMapper mapper,
-        IKillSwitchTrigger killSwitchTrigger)
+        IKillSwitchTrigger killSwitchTrigger
+    )
     {
         _receiver = receiver;
         _mapper = mapper;
@@ -32,17 +33,15 @@ public class HealthController : ControllerBase
     [HttpGet]
     public IReadOnlyDictionary<string, V1HealthCheckData> GetHealthCheck()
     {
-        return _receiver.RecordedHealthChecks
-            .ToImmutableDictionary(
-                d => d.InstanceId,
-                d => _mapper.Map<V1HealthCheckData>(d));
+        return _receiver.RecordedHealthChecks.ToImmutableDictionary(
+            d => d.InstanceId,
+            d => _mapper.Map<V1HealthCheckData>(d)
+        );
     }
 
     [HttpDelete("{hostName}/{pid}")]
     [Authorize(Permissions.RESTART_BOT)]
-    public IActionResult RestartInstance(
-        [FromRoute] string hostName,
-        [FromRoute] int pid)
+    public IActionResult RestartInstance([FromRoute] string hostName, [FromRoute] int pid)
     {
         var instanceId = _receiver.RecordedHealthChecks
             .Where(d => d.HostName == hostName && d.Process.Pid == pid)

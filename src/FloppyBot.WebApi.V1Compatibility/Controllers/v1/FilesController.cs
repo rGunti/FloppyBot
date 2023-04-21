@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FileHeader = FloppyBot.WebApi.V1Compatibility.Dtos.FileHeader;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/files/{messageInterface}/{channel}")]
@@ -23,40 +23,19 @@ public class FilesController : ControllerBase
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
 
-    public FilesController(
-        IUserService userService,
-        IFileService fileService,
-        IMapper mapper)
+    public FilesController(IUserService userService, IFileService fileService, IMapper mapper)
     {
         _userService = userService;
         _fileService = fileService;
         _mapper = mapper;
     }
 
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString()))
-        {
-            throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
-    }
-
     [HttpGet]
-    public FileHeader[] GetFiles(
-        [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel)
+    public FileHeader[] GetFiles([FromRoute] string messageInterface, [FromRoute] string channel)
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        return _fileService.GetFilesOf(channelId)
+        return _fileService
+            .GetFilesOf(channelId)
             .Select(f => _mapper.Map<FileHeader>(f))
             .OrderBy(f => f.FileName.ToLowerInvariant())
             .ToArray();
@@ -66,9 +45,9 @@ public class FilesController : ControllerBase
     [Authorize(Permissions.EDIT_FILES)]
     public IActionResult UploadFile(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        IFormFile? file)
+        [FromRoute] string channel,
+        IFormFile? file
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         if (file == null)
@@ -81,10 +60,18 @@ public class FilesController : ControllerBase
             throw new PayloadTooLargeException("File is larger than allowed");
         }
 
-        if (!_fileService.CreateFile(channelId, file.FileName, file.ContentType, file.OpenReadStream()))
+        if (
+            !_fileService.CreateFile(
+                channelId,
+                file.FileName,
+                file.ContentType,
+                file.OpenReadStream()
+            )
+        )
         {
             throw new ConflictException(
-                "A file with the same name already exists or you don't have enough space to store this file");
+                "A file with the same name already exists or you don't have enough space to store this file"
+            );
         }
 
         return NoContent();
@@ -93,13 +80,13 @@ public class FilesController : ControllerBase
     [HttpGet("{fileName}")]
     public FileHeader GetFile(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string fileName)
+        [FromRoute] string channel,
+        [FromRoute] string fileName
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        return _fileService.GetFile(channelId, fileName)
+        return _fileService
+            .GetFile(channelId, fileName)
             .Select(f => _mapper.Map<FileHeader>(f))
             .OrThrow(() => new NotFoundException($"File {channelId}/{fileName} does not exist"))
             .First();
@@ -108,10 +95,9 @@ public class FilesController : ControllerBase
     [HttpDelete("{fileName}")]
     public IActionResult DeleteFile(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string fileName)
+        [FromRoute] string channel,
+        [FromRoute] string fileName
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         _fileService.DeleteFile(channelId, fileName);
@@ -121,13 +107,13 @@ public class FilesController : ControllerBase
     [HttpGet("dl/{fileName}")]
     public IActionResult GetFileContent(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel,
-        [FromRoute]
-        string fileName)
+        [FromRoute] string channel,
+        [FromRoute] string fileName
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        FileStorage.Entities.FileHeader fileHeader = _fileService.GetFile(channelId, fileName)
+        FileStorage.Entities.FileHeader fileHeader = _fileService
+            .GetFile(channelId, fileName)
             .OrThrow(() => new NotFoundException($"File {channelId}/{fileName} does not exist"));
 
         using var ms = new MemoryStream();
@@ -138,8 +124,8 @@ public class FilesController : ControllerBase
     [HttpGet("quota")]
     public FileStorageQuota GetFileQuota(
         [FromRoute] string messageInterface,
-        [FromRoute]
-        string channel)
+        [FromRoute] string channel
+    )
     {
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         FileQuota quota = _fileService.GetQuotaFor(channelId);
@@ -149,6 +135,28 @@ public class FilesController : ControllerBase
             quota.MaxStorageQuota,
             quota.MaxFileNumber,
             usedQuota.MaxStorageQuota,
-            usedQuota.MaxFileNumber);
+            usedQuota.MaxFileNumber
+        );
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

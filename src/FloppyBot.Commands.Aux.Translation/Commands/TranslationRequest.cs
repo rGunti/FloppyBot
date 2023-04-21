@@ -1,9 +1,6 @@
 namespace FloppyBot.Commands.Aux.Translation.Commands;
 
-public record TranslationRequest(
-    string? InputLanguage,
-    string OutputLanguage,
-    string Text)
+public record TranslationRequest(string? InputLanguage, string OutputLanguage, string Text)
 {
     public override string ToString()
     {
@@ -14,5 +11,5 @@ public record TranslationRequest(
 public record TranslationResponse(
     TranslationRequest Request,
     string? Reply,
-    string? DetectedInputLanguage);
-
+    string? DetectedInputLanguage
+);

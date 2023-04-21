@@ -8,11 +8,11 @@ public record TimerRecord(
     string TimerMessage,
     DateTimeOffset TargetTime,
     DateTimeOffset CreatedAt,
-    string CreatedBy) : IEntity<TimerRecord>
+    string CreatedBy
+) : IEntity<TimerRecord>
 {
     public TimerRecord WithId(string newId)
     {
         return this with { Id = newId };
     }
 }
-

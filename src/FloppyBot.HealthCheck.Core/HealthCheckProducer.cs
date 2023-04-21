@@ -11,9 +11,7 @@ public class HealthCheckProducer : IHealthCheckProducer
     private readonly string _instanceName;
     private readonly ITimeProvider _timeProvider;
 
-    public HealthCheckProducer(
-        ITimeProvider timeProvider,
-        IConfiguration configuration)
+    public HealthCheckProducer(ITimeProvider timeProvider, IConfiguration configuration)
     {
         _timeProvider = timeProvider;
         _instanceName = configuration.GetInstanceName();
@@ -27,13 +25,8 @@ public class HealthCheckProducer : IHealthCheckProducer
             _timeProvider.GetCurrentUtcTime(),
             info.InstanceId,
             Environment.MachineName,
-            new AppInfo(
-                info.ServiceName,
-                info.Version,
-                _instanceName),
-            new ProcessInfo(
-                process.Id,
-                process.WorkingSet64,
-                process.StartTime));
+            new AppInfo(info.ServiceName, info.Version, _instanceName),
+            new ProcessInfo(process.Id, process.WorkingSet64, process.StartTime)
+        );
     }
 }

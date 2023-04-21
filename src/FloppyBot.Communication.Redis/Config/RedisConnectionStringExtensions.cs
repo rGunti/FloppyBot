@@ -11,10 +11,10 @@ public static class RedisConnectionStringExtensions
         {
             throw new ArgumentException(
                 $"Provided connection string does not contain all parts required to be parsed: {connectionString}",
-                nameof(connectionString));
+                nameof(connectionString)
+            );
         }
-        return new RedisConnectionConfig(
-            ConfigurationOptions.Parse(split[0]),
-            split[1]);
+
+        return new RedisConnectionConfig(ConfigurationOptions.Parse(split[0]), split[1]);
     }
 }

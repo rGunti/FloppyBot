@@ -19,7 +19,8 @@ public class MessageReplier : IMessageReplier
     public MessageReplier(
         INotificationSenderFactory senderFactory,
         IConfiguration configuration,
-        ILogger<MessageReplier> logger)
+        ILogger<MessageReplier> logger
+    )
     {
         _senderFactory = senderFactory;
         _logger = logger;
@@ -29,7 +30,10 @@ public class MessageReplier : IMessageReplier
 
     public void SendMessage(ChatMessage chatMessage)
     {
-        _logger.LogInformation("Sending message to {MessageInterface}", chatMessage.Identifier.Interface);
+        _logger.LogInformation(
+            "Sending message to {MessageInterface}",
+            chatMessage.Identifier.Interface
+        );
         _logger.LogDebug("Sending message {MessageIdentifier}", chatMessage.Identifier);
         INotificationSender sender = GetSenderForInterface(chatMessage.Identifier.Interface);
         sender.Send(chatMessage);
@@ -42,11 +46,14 @@ public class MessageReplier : IMessageReplier
             messageInterface,
             msgIf =>
             {
-                _logger.LogDebug("Creating new sender for message interface {MessageInterface}", messageInterface);
-                return _senderFactory.GetNewSender(_senderConnectionString.Format(new
-                {
-                    Interface = messageInterface
-                }));
-            });
+                _logger.LogDebug(
+                    "Creating new sender for message interface {MessageInterface}",
+                    messageInterface
+                );
+                return _senderFactory.GetNewSender(
+                    _senderConnectionString.Format(new { Interface = messageInterface })
+                );
+            }
+        );
     }
 }

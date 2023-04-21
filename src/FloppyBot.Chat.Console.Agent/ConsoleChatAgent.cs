@@ -19,43 +19,39 @@ internal class ConsoleChatAgent : BackgroundService
         INotificationSenderFactory senderFactory,
         INotificationReceiverFactory receiverFactory,
         IConfiguration configuration,
-        ConsoleChatInterface chatInterface)
+        ConsoleChatInterface chatInterface
+    )
     {
         _logger = logger;
         _chatInterface = chatInterface;
         _chatInterface.MessageReceived += OnMessageReceived;
 
         _sender = senderFactory.GetNewSender(
-            configuration.GetParsedConnectionString("MessageOutput"));
+            configuration.GetParsedConnectionString("MessageOutput")
+        );
         _receiver = receiverFactory.GetNewReceiver<ChatMessage>(
-            configuration.GetParsedConnectionString("MessageInput"));
+            configuration.GetParsedConnectionString("MessageInput")
+        );
         _receiver.NotificationReceived += OnMessageReceived;
-    }
-
-    private void OnMessageReceived(ChatMessage notification)
-    {
-        if (notification.Identifier.Interface == _chatInterface.Name)
-        {
-            _chatInterface.SendMessage(
-                notification.Content);
-        }
-    }
-
-    private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
-    {
-        _logger.LogDebug("Sending message {@Message}", chatMessage);
-        _sender.Send(chatMessage);
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogWarning(
-            "Welcome to the FloppyBot Console Agent! " +
-            "Please note that this is a development tool and not meant to be run in production environments!");
+            "Welcome to the FloppyBot Console Agent! "
+                + "Please note that this is a development tool and not meant to be run in production environments!"
+        );
         _logger.LogInformation("Starting Console Agent ...");
         _chatInterface.Connect();
         _receiver.StartListening();
         return base.StartAsync(cancellationToken);
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
+        _chatInterface.Disconnect();
+        return base.StopAsync(cancellationToken);
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -66,10 +62,17 @@ internal class ConsoleChatAgent : BackgroundService
         }
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    private void OnMessageReceived(ChatMessage notification)
     {
-        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
-        _chatInterface.Disconnect();
-        return base.StopAsync(cancellationToken);
+        if (notification.Identifier.Interface == _chatInterface.Name)
+        {
+            _chatInterface.SendMessage(notification.Content);
+        }
+    }
+
+    private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
+    {
+        _logger.LogDebug("Sending message {@Message}", chatMessage);
+        _sender.Send(chatMessage);
     }
 }

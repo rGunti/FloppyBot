@@ -12,9 +12,7 @@ namespace FloppyBot.WebApi.Base.Exceptions;
 /// </summary>
 public class UnsupportedV1OperationException : HttpStatusCodeException
 {
-    public UnsupportedV1OperationException(
-        string message,
-        string? route = null)
+    public UnsupportedV1OperationException(string message, string? route = null)
         : base(590, message)
     {
         Route = route;
@@ -24,9 +22,6 @@ public class UnsupportedV1OperationException : HttpStatusCodeException
 
     public override ErrorResponse GetErrorResponse()
     {
-        return new UnavailableFeatureResponse(
-            StatusCode,
-            Message,
-            Route);
+        return new UnavailableFeatureResponse(StatusCode, Message, Route);
     }
 }

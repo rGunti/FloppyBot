@@ -18,8 +18,13 @@ public class CustomCommandListSupplier : ICommandListSupplier
 
     public IEnumerable<string> GetCommandList(CommandInstruction commandInstruction)
     {
-        ChannelIdentifier channelId = commandInstruction.Context!.SourceMessage.Identifier.GetChannel();
-        PrivilegeLevel privilegeLevel = commandInstruction.Context!.SourceMessage.Author.PrivilegeLevel;
+        ChannelIdentifier channelId =
+            commandInstruction.Context!.SourceMessage.Identifier.GetChannel();
+        PrivilegeLevel privilegeLevel = commandInstruction
+            .Context!
+            .SourceMessage
+            .Author
+            .PrivilegeLevel;
 
         return _commandService
             .GetCommandsOfChannel(channelId)

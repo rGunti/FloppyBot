@@ -9,4 +9,5 @@ public record V1HealthCheckData(
     float MemoryUsed,
     string Version,
     IImmutableList<MessageInterfaceDescription> MessageInterfaces,
-    TimeSpan Uptime);
+    TimeSpan Uptime
+);

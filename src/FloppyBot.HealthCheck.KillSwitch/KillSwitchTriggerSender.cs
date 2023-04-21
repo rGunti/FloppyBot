@@ -12,11 +12,11 @@ public class KillSwitchTriggerSender : IKillSwitchTrigger
     public KillSwitchTriggerSender(
         ILogger<KillSwitchTriggerSender> logger,
         INotificationSenderFactory senderFactory,
-        IConfiguration configuration)
+        IConfiguration configuration
+    )
     {
         _logger = logger;
-        _sender = senderFactory.GetNewSender(
-            configuration.GetKillSwitchConnectionString());
+        _sender = senderFactory.GetNewSender(configuration.GetKillSwitchConnectionString());
     }
 
     public void RequestRestart(string instanceId)

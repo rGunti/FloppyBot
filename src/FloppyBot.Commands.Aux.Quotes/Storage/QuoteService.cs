@@ -18,7 +18,8 @@ public class QuoteService : IQuoteService
         IRepositoryFactory repositoryFactory,
         IQuoteChannelMappingService channelMappingService,
         ITimeProvider timeProvider,
-        IRandomNumberGenerator randomNumberGenerator)
+        IRandomNumberGenerator randomNumberGenerator
+    )
     {
         _channelMappingService = channelMappingService;
         _timeProvider = timeProvider;
@@ -44,7 +45,10 @@ public class QuoteService : IQuoteService
         Quote? quote;
         do
         {
-            quote = GetQuoteByChannelMappingId(mappingId, _randomNumberGenerator.Next(1, maxQuoteId));
+            quote = GetQuoteByChannelMappingId(
+                mappingId,
+                _randomNumberGenerator.Next(1, maxQuoteId)
+            );
             retries--;
         } while (quote == null && retries > 0);
 
@@ -66,25 +70,26 @@ public class QuoteService : IQuoteService
     {
         var mappingId = _channelMappingService.GetQuoteChannelMapping(channelId, true)!;
         var newQuoteId = DetermineNextQuoteId(mappingId);
-        return _repository.Insert(new Quote(
-            null!,
-            mappingId,
-            newQuoteId,
-            quoteText,
-            context ?? string.Empty,
-            _timeProvider.GetCurrentUtcTime(),
-            author));
+        return _repository.Insert(
+            new Quote(
+                null!,
+                mappingId,
+                newQuoteId,
+                quoteText,
+                context ?? string.Empty,
+                _timeProvider.GetCurrentUtcTime(),
+                author
+            )
+        );
     }
 
     public Quote ImportQuote(Quote quote)
     {
         var channelMappingId = _channelMappingService.GetQuoteChannelMapping(
             quote.ChannelMappingId,
-            true)!;
-        return _repository.Insert(quote with
-        {
-            ChannelMappingId = channelMappingId
-        });
+            true
+        )!;
+        return _repository.Insert(quote with { ChannelMappingId = channelMappingId });
     }
 
     public Quote? EditQuote(string channelId, int quoteId, string newContent)
@@ -95,10 +100,7 @@ public class QuoteService : IQuoteService
             return null;
         }
 
-        return _repository.Update(quote with
-        {
-            QuoteText = newContent
-        });
+        return _repository.Update(quote with { QuoteText = newContent });
     }
 
     public Quote? EditQuoteContext(string channelId, int quoteId, string newContext)
@@ -109,10 +111,7 @@ public class QuoteService : IQuoteService
             return null;
         }
 
-        return _repository.Update(quote with
-        {
-            QuoteContext = newContext
-        });
+        return _repository.Update(quote with { QuoteContext = newContext });
     }
 
     public bool DeleteQuote(string channelId, int quoteId)
@@ -129,8 +128,7 @@ public class QuoteService : IQuoteService
             return Enumerable.Empty<Quote>();
         }
 
-        return _repository.GetAll()
-            .Where(q => q.ChannelMappingId == mapping);
+        return _repository.GetAll().Where(q => q.ChannelMappingId == mapping);
     }
 
     public bool UpdateQuote(string channelId, int quoteId, Quote quote)
@@ -147,19 +145,22 @@ public class QuoteService : IQuoteService
             return false;
         }
 
-        _repository.Update(quote with
-        {
-            // Force properties to stay as-is
-            Id = existingQuote.Id,
-            QuoteId = existingQuote.QuoteId,
-            ChannelMappingId = existingQuote.ChannelMappingId
-        });
+        _repository.Update(
+            quote with
+            {
+                // Force properties to stay as-is
+                Id = existingQuote.Id,
+                QuoteId = existingQuote.QuoteId,
+                ChannelMappingId = existingQuote.ChannelMappingId,
+            }
+        );
         return true;
     }
 
     private Quote? GetQuoteByChannelMappingId(string mappingId, int quoteId)
     {
-        return _repository.GetAll()
+        return _repository
+            .GetAll()
             .FirstOrDefault(q => q.ChannelMappingId == mappingId && q.QuoteId == quoteId);
     }
 
@@ -172,11 +173,13 @@ public class QuoteService : IQuoteService
     {
         // ReSharper disable once SimplifyLinqExpressionUseAll
         if (!_repository.GetAll().Any(q => q.ChannelMappingId == channelMappingId))
+        {
             return 0;
+        }
 
-        return _repository.GetAll()
+        return _repository
+            .GetAll()
             .Where(q => q.ChannelMappingId == channelMappingId)
             .Max(q => q.QuoteId);
     }
 }
-

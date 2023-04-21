@@ -4,14 +4,13 @@ internal record TimeCommandOutput(
     DateTimeOffset Time,
     // ReSharper disable once NotAccessedPositionalProperty.Global
     string TimeStr,
-    TimeZoneInfo TimeZone)
+    TimeZoneInfo TimeZone
+)
 {
     // ReSharper disable once UnusedMember.Global
     public DateTimeOffset UtcTime => TimeZoneInfo.ConvertTime(Time, TimeZoneInfo.Utc);
 
     // ReSharper disable once UnusedMember.Global
-    public string TimeZoneName
-        => TimeZone.IsDaylightSavingTime(Time)
-            ? TimeZone.DaylightName
-            : TimeZone.StandardName;
+    public string TimeZoneName =>
+        TimeZone.IsDaylightSavingTime(Time) ? TimeZone.DaylightName : TimeZone.StandardName;
 }

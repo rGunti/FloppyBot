@@ -16,9 +16,10 @@ public class MongoDbIndexManager : IIndexManager
         _logger = logger;
     }
 
-    private IndexKeysDefinitionBuilder<BsonDocument> IndexBuilder => Builders<BsonDocument>.IndexKeys;
-
     public bool SupportsIndices => true;
+
+    private IndexKeysDefinitionBuilder<BsonDocument> IndexBuilder =>
+        Builders<BsonDocument>.IndexKeys;
 
     public bool IndexExists(string collectionName, string indexName, string[] fields)
     {
@@ -28,16 +29,17 @@ public class MongoDbIndexManager : IIndexManager
         }
 
         var collection = GetCollection(collectionName);
-        return collection.Indexes.List()
-            .ToEnumerable()
-            .Any(i => i["name"] == indexName);
+        return collection.Indexes.List().ToEnumerable().Any(i => i["name"] == indexName);
     }
 
     public void CreateIndex(string collectionName, string indexName, string[] fields)
     {
         if (!CollectionExists(collectionName))
         {
-            _logger.LogInformation("Collection {CollectionName} is missing, creating it ...", collectionName);
+            _logger.LogInformation(
+                "Collection {CollectionName} is missing, creating it ...",
+                collectionName
+            );
             _mongoDatabase.CreateCollection(collectionName);
         }
 
@@ -50,17 +52,14 @@ public class MongoDbIndexManager : IIndexManager
         }
         else
         {
-            index = IndexBuilder.Combine(fields
-                .Select(f => Builders<BsonDocument>.IndexKeys.Ascending(f)));
+            index = IndexBuilder.Combine(
+                fields.Select(f => Builders<BsonDocument>.IndexKeys.Ascending(f))
+            );
         }
 
         collection.Indexes.CreateOne(
-            new CreateIndexModel<BsonDocument>(
-                index,
-                new CreateIndexOptions
-                {
-                    Name = indexName
-                }));
+            new CreateIndexModel<BsonDocument>(index, new CreateIndexOptions { Name = indexName })
+        );
     }
 
     public void DeleteIndex(string collectionName, string indexName)

@@ -22,16 +22,11 @@ public class ShoutoutMessageSettingService : IShoutoutMessageSettingService
         var existingSettings = GetSettings(channelId);
         if (existingSettings != null)
         {
-            _repository.Update(existingSettings with
-            {
-                Message = message
-            });
+            _repository.Update(existingSettings with { Message = message });
         }
         else
         {
-            _repository.Insert(new ShoutoutMessageSetting(
-                channelId,
-                message));
+            _repository.Insert(new ShoutoutMessageSetting(channelId, message));
         }
     }
 

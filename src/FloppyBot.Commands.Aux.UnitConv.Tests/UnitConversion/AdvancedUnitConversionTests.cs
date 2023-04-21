@@ -10,9 +10,9 @@
         [DataRow(1f, "mi", 5280f, "ft")]
         [DataRow(1f, "mi", 63360f, "in")]
         [DataRow(1f, "mi", 63360f, "ft/in")]
-        //[DataRow(1f, "mi", 160934.4f, "cm")]
-        //[DataRow(1f, "km", 1093.613f, "yd")]
-        //[DataRow(1f, "km", 3280.84f, "ft")]
+        // [DataRow(1f, "mi", 160934.4f, "cm")]
+        // [DataRow(1f, "km", 1093.613f, "yd")]
+        // [DataRow(1f, "km", 3280.84f, "ft")]
         [DataRow(1f, "m/s", 2.237136f, "mph")]
         [DataRow(1f, "pins", 1.73f, "m")]
         [DataRow(1f, "pins", 68.11024f, "ft/in")]
@@ -31,18 +31,28 @@
             float value,
             string unitName,
             float expectedConvertedValue,
-            string convertedUnit)
+            string convertedUnit
+        )
         {
-            CanDoSimpleUnitConversions(value, unitName, expectedConvertedValue, convertedUnit, 0.1f);
+            CanDoSimpleUnitConversions(
+                value,
+                unitName,
+                expectedConvertedValue,
+                convertedUnit,
+                0.1f
+            );
         }
 
         [TestMethod]
-        public void CanConvertFromKmToYdAndBack() => CanConvertThroughMultipleUnits(1, "km", 1093.613f, "yd");
+        public void CanConvertFromKmToYdAndBack() =>
+            CanConvertThroughMultipleUnits(1, "km", 1093.613f, "yd");
 
         [TestMethod]
-        public void CanConvertFromKmToFtAndBack() => CanConvertThroughMultipleUnits(1, "km", 3280.84f, "ft");
+        public void CanConvertFromKmToFtAndBack() =>
+            CanConvertThroughMultipleUnits(1, "km", 3280.84f, "ft");
 
         [TestMethod]
-        public void CanConvertFromMiToCmAndBack() => CanConvertThroughMultipleUnits(1, "mi", 160934.4f, "cm");
+        public void CanConvertFromMiToCmAndBack() =>
+            CanConvertThroughMultipleUnits(1, "mi", 160934.4f, "cm");
     }
 }

@@ -20,8 +20,10 @@ public class DisabledCommandTask : IPreExecutionTask
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
     {
         return _commandConfigurationService
-            .GetCommandConfiguration(instruction.Context!.SourceMessage.Identifier.GetChannel(),
-                info.CommandId)
+            .GetCommandConfiguration(
+                instruction.Context!.SourceMessage.Identifier.GetChannel(),
+                info.CommandId
+            )
             .Select(config => !config.Disabled)
             .FirstOrDefault(true);
     }

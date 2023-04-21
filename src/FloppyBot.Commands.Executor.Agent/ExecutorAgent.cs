@@ -31,11 +31,13 @@ public class ExecutorAgent : BackgroundService
         ICommandExecutor commandExecutor,
         IndexInitializer indexInitializer,
         DistributedCommandRegistryAdapter distributedCommandRegistryAdapter,
-        IMessageReplier replier)
+        IMessageReplier replier
+    )
     {
         _logger = logger;
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
-            configuration.GetParsedConnectionString("CommandInput"));
+            configuration.GetParsedConnectionString("CommandInput")
+        );
 
         _instructionReceiver.NotificationReceived += OnCommandReceived;
 
@@ -44,23 +46,6 @@ public class ExecutorAgent : BackgroundService
 
         _distributedCommandRegistryAdapter = distributedCommandRegistryAdapter;
         _replier = replier;
-    }
-
-    private void OnCommandReceived(CommandInstruction commandInstruction)
-    {
-        #if DEBUG
-        _logger.LogDebug("Received command instruction {@CommandInstruction}",
-            commandInstruction);
-        #endif
-
-        ChatMessage? reply = _commandExecutor.ExecuteCommand(commandInstruction);
-        if (reply == null || string.IsNullOrWhiteSpace(reply.Content))
-        {
-            _logger.LogDebug("Reply was empty (null or whitespace), discarding");
-            return;
-        }
-
-        _replier.SendMessage(reply);
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -72,15 +57,31 @@ public class ExecutorAgent : BackgroundService
         return base.StartAsync(cancellationToken);
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Shutting down Command Executor Agent ...");
         _instructionReceiver.StopListening();
         return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        return Task.CompletedTask;
+    }
+
+    private void OnCommandReceived(CommandInstruction commandInstruction)
+    {
+#if DEBUG
+        _logger.LogDebug("Received command instruction {@CommandInstruction}", commandInstruction);
+#endif
+
+        ChatMessage? reply = _commandExecutor.ExecuteCommand(commandInstruction);
+        if (reply == null || string.IsNullOrWhiteSpace(reply.Content))
+        {
+            _logger.LogDebug("Reply was empty (null or whitespace), discarding");
+            return;
+        }
+
+        _replier.SendMessage(reply);
     }
 }

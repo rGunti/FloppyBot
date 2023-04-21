@@ -6,7 +6,6 @@ public static class DiSetup
 {
     public static IServiceCollection AddCommandConfiguration(this IServiceCollection services)
     {
-        return services
-            .AddSingleton<ICommandConfigurationService, CommandConfigurationService>();
+        return services.AddSingleton<ICommandConfigurationService, CommandConfigurationService>();
     }
 }

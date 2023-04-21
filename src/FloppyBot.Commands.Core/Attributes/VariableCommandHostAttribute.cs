@@ -6,9 +6,7 @@ namespace FloppyBot.Commands.Core.Attributes;
 /// another data source, like a database.
 /// </summary>
 [AttributeUsage(AttributeTargets.Class)]
-public class VariableCommandHostAttribute : Attribute
-{
-}
+public class VariableCommandHostAttribute : Attribute { }
 
 /// <summary>
 /// Methods marked with this attribute are supposed to execute
@@ -17,9 +15,7 @@ public class VariableCommandHostAttribute : Attribute
 [AttributeUsage(AttributeTargets.Method)]
 public class VariableCommandHandlerAttribute : Attribute
 {
-    public VariableCommandHandlerAttribute(
-        string assertionHandlerName,
-        string? identifier = null)
+    public VariableCommandHandlerAttribute(string assertionHandlerName, string? identifier = null)
     {
         Identifier = identifier;
         AssertionHandlerName = assertionHandlerName;

@@ -7,9 +7,7 @@ using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
 using FloppyBot.HealthCheck.KillSwitch;
 
-IHostBuilder builder = Host.CreateDefaultBuilder(args)
-    .SetupConfiguration()
-    .SetupSerilog();
+IHostBuilder builder = Host.CreateDefaultBuilder(args).SetupConfiguration().SetupSerilog();
 
 IHost host = builder
     .ConfigureServices(services =>
@@ -23,14 +21,12 @@ IHost host = builder
             .AddSingleton<ICommandParser, CommandParser>(s =>
             {
                 var config = s.GetRequiredService<IConfiguration>();
-                string[] prefixes = config.GetSection("CommandPrefixes").Get<string[]>() ?? new[] { "?" };
+                string[] prefixes =
+                    config.GetSection("CommandPrefixes").Get<string[]>() ?? new[] { "?" };
                 return new CommandParser(prefixes);
             })
             .AddHostedService<CommandParsingAgent>();
     })
     .Build();
 
-await host
-    .BootCronJobs()
-    .ArmKillSwitch()
-    .LogAndRun();
+await host.BootCronJobs().ArmKillSwitch().LogAndRun();

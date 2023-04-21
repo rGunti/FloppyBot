@@ -20,9 +20,9 @@ public static class RedisConnectionFactoryExtensions
 {
     public static IConnectionMultiplexer GetMultiplexer(
         this IRedisConnectionFactory connectionFactory,
-        string connectionString)
+        string connectionString
+    )
     {
-        return connectionFactory.GetMultiplexer(
-            connectionString.ParseToConnectionConfig());
+        return connectionFactory.GetMultiplexer(connectionString.ParseToConnectionConfig());
     }
 }

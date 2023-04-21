@@ -19,15 +19,14 @@ public class LogTask : IHybridTask
         _logger.LogDebug(
             "Post-execution tasks for command {Command}: Result was {CommandResult}",
             info,
-            result);
+            result
+        );
         return true;
     }
 
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
     {
-        _logger.LogDebug(
-            "Pre-execution tasks for command {Command}",
-            info);
+        _logger.LogDebug("Pre-execution tasks for command {Command}", info);
         return true;
     }
 }

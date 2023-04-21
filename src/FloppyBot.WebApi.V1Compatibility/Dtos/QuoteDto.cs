@@ -7,4 +7,5 @@ public record QuoteDto(
     string QuoteText,
     string? QuoteContext,
     DateTimeOffset CreatedAt,
-    string CreatedBy);
+    string CreatedBy
+);

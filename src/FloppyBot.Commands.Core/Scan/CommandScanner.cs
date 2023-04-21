@@ -27,25 +27,30 @@ public class CommandScanner : ICommandScanner
     public IImmutableDictionary<string, CommandInfo> ScanForCommandHandlers()
     {
         return IndexCommands(
-            ScanTypesForCommandHandlers(AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(a => a.GetTypes())));
+            ScanTypesForCommandHandlers(
+                AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+            )
+        );
     }
 
     public IEnumerable<VariableCommandInfo> ScanForVariableCommandHandlers()
     {
-        return ScanTypesForVariableCommandHandlers(AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(a => a.GetTypes()));
+        return ScanTypesForVariableCommandHandlers(
+            AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes())
+        );
     }
 
-    public IImmutableDictionary<string, CommandInfo> IndexCommands(IEnumerable<CommandInfo> commands)
+    public IImmutableDictionary<string, CommandInfo> IndexCommands(
+        IEnumerable<CommandInfo> commands
+    )
     {
         return commands
-            .SelectMany(commandInfo => commandInfo.Names
-                .Select(commandName => new
-                {
-                    Name = commandName,
-                    CommandInfo = commandInfo
-                }))
+            .SelectMany(
+                commandInfo =>
+                    commandInfo.Names.Select(
+                        commandName => new { Name = commandName, CommandInfo = commandInfo }
+                    )
+            )
             .ToImmutableDictionary(i => i.Name, i => i.CommandInfo);
     }
 
@@ -63,11 +68,11 @@ public class CommandScanner : ICommandScanner
         {
             throw new ArgumentException(
                 $"Type {type} does not have {nameof(CommandHostAttribute)} attached and cannot be used to host command handlers",
-                nameof(type));
+                nameof(type)
+            );
         }
 
-        return type
-            .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+        return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
             .Where(method => method.HasCustomAttribute<CommandAttribute>())
             .Inspect(method =>
             {
@@ -76,12 +81,20 @@ public class CommandScanner : ICommandScanner
                     throw new InvalidCommandSignatureException(method);
                 }
             })
-            .Select(method => new CommandInfo(
-                method.GetCustomAttribute<CommandAttribute>()!.Names.ToImmutableListWithValueSemantics(),
-                method));
+            .Select(
+                method =>
+                    new CommandInfo(
+                        method
+                            .GetCustomAttribute<CommandAttribute>()!
+                            .Names.ToImmutableListWithValueSemantics(),
+                        method
+                    )
+            );
     }
 
-    public IEnumerable<VariableCommandInfo> ScanTypesForVariableCommandHandlers(IEnumerable<Type> types)
+    public IEnumerable<VariableCommandInfo> ScanTypesForVariableCommandHandlers(
+        IEnumerable<Type> types
+    )
     {
         return types
             .Where(t => t.HasCustomAttribute<VariableCommandHostAttribute>())
@@ -95,11 +108,11 @@ public class CommandScanner : ICommandScanner
         {
             throw new ArgumentException(
                 $"Type {type} does not have {nameof(VariableCommandHostAttribute)} attached and cannot be used to host variable command handlers",
-                nameof(type));
+                nameof(type)
+            );
         }
 
-        return type
-            .GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
+        return type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
             .Where(method => method.HasCustomAttribute<VariableCommandHandlerAttribute>())
             .Inspect(method =>
             {
@@ -108,12 +121,19 @@ public class CommandScanner : ICommandScanner
                     throw new InvalidCommandSignatureException(method);
                 }
             })
-            .Select(method => new VariableCommandInfo(
-                method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier ??
-                GetDefaultIdentifierForVariableCommandHandler(method),
-                method,
-                method.ReflectedType!.GetMethod(method.GetCustomAttribute<VariableCommandHandlerAttribute>()!
-                    .AssertionHandlerName!)!));
+            .Select(
+                method =>
+                    new VariableCommandInfo(
+                        method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier
+                            ?? GetDefaultIdentifierForVariableCommandHandler(method),
+                        method,
+                        method.ReflectedType!.GetMethod(
+                            method
+                                .GetCustomAttribute<VariableCommandHandlerAttribute>()!
+                                .AssertionHandlerName!
+                        )!
+                    )
+            );
     }
 
     private static bool IsCommandSignatureValid(MethodInfo method)

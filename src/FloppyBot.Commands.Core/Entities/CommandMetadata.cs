@@ -6,9 +6,8 @@ namespace FloppyBot.Commands.Core.Entities;
 
 public class CommandMetadata
 {
-    public CommandMetadata() : this(new Dictionary<string, string>())
-    {
-    }
+    public CommandMetadata()
+        : this(new Dictionary<string, string>()) { }
 
     public CommandMetadata(IDictionary<string, string> metadata)
     {
@@ -35,15 +34,34 @@ public class CommandMetadata
     public PrivilegeLevel MinPrivilegeLevel { get; private set; }
 
     public bool HasNoParameters => RawData.ContainsKey(CommandMetadataTypes.NO_PARAMETERS);
-    public CommandParameterMetadata[] Parameters { get; private set; } = Array.Empty<CommandParameterMetadata>();
+
+    public CommandParameterMetadata[] Parameters { get; private set; } =
+        Array.Empty<CommandParameterMetadata>();
 
     public bool HiddenCommand => RawData.ContainsKey(CommandMetadataTypes.HIDDEN);
+
+    public bool HasValue(string key)
+    {
+        return RawData.ContainsKey(key);
+    }
+
+    public string? GetValueOrDefault(string key)
+    {
+        return RawData.GetValueOrDefault(key);
+    }
+
+    public Dictionary<string, string> GetRawDataAsDictionary()
+    {
+        return RawData.ToDictionary(i => i.Key, i => i.Value);
+    }
 
     private void Init()
     {
         if (RawData.ContainsKey(CommandMetadataTypes.MIN_PRIVILEGE))
         {
-            MinPrivilegeLevel = Enum.Parse<PrivilegeLevel>(RawData[CommandMetadataTypes.MIN_PRIVILEGE]);
+            MinPrivilegeLevel = Enum.Parse<PrivilegeLevel>(
+                RawData[CommandMetadataTypes.MIN_PRIVILEGE]
+            );
         }
 
         if (RawData.ContainsKey(CommandMetadataTypes.INTERFACES))
@@ -65,21 +83,6 @@ public class CommandMetadata
                 .ToArray();
         }
     }
-
-    public bool HasValue(string key)
-    {
-        return RawData.ContainsKey(key);
-    }
-
-    public string? GetValueOrDefault(string key)
-    {
-        return RawData.GetValueOrDefault(key);
-    }
-
-    public Dictionary<string, string> GetRawDataAsDictionary()
-    {
-        return RawData.ToDictionary(i => i.Key, i => i.Value);
-    }
 }
 
 public record CommandParameterMetadata(
@@ -88,7 +91,8 @@ public record CommandParameterMetadata(
     CommandParameterType Type,
     bool Required,
     string? Description = null,
-    string[]? PossibleValues = null)
+    string[]? PossibleValues = null
+)
 {
     public static CommandParameterMetadata ParseFromString(string inputString)
     {
@@ -105,7 +109,8 @@ public record CommandParameterMetadata(
             Enum.Parse<CommandParameterType>(split[2]),
             split[3] == "1",
             split[4] == string.Empty ? null : split[4],
-            possibleValues);
+            possibleValues
+        );
     }
 
     public override string ToString()
@@ -118,5 +123,5 @@ public enum CommandParameterType
 {
     String,
     Number,
-    Enum
+    Enum,
 }

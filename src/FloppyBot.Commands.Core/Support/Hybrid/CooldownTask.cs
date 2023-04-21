@@ -26,7 +26,8 @@ public class CooldownTask : IHybridTask
         ILogger<CooldownTask> logger,
         ICooldownService cooldownService,
         ITimeProvider timeProvider,
-        ICommandConfigurationService commandConfigurationService)
+        ICommandConfigurationService commandConfigurationService
+    )
     {
         _logger = logger;
         _cooldownService = cooldownService;
@@ -47,14 +48,16 @@ public class CooldownTask : IHybridTask
         DateTimeOffset lastExecution = _cooldownService.GetLastExecution(
             sourceMessage.Identifier.GetChannel(),
             sourceMessage.Author.Identifier,
-            info.CommandId);
+            info.CommandId
+        );
         TimeSpan delta = _timeProvider.GetCurrentUtcTime() - lastExecution;
         if (delta < cooldownTime)
         {
             _logger.LogDebug(
                 "Last execution did not pass cooldown check, delta was {CooldownDelta}, needed at least {Cooldown}",
                 delta,
-                cooldownTime);
+                cooldownTime
+            );
             return false;
         }
 
@@ -69,7 +72,8 @@ public class CooldownTask : IHybridTask
             _cooldownService.StoreExecution(
                 sourceMessage.Identifier.GetChannel(),
                 sourceMessage.Author.Identifier,
-                info.CommandId);
+                info.CommandId
+            );
         }
 
         return true;
@@ -81,7 +85,8 @@ public class CooldownTask : IHybridTask
         return ExtractCooldownFromConfiguration(
                 sourceMessage.Identifier.GetChannel(),
                 info.CommandId,
-                userPrivilegeLevel)
+                userPrivilegeLevel
+            )
             .Concat(ExtractCooldownFromCommandImplementation(info, userPrivilegeLevel))
             .FirstOrDefault(TimeSpan.Zero);
     }
@@ -89,7 +94,8 @@ public class CooldownTask : IHybridTask
     private IEnumerable<TimeSpan> ExtractCooldownFromConfiguration(
         string channelId,
         string command,
-        PrivilegeLevel userPrivilegeLevel)
+        PrivilegeLevel userPrivilegeLevel
+    )
     {
         return _commandConfigurationService
             .GetCommandConfiguration(channelId, command)
@@ -103,7 +109,8 @@ public class CooldownTask : IHybridTask
 
     private IEnumerable<TimeSpan> ExtractCooldownFromCommandImplementation(
         CommandInfo info,
-        PrivilegeLevel userPrivilegeLevel)
+        PrivilegeLevel userPrivilegeLevel
+    )
     {
         return info.HandlerMethod
             .GetCustomAttributes<CommandCooldownAttribute>()

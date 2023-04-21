@@ -1,6 +1,7 @@
 # Quote Commands
 
-Quotes are stored and numbered per channel. The quote with the number 42 on your channel is not the same as quote number 42 on someone elses channel.
+Quotes are stored and numbered per channel. The quote with the number 42 on your channel is not the same as quote number
+42 on someone elses channel.
 
 ## `quote`
 
@@ -52,7 +53,8 @@ Syntax: `quote delete 25`
 
 _Alias: `qi`_
 
-Returns administrative information about this channels quote database and information about how to link it with one from another channel.
+Returns administrative information about this channels quote database and information about how to link it with one from
+another channel.
 
 ## `quotejoin`
 
@@ -69,6 +71,7 @@ the [appropriate Guide](guides/quote-join.md).
 
 _Alias: `qc`_
 
-Confirms the connection between this channel and another one, linking their quote databases together. This is to be executed after "quotejoin".
+Confirms the connection between this channel and another one, linking their quote databases together. This is to be
+executed after "quotejoin".
 
 Syntax: `quoteconfirm <Channel ID> <Join Code>`

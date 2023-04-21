@@ -11,7 +11,7 @@ public class MockNotificationSender : INotificationSender
 
     public List<object> SentMessages { get; } = new();
 
-    public event NotificationReceivedDelegate<object>? NotificationSent; 
+    public event NotificationReceivedDelegate<object>? NotificationSent;
 
     public void Send(object obj)
     {

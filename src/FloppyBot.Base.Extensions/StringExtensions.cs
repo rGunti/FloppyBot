@@ -8,8 +8,7 @@ public static class StringExtensions
         {
             0 => s,
             1 => char.ToUpperInvariant(s[0]).ToString(),
-            _ => $"{char.ToUpperInvariant(s[0])}{s[1..]}"
+            _ => $"{char.ToUpperInvariant(s[0])}{s[1..]}",
         };
     }
 }
-

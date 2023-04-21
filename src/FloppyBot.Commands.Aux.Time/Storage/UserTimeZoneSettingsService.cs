@@ -21,8 +21,7 @@ public class UserTimeZoneSettingsService : IUserTimeZoneSettingsService
 
     public NullableObject<UserTimeZoneSetting> GetTimeZoneForUser(string userId)
     {
-        return _repository.GetById(userId)
-            .Wrap();
+        return _repository.GetById(userId).Wrap();
     }
 
     public void SetTimeZoneForUser(string userId, string timezoneId)
@@ -30,10 +29,7 @@ public class UserTimeZoneSettingsService : IUserTimeZoneSettingsService
         NullableObject<UserTimeZoneSetting> setting = GetTimeZoneForUser(userId);
         if (setting.HasValue)
         {
-            _repository.Update(setting.Value with
-            {
-                TimeZoneId = timezoneId
-            });
+            _repository.Update(setting.Value with { TimeZoneId = timezoneId });
         }
         else
         {
@@ -41,4 +37,3 @@ public class UserTimeZoneSettingsService : IUserTimeZoneSettingsService
         }
     }
 }
-

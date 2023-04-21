@@ -15,5 +15,5 @@ public record DataExport(
     IImmutableList<CounterCommandConfig> CounterCommands,
     IImmutableList<ShoutoutMessageConfig> Shoutout,
     IImmutableList<TimerMessageConfig> Timers,
-    IImmutableList<CommandConfig> CommandConfigs);
-
+    IImmutableList<CommandConfig> CommandConfigs
+);

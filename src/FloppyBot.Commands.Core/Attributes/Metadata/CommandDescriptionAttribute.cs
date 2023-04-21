@@ -2,7 +2,6 @@
 
 public class CommandDescriptionAttribute : CommandOnlyMetadataAttribute
 {
-    public CommandDescriptionAttribute(string value) : base(CommandMetadataTypes.DESCRIPTION, value)
-    {
-    }
+    public CommandDescriptionAttribute(string value)
+        : base(CommandMetadataTypes.DESCRIPTION, value) { }
 }

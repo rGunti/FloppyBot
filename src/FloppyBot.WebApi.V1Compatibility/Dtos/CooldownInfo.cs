@@ -4,4 +4,5 @@ public record CooldownInfo(
     string CooldownMode,
     int? DefaultCooldown,
     int? ModCooldown,
-    int? AdminCooldown);
+    int? AdminCooldown
+);

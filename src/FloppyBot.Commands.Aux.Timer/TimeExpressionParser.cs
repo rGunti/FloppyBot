@@ -5,15 +5,16 @@ namespace FloppyBot.Commands.Aux.Timer;
 public static class TimeExpressionParser
 {
     // 12d23h45m12s
-    private static readonly Regex TimeParsingRegex = new(
-        "^((\\d?\\d)d)?((\\d?\\d)h)?(([0-5]?\\d)m)?(([0-5]?\\d)s)?$",
-        RegexOptions.Compiled);
+    private static readonly Regex TimeParsingRegex =
+        new("^((\\d?\\d)d)?((\\d?\\d)h)?(([0-5]?\\d)m)?(([0-5]?\\d)s)?$", RegexOptions.Compiled);
 
     public static TimeSpan? ParseTimeExpression(string expression)
     {
         Match timeParse = TimeParsingRegex.Match(expression);
         if (!timeParse.Success)
+        {
             return null;
+        }
 
         string dayStr = timeParse.Groups[2].Value,
             hrsStr = timeParse.Groups[4].Value,
@@ -25,15 +26,26 @@ public static class TimeExpressionParser
             min = ParseInt(minStr),
             sec = ParseInt(secStr);
 
-        var timeSpan = new TimeSpan();
+        var timeSpan = default(TimeSpan);
         if (day.HasValue)
+        {
             timeSpan += TimeSpan.FromDays(day.Value);
+        }
+
         if (hrs.HasValue)
+        {
             timeSpan += TimeSpan.FromHours(hrs.Value);
+        }
+
         if (min.HasValue)
+        {
             timeSpan += TimeSpan.FromMinutes(min.Value);
+        }
+
         if (sec.HasValue)
+        {
             timeSpan += TimeSpan.FromSeconds(sec.Value);
+        }
 
         return timeSpan;
     }

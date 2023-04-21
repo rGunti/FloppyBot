@@ -10,9 +10,7 @@ using FloppyBot.Commands.Custom.Storage;
 
 namespace FloppyBot.Commands.Custom.Execution.Administration;
 
-internal record CustomCommandFormattingParams(
-    string CommandName,
-    int Counter = int.MinValue);
+internal record CustomCommandFormattingParams(string CommandName, int Counter = int.MinValue);
 
 [CommandHost]
 [CommandCategory("Custom Commands")]
@@ -40,7 +38,8 @@ public class CustomCommandAdministrationCommands
 
     public CustomCommandAdministrationCommands(
         ICustomCommandService commandService,
-        ICounterStorageService counterStorageService)
+        ICounterStorageService counterStorageService
+    )
     {
         _commandService = commandService;
         _counterStorageService = counterStorageService;
@@ -51,12 +50,15 @@ public class CustomCommandAdministrationCommands
     [CommandSyntax("<Command Name> <Reply Text>")]
     public CommandResult CreateCommand(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        string commandName,
-        [ArgumentRange(1)]
-        string commandResponse)
+        [ArgumentIndex(0)] string commandName,
+        [ArgumentRange(1)] string commandResponse
+    )
     {
-        bool created = _commandService.CreateSimpleCommand(sourceChannel, commandName, commandResponse);
+        bool created = _commandService.CreateSimpleCommand(
+            sourceChannel,
+            commandName,
+            commandResponse
+        );
         var formatParams = new CustomCommandFormattingParams(commandName);
         return created
             ? new CommandResult(CommandOutcome.Success, REPLY_CREATE_SUCCESS.Format(formatParams))
@@ -68,8 +70,8 @@ public class CustomCommandAdministrationCommands
     [CommandSyntax("<Command Name>")]
     public CommandResult DeleteCommand(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        string commandName)
+        [ArgumentIndex(0)] string commandName
+    )
     {
         bool deleted = _commandService.DeleteCommand(sourceChannel, commandName);
         var formatParams = new CustomCommandFormattingParams(commandName);
@@ -84,19 +86,22 @@ public class CustomCommandAdministrationCommands
     [CommandSyntax("<Command Name> <Operation>|<Value>")]
     public CommandResult SetCounter(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0, stopIfMissing: true)]
-        string commandName,
-        [ArgumentIndex(1, stopIfMissing: true)]
-        string operationOrValue)
+        [ArgumentIndex(0, stopIfMissing: true)] string commandName,
+        [ArgumentIndex(1, stopIfMissing: true)] string operationOrValue
+    )
     {
-        string? commandId = _commandService.GetCommand(sourceChannel, commandName)
+        string? commandId = _commandService
+            .GetCommand(sourceChannel, commandName)
             .Wrap()
             .Select(c => c.Id)
             .FirstOrDefault();
         var formatParams = new CustomCommandFormattingParams(commandName);
         if (commandId == null)
         {
-            return new CommandResult(CommandOutcome.Failed, REPLY_COMMAND_NOT_FOUND.Format(formatParams));
+            return new CommandResult(
+                CommandOutcome.Failed,
+                REPLY_COMMAND_NOT_FOUND.Format(formatParams)
+            );
         }
 
         switch (operationOrValue)
@@ -106,25 +111,21 @@ public class CustomCommandAdministrationCommands
                 return CreateCounterResult(formatParams with { Counter = 0 });
         }
 
-        if ((operationOrValue.StartsWith("+") || operationOrValue.StartsWith("-"))
-            && int.TryParse(operationOrValue, out int incrementValue))
+        if (
+            (operationOrValue.StartsWith("+") || operationOrValue.StartsWith("-"))
+            && int.TryParse(operationOrValue, out int incrementValue)
+        )
         {
             // Relative
             int incrementedValue = _counterStorageService.Increase(commandId, incrementValue);
-            return CreateCounterResult(formatParams with
-            {
-                Counter = incrementedValue
-            });
+            return CreateCounterResult(formatParams with { Counter = incrementedValue });
         }
 
         if (int.TryParse(operationOrValue, out int newValue))
         {
             // Absolute
             _counterStorageService.Set(commandId, newValue);
-            return CreateCounterResult(formatParams with
-            {
-                Counter = newValue
-            });
+            return CreateCounterResult(formatParams with { Counter = newValue });
         }
 
         return new CommandResult(CommandOutcome.Failed, REPLY_COUNTER_PARAMS_UNKNOWN);
@@ -132,6 +133,9 @@ public class CustomCommandAdministrationCommands
 
     private static CommandResult CreateCounterResult(CustomCommandFormattingParams formattingParams)
     {
-        return new CommandResult(CommandOutcome.Success, REPLY_COUNTER_SET.Format(formattingParams));
+        return new CommandResult(
+            CommandOutcome.Success,
+            REPLY_COUNTER_SET.Format(formattingParams)
+        );
     }
 }

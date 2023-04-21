@@ -20,14 +20,17 @@ public class DistributedCommandRegistryAdapter
     private readonly IMetadataExtractor _metadataExtractor;
     private readonly ITimeProvider _timeProvider;
 
-    private IImmutableList<CommandAbstract> _storedCommandAbstracts = Array.Empty<CommandAbstract>().ToImmutableList();
+    private IImmutableList<CommandAbstract> _storedCommandAbstracts = Array
+        .Empty<CommandAbstract>()
+        .ToImmutableList();
 
     public DistributedCommandRegistryAdapter(
         ILogger<DistributedCommandRegistryAdapter> logger,
         IDistributedCommandRegistry distributedCommandRegistry,
         ICommandExecutor commandExecutor,
         ITimeProvider timeProvider,
-        IMetadataExtractor metadataExtractor)
+        IMetadataExtractor metadataExtractor
+    )
     {
         _logger = logger;
         _distributedCommandRegistry = distributedCommandRegistry;
@@ -44,10 +47,28 @@ public class DistributedCommandRegistryAdapter
             .ToImmutableList();
         _logger.LogInformation(
             "Submitting {CommandCount} known command(s) to distributed command store",
-            _storedCommandAbstracts.Count);
+            _storedCommandAbstracts.Count
+        );
         foreach (var commandAbstract in _storedCommandAbstracts)
         {
             _distributedCommandRegistry.StoreCommand(commandAbstract.Name, commandAbstract);
+        }
+    }
+
+    private static CommandParameterAbstractType ToCommandParameterAbstractType(
+        CommandParameterType parameterType
+    )
+    {
+        switch (parameterType)
+        {
+            case CommandParameterType.String:
+                return CommandParameterAbstractType.String;
+            case CommandParameterType.Number:
+                return CommandParameterAbstractType.Number;
+            case CommandParameterType.Enum:
+                return CommandParameterAbstractType.Enum;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(parameterType), parameterType, null);
         }
     }
 
@@ -67,29 +88,19 @@ public class DistributedCommandRegistryAdapter
             metadata.HasNoParameters,
             metadata.HiddenCommand,
             metadata.Parameters
-                .Select(p => new CommandParameterAbstract(
-                    p.Order,
-                    p.Name,
-                    ToCommandParameterAbstractType(p.Type),
-                    p.Required,
-                    p.Description,
-                    p.PossibleValues))
+                .Select(
+                    p =>
+                        new CommandParameterAbstract(
+                            p.Order,
+                            p.Name,
+                            ToCommandParameterAbstractType(p.Type),
+                            p.Required,
+                            p.Description,
+                            p.PossibleValues
+                        )
+                )
                 .ToArray(),
-            metadata.GetRawDataAsDictionary());
-    }
-
-    private static CommandParameterAbstractType ToCommandParameterAbstractType(CommandParameterType parameterType)
-    {
-        switch (parameterType)
-        {
-            case CommandParameterType.String:
-                return CommandParameterAbstractType.String;
-            case CommandParameterType.Number:
-                return CommandParameterAbstractType.Number;
-            case CommandParameterType.Enum:
-                return CommandParameterAbstractType.Enum;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(parameterType), parameterType, null);
-        }
+            metadata.GetRawDataAsDictionary()
+        );
     }
 }

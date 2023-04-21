@@ -19,14 +19,15 @@ public class PrivilegeGuard : BaseGuard<PrivilegeGuardAttribute>
     public override bool CanExecute(
         CommandInstruction instruction,
         CommandInfo command,
-        PrivilegeGuardAttribute settings)
+        PrivilegeGuardAttribute settings
+    )
     {
         ChatMessage sourceMessage = instruction.Context!.SourceMessage;
-        PrivilegeLevel minRequiredLevel = _commandConfigurationService.GetCommandConfiguration(
-                sourceMessage.Identifier.GetChannel(),
-                command.CommandId)
-            .Select(config => config.RequiredPrivilegeLevel)
-            .FirstOrDefault() ?? settings.MinLevel;
+        PrivilegeLevel minRequiredLevel =
+            _commandConfigurationService
+                .GetCommandConfiguration(sourceMessage.Identifier.GetChannel(), command.CommandId)
+                .Select(config => config.RequiredPrivilegeLevel)
+                .FirstOrDefault() ?? settings.MinLevel;
 
         return instruction.Context!.SourceMessage.Author.PrivilegeLevel >= minRequiredLevel;
     }

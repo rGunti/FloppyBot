@@ -2,9 +2,8 @@
 
 public class ConversionNode
 {
-    internal ConversionNode(string name) : this(name, new HashSet<ConversionNode>())
-    {
-    }
+    internal ConversionNode(string name)
+        : this(name, new HashSet<ConversionNode>()) { }
 
     internal ConversionNode(string name, ISet<ConversionNode> neighbors)
     {
@@ -16,6 +15,7 @@ public class ConversionNode
     public ISet<ConversionNode> Neighbors { get; }
 
     public bool IsNeighborOf(ConversionNode node) => Neighbors.Contains(node);
+
     public bool IsNeighborOf(string node) => Neighbors.Any(n => n.Name == node);
 
     public void AddNeighbor(ConversionNode node)
@@ -25,4 +25,3 @@ public class ConversionNode
 
     public override string ToString() => $"{Name} (n={Neighbors.Count})";
 }
-

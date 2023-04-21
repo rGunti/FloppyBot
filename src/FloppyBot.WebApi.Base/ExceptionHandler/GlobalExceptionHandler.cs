@@ -29,10 +29,10 @@ public class GlobalExceptionHandler : IExceptionFilter
             {
                 _logger.LogWarning(context.Exception, "Unhandled exception occurred");
                 context.Result = new ErrorResponse(
-                        StatusCodes.Status500InternalServerError,
-                        $"{context.Exception.Message}",
-                        context.Exception.GetType().ToString())
-                    .ToJsonResult();
+                    StatusCodes.Status500InternalServerError,
+                    $"{context.Exception.Message}",
+                    context.Exception.GetType().ToString()
+                ).ToJsonResult();
             }
         }
     }

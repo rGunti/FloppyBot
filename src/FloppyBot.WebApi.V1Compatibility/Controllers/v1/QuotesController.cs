@@ -9,7 +9,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/quotes")]
@@ -27,29 +27,6 @@ public class QuotesController : ControllerBase
         _userService = userService;
     }
 
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (!_userService.GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString()))
-        {
-            throw new NotFoundException($"You don't have access to {channelIdentifier} or it doesn't exist");
-        }
-    }
-
-    private void EnsureChannelAccess(string messageInterface, string channel)
-        => EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
-
-    private IEnumerable<QuoteDto> GetQuotesForChannel(
-        ChannelIdentifier channelIdentifier)
-    {
-        return _quoteService
-            .GetQuotes(channelIdentifier)
-            .Select(q => _mapper.Map<QuoteDto>(q) with
-            {
-                Channel = channelIdentifier
-            });
-    }
-
     [HttpGet]
     [Obsolete("This method will not be implemented as it is not used")]
     public void GetQuotes()
@@ -60,7 +37,8 @@ public class QuotesController : ControllerBase
     [HttpGet("{messageInterface}/{channel}")]
     public QuoteDto[] GetQuotesForChannel(
         [FromRoute] string messageInterface,
-        [FromRoute] string channel)
+        [FromRoute] string channel
+    )
     {
         var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelIdentifier);
@@ -71,7 +49,8 @@ public class QuotesController : ControllerBase
     public QuoteDto GetQuoteForChannel(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
-        [FromRoute] int quoteNumber)
+        [FromRoute] int quoteNumber
+    )
     {
         var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelIdentifier);
@@ -81,7 +60,10 @@ public class QuotesController : ControllerBase
             throw new NotFoundException($"Quote {channelIdentifier}#{quoteNumber} not found");
         }
 
-        return _mapper.Map<QuoteDto>(quote) with { Channel = channelIdentifier };
+        return _mapper.Map<QuoteDto>(quote) with
+        {
+            Channel = channelIdentifier,
+        };
     }
 
     [HttpPut("{messageInterface}/{channel}/{quoteNumber}")]
@@ -90,7 +72,8 @@ public class QuotesController : ControllerBase
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
         [FromRoute] int quoteNumber,
-        [FromBody] QuoteDto updatedQuote)
+        [FromBody] QuoteDto updatedQuote
+    )
     {
         var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelIdentifier);
@@ -98,7 +81,9 @@ public class QuotesController : ControllerBase
 
         if (!_quoteService.UpdateQuote(channelIdentifier, quoteNumber, quote))
         {
-            throw new BadRequestException($"Failed to update Quote {channelIdentifier}#{quoteNumber}");
+            throw new BadRequestException(
+                $"Failed to update Quote {channelIdentifier}#{quoteNumber}"
+            );
         }
 
         return NoContent();
@@ -109,15 +94,42 @@ public class QuotesController : ControllerBase
     public IActionResult DeleteQuote(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
-        [FromRoute] int quoteNumber)
+        [FromRoute] int quoteNumber
+    )
     {
         var channelIdentifier = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelIdentifier);
         if (!_quoteService.DeleteQuote(channelIdentifier, quoteNumber))
         {
-            throw new BadRequestException($"Failed to delete Quote {channelIdentifier}#{quoteNumber}");
+            throw new BadRequestException(
+                $"Failed to delete Quote {channelIdentifier}#{quoteNumber}"
+            );
         }
 
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private void EnsureChannelAccess(string messageInterface, string channel) =>
+        EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
+
+    private IEnumerable<QuoteDto> GetQuotesForChannel(ChannelIdentifier channelIdentifier)
+    {
+        return _quoteService
+            .GetQuotes(channelIdentifier)
+            .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
     }
 }

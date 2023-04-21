@@ -26,28 +26,30 @@ public class QuoteLinkCommands
         "Quotes are not setup. To join this channel to an existing channel with quotes, run !quoteinfo on a channel that is already setup.";
 
     private const string REPLY_JOIN =
-        "Join process started. To confirm the link, run the following command in one of your already joined channels: \"!quoteconfirm {ChannelId} {JoinCode}\". " +
-        "Please note that this code will expire in 5 minutes.";
+        "Join process started. To confirm the link, run the following command in one of your already joined channels: \"!quoteconfirm {ChannelId} {JoinCode}\". "
+        + "Please note that this code will expire in 5 minutes.";
 
     private const string REPLY_JOIN_MD =
-        "Join process started. To confirm the link, run the following command in one of your already joined channels: `!quoteconfirm {ChannelId} {JoinCode}`. " +
-        "Please note that this code will expire in 5 minutes.";
+        "Join process started. To confirm the link, run the following command in one of your already joined channels: `!quoteconfirm {ChannelId} {JoinCode}`. "
+        + "Please note that this code will expire in 5 minutes.";
 
     private const string REPLY_JOIN_FAILED =
         "Failed to start join process. The provided channel is either not known or already joined.";
 
     private const string REPLY_CONFIRM_FAILED =
-        "Failed to confirm channel. Make sure your code was copied correctly and that it has not been more than " +
-        "5 minutes since you started the join process with !quotejoin.";
+        "Failed to confirm channel. Make sure your code was copied correctly and that it has not been more than "
+        + "5 minutes since you started the join process with !quotejoin.";
 
-    private const string REPLY_CONFIRM = "Join confirmed! {ChannelId} now shares quotes with {OtherChannelId}.";
+    private const string REPLY_CONFIRM =
+        "Join confirmed! {ChannelId} now shares quotes with {OtherChannelId}.";
 
     private readonly ILogger<QuoteLinkCommands> _logger;
     private readonly IQuoteChannelMappingService _quoteChannelMappingService;
 
     public QuoteLinkCommands(
         ILogger<QuoteLinkCommands> logger,
-        IQuoteChannelMappingService quoteChannelMappingService)
+        IQuoteChannelMappingService quoteChannelMappingService
+    )
     {
         _logger = logger;
         _quoteChannelMappingService = quoteChannelMappingService;
@@ -55,15 +57,17 @@ public class QuoteLinkCommands
 
     [Command("quoteinfo", "qi")]
     [PrimaryCommandName("quoteinfo")]
-    [CommandDescription("Returns administrative information about this channels quote database and information about " +
-                        "how to link it with one from another channel.")]
+    [CommandDescription(
+        "Returns administrative information about this channels quote database and information about "
+            + "how to link it with one from another channel."
+    )]
     [CommandNoParametersHint]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? GetMappingInfo(
         [SourceChannel] string sourceChannel,
-        [SupportedFeatures]
-        ChatInterfaceFeatures supportedFeatures)
+        [SupportedFeatures] ChatInterfaceFeatures supportedFeatures
+    )
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(sourceChannel);
         if (mapping == null)
@@ -71,11 +75,10 @@ public class QuoteLinkCommands
             return REPLY_INFO_NOT_SETUP;
         }
 
-        var msg = supportedFeatures.Supports(ChatInterfaceFeatures.MarkdownText) ? REPLY_INFO_MD : REPLY_INFO;
-        return msg.Format(new
-        {
-            ChannelId = sourceChannel
-        });
+        var msg = supportedFeatures.Supports(ChatInterfaceFeatures.MarkdownText)
+            ? REPLY_INFO_MD
+            : REPLY_INFO;
+        return msg.Format(new { ChannelId = sourceChannel });
     }
 
     [Command("quotejoin", "qj")]
@@ -87,10 +90,9 @@ public class QuoteLinkCommands
     [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? JoinChannel(
         [SourceChannel] string sourceChannel,
-        [SupportedFeatures]
-        ChatInterfaceFeatures supportedFeatures,
-        [ArgumentIndex(0)]
-        string joinToChannel)
+        [SupportedFeatures] ChatInterfaceFeatures supportedFeatures,
+        [ArgumentIndex(0)] string joinToChannel
+    )
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(joinToChannel);
         if (mapping == null)
@@ -104,18 +106,20 @@ public class QuoteLinkCommands
             return REPLY_JOIN_FAILED;
         }
 
-        return (supportedFeatures.Supports(ChatInterfaceFeatures.MarkdownText) ? REPLY_JOIN_MD : REPLY_JOIN).Format(new
-        {
-            ChannelId = sourceChannel,
-            JoinCode = joinCode
-        });
+        return (
+            supportedFeatures.Supports(ChatInterfaceFeatures.MarkdownText)
+                ? REPLY_JOIN_MD
+                : REPLY_JOIN
+        ).Format(new { ChannelId = sourceChannel, JoinCode = joinCode });
     }
 
     [Command("quoteconfirm", "qc")]
     [PrimaryCommandName("quoteconfirm")]
-    [CommandDescription("Confirms the connection between this channel and another one, " +
-                        "linking their quote databases together. This is to be executed after " +
-                        "\"quotejoin\".")]
+    [CommandDescription(
+        "Confirms the connection between this channel and another one, "
+            + "linking their quote databases together. This is to be executed after "
+            + "\"quotejoin\"."
+    )]
     [CommandSyntax("<Channel ID> <Join Code>")]
     [CommandParameterHint(1, "channelId", CommandParameterType.String)]
     [CommandParameterHint(2, "joinCode", CommandParameterType.String)]
@@ -123,10 +127,9 @@ public class QuoteLinkCommands
     [MinCommandPrivilege(PrivilegeLevel.Moderator)]
     public string? ConfirmJoin(
         [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)]
-        string channelId,
-        [ArgumentIndex(1)]
-        string joinCode)
+        [ArgumentIndex(0)] string channelId,
+        [ArgumentIndex(1)] string joinCode
+    )
     {
         var mapping = _quoteChannelMappingService.GetQuoteChannelMapping(sourceChannel);
         if (mapping == null)
@@ -139,10 +142,6 @@ public class QuoteLinkCommands
             return REPLY_CONFIRM_FAILED;
         }
 
-        return REPLY_CONFIRM.Format(new
-        {
-            ChannelId = channelId,
-            OtherChannelId = sourceChannel
-        });
+        return REPLY_CONFIRM.Format(new { ChannelId = channelId, OtherChannelId = sourceChannel });
     }
 }

@@ -3,7 +3,6 @@
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public abstract class CommandOnlyMetadataAttribute : CommandMetadataAttribute
 {
-    protected CommandOnlyMetadataAttribute(string type, string value) : base(type, value)
-    {
-    }
+    protected CommandOnlyMetadataAttribute(string type, string value)
+        : base(type, value) { }
 }

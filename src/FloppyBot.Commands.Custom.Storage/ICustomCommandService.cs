@@ -22,9 +22,7 @@ public class CustomCommandService : ICustomCommandService
     private readonly IMapper _mapper;
     private readonly IRepository<CustomCommandDescriptionEo> _repository;
 
-    public CustomCommandService(
-        IRepositoryFactory repositoryFactory,
-        IMapper mapper)
+    public CustomCommandService(IRepositoryFactory repositoryFactory, IMapper mapper)
     {
         _repository = repositoryFactory.GetRepository<CustomCommandDescriptionEo>();
         _mapper = mapper;
@@ -39,7 +37,8 @@ public class CustomCommandService : ICustomCommandService
 
     public IEnumerable<CustomCommandDescription> GetCommandsOfChannel(string channelId)
     {
-        return _repository.GetAll()
+        return _repository
+            .GetAll()
             .Where(c => c.Owners.Contains(channelId))
             .Select(eo => _mapper.Map<CustomCommandDescription>(eo));
     }
@@ -58,16 +57,12 @@ public class CustomCommandService : ICustomCommandService
             Limitations = new CommandLimitationEo
             {
                 MinLevel = PrivilegeLevel.Unknown,
-                Cooldown = Array.Empty<CooldownDescriptionEo>()
+                Cooldown = Array.Empty<CooldownDescriptionEo>(),
             },
             Owners = new[] { channelId },
             Responses = new[]
             {
-                new CommandResponseEo
-                {
-                    Type = $"{ResponseType.Text}",
-                    Content = response
-                }
+                new CommandResponseEo { Type = $"{ResponseType.Text}", Content = response },
             },
             ResponseMode = CommandResponseMode.First,
         };
@@ -77,10 +72,18 @@ public class CustomCommandService : ICustomCommandService
 
     public bool CreateCommand(CustomCommandDescription commandDescription)
     {
-        if (commandDescription.Owners
-            .Select(channel
-                => ExistsAnyWithName(channel, commandDescription.Name, commandDescription.Aliases.ToArray()))
-            .Any(exists => exists))
+        if (
+            commandDescription.Owners
+                .Select(
+                    channel =>
+                        ExistsAnyWithName(
+                            channel,
+                            commandDescription.Name,
+                            commandDescription.Aliases.ToArray()
+                        )
+                )
+                .Any(exists => exists)
+        )
         {
             return false;
         }
@@ -106,7 +109,10 @@ public class CustomCommandService : ICustomCommandService
         _repository.Update(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
     }
 
-    private NullableObject<CustomCommandDescriptionEo> GetCommandEo(string channelId, string commandName)
+    private NullableObject<CustomCommandDescriptionEo> GetCommandEo(
+        string channelId,
+        string commandName
+    )
     {
         return _repository
             .GetAll()

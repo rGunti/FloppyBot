@@ -3,15 +3,14 @@ using RestSharp;
 
 namespace FloppyBot.Commands.Executor.Agent.Cmds.Currency;
 
-public class CurrencyConverter : ICurrencyConverter
+public class CurrencyConverter : ICurrencyConverter, IDisposable
 {
     private readonly CurrencyCommandConfig _currencyCommandConfig;
     private readonly RestClient _restClient;
 
     public CurrencyConverter(IConfiguration configuration)
     {
-        _currencyCommandConfig = configuration.GetSection("Currency")
-            .Get<CurrencyCommandConfig>();
+        _currencyCommandConfig = configuration.GetSection("Currency").Get<CurrencyCommandConfig>();
         _restClient = new RestClient(_currencyCommandConfig.SourceUrl);
     }
 
@@ -19,6 +18,11 @@ public class CurrencyConverter : ICurrencyConverter
     {
         var rate = await GetConversionRate(input.Currency, targetCurrency);
         return rate.ConvertFrom(input);
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 
     private async Task<CurrencyConversionRecord> GetConversionRate(string from, string to)
@@ -34,9 +38,6 @@ public class CurrencyConverter : ICurrencyConverter
             throw new InvalidOperationException("Could not load data as requested");
         }
 
-        return new CurrencyConversionRecord(
-            from,
-            to,
-            responseData[$"{from}_{to}"]);
+        return new CurrencyConversionRecord(from, to, responseData[$"{from}_{to}"]);
     }
 }

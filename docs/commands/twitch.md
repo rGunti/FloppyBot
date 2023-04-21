@@ -8,7 +8,7 @@
 
 _Alias: `so`_
 
-Allows you to shoutout another Twitch channel. 
+Allows you to shoutout another Twitch channel.
 Note that you will need to setup a shoutout message using `setshoutout`
 (or the Admin Console) for this to work.
 

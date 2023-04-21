@@ -34,11 +34,13 @@ public static class Permissions
 
     public static AuthorizationOptions AddPermissionAsPolicy(
         this AuthorizationOptions opts,
-        string permission)
+        string permission
+    )
     {
         opts.AddPolicy(
             permission,
-            p => p.Requirements.Add(new HasPermissionRequirement(permission)));
+            p => p.Requirements.Add(new HasPermissionRequirement(permission))
+        );
         return opts;
     }
 }

@@ -7,18 +7,19 @@ namespace FloppyBot.Base.Storage.Utils;
 
 public static class RepositoryFactoryUtils
 {
-    public static string DetermineCollectionName<T>() where T : class, IEntity<T>
-        => DetermineCollectionName(typeof(T));
+    public static string DetermineCollectionName<T>()
+        where T : class, IEntity<T> => DetermineCollectionName(typeof(T));
 
     public static string DetermineCollectionName(MemberInfo type)
     {
         return type.GetCustomAttributes<CollectionNameAttribute>()
-            .Select(a => a.Name)
-            .FirstOrDefault() ?? type.Name;
+                .Select(a => a.Name)
+                .FirstOrDefault() ?? type.Name;
     }
 
     public static IServiceCollection AddStorageImplementation<TRepositoryFactory, TIndexManager>(
-        this IServiceCollection services)
+        this IServiceCollection services
+    )
         where TRepositoryFactory : class, IRepositoryFactory
         where TIndexManager : class, IIndexManager
     {

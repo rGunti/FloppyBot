@@ -6,7 +6,6 @@ public static class DiSetup
 {
     public static IServiceCollection AddCooldown(this IServiceCollection services)
     {
-        return services
-            .AddSingleton<ICooldownService, CooldownService>();
+        return services.AddSingleton<ICooldownService, CooldownService>();
     }
 }

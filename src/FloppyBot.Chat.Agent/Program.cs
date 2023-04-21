@@ -29,7 +29,4 @@ IHost host = builder
     })
     .Build();
 
-await host
-    .BootCronJobs()
-    .ArmKillSwitch()
-    .LogAndRun();
+await host.BootCronJobs().ArmKillSwitch().LogAndRun();

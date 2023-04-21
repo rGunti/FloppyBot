@@ -30,12 +30,13 @@ public class QuoteServiceTests
             memoryDb,
             _quoteChannelMappingServiceMock.Object,
             _timeProvider,
-            _rng);
+            _rng
+        );
 
         _quoteChannelMappingServiceMock
-            .Setup(q => q.GetQuoteChannelMapping(
-                It.Is<string>(s => s == CHANNEL_ID),
-                It.IsAny<bool>()))
+            .Setup(
+                q => q.GetQuoteChannelMapping(It.Is<string>(s => s == CHANNEL_ID), It.IsAny<bool>())
+            )
             .Returns<string, bool>((_, _) => MAPPING_ID);
     }
 
@@ -46,7 +47,8 @@ public class QuoteServiceTests
             CHANNEL_ID,
             "This is my quote",
             "Cool Game",
-            "My User Name");
+            "My User Name"
+        );
 
         Assert.AreEqual(
             new Quote(
@@ -56,16 +58,20 @@ public class QuoteServiceTests
                 "This is my quote",
                 "Cool Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "My User Name"),
-            newQuote);
+                "My User Name"
+            ),
+            newQuote
+        );
         Assert.IsTrue(
-            _quoteRepository.GetAll().Any(i => i.ChannelMappingId == MAPPING_ID && i.QuoteId == 1));
+            _quoteRepository.GetAll().Any(i => i.ChannelMappingId == MAPPING_ID && i.QuoteId == 1)
+        );
 
         var newQuote2 = _quoteService.AddQuote(
             CHANNEL_ID,
             "This is my #2 quote",
             "Cool Game",
-            "Other User Name");
+            "Other User Name"
+        );
         Assert.AreEqual(
             new Quote(
                 newQuote2.Id,
@@ -74,32 +80,36 @@ public class QuoteServiceTests
                 "This is my #2 quote",
                 "Cool Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "Other User Name"),
-            newQuote2);
+                "Other User Name"
+            ),
+            newQuote2
+        );
         CollectionAssert.AreEquivalent(
             new[] { 1, 2 },
-            _quoteRepository.GetAll()
+            _quoteRepository
+                .GetAll()
                 .Where(i => i.ChannelMappingId == MAPPING_ID)
                 .Select(q => q.QuoteId)
-                .ToArray());
+                .ToArray()
+        );
     }
 
     [TestMethod]
     public void EditQuote()
     {
-        _quoteRepository.Insert(new Quote(
-            "myId",
-            MAPPING_ID,
-            1337,
-            "My quote text",
-            "Cool Game",
-            DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-            "My User Name"));
+        _quoteRepository.Insert(
+            new Quote(
+                "myId",
+                MAPPING_ID,
+                1337,
+                "My quote text",
+                "Cool Game",
+                DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
+                "My User Name"
+            )
+        );
 
-        var editQuote = _quoteService.EditQuote(
-            CHANNEL_ID,
-            1337,
-            "New quote text");
+        var editQuote = _quoteService.EditQuote(CHANNEL_ID, 1337, "New quote text");
 
         Assert.IsNotNull(editQuote);
         Assert.AreEqual(
@@ -110,8 +120,10 @@ public class QuoteServiceTests
                 "New quote text",
                 "Cool Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "My User Name"),
-            editQuote);
+                "My User Name"
+            ),
+            editQuote
+        );
 
         Assert.IsNull(_quoteService.EditQuote("Mock/OtherChannel", 1337, "New Content"));
     }
@@ -119,14 +131,17 @@ public class QuoteServiceTests
     [TestMethod]
     public void DeleteQuote()
     {
-        _quoteRepository.Insert(new Quote(
-            "myId",
-            MAPPING_ID,
-            1337,
-            "My quote text",
-            "Cool Game",
-            DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-            "My User Name"));
+        _quoteRepository.Insert(
+            new Quote(
+                "myId",
+                MAPPING_ID,
+                1337,
+                "My quote text",
+                "Cool Game",
+                DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
+                "My User Name"
+            )
+        );
 
         Assert.IsTrue(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
         Assert.IsFalse(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
@@ -135,19 +150,19 @@ public class QuoteServiceTests
     [TestMethod]
     public void EditQuoteContext()
     {
-        _quoteRepository.Insert(new Quote(
-            "myId",
-            MAPPING_ID,
-            1337,
-            "My quote text",
-            "Cool Game",
-            DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-            "My User Name"));
+        _quoteRepository.Insert(
+            new Quote(
+                "myId",
+                MAPPING_ID,
+                1337,
+                "My quote text",
+                "Cool Game",
+                DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
+                "My User Name"
+            )
+        );
 
-        var editQuote = _quoteService.EditQuoteContext(
-            CHANNEL_ID,
-            1337,
-            "New Game");
+        var editQuote = _quoteService.EditQuoteContext(CHANNEL_ID, 1337, "New Game");
 
         Assert.AreEqual(
             new Quote(
@@ -157,13 +172,20 @@ public class QuoteServiceTests
                 "My quote text",
                 "New Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "My User Name"),
-            editQuote);
+                "My User Name"
+            ),
+            editQuote
+        );
         Assert.IsTrue(
-            _quoteRepository.GetAll().Any(q =>
-                q.ChannelMappingId == MAPPING_ID
-                && q.QuoteId == 1337
-                && q.QuoteContext == "New Game"));
+            _quoteRepository
+                .GetAll()
+                .Any(
+                    q =>
+                        q.ChannelMappingId == MAPPING_ID
+                        && q.QuoteId == 1337
+                        && q.QuoteContext == "New Game"
+                )
+        );
 
         Assert.IsNull(_quoteService.EditQuoteContext("Mock/OtherChannel", 1337, "New Game"));
     }
@@ -171,14 +193,17 @@ public class QuoteServiceTests
     [TestMethod]
     public void GetQuote()
     {
-        _quoteRepository.Insert(new Quote(
-            "myId",
-            MAPPING_ID,
-            1337,
-            "My quote text",
-            "Cool Game",
-            DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-            "My User Name"));
+        _quoteRepository.Insert(
+            new Quote(
+                "myId",
+                MAPPING_ID,
+                1337,
+                "My quote text",
+                "Cool Game",
+                DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
+                "My User Name"
+            )
+        );
 
         Assert.AreEqual(
             new Quote(
@@ -188,8 +213,10 @@ public class QuoteServiceTests
                 "My quote text",
                 "Cool Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "My User Name"),
-            _quoteService.GetQuote(CHANNEL_ID, 1337));
+                "My User Name"
+            ),
+            _quoteService.GetQuote(CHANNEL_ID, 1337)
+        );
         Assert.IsNull(_quoteService.GetQuote(CHANNEL_ID, 1338));
         Assert.IsNull(_quoteService.GetQuote("Mock/OtherChannel", 1337));
     }
@@ -199,14 +226,17 @@ public class QuoteServiceTests
     {
         Assert.IsNull(_quoteService.GetRandomQuote(CHANNEL_ID));
 
-        _quoteRepository.Insert(new Quote(
-            "myId",
-            MAPPING_ID,
-            1,
-            "My quote text",
-            "Cool Game",
-            DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-            "My User Name"));
+        _quoteRepository.Insert(
+            new Quote(
+                "myId",
+                MAPPING_ID,
+                1,
+                "My quote text",
+                "Cool Game",
+                DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
+                "My User Name"
+            )
+        );
 
         var quote = _quoteService.GetRandomQuote(CHANNEL_ID);
         Assert.AreEqual(
@@ -217,8 +247,10 @@ public class QuoteServiceTests
                 "My quote text",
                 "Cool Game",
                 DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
-                "My User Name"),
-            quote);
+                "My User Name"
+            ),
+            quote
+        );
 
         Assert.IsNull(_quoteService.GetRandomQuote("Mock/SomeOtherChannel"));
 

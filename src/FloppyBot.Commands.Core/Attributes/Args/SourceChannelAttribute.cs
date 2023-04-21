@@ -7,7 +7,10 @@ namespace FloppyBot.Commands.Core.Attributes.Args;
 
 public class SourceChannelAttribute : BaseArgumentAttribute
 {
-    public override object? ExtractArgument(ParameterInfo parameterInfo, CommandInstruction commandInstruction)
+    public override object? ExtractArgument(
+        ParameterInfo parameterInfo,
+        CommandInstruction commandInstruction
+    )
     {
         var channelIdentifier = commandInstruction.Context!.SourceMessage.Identifier.GetChannel();
         if (parameterInfo.IsOfType<string>())
