@@ -34,6 +34,7 @@ public class CommandMetadata
     public PrivilegeLevel MinPrivilegeLevel { get; private set; }
 
     public bool HasNoParameters => RawData.ContainsKey(CommandMetadataTypes.NO_PARAMETERS);
+
     public CommandParameterMetadata[] Parameters { get; private set; } =
         Array.Empty<CommandParameterMetadata>();
 
@@ -47,6 +48,11 @@ public class CommandMetadata
     public string? GetValueOrDefault(string key)
     {
         return RawData.GetValueOrDefault(key);
+    }
+
+    public Dictionary<string, string> GetRawDataAsDictionary()
+    {
+        return RawData.ToDictionary(i => i.Key, i => i.Value);
     }
 
     private void Init()
@@ -76,11 +82,6 @@ public class CommandMetadata
                 .OrderBy(p => p.Order)
                 .ToArray();
         }
-    }
-
-    public Dictionary<string, string> GetRawDataAsDictionary()
-    {
-        return RawData.ToDictionary(i => i.Key, i => i.Value);
     }
 }
 

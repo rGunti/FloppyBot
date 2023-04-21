@@ -45,25 +45,6 @@ public class CommandSpawnerTests
         Assert.AreEqual("Simple Response", returnValue!.Content);
     }
 
-    private static ICommandSpawner GetCommandSpawner<T>()
-        where T : class
-    {
-        var sp = new ServiceCollection().AddScoped<T>().BuildServiceProvider();
-        return new CommandSpawner(LoggingUtils.GetLogger<CommandSpawner>(), sp);
-    }
-
-    private static CommandInfo GetCommandInfo(
-        string commandName,
-        Type commandHostType,
-        string methodName
-    )
-    {
-        return new CommandInfo(
-            new[] { commandName }.ToImmutableListWithValueSemantics(),
-            commandHostType.GetMethod(methodName)!
-        );
-    }
-
     [TestMethod]
     public void RunsCommandsWithNoArgs()
     {
@@ -280,5 +261,24 @@ public class CommandSpawnerTests
 
         Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
         Assert.AreEqual("Async", returnValue!.Content);
+    }
+
+    private static ICommandSpawner GetCommandSpawner<T>()
+        where T : class
+    {
+        var sp = new ServiceCollection().AddScoped<T>().BuildServiceProvider();
+        return new CommandSpawner(LoggingUtils.GetLogger<CommandSpawner>(), sp);
+    }
+
+    private static CommandInfo GetCommandInfo(
+        string commandName,
+        Type commandHostType,
+        string methodName
+    )
+    {
+        return new CommandInfo(
+            new[] { commandName }.ToImmutableListWithValueSemantics(),
+            commandHostType.GetMethod(methodName)!
+        );
     }
 }

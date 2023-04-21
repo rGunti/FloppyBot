@@ -29,6 +29,13 @@ public class AppConfigurationTests
         Assert.AreEqual("aConnectionStringWithCValue", config.GetParsedConnectionString("C", true));
     }
 
+    [TestMethod]
+    public void ConfigValuesParsedCorrectly()
+    {
+        IConfiguration config = BuildTestConfig();
+        Assert.AreEqual("aConnectionStringOnRoot", config.GetParsedConfigString("SomeOtherValue"));
+    }
+
     private static IConfiguration BuildTestConfig()
     {
         return new ConfigurationBuilder()
@@ -43,12 +50,5 @@ public class AppConfigurationTests
                 }
             )
             .Build();
-    }
-
-    [TestMethod]
-    public void ConfigValuesParsedCorrectly()
-    {
-        IConfiguration config = BuildTestConfig();
-        Assert.AreEqual("aConnectionStringOnRoot", config.GetParsedConfigString("SomeOtherValue"));
     }
 }
