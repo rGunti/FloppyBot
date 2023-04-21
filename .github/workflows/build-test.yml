@@ -11,21 +11,21 @@ jobs:
     name: Build & Test Project
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v2
-      with:
-        dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: |
-        dotnet restore src/FloppyBot.sln
-    - name: Build
-      run: dotnet build --no-restore src/FloppyBot.sln
-    - name: Test
-      uses: zyborg/dotnet-tests-report@v1
-      with:
-        project_path: src/FloppyBot.sln
-        report_name: floppybot_v2_tests
-        report_title: FloppyBot v2 Tests
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout Code
+        uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: |
+          dotnet restore src/FloppyBot.sln
+      - name: Build
+        run: dotnet build --no-restore src/FloppyBot.sln
+      - name: Test
+        uses: zyborg/dotnet-tests-report@v1
+        with:
+          project_path: src/FloppyBot.sln
+          report_name: floppybot_v2_tests
+          report_title: FloppyBot v2 Tests
+          github_token: ${{ secrets.GITHUB_TOKEN }}
