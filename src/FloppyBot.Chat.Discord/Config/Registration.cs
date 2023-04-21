@@ -28,7 +28,7 @@ public static class Registration
                                     GatewayIntents.AllUnprivileged
                                     & ~GatewayIntents.GuildScheduledEvents
                                     & ~GatewayIntents.GuildInvites
-                                ) | GatewayIntents.MessageContent
+                                ) | GatewayIntents.MessageContent,
                         }
                     )
             )

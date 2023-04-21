@@ -55,7 +55,7 @@ public class FileService : IFileService
         return _fileQuota.GetById(owner).Wrap().FirstOrDefault()
             ?? DefaultQuota with
             {
-                Id = owner
+                Id = owner,
             };
     }
 

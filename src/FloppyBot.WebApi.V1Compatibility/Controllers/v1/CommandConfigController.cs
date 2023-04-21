@@ -9,7 +9,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/commands/config/{messageInterface}/{channel}")]
@@ -31,27 +31,6 @@ public class CommandConfigController : ControllerBase
         _mapper = mapper;
         _userService = userService;
         _commandConverter = commandConverter;
-    }
-
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
     }
 
     [HttpGet("")]
@@ -123,7 +102,7 @@ public class CommandConfigController : ControllerBase
                 {
                     // Force parameters to prevent URL hacking / abuse
                     ChannelId = channelId,
-                    CommandName = commandName
+                    CommandName = commandName,
                 }
             )
         );
@@ -140,5 +119,26 @@ public class CommandConfigController : ControllerBase
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         _commandConfigurationService.DeleteCommandConfiguration(channelId, command);
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

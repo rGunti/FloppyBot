@@ -55,7 +55,7 @@ public class CustomCommandStorageProfile : Profile
                         ).ToImmutableHashSet(),
                         Cooldown = eo.Cooldown
                             .Select(c => ctx.Mapper.Map<CooldownDescription>(c))
-                            .ToImmutableHashSet()
+                            .ToImmutableHashSet(),
                     }
             );
         CreateMap<CooldownDescriptionEo, CooldownDescription>();

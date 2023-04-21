@@ -37,16 +37,6 @@ public static class SupportingTaskExtensions
             .AddHybridExecutionTask<CooldownTask>();
     }
 
-    private static IOrderedEnumerable<T> GetSupportingTasks<T>(this IServiceProvider provider)
-    {
-        return provider
-            .GetRequiredService<IEnumerable<T>>()
-            .OrderBy(
-                t => t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue
-            )
-            .ThenBy(t => t!.GetType().FullName);
-    }
-
     internal static IPreExecutionTask? RunPreExecutionTasks(
         this IServiceScope scope,
         CommandInfo info,
@@ -68,5 +58,15 @@ public static class SupportingTaskExtensions
         return scope.ServiceProvider
             .GetSupportingTasks<IPostExecutionTask>()
             .FirstOrDefault(t => !t.ExecutePost(info, instruction, result));
+    }
+
+    private static IOrderedEnumerable<T> GetSupportingTasks<T>(this IServiceProvider provider)
+    {
+        return provider
+            .GetRequiredService<IEnumerable<T>>()
+            .OrderBy(
+                t => t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue
+            )
+            .ThenBy(t => t!.GetType().FullName);
     }
 }

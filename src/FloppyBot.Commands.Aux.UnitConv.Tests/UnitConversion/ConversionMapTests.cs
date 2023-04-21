@@ -5,46 +5,6 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
     [TestClass]
     public class ConversionMapTests
     {
-        private readonly ConversionMap _map;
-
-        public ConversionMapTests()
-        {
-            _map = ConversionMapBuilder.BuildMap(Nodes, NodeRelations);
-        }
-
-        private void DoReachTest(
-            string origin,
-            string target,
-            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
-            bool expectReach
-        )
-        {
-            ConversionNode originNode = _map.GetNode(origin),
-                targetNode = _map.GetNode(target);
-
-            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
-        }
-
-        [TestMethod]
-        [DataRow(A, I, true)]
-        [DataRow(A, C, true)]
-        [DataRow(A, O, false)]
-        [DataRow(E, L, false)]
-        public void TestReachabilityOfPoints(string origin, string target, bool canReach)
-        {
-            DoReachTest(
-                origin,
-                target,
-                (o, t) =>
-                {
-                    var res = _map.IsNodeReachable(o, t, out var path);
-                    Console.WriteLine(path.ToString());
-                    return res;
-                },
-                canReach
-            );
-        }
-
         #region Test Data Setup
 
         private const string A = "A";
@@ -81,12 +41,12 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             M,
             N,
             O,
-            P
+            P,
         };
 
-        private static readonly ISet<(string a, string b)> NodeRelations = new HashSet<(
-            string a,
-            string b
+        private static readonly ISet<(string A, string B)> NodeRelations = new HashSet<(
+            string A,
+            string B
         )>
         {
             (A, I),
@@ -122,8 +82,48 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             (N, M),
             (N, P),
             (O, M),
-            (P, N)
+            (P, N),
         };
+
+        private readonly ConversionMap _map;
+
+        public ConversionMapTests()
+        {
+            _map = ConversionMapBuilder.BuildMap(Nodes, NodeRelations);
+        }
+
+        [TestMethod]
+        [DataRow(A, I, true)]
+        [DataRow(A, C, true)]
+        [DataRow(A, O, false)]
+        [DataRow(E, L, false)]
+        public void TestReachabilityOfPoints(string origin, string target, bool canReach)
+        {
+            DoReachTest(
+                origin,
+                target,
+                (o, t) =>
+                {
+                    var res = _map.IsNodeReachable(o, t, out var path);
+                    Console.WriteLine(path.ToString());
+                    return res;
+                },
+                canReach
+            );
+        }
+
+        private void DoReachTest(
+            string origin,
+            string target,
+            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
+            bool expectReach
+        )
+        {
+            ConversionNode originNode = _map.GetNode(origin),
+                targetNode = _map.GetNode(target);
+
+            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
+        }
 
         #endregion
     }

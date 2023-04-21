@@ -34,10 +34,26 @@ public class CommandMetadata
     public PrivilegeLevel MinPrivilegeLevel { get; private set; }
 
     public bool HasNoParameters => RawData.ContainsKey(CommandMetadataTypes.NO_PARAMETERS);
+
     public CommandParameterMetadata[] Parameters { get; private set; } =
         Array.Empty<CommandParameterMetadata>();
 
     public bool HiddenCommand => RawData.ContainsKey(CommandMetadataTypes.HIDDEN);
+
+    public bool HasValue(string key)
+    {
+        return RawData.ContainsKey(key);
+    }
+
+    public string? GetValueOrDefault(string key)
+    {
+        return RawData.GetValueOrDefault(key);
+    }
+
+    public Dictionary<string, string> GetRawDataAsDictionary()
+    {
+        return RawData.ToDictionary(i => i.Key, i => i.Value);
+    }
 
     private void Init()
     {
@@ -66,21 +82,6 @@ public class CommandMetadata
                 .OrderBy(p => p.Order)
                 .ToArray();
         }
-    }
-
-    public bool HasValue(string key)
-    {
-        return RawData.ContainsKey(key);
-    }
-
-    public string? GetValueOrDefault(string key)
-    {
-        return RawData.GetValueOrDefault(key);
-    }
-
-    public Dictionary<string, string> GetRawDataAsDictionary()
-    {
-        return RawData.ToDictionary(i => i.Key, i => i.Value);
     }
 }
 
@@ -122,5 +123,5 @@ public enum CommandParameterType
 {
     String,
     Number,
-    Enum
+    Enum,
 }

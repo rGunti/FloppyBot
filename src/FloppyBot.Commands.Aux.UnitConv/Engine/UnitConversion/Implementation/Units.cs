@@ -104,17 +104,20 @@ internal static class Units
         ),
         ConstructDefaultUnit(UNIT_CUP, "cup (US)", false),
         ConstructDefaultUnit(UNIT_TBS, "tablespoon (US)", false),
-        ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false)
+        ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false),
     };
 
     public static readonly DTOs.Unit DefaultUnit = new(null, "Default Unit", null, null);
 
     public static readonly Dictionary<(string, string), IUnitConversion> AllConversions;
-    public static readonly Dictionary<(string, string), (string, string)[]> AllProxyConversions;
+    public static readonly Dictionary<
+        (string, string),
+        (string From, string To)[]
+    > AllProxyConversions;
 
     static Units()
     {
-        AllConversions = new Dictionary<(string from, string to), IUnitConversion>()
+        AllConversions = new Dictionary<(string From, string To), IUnitConversion>
         {
             // Distances
             // - Metric <-> Metric
@@ -140,9 +143,12 @@ internal static class Units
             { (UNIT_KELVIN, UNIT_CELSIUS), Offset(-273.15f) },
             {
                 (UNIT_KELVIN, UNIT_FAHRENHEIT),
-                Formula(k => k * (9 / 5f) - 459.67f, f => (f + 459.67f) * (5 / 9f))
+                Formula(k => (k * (9 / 5f)) - 459.67f, f => (f + 459.67f) * (5 / 9f))
             },
-            { (UNIT_CELSIUS, UNIT_FAHRENHEIT), Formula(c => c * 1.8f + 32, f => (f - 32) / 1.8f) },
+            {
+                (UNIT_CELSIUS, UNIT_FAHRENHEIT),
+                Formula(c => (c * 1.8f) + 32, f => (f - 32) / 1.8f)
+            },
             // Speed
             { (UNIT_MPH, UNIT_KMH), Factor(1.609344f) },
             { (UNIT_MPS, UNIT_KMH), Factor(3.6f) },
@@ -170,10 +176,10 @@ internal static class Units
             { (UNIT_TBS, UNIT_TSP), Factor(3f) },
             // - Imperial <-> Metrical
             { (UNIT_FLOZ, UNIT_ML), Factor(29.5735295625f) },
-            { (UNIT_GAL, UNIT_L), Factor(3.785411784f) }
+            { (UNIT_GAL, UNIT_L), Factor(3.785411784f) },
         };
 
-        AllProxyConversions = new Dictionary<(string, string), (string, string)[]>
+        AllProxyConversions = new Dictionary<(string, string), (string From, string To)[]>
         {
             { (UNIT_KM, UNIT_MM), Chain(UNIT_KM, UNIT_M, UNIT_CM, UNIT_MM) },
             { (UNIT_MI, UNIT_INCH), Chain(UNIT_MI, UNIT_YD, UNIT_FT, UNIT_INCH, UNIT_FT_INCH) },
@@ -238,10 +244,16 @@ internal static class Units
     {
         var r = "^(";
         if (allowNegative)
+        {
             r += "-?";
+        }
+
         r += "\\d{1,}";
         if (allowDecimal)
+        {
             r += "(\\.?\\d{1,})?";
+        }
+
         r += $"){Regex.Escape(unit)}$";
         return r;
     }
@@ -254,10 +266,16 @@ internal static class Units
     {
         var r = "^(";
         if (allowNegative)
+        {
             r += "-?";
+        }
+
         r += "\\d{1,}";
         if (allowDecimal)
+        {
             r += "(\\.?\\d{1,})?";
+        }
+
         r += $"){suffixRegex}$";
         return r;
     }
@@ -282,11 +300,14 @@ internal static class Units
     private static IUnitConversion Chain(params IUnitConversion[] conversions) =>
         new ChainedUnitConversion(conversions);
 
-    private static (string from, string to)[] Chain(params string[] steps)
+    private static (string From, string To)[] Chain(params string[] steps)
     {
-        var stepPairs = new List<(string from, string to)>();
+        var stepPairs = new List<(string From, string To)>();
         for (var i = 0; i < steps.Length - 1; i++)
+        {
             stepPairs.Add((steps[i], steps[i + 1]));
+        }
+
         return stepPairs.ToArray();
     }
 

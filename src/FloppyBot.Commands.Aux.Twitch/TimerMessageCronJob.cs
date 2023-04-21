@@ -56,7 +56,7 @@ public class TimerMessageCronJob : ICronJob
                                 config.Id,
                                 TimeSpan.FromMinutes(config.MinMessages)
                             )
-                            : -1
+                            : -1,
                     }
             )
             .Where(i => IsExecutionRequired(i.Config, i.LastExecution, i.MessageCount))
@@ -72,6 +72,16 @@ public class TimerMessageCronJob : ICronJob
         {
             _messageReplier.SendMessage(message);
         }
+    }
+
+    private static ChatMessage CreateMessageTo(string channelId, string content)
+    {
+        return new ChatMessage(
+            ChatMessageIdentifier.NewFor(channelId),
+            ChatUser.Anonymous,
+            SharedEventTypes.CHAT_MESSAGE,
+            content
+        );
     }
 
     private bool IsExecutionRequired(
@@ -117,15 +127,5 @@ public class TimerMessageCronJob : ICronJob
             msgIndex
         );
         return CreateMessageTo(config.Id, config.Messages[msgIndex]);
-    }
-
-    private static ChatMessage CreateMessageTo(string channelId, string content)
-    {
-        return new ChatMessage(
-            ChatMessageIdentifier.NewFor(channelId),
-            ChatUser.Anonymous,
-            SharedEventTypes.CHAT_MESSAGE,
-            content
-        );
     }
 }

@@ -26,15 +26,15 @@ public class MessageCounterHost : BackgroundService
         return Task.CompletedTask;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Shutting down Message Counter Agent ...");
         _messageCounter.Stop();
         return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        return Task.CompletedTask;
     }
 }

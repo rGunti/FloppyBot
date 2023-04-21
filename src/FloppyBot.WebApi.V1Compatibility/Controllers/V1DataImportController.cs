@@ -9,7 +9,7 @@ namespace FloppyBot.WebApi.V1Compatibility.Controllers;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/import")]
-//[Authorize(Permissions.READ_BOT)]
+// [Authorize(Permissions.READ_BOT)]
 public class V1DataImportController : ControllerBase
 {
     private readonly V1DataImportService _importService;

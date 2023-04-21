@@ -4,5 +4,5 @@ public enum CommandResponseMode
 {
     First,
     PickOneRandom,
-    All
+    All,
 }

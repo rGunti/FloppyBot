@@ -7,7 +7,10 @@ public record UnitValue(float Value, Unit? Unit)
     public override string ToString()
     {
         if (Unit != null)
+        {
             return Unit.FormatFunction(Value);
+        }
+
         return $"{Value} of unknown unit";
     }
 }

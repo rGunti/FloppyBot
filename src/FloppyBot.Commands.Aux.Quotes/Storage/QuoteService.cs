@@ -151,7 +151,7 @@ public class QuoteService : IQuoteService
                 // Force properties to stay as-is
                 Id = existingQuote.Id,
                 QuoteId = existingQuote.QuoteId,
-                ChannelMappingId = existingQuote.ChannelMappingId
+                ChannelMappingId = existingQuote.ChannelMappingId,
             }
         );
         return true;
@@ -173,7 +173,9 @@ public class QuoteService : IQuoteService
     {
         // ReSharper disable once SimplifyLinqExpressionUseAll
         if (!_repository.GetAll().Any(q => q.ChannelMappingId == channelMappingId))
+        {
             return 0;
+        }
 
         return _repository
             .GetAll()

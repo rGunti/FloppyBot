@@ -5,5 +5,5 @@ public enum ChatInterfaceFeatures
 {
     None = 0,
     Newline = 1,
-    MarkdownText = 2
+    MarkdownText = 2,
 }

@@ -60,23 +60,6 @@ public class TimerMessageTests
         );
     }
 
-    private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
-    {
-        var _ = Enumerable
-            .Range(startId, amount)
-            .Select(
-                i =>
-                    new MessageOccurrence(
-                        $"Mock/Channel/Message{i}",
-                        "Mock/Channel",
-                        "Mock/User",
-                        _timeProvider.GetCurrentUtcTime() - (i - startId) * gap
-                    )
-            )
-            .Select(_occurrenceRepo.Insert)
-            .ToArray();
-    }
-
     [TestMethod]
     public void SendNoMessageWhenNothingIsAvailable()
     {
@@ -130,7 +113,7 @@ public class TimerMessageTests
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
                     RefConfig.Messages[0]
-                )
+                ),
             },
             _sentMessages.ToArray()
         );
@@ -153,7 +136,7 @@ public class TimerMessageTests
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
                     RefConfig.Messages[1]
-                )
+                ),
             },
             _sentMessages.ToArray()
         );
@@ -161,5 +144,22 @@ public class TimerMessageTests
             new TimerMessageExecution("Mock/Channel", RefTime + 10.Minutes(), 1),
             _executionRepo.GetAll().Single()
         );
+    }
+
+    private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
+    {
+        var _ = Enumerable
+            .Range(startId, amount)
+            .Select(
+                i =>
+                    new MessageOccurrence(
+                        $"Mock/Channel/Message{i}",
+                        "Mock/Channel",
+                        "Mock/User",
+                        _timeProvider.GetCurrentUtcTime() - ((i - startId) * gap)
+                    )
+            )
+            .Select(_occurrenceRepo.Insert)
+            .ToArray();
     }
 }

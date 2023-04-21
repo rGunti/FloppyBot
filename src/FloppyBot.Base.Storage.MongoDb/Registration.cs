@@ -12,12 +12,6 @@ namespace FloppyBot.Base.Storage.MongoDb;
 
 public static class Registration
 {
-    private static MongoUrl GetMongoUrl(this IServiceProvider provider) =>
-        provider.GetRequiredService<MongoUrl>();
-
-    private static IMongoClient GetMongoClient(this IServiceProvider provider) =>
-        provider.GetRequiredService<IMongoClient>();
-
     public static IServiceCollection AddMongoDbStorage(
         this IServiceCollection services,
         string connectionStringName = "MongoDb"
@@ -43,4 +37,10 @@ public static class Registration
             )
             .AddStorageImplementation<MongoDbRepositoryFactory, MongoDbIndexManager>();
     }
+
+    private static MongoUrl GetMongoUrl(this IServiceProvider provider) =>
+        provider.GetRequiredService<MongoUrl>();
+
+    private static IMongoClient GetMongoClient(this IServiceProvider provider) =>
+        provider.GetRequiredService<IMongoClient>();
 }

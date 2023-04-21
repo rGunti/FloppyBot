@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace FloppyBot.Base.Tests.EquatableCollections;
 
-record SampleRecord(string Name, IImmutableList<string> AList);
+internal record SampleRecord(string Name, IImmutableList<string> AList);
 
 [TestClass]
 public class EquatableCollectionsTests
@@ -15,12 +15,12 @@ public class EquatableCollectionsTests
         IImmutableList<string> listA = new[]
         {
             "Hello",
-            "World"
+            "World",
         }.ToImmutableListWithValueSemantics();
         IImmutableList<string> listB = new[]
         {
             "Hello",
-            "World"
+            "World",
         }.ToImmutableListWithValueSemantics();
 
         Assert.AreEqual(listA, listB);

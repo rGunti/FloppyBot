@@ -32,15 +32,6 @@ public class RedisNotificationReceiver<T> : INotificationReceiver<T>
         _isStarted = true;
     }
 
-    private void HandleNewMessage(RedisChannel _, RedisValue value)
-    {
-        var data = JsonSerializer.Deserialize<T>(value.ToString());
-        if (data != null)
-        {
-            NotificationReceived?.Invoke(data);
-        }
-    }
-
     public void StopListening()
     {
         if (!_isStarted)
@@ -55,5 +46,14 @@ public class RedisNotificationReceiver<T> : INotificationReceiver<T>
     public override string ToString()
     {
         return $"{nameof(RedisNotificationReceiver<T>)}<{typeof(T)}>: {_channel}";
+    }
+
+    private void HandleNewMessage(RedisChannel _, RedisValue value)
+    {
+        var data = JsonSerializer.Deserialize<T>(value.ToString());
+        if (data != null)
+        {
+            NotificationReceived?.Invoke(data);
+        }
     }
 }

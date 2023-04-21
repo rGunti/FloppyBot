@@ -33,21 +33,24 @@ public class CustomCommandHost
         _commandService = commandService;
     }
 
-    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void DiSetup(IServiceCollection services)
     {
-        return _commandService
-            .GetCommand(
-                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
-                instruction.CommandName
-            )
-            .Wrap();
+        WebDiSetup(services);
+        services
+            .AddCommandListSupplier<CustomCommandListSupplier>()
+            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
+            .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
     }
 
-    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
+    public static void WebDiSetup(IServiceCollection services)
     {
-        return new KeyNotFoundException(
-            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
-        );
+        services
+            .AddAutoMapper(typeof(CustomCommandStorageProfile))
+            .AddScoped<ICustomCommandService, CustomCommandService>()
+            .AddScoped<ICounterStorageService, CounterStorageService>()
+            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
     }
 
     public bool CanHandleCommand(CommandInstruction instruction)
@@ -74,23 +77,20 @@ public class CustomCommandHost
         return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
     }
 
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void DiSetup(IServiceCollection services)
+    private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
     {
-        WebDiSetup(services);
-        services
-            .AddCommandListSupplier<CustomCommandListSupplier>()
-            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
-            .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
+        return _commandService
+            .GetCommand(
+                instruction.Context!.SourceMessage!.Identifier.GetChannel(),
+                instruction.CommandName
+            )
+            .Wrap();
     }
 
-    public static void WebDiSetup(IServiceCollection services)
+    private Exception CreateCommandNotFoundException(CommandInstruction instruction)
     {
-        services
-            .AddAutoMapper(typeof(CustomCommandStorageProfile))
-            .AddScoped<ICustomCommandService, CustomCommandService>()
-            .AddScoped<ICounterStorageService, CounterStorageService>()
-            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
+        return new KeyNotFoundException(
+            $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
+        );
     }
 }

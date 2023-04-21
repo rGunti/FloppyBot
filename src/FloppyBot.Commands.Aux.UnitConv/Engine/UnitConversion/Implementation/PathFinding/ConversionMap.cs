@@ -19,14 +19,24 @@ public class ConversionMap
     public IEnumerable<ConversionNode> FindPaths(string origin, string target)
     {
         if (origin == null)
+        {
             throw new ArgumentNullException(nameof(origin));
+        }
+
         if (target == null)
+        {
             throw new ArgumentNullException(nameof(target));
+        }
 
         if (!HasNode(origin))
+        {
             throw new ArgumentOutOfRangeException(nameof(origin), "Origin node doesn't exist");
+        }
+
         if (!HasNode(target))
+        {
             throw new ArgumentOutOfRangeException(nameof(target), "Target node doesn't exist");
+        }
 
         ConversionNode originNode = Nodes[origin],
             targetNode = Nodes[target];
@@ -75,26 +85,36 @@ public class ConversionMap
     )
     {
         if (originNode == targetNode)
+        {
             throw new InvalidOperationException("Origin and Target node cannot be the same!");
+        }
 
         pathStack.Push(refNode);
         foreach (var neighbor in refNode.Neighbors)
         {
             // If we found the origin, we're going circles
             if (neighbor == originNode)
+            {
                 continue;
+            }
 
             // If we came from that neighbor, ignore it or we'll be going circles
             if (neighbor == refNode)
+            {
                 continue;
+            }
 
             // If stack already contains this node, ignore it or we'll be going circles
             if (pathStack.Contains(neighbor))
+            {
                 continue;
+            }
 
             // If we found the target, we're done!
             if (neighbor == targetNode)
+            {
                 return true;
+            }
 
             // Check if we can reach the target from the current point
             if (maxDepth > 0)
@@ -107,7 +127,9 @@ public class ConversionMap
                     maxDepth - 1
                 );
                 if (neighborCanReachTarget)
+                {
                     return true;
+                }
             }
         }
 

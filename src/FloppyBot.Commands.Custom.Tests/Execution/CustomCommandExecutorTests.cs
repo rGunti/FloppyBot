@@ -33,14 +33,14 @@ public class CustomCommandExecutorTests
                 Cooldown = new CooldownDescription[]
                 {
                     new(PrivilegeLevel.Moderator, 0),
-                    new(PrivilegeLevel.Viewer, 15 * 1000)
-                }.ToImmutableHashSetWithValueSemantics()
+                    new(PrivilegeLevel.Viewer, 15 * 1000),
+                }.ToImmutableHashSetWithValueSemantics(),
             },
             ResponseMode = CommandResponseMode.First,
             Responses = new CommandResponse[]
             {
-                new(ResponseType.Text, "Hello World")
-            }.ToImmutableListWithValueSemantics()
+                new(ResponseType.Text, "Hello World"),
+            }.ToImmutableListWithValueSemantics(),
         };
 
     private static readonly CommandInstruction CommandInstruction =
@@ -143,10 +143,10 @@ public class CustomCommandExecutorTests
                         {
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
-                                PrivilegeLevel = userPrivilegeLevel
-                            }
+                                PrivilegeLevel = userPrivilegeLevel,
+                            },
                         }
-                    )
+                    ),
                 },
                 CommandDescription
             )
@@ -189,8 +189,8 @@ public class CustomCommandExecutorTests
                 {
                     Responses = new[]
                     {
-                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                    }.ToImmutableListWithValueSemantics()
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!"),
+                    }.ToImmutableListWithValueSemantics(),
                 }
             )
             .ToArray();
@@ -206,8 +206,8 @@ public class CustomCommandExecutorTests
                 {
                     Responses = new[]
                     {
-                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                    }.ToImmutableListWithValueSemantics()
+                        new CommandResponse(ResponseType.Text, "I am at level {Counter} now!"),
+                    }.ToImmutableListWithValueSemantics(),
                 }
             )
             .ToArray();
@@ -241,10 +241,10 @@ public class CustomCommandExecutorTests
                         {
                             Author = CommandInstruction.Context!.SourceMessage.Author with
                             {
-                                Identifier = inputUser
-                            }
+                                Identifier = inputUser,
+                            },
                         }
-                    )
+                    ),
                 },
                 CommandDescription with
                 {
@@ -252,8 +252,8 @@ public class CustomCommandExecutorTests
                     {
                         LimitedToUsers = ImmutableHashSet
                             .Create<string>()
-                            .Add("CoolUser".ToLowerInvariant())
-                    }
+                            .Add("CoolUser".ToLowerInvariant()),
+                    },
                 }
             )
             .ToArray();

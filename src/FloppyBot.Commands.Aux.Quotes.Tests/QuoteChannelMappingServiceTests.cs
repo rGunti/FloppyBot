@@ -49,11 +49,6 @@ public class QuoteChannelMappingServiceTests
         );
     }
 
-    private string CreateMapping(string channelId)
-    {
-        return _service.GetQuoteChannelMapping(channelId, true)!;
-    }
-
     [TestMethod]
     public void PositiveJoinProcess()
     {
@@ -203,5 +198,10 @@ public class QuoteChannelMappingServiceTests
                         && k.ChannelId == "Mock/Channel2"
                 )
         );
+    }
+
+    private string CreateMapping(string channelId)
+    {
+        return _service.GetQuoteChannelMapping(channelId, true)!;
     }
 }

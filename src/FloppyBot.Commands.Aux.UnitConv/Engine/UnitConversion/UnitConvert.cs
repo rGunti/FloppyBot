@@ -5,14 +5,13 @@ namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion;
 
 public static class UnitConvert
 {
-    public static IUnitParsingEngine DefaultParser = new UnitParsingEngine(
-        Units.AllUnits,
-        Units.DefaultUnit
-    );
+    public static IUnitParsingEngine DefaultParser { get; } =
+        new UnitParsingEngine(Units.AllUnits, Units.DefaultUnit);
 
-    public static IUnitConversionEngine DefaultConverter = new UnitConversionEngine(
-        Units.AllConversions,
-        Units.AllProxyConversions,
-        DefaultParser.RegisteredUnits
-    );
+    public static IUnitConversionEngine DefaultConverter { get; } =
+        new UnitConversionEngine(
+            Units.AllConversions,
+            Units.AllProxyConversions,
+            DefaultParser.RegisteredUnits
+        );
 }

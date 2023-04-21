@@ -110,7 +110,7 @@ public class CommandScannerTests
                         nameof(VariableCommands.HandleVariableCommands)
                     )!,
                     typeof(VariableCommands).GetMethod(nameof(VariableCommands.CanHandle))!
-                )
+                ),
             },
             handlers
         );

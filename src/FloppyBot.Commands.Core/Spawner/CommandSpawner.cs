@@ -24,7 +24,7 @@ public class CommandSpawner : ICommandSpawner
             { typeof(double), s => Convert.ToDouble(s) },
             { typeof(float), s => Convert.ToSingle(s) },
             { typeof(decimal), s => Convert.ToDecimal(s) },
-            { typeof(byte), s => Convert.ToByte(s) }
+            { typeof(byte), s => Convert.ToByte(s) },
         }.ToImmutableDictionary();
 
     private readonly ILogger<CommandSpawner> _logger;
@@ -175,54 +175,6 @@ public class CommandSpawner : ICommandSpawner
         return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[] { instruction })!;
     }
 
-    private CommandResult ProcessReturnValue(object? returnValue)
-    {
-        if (returnValue == null)
-        {
-            _logger.LogDebug("Return value was null, returning null as well");
-            return new CommandResult(CommandOutcome.NoResponse);
-        }
-
-        var returnValueToProcess = returnValue;
-        if (returnValueToProcess is Task task)
-        {
-            _logger.LogDebug("Return value is asynchronous, waiting for reply");
-            task.ConfigureAwait(false);
-            task.Wait();
-            // ReSharper disable once TailRecursiveCall
-            returnValueToProcess = (object)((dynamic)task).Result;
-        }
-
-        if (returnValueToProcess == null)
-        {
-            _logger.LogDebug("Return value as null, so message is being ignored");
-            return CommandResult.Empty;
-        }
-
-        switch (returnValueToProcess)
-        {
-            case string returnMessage:
-                _logger.LogDebug("Return value was string, returning as successful outcome");
-                return new CommandResult(CommandOutcome.Success, returnMessage);
-            case CommandResult result:
-                _logger.LogDebug($"Return value was {nameof(CommandResult)}, returning as is");
-                return result;
-            case ChatMessage chatMessage:
-                _logger.LogWarning(
-                    "Return value was chat message (deprecated), returning its content as successful outcome"
-                );
-                return new CommandResult(CommandOutcome.Success, chatMessage.Content);
-            default:
-                _logger.LogError(
-                    "Return value was of type {ReturnValueType}, which is not supported",
-                    returnValueToProcess.GetType()
-                );
-                throw new InvalidDataException(
-                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
-                );
-        }
-    }
-
     private static object?[] ConstructArguments(
         MethodInfo methodInfo,
         CommandInstruction instruction
@@ -289,5 +241,53 @@ public class CommandSpawner : ICommandSpawner
         throw new InvalidCastException(
             $"Cannot yet convert from {sourceValue.GetType()} to {targetType}"
         );
+    }
+
+    private CommandResult ProcessReturnValue(object? returnValue)
+    {
+        if (returnValue == null)
+        {
+            _logger.LogDebug("Return value was null, returning null as well");
+            return new CommandResult(CommandOutcome.NoResponse);
+        }
+
+        var returnValueToProcess = returnValue;
+        if (returnValueToProcess is Task task)
+        {
+            _logger.LogDebug("Return value is asynchronous, waiting for reply");
+            task.ConfigureAwait(false);
+            task.Wait();
+            // ReSharper disable once TailRecursiveCall
+            returnValueToProcess = (object)((dynamic)task).Result;
+        }
+
+        if (returnValueToProcess == null)
+        {
+            _logger.LogDebug("Return value as null, so message is being ignored");
+            return CommandResult.Empty;
+        }
+
+        switch (returnValueToProcess)
+        {
+            case string returnMessage:
+                _logger.LogDebug("Return value was string, returning as successful outcome");
+                return new CommandResult(CommandOutcome.Success, returnMessage);
+            case CommandResult result:
+                _logger.LogDebug($"Return value was {nameof(CommandResult)}, returning as is");
+                return result;
+            case ChatMessage chatMessage:
+                _logger.LogWarning(
+                    "Return value was chat message (deprecated), returning its content as successful outcome"
+                );
+                return new CommandResult(CommandOutcome.Success, chatMessage.Content);
+            default:
+                _logger.LogError(
+                    "Return value was of type {ReturnValueType}, which is not supported",
+                    returnValueToProcess.GetType()
+                );
+                throw new InvalidDataException(
+                    $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
+                );
+        }
     }
 }

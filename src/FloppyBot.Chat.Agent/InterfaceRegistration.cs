@@ -17,7 +17,7 @@ public static class InterfaceRegistration
         {
             { MockChatInterface.IF_NAME, s => s.AddMockChatInterface() },
             { TwitchChatInterface.IF_NAME, s => s.AddTwitchChatInterface() },
-            { DiscordChatInterface.IF_NAME, s => s.AddDiscordChatInterface() }
+            { DiscordChatInterface.IF_NAME, s => s.AddDiscordChatInterface() },
         };
 
     public static IServiceCollection RegisterChatInterface(

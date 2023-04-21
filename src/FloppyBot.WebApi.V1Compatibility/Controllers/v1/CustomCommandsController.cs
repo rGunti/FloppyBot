@@ -10,7 +10,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/custom-commands")]
@@ -32,27 +32,6 @@ public class CustomCommandsController : ControllerBase
         _userService = userService;
         _mapper = mapper;
         _counterStorageService = counterStorageService;
-    }
-
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
     }
 
     [HttpGet]
@@ -153,7 +132,7 @@ public class CustomCommandsController : ControllerBase
 
         CustomCommandDescription customCommand = wrappedCommand.Value with
         {
-            Name = newCommandName
+            Name = newCommandName,
         };
         _customCommandService.UpdateCommand(customCommand);
         return NoContent();
@@ -224,5 +203,26 @@ public class CustomCommandsController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

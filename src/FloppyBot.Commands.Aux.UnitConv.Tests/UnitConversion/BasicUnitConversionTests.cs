@@ -29,14 +29,19 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             float diversionTolerance = CONVERSION_TOLERANCE
         )
         {
-            if (!_unitParsingEngine.TryGetUnit(unitName, out var unit))
+            if (!UnitParsingEngine.TryGetUnit(unitName, out var unit))
+            {
                 Assert.Fail($"Unit <{unitName}> is unknown");
+            }
+
             var unitValue = value.As(unit);
 
-            if (!_unitParsingEngine.TryGetUnit(convertedUnit, out var destinationUnit))
+            if (!UnitParsingEngine.TryGetUnit(convertedUnit, out var destinationUnit))
+            {
                 Assert.Fail($"Unit <{convertedUnit}> is unknown");
+            }
 
-            var conversion = _unitConversionEngine.FindConversion(unit, destinationUnit);
+            var conversion = UnitConversionEngine.FindConversion(unit, destinationUnit);
             Assert.IsNotNull(
                 conversion,
                 $"Could not find a conversion from <{unit}> to <{destinationUnit}>"
@@ -60,7 +65,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             Console.WriteLine($"Converted:       {outputValue}");
             Console.WriteLine($"Diversion:       {convertDiversion}");
 
-            var backConversion = _unitConversionEngine.FindConversion(destinationUnit, unit);
+            var backConversion = UnitConversionEngine.FindConversion(destinationUnit, unit);
             Assert.IsNotNull(
                 backConversion,
                 $"Could not find a back-conversion from <{destinationUnit}> to <{unit}>"
@@ -90,9 +95,9 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
         public virtual void CanConvertToSameUnit()
         {
             var failedUnits = new List<Unit>();
-            foreach (var unit in _unitParsingEngine.RegisteredUnits)
+            foreach (var unit in UnitParsingEngine.RegisteredUnits)
             {
-                var conversion = _unitConversionEngine.FindConversion(unit, unit);
+                var conversion = UnitConversionEngine.FindConversion(unit, unit);
                 if (conversion == null)
                 {
                     failedUnits.Add(unit);
@@ -102,13 +107,13 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             if (failedUnits.Any())
             {
                 var failedUnitsCount = failedUnits.Count;
-                var knownUnitsCount = _unitParsingEngine.RegisteredUnits.Count;
+                var knownUnitsCount = UnitParsingEngine.RegisteredUnits.Count;
 
                 var failureRate = (double)failedUnitsCount / knownUnitsCount;
 
                 Assert.Fail(
                     $"Same unit conversion failed for "
-                        + $"<{failedUnitsCount} / {knownUnitsCount}> known unit(s) (<{(failureRate * 100):0.##} %>): "
+                        + $"<{failedUnitsCount} / {knownUnitsCount}> known unit(s) (<{failureRate * 100:0.##} %>): "
                         + $"<{string.Join(",", failedUnits.Select(u => u.Symbol).OrderBy(i => i))}>"
                 );
             }

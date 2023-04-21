@@ -32,16 +32,25 @@ public class ChatAgent : BackgroundService
         _replyReceiver.NotificationReceived += OnReplyReceived;
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting up Chat Agent ...");
         _chatInterface.Connect();
         _replyReceiver.StartListening();
+        return Task.CompletedTask;
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Chat Agent ...");
+        _replyReceiver.StartListening();
+        _chatInterface.MessageReceived -= OnMessageReceived;
+        _chatInterface.Disconnect();
+        return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
         return Task.CompletedTask;
     }
 
@@ -61,14 +70,5 @@ public class ChatAgent : BackgroundService
     {
         _logger.LogTrace("Received reply message {@Message}", message);
         _chatInterface.SendMessage(message.Identifier, message.Content);
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Shutting down Chat Agent ...");
-        _replyReceiver.StartListening();
-        _chatInterface.MessageReceived -= OnMessageReceived;
-        _chatInterface.Disconnect();
-        return base.StopAsync(cancellationToken);
     }
 }

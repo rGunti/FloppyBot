@@ -21,8 +21,7 @@ public class UnitCommands
 {
     private const string PARAM_HELP = "help";
 
-    //private const string PARAM_DEBUG = "debug";
-
+    // private const string PARAM_DEBUG = "debug";
     private const string REPLY_CONVERTED = "{Original} are about {Converted}";
     private const string REPLY_CONVERTED_MD = "_{Original}_ are about _{Converted}_";
 
@@ -128,7 +127,7 @@ public class UnitCommands
                             .OrderBy(u => u.FullName)
                             .Select(u => u.Symbol)
                             .OrderBy(i => i)
-                            .ToArray()
+                            .ToArray(),
                     }
                 )
             );
@@ -196,7 +195,6 @@ public class UnitCommands
             case "unit":
                 return PrintUnit(subCommandParam1, supportsMarkdown);
             case "units":
-                ;
                 return PrintUnitList(subCommandParam1, supportsMarkdown);
             case "convert":
                 return PrintConversion(subCommandParam1, subCommandParam2, supportsMarkdown);
@@ -258,7 +256,7 @@ public class UnitCommands
                         .Take(DEBUG_PAGE_SIZE)
                         .Select(u => supportsMarkdown ? u.MdDebugString : u.DebugString),
                     CurrentPage = page + 1,
-                    MaxPage = totalPages
+                    MaxPage = totalPages,
                 }
             )
         );
@@ -296,7 +294,7 @@ public class UnitCommands
                         {
                             SourceUnit = sourceUnit,
                             DestinationUnit = destinationUnit,
-                            Conversion = conversion
+                            Conversion = conversion,
                         }
                     )
             )

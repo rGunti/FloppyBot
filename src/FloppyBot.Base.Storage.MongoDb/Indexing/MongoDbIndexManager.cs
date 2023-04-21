@@ -16,10 +16,10 @@ public class MongoDbIndexManager : IIndexManager
         _logger = logger;
     }
 
+    public bool SupportsIndices => true;
+
     private IndexKeysDefinitionBuilder<BsonDocument> IndexBuilder =>
         Builders<BsonDocument>.IndexKeys;
-
-    public bool SupportsIndices => true;
 
     public bool IndexExists(string collectionName, string indexName, string[] fields)
     {

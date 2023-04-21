@@ -48,6 +48,44 @@ public class ShoutoutCommand
         _logger = logger;
     }
 
+    [DependencyRegistration]
+    public static void RegisterDependencies(IServiceCollection services)
+    {
+        services
+            .AddSingleton<TwitchApiConfig>(
+                s =>
+                    s.GetRequiredService<IConfiguration>()
+                        .GetSection("TwitchApi")
+                        .Get<TwitchApiConfig>()
+            )
+            .AddSingleton<ITwitchAPI>(s =>
+            {
+                var config = s.GetRequiredService<TwitchApiConfig>();
+                var api = new TwitchAPI(s.GetRequiredService<ILoggerFactory>())
+                {
+                    Settings = { ClientId = config.ClientId, Secret = config.Secret },
+                };
+                return api;
+            })
+            .AddScoped<ITwitchApiService, TwitchApiService>()
+            .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
+    }
+
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void SetupTimerMessageDependencies(IServiceCollection services)
+    {
+        SetupTimerMessageDbDependencies(services);
+        services.AddCronJob<TimerMessageCronJob>();
+    }
+
+    public static void SetupTimerMessageDbDependencies(IServiceCollection services)
+    {
+        services
+            .AddMessageOccurrenceService()
+            .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
+    }
+
     [Command("shoutout", "so")]
     [CommandDescription(
         "Shouts out a Twitch channel with a customized message defined for the channel"
@@ -115,43 +153,5 @@ public class ShoutoutCommand
     {
         _shoutoutMessageSettingService.ClearSettings(sourceChannel);
         return REPLY_CLEAR;
-    }
-
-    [DependencyRegistration]
-    public static void RegisterDependencies(IServiceCollection services)
-    {
-        services
-            .AddSingleton<TwitchApiConfig>(
-                s =>
-                    s.GetRequiredService<IConfiguration>()
-                        .GetSection("TwitchApi")
-                        .Get<TwitchApiConfig>()
-            )
-            .AddSingleton<ITwitchAPI>(s =>
-            {
-                var config = s.GetRequiredService<TwitchApiConfig>();
-                var api = new TwitchAPI(s.GetRequiredService<ILoggerFactory>())
-                {
-                    Settings = { ClientId = config.ClientId, Secret = config.Secret }
-                };
-                return api;
-            })
-            .AddScoped<ITwitchApiService, TwitchApiService>()
-            .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void SetupTimerMessageDependencies(IServiceCollection services)
-    {
-        SetupTimerMessageDbDependencies(services);
-        services.AddCronJob<TimerMessageCronJob>();
-    }
-
-    public static void SetupTimerMessageDbDependencies(IServiceCollection services)
-    {
-        services
-            .AddMessageOccurrenceService()
-            .AddTransient<ITimerMessageConfigurationService, TimerMessageConfigurationService>();
     }
 }

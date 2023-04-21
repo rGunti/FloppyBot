@@ -50,6 +50,7 @@ public static class Registration
                     api.Settings.ClientId = config.ClientId;
                     api.Settings.Secret = config.AccessToken;
                 }
+
                 return api;
             })
             .AddSingleton<LiveStreamMonitorService>(p =>

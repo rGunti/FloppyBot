@@ -15,18 +15,6 @@ public static class SerilogSetup
         return hostBuilder.UseSerilog((ctx, lc) => lc.ConfigureSerilog(ctx.Configuration));
     }
 
-    internal static LoggerConfiguration ConfigureCommonSerilogSettings(
-        this LoggerConfiguration loggerConfig
-    )
-    {
-        return loggerConfig.Enrich.FromLogContext().Enrich.WithThreadId();
-    }
-
-    internal static LoggerConfiguration CommonConsoleOutput(this LoggerSinkConfiguration sinkConfig)
-    {
-        return sinkConfig.Console(outputTemplate: OUTPUT_TEMPLATE);
-    }
-
     public static LoggerConfiguration ConfigureSerilog(
         this LoggerConfiguration loggerConfig,
         IConfiguration hostConfig
@@ -53,5 +41,17 @@ public static class SerilogSetup
             .ConfigureCommonSerilogSettings()
             .WriteTo.CommonConsoleOutput()
             .MinimumLevel.Verbose();
+    }
+
+    internal static LoggerConfiguration ConfigureCommonSerilogSettings(
+        this LoggerConfiguration loggerConfig
+    )
+    {
+        return loggerConfig.Enrich.FromLogContext().Enrich.WithThreadId();
+    }
+
+    internal static LoggerConfiguration CommonConsoleOutput(this LoggerSinkConfiguration sinkConfig)
+    {
+        return sinkConfig.Console(outputTemplate: OUTPUT_TEMPLATE);
     }
 }

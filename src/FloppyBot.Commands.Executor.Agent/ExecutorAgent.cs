@@ -48,6 +48,27 @@ public class ExecutorAgent : BackgroundService
         _replier = replier;
     }
 
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        _indexInitializer.InitializeIndices();
+
+        _logger.LogInformation("Starting Command Executor Agent ...");
+        _instructionReceiver.StartListening();
+        return base.StartAsync(cancellationToken);
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Command Executor Agent ...");
+        _instructionReceiver.StopListening();
+        return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        return Task.CompletedTask;
+    }
+
     private void OnCommandReceived(CommandInstruction commandInstruction)
     {
 #if DEBUG
@@ -62,26 +83,5 @@ public class ExecutorAgent : BackgroundService
         }
 
         _replier.SendMessage(reply);
-    }
-
-    public override Task StartAsync(CancellationToken cancellationToken)
-    {
-        _indexInitializer.InitializeIndices();
-
-        _logger.LogInformation("Starting Command Executor Agent ...");
-        _instructionReceiver.StartListening();
-        return base.StartAsync(cancellationToken);
-    }
-
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Shutting down Command Executor Agent ...");
-        _instructionReceiver.StopListening();
-        return base.StopAsync(cancellationToken);
     }
 }

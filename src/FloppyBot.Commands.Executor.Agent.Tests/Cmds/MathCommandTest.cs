@@ -38,9 +38,9 @@ public class MathCommandTest
             Context = new CommandContext(
                 SourceMessage: instruction.Context!.SourceMessage with
                 {
-                    SupportedFeatures = ChatInterfaceFeatures.MarkdownText
+                    SupportedFeatures = ChatInterfaceFeatures.MarkdownText,
                 }
-            )
+            ),
         };
         var reply = _command.CalculateMathExpression(instruction, inputStr);
 

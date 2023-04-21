@@ -49,6 +49,16 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
         return _stream?.IsOnline ?? false;
     }
 
+    public void Dispose()
+    {
+        _logger.LogInformation("Stopping and disposing Live Stream Monitor ...");
+
+        _liveStreamMonitorService.Stop();
+        _liveStreamMonitorService.OnStreamOffline -= OnStreamOffline;
+        _liveStreamMonitorService.OnStreamOnline -= OnStreamOnline;
+        _liveStreamMonitorService.OnStreamUpdate -= OnStreamUpdate;
+    }
+
     private void OnStreamUpdate(object? sender, OnStreamUpdateArgs e)
     {
         _logger.LogInformation("Channel {ChannelName} has updated", e.Channel);
@@ -66,15 +76,5 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
     {
         _logger.LogInformation("Channel {ChannelName} has come offline", e.Channel);
         _stream = e.Stream.ToTwitchStream(false);
-    }
-
-    public void Dispose()
-    {
-        _logger.LogInformation("Stopping and disposing Live Stream Monitor ...");
-
-        _liveStreamMonitorService.Stop();
-        _liveStreamMonitorService.OnStreamOffline -= OnStreamOffline;
-        _liveStreamMonitorService.OnStreamOnline -= OnStreamOnline;
-        _liveStreamMonitorService.OnStreamUpdate -= OnStreamUpdate;
     }
 }

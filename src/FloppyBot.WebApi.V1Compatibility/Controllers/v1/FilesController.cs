@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FileHeader = FloppyBot.WebApi.V1Compatibility.Dtos.FileHeader;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/files/{messageInterface}/{channel}")]
@@ -28,27 +28,6 @@ public class FilesController : ControllerBase
         _userService = userService;
         _fileService = fileService;
         _mapper = mapper;
-    }
-
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
     }
 
     [HttpGet]
@@ -158,5 +137,26 @@ public class FilesController : ControllerBase
             usedQuota.MaxStorageQuota,
             usedQuota.MaxFileNumber
         );
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

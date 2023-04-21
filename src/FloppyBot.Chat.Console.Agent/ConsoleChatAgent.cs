@@ -35,20 +35,6 @@ internal class ConsoleChatAgent : BackgroundService
         _receiver.NotificationReceived += OnMessageReceived;
     }
 
-    private void OnMessageReceived(ChatMessage notification)
-    {
-        if (notification.Identifier.Interface == _chatInterface.Name)
-        {
-            _chatInterface.SendMessage(notification.Content);
-        }
-    }
-
-    private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
-    {
-        _logger.LogDebug("Sending message {@Message}", chatMessage);
-        _sender.Send(chatMessage);
-    }
-
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogWarning(
@@ -61,6 +47,13 @@ internal class ConsoleChatAgent : BackgroundService
         return base.StartAsync(cancellationToken);
     }
 
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
+        _chatInterface.Disconnect();
+        return base.StopAsync(cancellationToken);
+    }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
@@ -69,10 +62,17 @@ internal class ConsoleChatAgent : BackgroundService
         }
     }
 
-    public override Task StopAsync(CancellationToken cancellationToken)
+    private void OnMessageReceived(ChatMessage notification)
     {
-        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
-        _chatInterface.Disconnect();
-        return base.StopAsync(cancellationToken);
+        if (notification.Identifier.Interface == _chatInterface.Name)
+        {
+            _chatInterface.SendMessage(notification.Content);
+        }
+    }
+
+    private void OnMessageReceived(IChatInterface sourceInterface, ChatMessage chatMessage)
+    {
+        _logger.LogDebug("Sending message {@Message}", chatMessage);
+        _sender.Send(chatMessage);
     }
 }

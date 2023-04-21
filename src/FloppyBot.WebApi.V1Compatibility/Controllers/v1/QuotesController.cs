@@ -9,7 +9,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/quotes")]
@@ -25,30 +25,6 @@ public class QuotesController : ControllerBase
         _quoteService = quoteService;
         _mapper = mapper;
         _userService = userService;
-    }
-
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private void EnsureChannelAccess(string messageInterface, string channel) =>
-        EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
-
-    private IEnumerable<QuoteDto> GetQuotesForChannel(ChannelIdentifier channelIdentifier)
-    {
-        return _quoteService
-            .GetQuotes(channelIdentifier)
-            .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
     }
 
     [HttpGet]
@@ -86,7 +62,7 @@ public class QuotesController : ControllerBase
 
         return _mapper.Map<QuoteDto>(quote) with
         {
-            Channel = channelIdentifier
+            Channel = channelIdentifier,
         };
     }
 
@@ -131,5 +107,29 @@ public class QuotesController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private void EnsureChannelAccess(string messageInterface, string channel) =>
+        EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
+
+    private IEnumerable<QuoteDto> GetQuotesForChannel(ChannelIdentifier channelIdentifier)
+    {
+        return _quoteService
+            .GetQuotes(channelIdentifier)
+            .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
     }
 }

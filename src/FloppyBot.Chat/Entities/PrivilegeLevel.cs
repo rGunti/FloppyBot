@@ -6,5 +6,5 @@ public enum PrivilegeLevel
     Viewer = 1,
     Moderator = 2,
     Administrator = 4,
-    Superuser = byte.MaxValue
+    Superuser = byte.MaxValue,
 }

@@ -7,7 +7,9 @@ public class ConversionPath : Stack<ConversionNode>
     public bool IsSamePath(ConversionPath path)
     {
         if (Count != path.Count)
+        {
             return false;
+        }
 
         var me = ToArray();
         var them = path.ToArray();
@@ -15,7 +17,9 @@ public class ConversionPath : Stack<ConversionNode>
         for (var i = 0; i < Count; i++)
         {
             if (me[i] != them[i])
+            {
                 return false;
+            }
         }
 
         return true;

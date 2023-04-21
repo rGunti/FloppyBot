@@ -2,7 +2,7 @@
 using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1.Config;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1.Config;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/config/sub-alerts")]

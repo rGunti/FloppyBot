@@ -38,6 +38,19 @@ public static class CommandScannerExtensions
             .AddCommandConfiguration();
     }
 
+    public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(
+        this ICommandScanner scanner
+    )
+    {
+        return scanner.ScanTypeForCommandHandlers(typeof(T));
+    }
+
+    public static IServiceCollection AddCommandListSupplier<T>(this IServiceCollection services)
+        where T : class, ICommandListSupplier
+    {
+        return services.AddSingleton<ICommandListSupplier, T>();
+    }
+
     private static IServiceCollection ScanAndAddCommandHandlers(this IServiceCollection services)
     {
         IImmutableDictionary<string, CommandInfo> handlers =
@@ -73,19 +86,6 @@ public static class CommandScannerExtensions
             .AddGuardRegistry()
             .AddGuard<PrivilegeGuard, PrivilegeGuardAttribute>()
             .AddGuard<SourceInterfaceGuard, SourceInterfaceGuardAttribute>();
-    }
-
-    public static IEnumerable<CommandInfo> ScanTypeForCommandHandlers<T>(
-        this ICommandScanner scanner
-    )
-    {
-        return scanner.ScanTypeForCommandHandlers(typeof(T));
-    }
-
-    public static IServiceCollection AddCommandListSupplier<T>(this IServiceCollection services)
-        where T : class, ICommandListSupplier
-    {
-        return services.AddSingleton<ICommandListSupplier, T>();
     }
 
     private static void ScanForCommandDependencies(

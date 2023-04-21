@@ -20,9 +20,15 @@ internal static class IdentifierExtensions
     {
         ulong? msgRefId = null;
         if (id.MessageId == string.Empty || id.MessageId == ChatMessageIdentifier.NEW_MESSAGE_ID)
+        {
             return null;
+        }
+
         if (ulong.TryParse(id.MessageId, out var msgRefIdVal))
+        {
             msgRefId = msgRefIdVal;
+        }
+
         return new MessageReference(messageId: msgRefId, failIfNotExists: false);
     }
 }

@@ -32,21 +32,24 @@ public class QuoteCommands
     public const string REPLY_QUOTE_ID_INVALID = "Quote number has to be a number";
 
     private static readonly IImmutableSet<string> OpAdd = new[] { "add", "+" }.ToImmutableHashSet();
+
     private static readonly IImmutableSet<string> OpEdit = new[]
     {
         "edit",
-        "*"
+        "*",
     }.ToImmutableHashSet();
+
     private static readonly IImmutableSet<string> OpEditContext = new[]
     {
         "editcontext",
-        "ec"
+        "ec",
     }.ToImmutableHashSet();
+
     private static readonly IImmutableSet<string> OpDelete = new[]
     {
         "del",
         "delete",
-        "-"
+        "-",
     }.ToImmutableHashSet();
 
     private readonly ILogger<QuoteCommands> _logger;
@@ -56,6 +59,17 @@ public class QuoteCommands
     {
         _logger = logger;
         _quoteService = quoteService;
+    }
+
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void RegisterDependencies(IServiceCollection services)
+    {
+        services
+            .AddSingleton<ITimeProvider, RealTimeProvider>()
+            .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
+            .AddScoped<IQuoteService, QuoteService>()
+            .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }
 
     [Command("quote", "q")]
@@ -81,6 +95,84 @@ public class QuoteCommands
         {
             return null;
         }
+    }
+
+    [Command("quoteadd", "q+")]
+    [PrimaryCommandName("quoteadd")]
+    [CommandDescription("Adds a new quote")]
+    [CommandSyntax("<Text>")]
+    [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
+    public string AddQuote(
+        [SourceChannel] ChannelIdentifier sourceChannel,
+        [SourceContext] string? sourceContext,
+        [Author] ChatUser author,
+        [AllArguments] string quoteText
+    )
+    {
+        var quote = _quoteService.AddQuote(
+            sourceChannel,
+            quoteText,
+            sourceContext ?? sourceChannel.Interface,
+            author.DisplayName
+        );
+        return REPLY_CREATED.Format(new { Quote = quote });
+    }
+
+    [Command("quoteedit", "qe", "q*")]
+    [PrimaryCommandName("quoteedit")]
+    [CommandDescription("Edits the text of an existing quote")]
+    [CommandSyntax("<Quote No.> <New Text>")]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    [CommandParameterHint(2, "newText", CommandParameterType.String)]
+    public string EditQuote(
+        [SourceChannel] string sourceChannel,
+        [ArgumentIndex(0)] int quoteId,
+        [ArgumentRange(1)] string newQuoteText
+    )
+    {
+        var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
+        if (editedQuote == null)
+        {
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
+        }
+
+        return REPLY_EDITED.Format(new { Quote = editedQuote });
+    }
+
+    [Command("quoteeditcontext", "qec", "q*c")]
+    [PrimaryCommandName("quoteeditcontext")]
+    [CommandDescription("Edits the context of an existing quote")]
+    [CommandSyntax("<Quote No.> <New Context>")]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    [CommandParameterHint(2, "newContext", CommandParameterType.String)]
+    public string EditQuoteContext(
+        [SourceChannel] string sourceChannel,
+        [ArgumentIndex(0)] int quoteId,
+        [ArgumentRange(1)] string newQuoteContext
+    )
+    {
+        var editedQuote = _quoteService.EditQuoteContext(sourceChannel, quoteId, newQuoteContext);
+        if (editedQuote == null)
+        {
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
+        }
+
+        return REPLY_EDITED.Format(new { Quote = editedQuote });
+    }
+
+    [Command("quotedel", "q-")]
+    [PrimaryCommandName("quotedel")]
+    [CommandDescription("Deletes an existing quote")]
+    [CommandSyntax("<Quote No.>", "123")]
+    [PrivilegeGuard(PrivilegeLevel.Moderator)]
+    [CommandParameterHint(1, "id", CommandParameterType.Number)]
+    public string DeleteQuote([SourceChannel] string sourceChannel, [ArgumentIndex(0)] int quoteId)
+    {
+        return _quoteService.DeleteQuote(sourceChannel, quoteId)
+            ? REPLY_DELETED.Format(new { QuoteId = quoteId })
+            : REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
     }
 
     private string? DoQuote(
@@ -168,94 +260,5 @@ public class QuoteCommands
             text
         );
         return null;
-    }
-
-    [Command("quoteadd", "q+")]
-    [PrimaryCommandName("quoteadd")]
-    [CommandDescription("Adds a new quote")]
-    [CommandSyntax("<Text>")]
-    [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
-    public string AddQuote(
-        [SourceChannel] ChannelIdentifier sourceChannel,
-        [SourceContext] string? sourceContext,
-        [Author] ChatUser author,
-        [AllArguments] string quoteText
-    )
-    {
-        var quote = _quoteService.AddQuote(
-            sourceChannel,
-            quoteText,
-            sourceContext ?? sourceChannel.Interface,
-            author.DisplayName
-        );
-        return REPLY_CREATED.Format(new { Quote = quote });
-    }
-
-    [Command("quoteedit", "qe", "q*")]
-    [PrimaryCommandName("quoteedit")]
-    [CommandDescription("Edits the text of an existing quote")]
-    [CommandSyntax("<Quote No.> <New Text>")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
-    [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    [CommandParameterHint(2, "newText", CommandParameterType.String)]
-    public string EditQuote(
-        [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteText
-    )
-    {
-        var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
-        if (editedQuote == null)
-        {
-            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
-        }
-
-        return REPLY_EDITED.Format(new { Quote = editedQuote });
-    }
-
-    [Command("quoteeditcontext", "qec", "q*c")]
-    [PrimaryCommandName("quoteeditcontext")]
-    [CommandDescription("Edits the context of an existing quote")]
-    [CommandSyntax("<Quote No.> <New Context>")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
-    [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    [CommandParameterHint(2, "newContext", CommandParameterType.String)]
-    public string EditQuoteContext(
-        [SourceChannel] string sourceChannel,
-        [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteContext
-    )
-    {
-        var editedQuote = _quoteService.EditQuoteContext(sourceChannel, quoteId, newQuoteContext);
-        if (editedQuote == null)
-        {
-            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
-        }
-
-        return REPLY_EDITED.Format(new { Quote = editedQuote });
-    }
-
-    [Command("quotedel", "q-")]
-    [PrimaryCommandName("quotedel")]
-    [CommandDescription("Deletes an existing quote")]
-    [CommandSyntax("<Quote No.>", "123")]
-    [PrivilegeGuard(PrivilegeLevel.Moderator)]
-    [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    public string DeleteQuote([SourceChannel] string sourceChannel, [ArgumentIndex(0)] int quoteId)
-    {
-        return _quoteService.DeleteQuote(sourceChannel, quoteId)
-            ? REPLY_DELETED.Format(new { QuoteId = quoteId })
-            : REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void RegisterDependencies(IServiceCollection services)
-    {
-        services
-            .AddSingleton<ITimeProvider, RealTimeProvider>()
-            .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
-            .AddScoped<IQuoteService, QuoteService>()
-            .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }
 }

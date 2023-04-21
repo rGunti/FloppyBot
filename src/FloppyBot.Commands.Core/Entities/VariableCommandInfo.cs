@@ -48,6 +48,6 @@ public record VariableCommandInfo : CommandInfo
 
     public override string ToString()
     {
-        return $"VariableCmd {CommandId} [{(IsStatic ? "(static) " : "")}{HandlerMethod}]";
+        return $"VariableCmd {CommandId} [{(IsStatic ? "(static) " : string.Empty)}{HandlerMethod}]";
     }
 }

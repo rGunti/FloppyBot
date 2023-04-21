@@ -8,22 +8,6 @@ namespace FloppyBot.Base.Configuration.Tests;
 [TestClass]
 public class AppConfigurationTests
 {
-    private static IConfiguration BuildTestConfig()
-    {
-        return new ConfigurationBuilder()
-            .AddInMemoryCollection(
-                new Dictionary<string, string>
-                {
-                    { "ConnectionStrings:A", "aConnectionString" },
-                    { "ConnectionStrings:B", "{A}WithB" },
-                    { "ConnectionStrings:C", "{A}With\\{SomeValue\\}" },
-                    { "SomeValue", "CValue" },
-                    { "SomeOtherValue", "{ConnectionStrings__A}OnRoot" }
-                }
-            )
-            .Build();
-    }
-
     [TestMethod]
     public void ConnectionStringsListedCorrectly()
     {
@@ -50,5 +34,21 @@ public class AppConfigurationTests
     {
         IConfiguration config = BuildTestConfig();
         Assert.AreEqual("aConnectionStringOnRoot", config.GetParsedConfigString("SomeOtherValue"));
+    }
+
+    private static IConfiguration BuildTestConfig()
+    {
+        return new ConfigurationBuilder()
+            .AddInMemoryCollection(
+                new Dictionary<string, string>
+                {
+                    { "ConnectionStrings:A", "aConnectionString" },
+                    { "ConnectionStrings:B", "{A}WithB" },
+                    { "ConnectionStrings:C", "{A}With\\{SomeValue\\}" },
+                    { "SomeValue", "CValue" },
+                    { "SomeOtherValue", "{ConnectionStrings__A}OnRoot" },
+                }
+            )
+            .Build();
     }
 }
