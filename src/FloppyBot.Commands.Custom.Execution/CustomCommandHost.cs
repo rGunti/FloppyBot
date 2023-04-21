@@ -68,6 +68,15 @@ public class CustomCommandHost
         return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
     }
 
+    public static void WebDiSetup(IServiceCollection services)
+    {
+        services
+            .AddAutoMapper(typeof(CustomCommandStorageProfile))
+            .AddScoped<ICustomCommandService, CustomCommandService>()
+            .AddScoped<ICounterStorageService, CounterStorageService>()
+            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
+    }
+
     private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
     {
         return _commandService
@@ -83,14 +92,5 @@ public class CustomCommandHost
         return new KeyNotFoundException(
             $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
         );
-    }
-
-    public static void WebDiSetup(IServiceCollection services)
-    {
-        services
-            .AddAutoMapper(typeof(CustomCommandStorageProfile))
-            .AddScoped<ICustomCommandService, CustomCommandService>()
-            .AddScoped<ICounterStorageService, CounterStorageService>()
-            .AddSingleton<ISoundCommandInvocationReceiver, SoundCommandInvocationReceiver>();
     }
 }

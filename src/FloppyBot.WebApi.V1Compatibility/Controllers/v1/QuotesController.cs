@@ -45,30 +45,6 @@ public class QuotesController : ControllerBase
         return GetQuotesForChannel(channelIdentifier).ToArray();
     }
 
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private void EnsureChannelAccess(string messageInterface, string channel) =>
-        EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
-
-    private IEnumerable<QuoteDto> GetQuotesForChannel(ChannelIdentifier channelIdentifier)
-    {
-        return _quoteService
-            .GetQuotes(channelIdentifier)
-            .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
-    }
-
     [HttpGet("{messageInterface}/{channel}/{quoteNumber}")]
     public QuoteDto GetQuoteForChannel(
         [FromRoute] string messageInterface,
@@ -131,5 +107,29 @@ public class QuotesController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private void EnsureChannelAccess(string messageInterface, string channel) =>
+        EnsureChannelAccess(new ChannelIdentifier(messageInterface, channel));
+
+    private IEnumerable<QuoteDto> GetQuotesForChannel(ChannelIdentifier channelIdentifier)
+    {
+        return _quoteService
+            .GetQuotes(channelIdentifier)
+            .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
     }
 }

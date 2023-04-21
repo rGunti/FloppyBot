@@ -83,27 +83,6 @@ public class CommandConfigController : ControllerBase
         );
     }
 
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
-    {
-        if (
-            !_userService
-                .GetAccessibleChannelsForUser(User.GetUserId())
-                .Contains(channelIdentifier.ToString())
-        )
-        {
-            throw new NotFoundException(
-                $"You don't have access to {channelIdentifier} or it doesn't exist"
-            );
-        }
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        EnsureChannelAccess(channelId);
-        return channelId;
-    }
-
     [HttpPut("{command}")]
     public IActionResult UpdateCommandConfig(
         [FromRoute] string messageInterface,
@@ -140,5 +119,26 @@ public class CommandConfigController : ControllerBase
         ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
         _commandConfigurationService.DeleteCommandConfiguration(channelId, command);
         return NoContent();
+    }
+
+    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    {
+        if (
+            !_userService
+                .GetAccessibleChannelsForUser(User.GetUserId())
+                .Contains(channelIdentifier.ToString())
+        )
+        {
+            throw new NotFoundException(
+                $"You don't have access to {channelIdentifier} or it doesn't exist"
+            );
+        }
+    }
+
+    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
+    {
+        var channelId = new ChannelIdentifier(messageInterface, channel);
+        EnsureChannelAccess(channelId);
+        return channelId;
     }
 }

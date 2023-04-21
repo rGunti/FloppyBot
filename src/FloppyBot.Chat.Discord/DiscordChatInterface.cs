@@ -67,13 +67,13 @@ public class DiscordChatInterface : IChatInterface
         };
     }
 
+    public string ConnectUrl =>
+        $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
+
     public string Name => IF_NAME;
 
     public ChatInterfaceFeatures SupportedFeatures =>
         ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
-
-    public string ConnectUrl =>
-        $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
 
     public void Connect()
     {

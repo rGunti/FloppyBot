@@ -62,37 +62,6 @@ public class EoDtoMappingTests
         );
     }
 
-    private bool TestConversion<TDto, TEo>(TDto dto)
-    {
-        // convert dto -> eo -> dto
-        var eo = _mapper.Map<TEo>(dto);
-        var backDto = _mapper.Map<TDto>(eo);
-
-        // conversion is successful when both DTOs are equal
-        Assert.AreEqual(dto, backDto);
-
-        return true;
-    }
-
-    private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
-        where TEo : class, IEntity<TEo>
-    {
-        var repo = _repositoryFactory.GetRepository<TEo>();
-
-        // convert dto -> eo -> dto
-        var eo = _mapper.Map<TEo>(dto);
-
-        var insertedEo = repo.Insert(eo);
-        var fetchedEo = repo.GetById(insertedEo.Id);
-
-        var backDto = _mapper.Map<TDto>(fetchedEo);
-
-        // conversion is successful when both DTOs are equal
-        Assert.AreEqual(dto, backDto);
-
-        return true;
-    }
-
     [TestMethod]
     public void CommandLimitationDtoAndEo()
     {
@@ -123,5 +92,36 @@ public class EoDtoMappingTests
                 .Select(l => new CooldownDescription(l, 2301))
                 .All(TestConversion<CooldownDescription, CooldownDescriptionEo>)
         );
+    }
+
+    private bool TestConversion<TDto, TEo>(TDto dto)
+    {
+        // convert dto -> eo -> dto
+        var eo = _mapper.Map<TEo>(dto);
+        var backDto = _mapper.Map<TDto>(eo);
+
+        // conversion is successful when both DTOs are equal
+        Assert.AreEqual(dto, backDto);
+
+        return true;
+    }
+
+    private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
+        where TEo : class, IEntity<TEo>
+    {
+        var repo = _repositoryFactory.GetRepository<TEo>();
+
+        // convert dto -> eo -> dto
+        var eo = _mapper.Map<TEo>(dto);
+
+        var insertedEo = repo.Insert(eo);
+        var fetchedEo = repo.GetById(insertedEo.Id);
+
+        var backDto = _mapper.Map<TDto>(fetchedEo);
+
+        // conversion is successful when both DTOs are equal
+        Assert.AreEqual(dto, backDto);
+
+        return true;
     }
 }

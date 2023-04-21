@@ -25,10 +25,12 @@ public class TimeCommands
 {
     private const string REPLY_TIME =
         "The current time is {Time:datetime:'HH:mm'} in {TimeZoneName}";
+
     private const string REPLY_TIME_DEC = "The current time is {TimeStr} DEC in {TimeZoneName}";
     private const string REPLY_ERR_TZ_NOT_FOUND = "Could not find the a timezone for \"{Input}\"";
 
     private const string REPLY_TZ_SET = "Your timezone is now set to {TimeZone}";
+
     private const string REPLY_ERR_TZ_NOT_DEFINED =
         "Run this command again and provide a timezone.";
 
@@ -95,6 +97,37 @@ public class TimeCommands
             );
     }
 
+    [Command("timeset")]
+    [CommandDescription("Set your default timezone")]
+    [PrivilegeGuard(PrivilegeLevel.Viewer)]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String)]
+    public CommandResult SetUserTimeZone(
+        [Author] ChatUser author,
+        [AllArguments("_")] string timeZoneId
+    )
+    {
+        if (string.IsNullOrWhiteSpace(timeZoneId))
+        {
+            return CommandResult.FailedWith(REPLY_ERR_TZ_NOT_DEFINED);
+        }
+
+        TimeZoneInfo timeZoneInfo;
+        try
+        {
+            timeZoneInfo = FindTimeZoneWithLinuxId(timeZoneId);
+        }
+        catch (TimeZoneNotFoundException ex)
+        {
+            _logger.LogError(ex, "Failed to get time zone {TimeZoneInput}", timeZoneId);
+            return CommandResult.FailedWith(
+                REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId })
+            );
+        }
+
+        _userTimeZoneSettings.SetTimeZoneForUser(author.Identifier, timeZoneInfo.Id);
+        return CommandResult.SuccessWith(REPLY_TZ_SET.Format(new { TimeZone = timeZoneInfo.Id }));
+    }
+
     private static TimeZoneInfo FindTimeZoneWithLinuxId(string timeZoneId)
     {
         string? tzId = timeZoneId;
@@ -143,36 +176,5 @@ public class TimeCommands
         DateTimeOffset currentTimeAtTz = TimeZoneInfo.ConvertTime(currentUtcTime, timeZone);
 
         return new TimeCommandOutput(currentTimeAtTz, currentTimeAtTz.ToString("HH:mm"), timeZone);
-    }
-
-    [Command("timeset")]
-    [CommandDescription("Set your default timezone")]
-    [PrivilegeGuard(PrivilegeLevel.Viewer)]
-    [CommandParameterHint(1, "timeZone", CommandParameterType.String)]
-    public CommandResult SetUserTimeZone(
-        [Author] ChatUser author,
-        [AllArguments("_")] string timeZoneId
-    )
-    {
-        if (string.IsNullOrWhiteSpace(timeZoneId))
-        {
-            return CommandResult.FailedWith(REPLY_ERR_TZ_NOT_DEFINED);
-        }
-
-        TimeZoneInfo timeZoneInfo;
-        try
-        {
-            timeZoneInfo = FindTimeZoneWithLinuxId(timeZoneId);
-        }
-        catch (TimeZoneNotFoundException ex)
-        {
-            _logger.LogError(ex, "Failed to get time zone {TimeZoneInput}", timeZoneId);
-            return CommandResult.FailedWith(
-                REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId })
-            );
-        }
-
-        _userTimeZoneSettings.SetTimeZoneForUser(author.Identifier, timeZoneInfo.Id);
-        return CommandResult.SuccessWith(REPLY_TZ_SET.Format(new { TimeZone = timeZoneInfo.Id }));
     }
 }

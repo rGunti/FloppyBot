@@ -64,6 +64,19 @@ public class TimerConfigController : ControllerBase
         return NoContent();
     }
 
+    [HttpPost("{messageInterface}/{channel}")]
+    public IActionResult UpdateConfig(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromBody] TimerMessageConfig config
+    )
+    {
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        var convertedConfig = _mapper.Map<TimerMessageConfiguration>(config);
+        _timerMessageConfigurationService.UpdateConfigurationForChannel(channelId, convertedConfig);
+        return NoContent();
+    }
+
     private ChannelIdentifier EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
         if (
@@ -84,18 +97,5 @@ public class TimerConfigController : ControllerBase
     {
         var channelId = new ChannelIdentifier(messageInterface, channel);
         return EnsureChannelAccess(channelId);
-    }
-
-    [HttpPost("{messageInterface}/{channel}")]
-    public IActionResult UpdateConfig(
-        [FromRoute] string messageInterface,
-        [FromRoute] string channel,
-        [FromBody] TimerMessageConfig config
-    )
-    {
-        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        var convertedConfig = _mapper.Map<TimerMessageConfiguration>(config);
-        _timerMessageConfigurationService.UpdateConfigurationForChannel(channelId, convertedConfig);
-        return NoContent();
     }
 }
