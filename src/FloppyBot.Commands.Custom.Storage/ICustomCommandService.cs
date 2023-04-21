@@ -57,12 +57,12 @@ public class CustomCommandService : ICustomCommandService
             Limitations = new CommandLimitationEo
             {
                 MinLevel = PrivilegeLevel.Unknown,
-                Cooldown = Array.Empty<CooldownDescriptionEo>()
+                Cooldown = Array.Empty<CooldownDescriptionEo>(),
             },
             Owners = new[] { channelId },
             Responses = new[]
             {
-                new CommandResponseEo { Type = $"{ResponseType.Text}", Content = response }
+                new CommandResponseEo { Type = $"{ResponseType.Text}", Content = response },
             },
             ResponseMode = CommandResponseMode.First,
         };

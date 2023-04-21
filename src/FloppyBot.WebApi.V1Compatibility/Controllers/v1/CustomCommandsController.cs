@@ -10,7 +10,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/custom-commands")]
@@ -34,6 +34,12 @@ public class CustomCommandsController : ControllerBase
         _counterStorageService = counterStorageService;
     }
 
+    [HttpGet]
+    public CustomCommand[] GetAll()
+    {
+        throw this.UnsupportedFeature("Requesting all commands is not supported");
+    }
+
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
         if (
@@ -53,12 +59,6 @@ public class CustomCommandsController : ControllerBase
         var channelId = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelId);
         return channelId;
-    }
-
-    [HttpGet]
-    public CustomCommand[] GetAll()
-    {
-        throw this.UnsupportedFeature("Requesting all commands is not supported");
     }
 
     [HttpGet("{messageInterface}/{channel}")]
@@ -153,7 +153,7 @@ public class CustomCommandsController : ControllerBase
 
         CustomCommandDescription customCommand = wrappedCommand.Value with
         {
-            Name = newCommandName
+            Name = newCommandName,
         };
         _customCommandService.UpdateCommand(customCommand);
         return NoContent();

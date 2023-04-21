@@ -104,7 +104,7 @@ internal static class Units
         ),
         ConstructDefaultUnit(UNIT_CUP, "cup (US)", false),
         ConstructDefaultUnit(UNIT_TBS, "tablespoon (US)", false),
-        ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false)
+        ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false),
     };
 
     public static readonly DTOs.Unit DefaultUnit = new(null, "Default Unit", null, null);
@@ -140,9 +140,12 @@ internal static class Units
             { (UNIT_KELVIN, UNIT_CELSIUS), Offset(-273.15f) },
             {
                 (UNIT_KELVIN, UNIT_FAHRENHEIT),
-                Formula(k => k * (9 / 5f) - 459.67f, f => (f + 459.67f) * (5 / 9f))
+                Formula(k => (k * (9 / 5f)) - 459.67f, f => (f + 459.67f) * (5 / 9f))
             },
-            { (UNIT_CELSIUS, UNIT_FAHRENHEIT), Formula(c => c * 1.8f + 32, f => (f - 32) / 1.8f) },
+            {
+                (UNIT_CELSIUS, UNIT_FAHRENHEIT),
+                Formula(c => (c * 1.8f) + 32, f => (f - 32) / 1.8f)
+            },
             // Speed
             { (UNIT_MPH, UNIT_KMH), Factor(1.609344f) },
             { (UNIT_MPS, UNIT_KMH), Factor(3.6f) },
@@ -170,7 +173,7 @@ internal static class Units
             { (UNIT_TBS, UNIT_TSP), Factor(3f) },
             // - Imperial <-> Metrical
             { (UNIT_FLOZ, UNIT_ML), Factor(29.5735295625f) },
-            { (UNIT_GAL, UNIT_L), Factor(3.785411784f) }
+            { (UNIT_GAL, UNIT_L), Factor(3.785411784f) },
         };
 
         AllProxyConversions = new Dictionary<(string, string), (string, string)[]>
@@ -238,10 +241,16 @@ internal static class Units
     {
         var r = "^(";
         if (allowNegative)
+        {
             r += "-?";
+        }
+
         r += "\\d{1,}";
         if (allowDecimal)
+        {
             r += "(\\.?\\d{1,})?";
+        }
+
         r += $"){Regex.Escape(unit)}$";
         return r;
     }
@@ -254,10 +263,16 @@ internal static class Units
     {
         var r = "^(";
         if (allowNegative)
+        {
             r += "-?";
+        }
+
         r += "\\d{1,}";
         if (allowDecimal)
+        {
             r += "(\\.?\\d{1,})?";
+        }
+
         r += $"){suffixRegex}$";
         return r;
     }
@@ -286,7 +301,10 @@ internal static class Units
     {
         var stepPairs = new List<(string from, string to)>();
         for (var i = 0; i < steps.Length - 1; i++)
+        {
             stepPairs.Add((steps[i], steps[i + 1]));
+        }
+
         return stepPairs.ToArray();
     }
 

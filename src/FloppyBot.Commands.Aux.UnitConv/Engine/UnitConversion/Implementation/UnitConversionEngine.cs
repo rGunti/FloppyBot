@@ -61,6 +61,9 @@ internal class UnitConversionEngine : IUnitConversionEngine
             $"Proxy[{string.Join('>', steps.Reverse())}]"
         );
 
+    public IEnumerable<(string from, string to)> GetConversionsForUnit(string unit) =>
+        _conversions.Keys.Where(i => i.from == unit || i.to == unit);
+
     private IEnumerable<IUnitConversion> GetProxyConversionSteps(
         string from,
         string to,
@@ -75,22 +78,25 @@ internal class UnitConversionEngine : IUnitConversionEngine
         {
             var conversion = FindSafeConversion(stepFrom, stepTo);
             if (conversion == null)
+            {
                 throw new InvalidOperationException(
                     $"Could not find suitable conversion from {stepFrom} to {stepTo}"
                 );
+            }
+
             stepList.Add(stepFrom);
             conversionSteps.Add(conversion);
             lastStepTo = stepTo;
         }
 
         if (lastStepTo != null)
+        {
             stepList.Add(lastStepTo);
+        }
+
         steps = stepList.ToArray();
         return conversionSteps;
     }
-
-    public IEnumerable<(string from, string to)> GetConversionsForUnit(string unit) =>
-        _conversions.Keys.Where(i => i.from == unit || i.to == unit);
 
     private IUnitConversion? FindSafeConversion(string from, string to) =>
         FindConversion(from, to, false, false, false, false);
@@ -105,26 +111,40 @@ internal class UnitConversionEngine : IUnitConversionEngine
     )
     {
         if (from == to)
+        {
             return new NoneConversion();
+        }
 
         if (HasDirectConversion(from, to))
+        {
             return GetDirectConversion(from, to);
+        }
+
         if (HasInvertedConversion(from, to))
+        {
             return GetInvertedConversion(from, to);
+        }
 
         if (useProxyConversions)
         {
             if (HasProxyConversion(from, to))
+            {
                 return GetProxyConversion(from, to);
+            }
+
             if (HasInvertedProxyConversion(from, to))
+            {
                 return GetInvertedProxyConversion(from, to);
+            }
         }
 
         if (
             usePartialProxyConversions
             && TryFindAndConstructProxyConversion(from, to, out var proxyConversion)
         )
+        {
             return proxyConversion;
+        }
 
         if (useCompoundProxyConversions)
         {
@@ -135,7 +155,9 @@ internal class UnitConversionEngine : IUnitConversionEngine
                     out var compoundProxyConversion
                 )
             )
+            {
                 return compoundProxyConversion;
+            }
 
             if (TryFindUnitWithSameConversion(from, out var matchingSourceUnits))
             {
@@ -148,12 +170,16 @@ internal class UnitConversionEngine : IUnitConversionEngine
                             out var compoundProxyConversionWithEquivalentUnit
                         )
                     )
+                    {
                         return compoundProxyConversionWithEquivalentUnit;
+                    }
                 }
             }
 
             if (TryFindAndConstructProxyConversion(to, from, out var revCompoundProxyConversion))
+            {
                 return revCompoundProxyConversion;
+            }
 
             if (TryFindUnitWithSameConversion(to, out var matchingTargetUnits))
             {
@@ -166,7 +192,9 @@ internal class UnitConversionEngine : IUnitConversionEngine
                             out var compoundProxyConversionWithEquivalentUnit
                         )
                     )
+                    {
                         return compoundProxyConversionWithEquivalentUnit;
+                    }
                 }
             }
         }
@@ -182,11 +210,17 @@ internal class UnitConversionEngine : IUnitConversionEngine
                 self = steps[i].Name;
                 next = (i + 1 < steps.Length) ? steps[i + 1].Name : to;
                 if (HasDirectConversion(self, next))
+                {
                     conversions.Add(GetDirectConversion(self, next));
+                }
                 else if (HasInvertedConversion(self, next))
+                {
                     conversions.Add(GetInvertedConversion(self, next));
+                }
                 else
+                {
                     break;
+                }
             }
 
             return new ChainedUnitConversion(conversions, path.ToString());
@@ -214,16 +248,24 @@ internal class UnitConversionEngine : IUnitConversionEngine
         if (TryFindMatchingProxyConversion(from, to, out var matchingChains))
         {
             foreach (var matchingChain in matchingChains)
+            {
                 if (TryConstructProxyConversion(from, to, matchingChain, out conversion))
+                {
                     return true;
+                }
+            }
         }
 
         // Attempt reverse conversion
         if (TryFindMatchingProxyConversion(to, from, out var reversedMatchingChain))
         {
             foreach (var matchingChain in reversedMatchingChain)
+            {
                 if (TryConstructProxyConversion(to, from, matchingChain, out conversion, true))
+                {
                     return true;
+                }
+            }
         }
 
         return false;
@@ -302,7 +344,9 @@ internal class UnitConversionEngine : IUnitConversionEngine
 
         var baseChain = _proxyConversions[usingBaseChain];
         if (reverse)
+        {
             baseChain = baseChain.Select(i => (i.Item2, i.Item1)).Reverse().ToArray();
+        }
 
         var derivedChain = new List<(string, string)>();
         var readingProxyChain = false;
@@ -311,26 +355,37 @@ internal class UnitConversionEngine : IUnitConversionEngine
             if (!readingProxyChain)
             {
                 if (stepFrom == from)
+                {
                     readingProxyChain = true;
+                }
                 else
+                {
                     continue;
+                }
             }
 
             derivedChain.Add((stepFrom, stepTo));
 
             if (stepTo == to)
+            {
                 break;
+            }
         }
 
         if (!derivedChain.Any())
+        {
             return false;
+        }
 
         var derivedChainSteps = new List<IUnitConversion>();
         foreach (var (stepFrom, stepTo) in derivedChain)
         {
             var step = FindSafeConversion(stepFrom, stepTo);
             if (step == null)
+            {
                 return false;
+            }
+
             derivedChainSteps.Add(step);
         }
 
@@ -338,7 +393,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
             reverse ? '<' : '>',
             derivedChain.Select(i => i.Item1).Concat(new[] { derivedChain.Last().Item2 })
         );
-        var chainName = $"Partial{(reverse ? "Rev" : "")}Proxy[{chainStr}]";
+        var chainName = $"Partial{(reverse ? "Rev" : string.Empty)}Proxy[{chainStr}]";
         conversion = new ChainedUnitConversion(derivedChainSteps, chainName);
         return true;
     }
@@ -386,7 +441,10 @@ internal class UnitConversionEngine : IUnitConversionEngine
                                 sourceConversionPair.to
                             );
                             if (bridgeConversion == null)
+                            {
                                 continue;
+                            }
+
                             conversion = new ChainedUnitConversion(bridgeConversion, partialChain);
                             return true;
                         }
@@ -424,7 +482,10 @@ internal class UnitConversionEngine : IUnitConversionEngine
                                 to
                             );
                             if (bridgeConversion == null)
+                            {
                                 continue;
+                            }
+
                             conversion = new ChainedUnitConversion(partialChain, bridgeConversion);
                             return true;
                         }

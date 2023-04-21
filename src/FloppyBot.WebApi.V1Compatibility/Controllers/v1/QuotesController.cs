@@ -9,7 +9,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/quotes")]
@@ -25,6 +25,13 @@ public class QuotesController : ControllerBase
         _quoteService = quoteService;
         _mapper = mapper;
         _userService = userService;
+    }
+
+    [HttpGet]
+    [Obsolete("This method will not be implemented as it is not used")]
+    public void GetQuotes()
+    {
+        throw this.Obsolete();
     }
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
@@ -49,13 +56,6 @@ public class QuotesController : ControllerBase
         return _quoteService
             .GetQuotes(channelIdentifier)
             .Select(q => _mapper.Map<QuoteDto>(q) with { Channel = channelIdentifier });
-    }
-
-    [HttpGet]
-    [Obsolete("This method will not be implemented as it is not used")]
-    public void GetQuotes()
-    {
-        throw this.Obsolete();
     }
 
     [HttpGet("{messageInterface}/{channel}")]
@@ -86,7 +86,7 @@ public class QuotesController : ControllerBase
 
         return _mapper.Map<QuoteDto>(quote) with
         {
-            Channel = channelIdentifier
+            Channel = channelIdentifier,
         };
     }
 

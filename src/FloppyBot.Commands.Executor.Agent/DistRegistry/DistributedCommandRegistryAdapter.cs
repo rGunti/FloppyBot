@@ -55,6 +55,23 @@ public class DistributedCommandRegistryAdapter
         }
     }
 
+    private static CommandParameterAbstractType ToCommandParameterAbstractType(
+        CommandParameterType parameterType
+    )
+    {
+        switch (parameterType)
+        {
+            case CommandParameterType.String:
+                return CommandParameterAbstractType.String;
+            case CommandParameterType.Number:
+                return CommandParameterAbstractType.Number;
+            case CommandParameterType.Enum:
+                return CommandParameterAbstractType.Enum;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(parameterType), parameterType, null);
+        }
+    }
+
     private CommandAbstract ConvertToAbstract(CommandInfo commandInfo)
     {
         _logger.LogDebug("Extracting metadata for command {CommandInfo}", commandInfo);
@@ -85,22 +102,5 @@ public class DistributedCommandRegistryAdapter
                 .ToArray(),
             metadata.GetRawDataAsDictionary()
         );
-    }
-
-    private static CommandParameterAbstractType ToCommandParameterAbstractType(
-        CommandParameterType parameterType
-    )
-    {
-        switch (parameterType)
-        {
-            case CommandParameterType.String:
-                return CommandParameterAbstractType.String;
-            case CommandParameterType.Number:
-                return CommandParameterAbstractType.Number;
-            case CommandParameterType.Enum:
-                return CommandParameterAbstractType.Enum;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(parameterType), parameterType, null);
-        }
     }
 }

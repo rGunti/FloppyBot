@@ -32,20 +32,20 @@ public class MessageCounter : IDisposable
         Stop();
     }
 
-    private void OnMessageReceived(ChatMessage chatMessage)
-    {
-#if DEBUG
-        _logger.LogInformation("Received chat message to count: {@ChatMessage}", chatMessage);
-#endif
-        _messageOccurrenceService.StoreMessage(chatMessage);
-    }
-
     public void Start()
     {
         _logger.LogInformation(
             "Connecting to message input to start listening for incoming messages"
         );
         _chatMessageReceiver.StartListening();
+    }
+
+    private void OnMessageReceived(ChatMessage chatMessage)
+    {
+#if DEBUG
+        _logger.LogInformation("Received chat message to count: {@ChatMessage}", chatMessage);
+#endif
+        _messageOccurrenceService.StoreMessage(chatMessage);
     }
 
     public void Stop()

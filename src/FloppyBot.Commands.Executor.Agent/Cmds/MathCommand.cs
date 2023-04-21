@@ -45,7 +45,9 @@ public class MathCommand
         {
             var result = ExpressionEvaluator.EvaluateExpression(expression);
             if (result == null)
+            {
                 return null;
+            }
 
             return instruction
                 .DetermineMessageTemplate(

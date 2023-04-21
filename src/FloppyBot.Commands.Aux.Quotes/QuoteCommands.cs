@@ -35,18 +35,18 @@ public class QuoteCommands
     private static readonly IImmutableSet<string> OpEdit = new[]
     {
         "edit",
-        "*"
+        "*",
     }.ToImmutableHashSet();
     private static readonly IImmutableSet<string> OpEditContext = new[]
     {
         "editcontext",
-        "ec"
+        "ec",
     }.ToImmutableHashSet();
     private static readonly IImmutableSet<string> OpDelete = new[]
     {
         "del",
         "delete",
-        "-"
+        "-",
     }.ToImmutableHashSet();
 
     private readonly ILogger<QuoteCommands> _logger;
@@ -56,6 +56,17 @@ public class QuoteCommands
     {
         _logger = logger;
         _quoteService = quoteService;
+    }
+
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void RegisterDependencies(IServiceCollection services)
+    {
+        services
+            .AddSingleton<ITimeProvider, RealTimeProvider>()
+            .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
+            .AddScoped<IQuoteService, QuoteService>()
+            .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }
 
     [Command("quote", "q")]
@@ -81,6 +92,27 @@ public class QuoteCommands
         {
             return null;
         }
+    }
+
+    [Command("quoteadd", "q+")]
+    [PrimaryCommandName("quoteadd")]
+    [CommandDescription("Adds a new quote")]
+    [CommandSyntax("<Text>")]
+    [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
+    public string AddQuote(
+        [SourceChannel] ChannelIdentifier sourceChannel,
+        [SourceContext] string? sourceContext,
+        [Author] ChatUser author,
+        [AllArguments] string quoteText
+    )
+    {
+        var quote = _quoteService.AddQuote(
+            sourceChannel,
+            quoteText,
+            sourceContext ?? sourceChannel.Interface,
+            author.DisplayName
+        );
+        return REPLY_CREATED.Format(new { Quote = quote });
     }
 
     private string? DoQuote(
@@ -170,27 +202,6 @@ public class QuoteCommands
         return null;
     }
 
-    [Command("quoteadd", "q+")]
-    [PrimaryCommandName("quoteadd")]
-    [CommandDescription("Adds a new quote")]
-    [CommandSyntax("<Text>")]
-    [CommandParameterHint(1, "quoteText", CommandParameterType.String)]
-    public string AddQuote(
-        [SourceChannel] ChannelIdentifier sourceChannel,
-        [SourceContext] string? sourceContext,
-        [Author] ChatUser author,
-        [AllArguments] string quoteText
-    )
-    {
-        var quote = _quoteService.AddQuote(
-            sourceChannel,
-            quoteText,
-            sourceContext ?? sourceChannel.Interface,
-            author.DisplayName
-        );
-        return REPLY_CREATED.Format(new { Quote = quote });
-    }
-
     [Command("quoteedit", "qe", "q*")]
     [PrimaryCommandName("quoteedit")]
     [CommandDescription("Edits the text of an existing quote")]
@@ -246,16 +257,5 @@ public class QuoteCommands
         return _quoteService.DeleteQuote(sourceChannel, quoteId)
             ? REPLY_DELETED.Format(new { QuoteId = quoteId })
             : REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void RegisterDependencies(IServiceCollection services)
-    {
-        services
-            .AddSingleton<ITimeProvider, RealTimeProvider>()
-            .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
-            .AddScoped<IQuoteService, QuoteService>()
-            .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }
 }

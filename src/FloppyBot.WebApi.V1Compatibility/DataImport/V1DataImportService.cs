@@ -40,7 +40,7 @@ public class V1DataImportService
         new()
         {
             PropertyNameCaseInsensitive = true,
-            Converters = { new JsonStringEnumConverter() }
+            Converters = { new JsonStringEnumConverter() },
         };
 
     private readonly ICommandConfigurationService _commandConfigurationService;
@@ -150,6 +150,12 @@ public class V1DataImportService
                 $"Payload has been created in an unsupported version of FloppyBot: {importVersion}"
             );
         }
+    }
+
+    private static string CalculateSha256CheckSum(byte[] data)
+    {
+        using var sha = SHA256.Create();
+        return BitConverter.ToString(sha.ComputeHash(data)).Replace("-", string.Empty);
     }
 
     private V1DataImport PrepareImport(DataExport payload)
@@ -365,12 +371,6 @@ public class V1DataImportService
         );
     }
 
-    private static string CalculateSha256CheckSum(byte[] data)
-    {
-        using var sha = SHA256.Create();
-        return BitConverter.ToString(sha.ComputeHash(data)).Replace("-", string.Empty);
-    }
-
     private ImmutableArray<Quote> PrepareImportQuotes(IImmutableList<QuoteDto> quotes)
     {
         _logger.LogDebug("Preparing import of {FileCount} quotes ...", quotes.Count);
@@ -510,7 +510,7 @@ public class V1DataImportService
                 {
                     SoundFiles = ImmutableList
                         .Create<string>()
-                        .Add($"{soundCommand.ChannelId}/{soundCommand.CommandName}.wav")
+                        .Add($"{soundCommand.ChannelId}/{soundCommand.CommandName}.wav"),
                 }
             );
         }

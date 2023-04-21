@@ -94,6 +94,28 @@ public class TwitchChatInterface : IChatInterface
         }
     }
 
+    private static PrivilegeLevel DeterminePrivilegeLevel(
+        TwitchLib.Client.Models.ChatMessage chatMessage
+    )
+    {
+        if (chatMessage.IsBroadcaster)
+        {
+            return PrivilegeLevel.Administrator;
+        }
+
+        if (chatMessage.IsModerator)
+        {
+            return PrivilegeLevel.Moderator;
+        }
+
+        if (chatMessage.IsMe)
+        {
+            return PrivilegeLevel.Unknown;
+        }
+
+        return PrivilegeLevel.Viewer;
+    }
+
     private ChatMessageIdentifier NewChatMessageIdentifier(string? messageId)
     {
         return new ChatMessageIdentifier(
@@ -158,19 +180,6 @@ public class TwitchChatInterface : IChatInterface
         );
 
         MessageReceived?.Invoke(this, message);
-    }
-
-    private static PrivilegeLevel DeterminePrivilegeLevel(
-        TwitchLib.Client.Models.ChatMessage chatMessage
-    )
-    {
-        if (chatMessage.IsBroadcaster)
-            return PrivilegeLevel.Administrator;
-        if (chatMessage.IsModerator)
-            return PrivilegeLevel.Moderator;
-        if (chatMessage.IsMe)
-            return PrivilegeLevel.Unknown;
-        return PrivilegeLevel.Viewer;
     }
 
     private void Client_OnReconnected(object? sender, OnReconnectedEventArgs e)

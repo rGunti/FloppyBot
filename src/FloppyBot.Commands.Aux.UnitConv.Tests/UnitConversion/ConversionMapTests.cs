@@ -5,24 +5,15 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
     [TestClass]
     public class ConversionMapTests
     {
+        #region Test Data Setup
+
+        private const string A = "A";
+
         private readonly ConversionMap _map;
 
         public ConversionMapTests()
         {
             _map = ConversionMapBuilder.BuildMap(Nodes, NodeRelations);
-        }
-
-        private void DoReachTest(
-            string origin,
-            string target,
-            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
-            bool expectReach
-        )
-        {
-            ConversionNode originNode = _map.GetNode(origin),
-                targetNode = _map.GetNode(target);
-
-            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
         }
 
         [TestMethod]
@@ -45,9 +36,19 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             );
         }
 
-        #region Test Data Setup
+        private void DoReachTest(
+            string origin,
+            string target,
+            Func<ConversionNode, ConversionNode, bool> resolutionFunc,
+            bool expectReach
+        )
+        {
+            ConversionNode originNode = _map.GetNode(origin),
+                targetNode = _map.GetNode(target);
 
-        private const string A = "A";
+            Assert.AreEqual(expectReach, resolutionFunc(originNode, targetNode));
+        }
+
         private const string B = "B";
         private const string C = "C";
         private const string D = "D";
@@ -81,7 +82,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             M,
             N,
             O,
-            P
+            P,
         };
 
         private static readonly ISet<(string a, string b)> NodeRelations = new HashSet<(
@@ -122,7 +123,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
             (N, M),
             (N, P),
             (O, M),
-            (P, N)
+            (P, N),
         };
 
         #endregion

@@ -4,16 +4,16 @@ namespace FloppyBot.WebApi.Base.Exceptions;
 
 public static class HttpStatusCodeExceptionExtensions
 {
-    private static string GetRequestIdentifier(this ControllerBase controllerBase)
-    {
-        return $"{controllerBase.Request.Method} {controllerBase.Request.Path}";
-    }
-
     public static HttpStatusCodeException NotImplemented(this ControllerBase controller)
     {
         return new RouteNotImplementedException(
             $"Route \"{controller.GetRequestIdentifier()}\" is not implemented"
         );
+    }
+
+    private static string GetRequestIdentifier(this ControllerBase controllerBase)
+    {
+        return $"{controllerBase.Request.Method} {controllerBase.Request.Path}";
     }
 
     public static HttpStatusCodeException Obsolete(this ControllerBase controller)

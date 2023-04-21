@@ -30,7 +30,7 @@ public sealed class ImmutableListWithValueSemantics<T>
     {
         unchecked
         {
-            return this.Aggregate(19, (h, i) => h * 19 + i!.GetHashCode());
+            return this.Aggregate(19, (h, i) => (h * 19) + i!.GetHashCode());
         }
     }
 

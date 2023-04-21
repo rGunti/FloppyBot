@@ -3,7 +3,7 @@ using RestSharp;
 
 namespace FloppyBot.Commands.Executor.Agent.Cmds.Currency;
 
-public class CurrencyConverter : ICurrencyConverter
+public class CurrencyConverter : ICurrencyConverter, IDisposable
 {
     private readonly CurrencyCommandConfig _currencyCommandConfig;
     private readonly RestClient _restClient;
@@ -34,5 +34,10 @@ public class CurrencyConverter : ICurrencyConverter
         }
 
         return new CurrencyConversionRecord(from, to, responseData[$"{from}_{to}"]);
+    }
+
+    public void Dispose()
+    {
+        throw new NotImplementedException();
     }
 }

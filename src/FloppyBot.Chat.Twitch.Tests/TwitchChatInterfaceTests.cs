@@ -39,12 +39,22 @@ public class TwitchChatInterfaceTests
         );
     }
 
+    [TestMethod]
+    public void BroadcasterHasAdminRights()
+    {
+        CheckPrivilegeLevel(
+            CreateChatMessage("atwitchviewer", "hello world", isBroadcaster: true),
+            PrivilegeLevel.Administrator
+        );
+    }
+
     private TwitchChatInterface CreateInterface(TwitchConfiguration? configuration = null)
     {
         if (configuration != null)
         {
             _configuration = configuration;
         }
+
         return new TwitchChatInterface(
             LoggingUtils.GetLogger<TwitchChatInterface>(),
             LoggingUtils.GetLogger<TwitchClient>(),
@@ -98,7 +108,7 @@ public class TwitchChatInterfaceTests
                 null,
                 0,
                 0
-            )
+            ),
         };
     }
 
@@ -130,15 +140,6 @@ public class TwitchChatInterfaceTests
                 messageReceivedArgs.ChatMessage.Message
             ),
             messages.First()
-        );
-    }
-
-    [TestMethod]
-    public void BroadcasterHasAdminRights()
-    {
-        CheckPrivilegeLevel(
-            CreateChatMessage("atwitchviewer", "hello world", isBroadcaster: true),
-            PrivilegeLevel.Administrator
         );
     }
 
@@ -228,7 +229,7 @@ public class TwitchChatInterfaceTests
         TwitchChatInterface chatInterface = CreateInterface(
             _configuration with
             {
-                DisableWhenChannelIsOffline = true
+                DisableWhenChannelIsOffline = true,
             }
         );
         var receivedMessages = 0;

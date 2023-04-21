@@ -14,6 +14,7 @@ public static class RedisConnectionStringExtensions
                 nameof(connectionString)
             );
         }
+
         return new RedisConnectionConfig(ConfigurationOptions.Parse(split[0]), split[1]);
     }
 }

@@ -10,7 +10,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/sound-commands")]
@@ -29,6 +29,12 @@ public class SoundCommandsController : ControllerBase
         _userService = userService;
         _customCommandService = customCommandService;
         _mapper = mapper;
+    }
+
+    [HttpGet]
+    public SoundCommand[] GetCommands()
+    {
+        throw this.UnsupportedFeature("Requesting all commands is not supported");
     }
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
@@ -50,12 +56,6 @@ public class SoundCommandsController : ControllerBase
         var channelId = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelId);
         return channelId;
-    }
-
-    [HttpGet]
-    public SoundCommand[] GetCommands()
-    {
-        throw this.UnsupportedFeature("Requesting all commands is not supported");
     }
 
     [HttpGet("{messageInterface}/{channel}")]
@@ -183,7 +183,7 @@ public class SoundCommandsController : ControllerBase
 
         CustomCommandDescription customCommand = wrappedCommand.Value with
         {
-            Name = newCommandName
+            Name = newCommandName,
         };
         _customCommandService.UpdateCommand(customCommand);
         return NoContent();

@@ -15,6 +15,19 @@ namespace FloppyBot.Commands.Core.Tests;
 [TestClass]
 public class CommandSpawnerTests
 {
+    [TestMethod]
+    public void RunsCommandAsExpected()
+    {
+        var instruction = MockCommandFactory.NewInstruction("ping", Array.Empty<string>());
+        var command = GetCommandInfo("ping", typeof(SampleCommands), nameof(SampleCommands.Ping));
+        var spawner = GetCommandSpawner<SampleCommands>();
+
+        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
+
+        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
+        Assert.AreEqual("Pong!", returnValue!.Content);
+    }
+
     private static ICommandSpawner GetCommandSpawner<T>()
         where T : class
     {
@@ -32,19 +45,6 @@ public class CommandSpawnerTests
             new[] { commandName }.ToImmutableListWithValueSemantics(),
             commandHostType.GetMethod(methodName)!
         );
-    }
-
-    [TestMethod]
-    public void RunsCommandAsExpected()
-    {
-        var instruction = MockCommandFactory.NewInstruction("ping", Array.Empty<string>());
-        var command = GetCommandInfo("ping", typeof(SampleCommands), nameof(SampleCommands.Ping));
-        var spawner = GetCommandSpawner<SampleCommands>();
-
-        var returnValue = spawner.SpawnAndExecuteCommand(command, instruction);
-
-        Assert.IsInstanceOfType(returnValue, typeof(ChatMessage));
-        Assert.AreEqual("Pong!", returnValue!.Content);
     }
 
     [TestMethod]
@@ -250,7 +250,7 @@ public class CommandSpawnerTests
                 {
                     SupportedFeatures = features
                 }
-            )
+            ),
         };
         var command = GetCommandInfo(
             "feature",

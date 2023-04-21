@@ -7,7 +7,7 @@ using FloppyBot.WebApi.V1Compatibility.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/user")]

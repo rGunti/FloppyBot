@@ -18,12 +18,12 @@ namespace FloppyBot.Commands.Aux.Translation;
 [CommandHost]
 public class DeepLCommands
 {
-    private const string CONFIG_KEY = "DeepL:ApiKey";
-
     public const string REPLY_HELP =
         "Translate anything using DeepL! You can either ask it in a sentence"
         + " (\"translate Hello World from English to German\") or a short syntax"
         + " (\"translate en>de Hello World\").";
+
+    private const string CONFIG_KEY = "DeepL:ApiKey";
 
     private const string REPLY_SUPPORTED_LANGUAGES =
         "The following languages are supported: {SupportedLanguages:list:{}|, |, and }";
@@ -103,7 +103,7 @@ public class DeepLCommands
                 _
                     => throw new ArgumentOutOfRangeException(
                         $"Combination of parameter {inputString} and markdown support {supportsMarkdown} is not implemented"
-                    )
+                    ),
             };
 
             return CommandResult.SuccessWith(template.Format(languages));

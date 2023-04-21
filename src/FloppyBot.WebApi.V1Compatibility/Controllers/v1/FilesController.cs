@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using FileHeader = FloppyBot.WebApi.V1Compatibility.Dtos.FileHeader;
 
-namespace FloppyBot.WebApi.V1Compatibility.Controllers.v1;
+namespace FloppyBot.WebApi.V1Compatibility.Controllers.V1;
 
 [ApiController]
 [Route(V1Config.ROUTE_BASE + "api/v1/files/{messageInterface}/{channel}")]
@@ -28,6 +28,17 @@ public class FilesController : ControllerBase
         _userService = userService;
         _fileService = fileService;
         _mapper = mapper;
+    }
+
+    [HttpGet]
+    public FileHeader[] GetFiles([FromRoute] string messageInterface, [FromRoute] string channel)
+    {
+        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
+        return _fileService
+            .GetFilesOf(channelId)
+            .Select(f => _mapper.Map<FileHeader>(f))
+            .OrderBy(f => f.FileName.ToLowerInvariant())
+            .ToArray();
     }
 
     private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
@@ -49,17 +60,6 @@ public class FilesController : ControllerBase
         var channelId = new ChannelIdentifier(messageInterface, channel);
         EnsureChannelAccess(channelId);
         return channelId;
-    }
-
-    [HttpGet]
-    public FileHeader[] GetFiles([FromRoute] string messageInterface, [FromRoute] string channel)
-    {
-        ChannelIdentifier channelId = EnsureChannelAccess(messageInterface, channel);
-        return _fileService
-            .GetFilesOf(channelId)
-            .Select(f => _mapper.Map<FileHeader>(f))
-            .OrderBy(f => f.FileName.ToLowerInvariant())
-            .ToArray();
     }
 
     [HttpPost]

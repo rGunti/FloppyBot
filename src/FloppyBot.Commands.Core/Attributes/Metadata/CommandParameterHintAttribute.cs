@@ -33,9 +33,6 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
     public string? Description { get; }
     public string[] PossibleValues { get; }
 
-    public string ConvertToString() =>
-        ConvertToString(Order, ParamName, Type, Required, Description, PossibleValues);
-
     public static string ConvertToString(
         int order,
         string paramName,
@@ -52,7 +49,10 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
             $"{type}",
             $"{(required ? 1 : 0)}",
             $"{description ?? string.Empty}",
-            possibleValues.Join(";")
+            possibleValues.Join(";"),
         }.Join("|");
     }
+
+    public string ConvertToString() =>
+        ConvertToString(Order, ParamName, Type, Required, Description, PossibleValues);
 }

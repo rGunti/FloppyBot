@@ -39,6 +39,11 @@ public class CommandMetadata
 
     public bool HiddenCommand => RawData.ContainsKey(CommandMetadataTypes.HIDDEN);
 
+    public bool HasValue(string key)
+    {
+        return RawData.ContainsKey(key);
+    }
+
     private void Init()
     {
         if (RawData.ContainsKey(CommandMetadataTypes.MIN_PRIVILEGE))
@@ -66,11 +71,6 @@ public class CommandMetadata
                 .OrderBy(p => p.Order)
                 .ToArray();
         }
-    }
-
-    public bool HasValue(string key)
-    {
-        return RawData.ContainsKey(key);
     }
 
     public string? GetValueOrDefault(string key)
@@ -122,5 +122,5 @@ public enum CommandParameterType
 {
     String,
     Number,
-    Enum
+    Enum,
 }

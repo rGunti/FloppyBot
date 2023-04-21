@@ -33,6 +33,22 @@ public class CustomCommandHost
         _commandService = commandService;
     }
 
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void DiSetup(IServiceCollection services)
+    {
+        WebDiSetup(services);
+        services
+            .AddCommandListSupplier<CustomCommandListSupplier>()
+            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
+            .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
+    }
+
+    public bool CanHandleCommand(CommandInstruction instruction)
+    {
+        return GetCommand(instruction).HasValue;
+    }
+
     private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)
     {
         return _commandService
@@ -48,11 +64,6 @@ public class CustomCommandHost
         return new KeyNotFoundException(
             $"Channel={instruction.Context!.SourceMessage!.Identifier.GetChannel()}, Command={instruction.CommandName}"
         );
-    }
-
-    public bool CanHandleCommand(CommandInstruction instruction)
-    {
-        return GetCommand(instruction).HasValue;
     }
 
     [VariableCommandHandler(nameof(CanHandleCommand), identifier: "Custom Commands")]
@@ -72,17 +83,6 @@ public class CustomCommandHost
 
         // TODO: Supply multiple results
         return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void DiSetup(IServiceCollection services)
-    {
-        WebDiSetup(services);
-        services
-            .AddCommandListSupplier<CustomCommandListSupplier>()
-            .AddScoped<ICustomCommandExecutor, CustomCommandExecutor>()
-            .AddScoped<ISoundCommandInvocationSender, SoundCommandInvocationSender>();
     }
 
     public static void WebDiSetup(IServiceCollection services)

@@ -36,7 +36,7 @@ public class CommandConfigurationService : ICommandConfigurationService
                 Id = GenerateCommandConfigurationId(
                     commandConfiguration.ChannelId,
                     commandConfiguration.CommandName
-                )
+                ),
             }
         );
     }

@@ -12,7 +12,9 @@ public static class TimeExpressionParser
     {
         Match timeParse = TimeParsingRegex.Match(expression);
         if (!timeParse.Success)
+        {
             return null;
+        }
 
         string dayStr = timeParse.Groups[2].Value,
             hrsStr = timeParse.Groups[4].Value,
@@ -24,15 +26,26 @@ public static class TimeExpressionParser
             min = ParseInt(minStr),
             sec = ParseInt(secStr);
 
-        var timeSpan = new TimeSpan();
+        var timeSpan = default(TimeSpan);
         if (day.HasValue)
+        {
             timeSpan += TimeSpan.FromDays(day.Value);
+        }
+
         if (hrs.HasValue)
+        {
             timeSpan += TimeSpan.FromHours(hrs.Value);
+        }
+
         if (min.HasValue)
+        {
             timeSpan += TimeSpan.FromMinutes(min.Value);
+        }
+
         if (sec.HasValue)
+        {
             timeSpan += TimeSpan.FromSeconds(sec.Value);
+        }
 
         return timeSpan;
     }

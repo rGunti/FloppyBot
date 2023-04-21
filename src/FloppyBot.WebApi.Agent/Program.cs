@@ -60,7 +60,7 @@ services
                 });
 
                 return Task.CompletedTask;
-            }
+            },
         };
     });
 services
@@ -83,7 +83,7 @@ services
             new OpenApiInfo
             {
                 Title = "FloppyBot Management API",
-                Version = AboutThisApp.Info.Version
+                Version = AboutThisApp.Info.Version,
             }
         );
         o.AddSecurityDefinition(
@@ -95,7 +95,7 @@ services
                 BearerFormat = "JWT",
                 Type = SecuritySchemeType.Http,
                 In = ParameterLocation.Header,
-                Description = "JWT Token goes here"
+                Description = "JWT Token goes here",
             }
         );
         o.AddSecurityRequirement(
@@ -111,7 +111,7 @@ services
                         }
                     },
                     Array.Empty<string>()
-                }
+                },
             }
         );
     });

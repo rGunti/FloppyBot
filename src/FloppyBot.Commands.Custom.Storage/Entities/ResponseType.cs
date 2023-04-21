@@ -6,5 +6,5 @@ public enum ResponseType
     Sound,
 
     [Obsolete("Not yet implemented")]
-    JavaScript
+    JavaScript,
 }

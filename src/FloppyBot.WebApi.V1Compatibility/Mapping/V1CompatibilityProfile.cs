@@ -30,6 +30,33 @@ public class V1CompatibilityProfile : Profile
         MapCommandConfig();
     }
 
+    public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
+    {
+        return commandDescription.Aliases.Count == 0
+            && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
+    }
+
+    private static IEnumerable<CooldownConfiguration> ConvertCooldownConfig(
+        CooldownConfig cooldownConfig
+    )
+    {
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Administrator,
+            CooldownMs = cooldownConfig.AdminCooldown,
+        };
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Moderator,
+            CooldownMs = cooldownConfig.ModCooldown,
+        };
+        yield return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel.Viewer,
+            CooldownMs = cooldownConfig.Cooldown,
+        };
+    }
+
     private void MapTimerMessageConfig()
     {
         CreateMap<TimerMessageConfig, TimerMessageConfiguration>()
@@ -118,7 +145,7 @@ public class V1CompatibilityProfile : Profile
                                 null,
                                 null,
                                 null
-                            )
+                            ),
                         }.ToImmutableListWithValueSemantics(),
                         DateTimeOffset.UtcNow - c.Process.StartedAt
                     )
@@ -169,7 +196,7 @@ public class V1CompatibilityProfile : Profile
                             Cooldown = new[]
                             {
                                 new CooldownDescription(PrivilegeLevel.Unknown, c.Timeout)
-                            }.ToImmutableHashSetWithValueSemantics()
+                            }.ToImmutableHashSetWithValueSemantics(),
                         },
                         ResponseMode = CommandResponseMode.PickOneRandom,
                         Responses = (c.ResponseVariants ?? Enumerable.Empty<string>()).Any()
@@ -178,7 +205,7 @@ public class V1CompatibilityProfile : Profile
                                 .ToImmutableListWithValueSemantics()
                             : new[]
                             {
-                                new CommandResponse(ResponseType.Text, c.Response)
+                                new CommandResponse(ResponseType.Text, c.Response),
                             }.ToImmutableListWithValueSemantics(),
                         Id = null!,
                     }
@@ -247,7 +274,7 @@ public class V1CompatibilityProfile : Profile
                             Cooldown = new[]
                             {
                                 new CooldownDescription(PrivilegeLevel.Unknown, c.Cooldown)
-                            }.ToImmutableHashSetWithValueSemantics()
+                            }.ToImmutableHashSetWithValueSemantics(),
                         },
                         ResponseMode = CommandResponseMode.PickOneRandom,
                         Responses = new[]
@@ -255,7 +282,7 @@ public class V1CompatibilityProfile : Profile
                             new CommandResponse(
                                 ResponseType.Sound,
                                 $"{c.SoundFiles[0]}{CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR}{c.Response}"
-                            )
+                            ),
                         }.ToImmutableList(),
                         Id = null!,
                     }
@@ -316,27 +343,6 @@ public class V1CompatibilityProfile : Profile
             );
     }
 
-    private static IEnumerable<CooldownConfiguration> ConvertCooldownConfig(
-        CooldownConfig cooldownConfig
-    )
-    {
-        yield return new CooldownConfiguration
-        {
-            PrivilegeLevel = PrivilegeLevel.Administrator,
-            CooldownMs = cooldownConfig.AdminCooldown
-        };
-        yield return new CooldownConfiguration
-        {
-            PrivilegeLevel = PrivilegeLevel.Moderator,
-            CooldownMs = cooldownConfig.ModCooldown
-        };
-        yield return new CooldownConfiguration
-        {
-            PrivilegeLevel = PrivilegeLevel.Viewer,
-            CooldownMs = cooldownConfig.Cooldown
-        };
-    }
-
     private static CooldownConfig ConvertCooldownConfig(CooldownConfiguration[] configs)
     {
         return new CooldownConfig(
@@ -351,12 +357,6 @@ public class V1CompatibilityProfile : Profile
                 .MinBy(c => c.PrivilegeLevel)
                 ?.CooldownMs ?? 0
         );
-    }
-
-    public static bool IsConvertableForTextCommand(CustomCommandDescription commandDescription)
-    {
-        return commandDescription.Aliases.Count == 0
-            && commandDescription.Responses.All(r => r.Type == ResponseType.Text);
     }
 
     public static bool IsConvertableForSoundCommand(CustomCommandDescription commandDescription)

@@ -135,6 +135,50 @@ public class DiscordChatInterface : IChatInterface
         _discordClient.MessageReceived -= DiscordClientOnMessageReceived;
     }
 
+    private static ApplicationCommandOptionType ConvertParamType(
+        CommandParameterAbstractType commandParameterAbstractType
+    )
+    {
+        return commandParameterAbstractType switch
+        {
+            CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
+            CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
+            _
+                => throw new ArgumentOutOfRangeException(
+                    nameof(commandParameterAbstractType),
+                    commandParameterAbstractType,
+                    "This value is not supported!"
+                ),
+        };
+    }
+
+    private static PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
+    {
+        if (user.IsBot || user.IsWebhook)
+        {
+            return PrivilegeLevel.Unknown;
+        }
+
+        if (user is SocketGuildUser guildUser)
+        {
+            var guildPermissions = guildUser.GuildPermissions;
+            if (guildPermissions.Administrator)
+            {
+                return PrivilegeLevel.Administrator;
+            }
+
+            if (guildPermissions.ManageChannels)
+            {
+                return PrivilegeLevel.Moderator;
+            }
+
+            return PrivilegeLevel.Viewer;
+        }
+
+        return PrivilegeLevel.Unknown;
+    }
+
     private async void ConnectAsync()
     {
         _logger.LogTrace("Logging in with Bot Token ...");
@@ -173,10 +217,9 @@ public class DiscordChatInterface : IChatInterface
             .Select(c =>
             {
                 _logger.LogTrace("Building slash command for {CommandName}", c.Name);
-                var description = (
+                var description =
                     c.Description
-                    ?? "No description was provided for this command, but I'm sure it's lovely"
-                );
+                    ?? "No description was provided for this command, but I'm sure it's lovely";
                 if (description.Length >= 100)
                 {
                     description = description[..96] + "...";
@@ -246,24 +289,6 @@ public class DiscordChatInterface : IChatInterface
         }
     }
 
-    private static ApplicationCommandOptionType ConvertParamType(
-        CommandParameterAbstractType commandParameterAbstractType
-    )
-    {
-        return commandParameterAbstractType switch
-        {
-            CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
-            CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
-            CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(commandParameterAbstractType),
-                    commandParameterAbstractType,
-                    "This value is not supported!"
-                ),
-        };
-    }
-
     private Task DiscordClientOnLog(LogMessage arg)
     {
         if (arg.Exception != null)
@@ -313,23 +338,6 @@ public class DiscordChatInterface : IChatInterface
         return Task.CompletedTask;
     }
 
-    private static PrivilegeLevel DeterminePrivilegeLevel(SocketUser user)
-    {
-        if (user.IsBot || user.IsWebhook)
-            return PrivilegeLevel.Unknown;
-        if (user is SocketGuildUser guildUser)
-        {
-            var guildPermissions = guildUser.GuildPermissions;
-            if (guildPermissions.Administrator)
-                return PrivilegeLevel.Administrator;
-            if (guildPermissions.ManageChannels)
-                return PrivilegeLevel.Moderator;
-            return PrivilegeLevel.Viewer;
-        }
-
-        return PrivilegeLevel.Unknown;
-    }
-
     private static GuildPermission? ConvertToGuildPermission(PrivilegeLevel? level)
     {
         if (level == null)
@@ -344,11 +352,6 @@ public class DiscordChatInterface : IChatInterface
             PrivilegeLevel.Viewer => GuildPermission.SendMessages,
             _ => null,
         };
-    }
-
-    private ChatMessageIdentifier NewChatMessageIdentifier(ulong channelId, ulong messageId)
-    {
-        return new ChatMessageIdentifier(IF_NAME, $"{channelId}", $"{messageId}");
     }
 
     private static LogLevel TranslateLogLevel(LogSeverity severity)
@@ -370,6 +373,11 @@ public class DiscordChatInterface : IChatInterface
             default:
                 return LogLevel.Trace;
         }
+    }
+
+    private ChatMessageIdentifier NewChatMessageIdentifier(ulong channelId, ulong messageId)
+    {
+        return new ChatMessageIdentifier(IF_NAME, $"{channelId}", $"{messageId}");
     }
 
     private Task DiscordClientSlashCommandExecuted(SocketSlashCommand arg)

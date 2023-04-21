@@ -27,6 +27,13 @@ public class CurrencyCommands
         _currencyConverter = currencyConverter;
     }
 
+    [DependencyRegistration]
+    // ReSharper disable once UnusedMember.Global
+    public static void RegisterDependencies(IServiceCollection services)
+    {
+        services.AddSingleton<ICurrencyConverter, CurrencyConverter>();
+    }
+
     [Command("money", "currency")]
     [PrimaryCommandName("money")]
     [CommandDescription(
@@ -53,12 +60,5 @@ public class CurrencyCommands
         return (features.Supports(ChatInterfaceFeatures.MarkdownText) ? REPLY_MD : REPLY).Format(
             new { Input = inputValue, Output = output, }
         );
-    }
-
-    [DependencyRegistration]
-    // ReSharper disable once UnusedMember.Global
-    public static void RegisterDependencies(IServiceCollection services)
-    {
-        services.AddSingleton<ICurrencyConverter, CurrencyConverter>();
     }
 }

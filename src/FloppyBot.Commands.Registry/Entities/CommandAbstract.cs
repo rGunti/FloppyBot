@@ -32,5 +32,5 @@ public enum CommandParameterAbstractType
 {
     String,
     Number,
-    Enum
+    Enum,
 }

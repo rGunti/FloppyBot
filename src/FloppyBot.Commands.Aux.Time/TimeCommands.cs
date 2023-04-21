@@ -54,6 +54,22 @@ public class TimeCommands
         services.AddScoped<IUserTimeZoneSettingsService, UserTimeZoneSettingsService>();
     }
 
+    [Command("time")]
+    [CommandDescription("What is the current time")]
+    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
+    public CommandResult ShowCurrentTime(
+        [Author] ChatUser author,
+        [AllArguments("_")] string? timeZoneId
+    )
+    {
+        return GetTime(author.Identifier, timeZoneId)
+            .Select(t => REPLY_TIME.Format(t))
+            .Select(CommandResult.SuccessWith)
+            .FirstOrDefault(
+                CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId }))
+            );
+    }
+
     private static TimeZoneInfo FindTimeZoneWithLinuxId(string timeZoneId)
     {
         string? tzId = timeZoneId;
@@ -104,22 +120,6 @@ public class TimeCommands
         return new TimeCommandOutput(currentTimeAtTz, currentTimeAtTz.ToString("HH:mm"), timeZone);
     }
 
-    [Command("time")]
-    [CommandDescription("What is the current time")]
-    [CommandParameterHint(1, "timeZone", CommandParameterType.String, false)]
-    public CommandResult ShowCurrentTime(
-        [Author] ChatUser author,
-        [AllArguments("_")] string? timeZoneId
-    )
-    {
-        return GetTime(author.Identifier, timeZoneId)
-            .Select(t => REPLY_TIME.Format(t))
-            .Select(CommandResult.SuccessWith)
-            .FirstOrDefault(
-                CommandResult.FailedWith(REPLY_ERR_TZ_NOT_FOUND.Format(new { Input = timeZoneId }))
-            );
-    }
-
     [Command("dectime", "dt")]
     [PrimaryCommandName("dectime")]
     [CommandDescription("What is the current decimal time")]
@@ -135,7 +135,7 @@ public class TimeCommands
                     REPLY_TIME_DEC.Format(
                         t with
                         {
-                            TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm")
+                            TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm"),
                         }
                     )
             )

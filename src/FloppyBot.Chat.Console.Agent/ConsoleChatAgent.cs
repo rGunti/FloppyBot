@@ -35,6 +35,25 @@ internal class ConsoleChatAgent : BackgroundService
         _receiver.NotificationReceived += OnMessageReceived;
     }
 
+    public override Task StartAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogWarning(
+            "Welcome to the FloppyBot Console Agent! "
+                + "Please note that this is a development tool and not meant to be run in production environments!"
+        );
+        _logger.LogInformation("Starting Console Agent ...");
+        _chatInterface.Connect();
+        _receiver.StartListening();
+        return base.StartAsync(cancellationToken);
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
+        _chatInterface.Disconnect();
+        return base.StopAsync(cancellationToken);
+    }
+
     private void OnMessageReceived(ChatMessage notification)
     {
         if (notification.Identifier.Interface == _chatInterface.Name)
@@ -49,30 +68,11 @@ internal class ConsoleChatAgent : BackgroundService
         _sender.Send(chatMessage);
     }
 
-    public override Task StartAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogWarning(
-            "Welcome to the FloppyBot Console Agent! "
-                + "Please note that this is a development tool and not meant to be run in production environments!"
-        );
-        _logger.LogInformation("Starting Console Agent ...");
-        _chatInterface.Connect();
-        _receiver.StartListening();
-        return base.StartAsync(cancellationToken);
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
             await Task.Delay(500, stoppingToken);
         }
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Shutting down Console Agent (you might need to press [ENTER]) ...");
-        _chatInterface.Disconnect();
-        return base.StopAsync(cancellationToken);
     }
 }

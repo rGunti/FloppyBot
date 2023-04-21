@@ -43,8 +43,8 @@ public class UserService : IUserService
             {
                 ChannelAliases = user.OwnerOf.ToDictionary(
                     c => c,
-                    c => user.ChannelAliases.GetValueOrDefault(c) ?? ""
-                )
+                    c => user.ChannelAliases.GetValueOrDefault(c) ?? string.Empty
+                ),
             };
         }
 

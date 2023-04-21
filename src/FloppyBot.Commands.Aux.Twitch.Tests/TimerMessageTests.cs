@@ -60,6 +60,17 @@ public class TimerMessageTests
         );
     }
 
+    [TestMethod]
+    public void SendNoMessageWhenNothingIsAvailable()
+    {
+        _cronJob.Run();
+        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
+        CollectionAssert.AreEqual(
+            Array.Empty<TimerMessageExecution>(),
+            _executionRepo.GetAll().ToArray()
+        );
+    }
+
     private void GenerateMessageOccurrences(int amount, TimeSpan gap, int startId = 0)
     {
         var _ = Enumerable
@@ -70,22 +81,11 @@ public class TimerMessageTests
                         $"Mock/Channel/Message{i}",
                         "Mock/Channel",
                         "Mock/User",
-                        _timeProvider.GetCurrentUtcTime() - (i - startId) * gap
+                        _timeProvider.GetCurrentUtcTime() - ((i - startId) * gap)
                     )
             )
             .Select(_occurrenceRepo.Insert)
             .ToArray();
-    }
-
-    [TestMethod]
-    public void SendNoMessageWhenNothingIsAvailable()
-    {
-        _cronJob.Run();
-        CollectionAssert.AreEqual(Array.Empty<ChatMessage>(), _sentMessages.ToArray());
-        CollectionAssert.AreEqual(
-            Array.Empty<TimerMessageExecution>(),
-            _executionRepo.GetAll().ToArray()
-        );
     }
 
     [TestMethod]
@@ -130,7 +130,7 @@ public class TimerMessageTests
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
                     RefConfig.Messages[0]
-                )
+                ),
             },
             _sentMessages.ToArray()
         );
@@ -153,7 +153,7 @@ public class TimerMessageTests
                     ChatUser.Anonymous,
                     SharedEventTypes.CHAT_MESSAGE,
                     RefConfig.Messages[1]
-                )
+                ),
             },
             _sentMessages.ToArray()
         );

@@ -31,11 +31,6 @@ public class CommandParsingAgent : BackgroundService
         );
     }
 
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        return Task.CompletedTask;
-    }
-
     public override Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Starting up Command Parsing Agent ...");
@@ -43,6 +38,18 @@ public class CommandParsingAgent : BackgroundService
         _chatMessageReceiver.StartListening();
 
         _logger.LogInformation("Awaiting new messages to receive");
+        return Task.CompletedTask;
+    }
+
+    public override Task StopAsync(CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Shutting down Command Parsing Agent ...");
+        _chatMessageReceiver.StopListening();
+        return base.StopAsync(cancellationToken);
+    }
+
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    {
         return Task.CompletedTask;
     }
 
@@ -63,16 +70,9 @@ public class CommandParsingAgent : BackgroundService
             _commandMessageSender.Send(
                 instruction with
                 {
-                    Context = new CommandContext(notification)
+                    Context = new CommandContext(notification),
                 }
             );
         }
-    }
-
-    public override Task StopAsync(CancellationToken cancellationToken)
-    {
-        _logger.LogInformation("Shutting down Command Parsing Agent ...");
-        _chatMessageReceiver.StopListening();
-        return base.StopAsync(cancellationToken);
     }
 }

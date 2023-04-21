@@ -34,13 +34,13 @@ public class CustomCommandExecutorTests
                 {
                     new(PrivilegeLevel.Moderator, 0),
                     new(PrivilegeLevel.Viewer, 15 * 1000)
-                }.ToImmutableHashSetWithValueSemantics()
+                }.ToImmutableHashSetWithValueSemantics(),
             },
             ResponseMode = CommandResponseMode.First,
             Responses = new CommandResponse[]
             {
                 new(ResponseType.Text, "Hello World")
-            }.ToImmutableListWithValueSemantics()
+            }.ToImmutableListWithValueSemantics(),
         };
 
     private static readonly CommandInstruction CommandInstruction =
@@ -146,7 +146,7 @@ public class CustomCommandExecutorTests
                                 PrivilegeLevel = userPrivilegeLevel
                             }
                         }
-                    )
+                    ),
                 },
                 CommandDescription
             )
@@ -190,7 +190,7 @@ public class CustomCommandExecutorTests
                     Responses = new[]
                     {
                         new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                    }.ToImmutableListWithValueSemantics()
+                    }.ToImmutableListWithValueSemantics(),
                 }
             )
             .ToArray();
@@ -207,7 +207,7 @@ public class CustomCommandExecutorTests
                     Responses = new[]
                     {
                         new CommandResponse(ResponseType.Text, "I am at level {Counter} now!")
-                    }.ToImmutableListWithValueSemantics()
+                    }.ToImmutableListWithValueSemantics(),
                 }
             )
             .ToArray();
@@ -244,7 +244,7 @@ public class CustomCommandExecutorTests
                                 Identifier = inputUser
                             }
                         }
-                    )
+                    ),
                 },
                 CommandDescription with
                 {
@@ -253,7 +253,7 @@ public class CustomCommandExecutorTests
                         LimitedToUsers = ImmutableHashSet
                             .Create<string>()
                             .Add("CoolUser".ToLowerInvariant())
-                    }
+                    },
                 }
             )
             .ToArray();

@@ -8,13 +8,18 @@ namespace FloppyBot.Base.Testing;
 
 public static class LoggingUtils
 {
-    private static readonly Lazy<ILoggerFactory> LoggerFactory = new(InitRealLogger);
-    private static readonly Lazy<ILoggerFactory> NullLoggerFac = new(NullLoggerFactory.Instance);
-
     public static readonly Lazy<ILogger> SerilogLogger =
         new(() => new LoggerConfiguration().ConfigureSerilogForTesting().CreateLogger());
 
+    private static readonly Lazy<ILoggerFactory> LoggerFactory = new(InitRealLogger);
+    private static readonly Lazy<ILoggerFactory> NullLoggerFac = new(NullLoggerFactory.Instance);
+
     public static bool UseRealLogger { get; set; } = true;
+
+    public static ILogger<T> GetLogger<T>()
+    {
+        return GetLoggerFactory().CreateLogger<T>();
+    }
 
     private static ILoggerFactory InitRealLogger()
     {
@@ -22,11 +27,6 @@ public static class LoggingUtils
         {
             loggingBuilder.AddSerilog(SerilogLogger.Value);
         });
-    }
-
-    public static ILogger<T> GetLogger<T>()
-    {
-        return GetLoggerFactory().CreateLogger<T>();
     }
 
     public static ILoggerFactory GetLoggerFactory()

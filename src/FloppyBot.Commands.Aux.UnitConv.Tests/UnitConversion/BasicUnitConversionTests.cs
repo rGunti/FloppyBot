@@ -30,11 +30,16 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
         )
         {
             if (!_unitParsingEngine.TryGetUnit(unitName, out var unit))
+            {
                 Assert.Fail($"Unit <{unitName}> is unknown");
+            }
+
             var unitValue = value.As(unit);
 
             if (!_unitParsingEngine.TryGetUnit(convertedUnit, out var destinationUnit))
+            {
                 Assert.Fail($"Unit <{convertedUnit}> is unknown");
+            }
 
             var conversion = _unitConversionEngine.FindConversion(unit, destinationUnit);
             Assert.IsNotNull(
@@ -108,7 +113,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Tests.UnitConversion
 
                 Assert.Fail(
                     $"Same unit conversion failed for "
-                        + $"<{failedUnitsCount} / {knownUnitsCount}> known unit(s) (<{(failureRate * 100):0.##} %>): "
+                        + $"<{failedUnitsCount} / {knownUnitsCount}> known unit(s) (<{failureRate * 100:0.##} %>): "
                         + $"<{string.Join(",", failedUnits.Select(u => u.Symbol).OrderBy(i => i))}>"
                 );
             }

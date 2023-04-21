@@ -24,7 +24,7 @@ public class CommandSpawner : ICommandSpawner
             { typeof(double), s => Convert.ToDouble(s) },
             { typeof(float), s => Convert.ToSingle(s) },
             { typeof(decimal), s => Convert.ToDecimal(s) },
-            { typeof(byte), s => Convert.ToByte(s) }
+            { typeof(byte), s => Convert.ToByte(s) },
         }.ToImmutableDictionary();
 
     private readonly ILogger<CommandSpawner> _logger;
@@ -175,6 +175,26 @@ public class CommandSpawner : ICommandSpawner
         return (bool)commandInfo.TestHandlerMethod.Invoke(host, new object?[] { instruction })!;
     }
 
+    private static object?[] ConstructArguments(
+        MethodInfo methodInfo,
+        CommandInstruction instruction
+    )
+    {
+        return methodInfo
+            .GetParameters()
+            .Select(p =>
+            {
+                var argValue = ConstructArgument(p, instruction);
+                if (!p.ParameterType.IsAssignableFrom(argValue?.GetType() ?? typeof(object)))
+                {
+                    return ConvertArgumentTo(argValue, p.ParameterType);
+                }
+
+                return argValue;
+            })
+            .ToArray();
+    }
+
     private CommandResult ProcessReturnValue(object? returnValue)
     {
         if (returnValue == null)
@@ -221,26 +241,6 @@ public class CommandSpawner : ICommandSpawner
                     $"Return value was of type {returnValueToProcess.GetType()}, which is not supported"
                 );
         }
-    }
-
-    private static object?[] ConstructArguments(
-        MethodInfo methodInfo,
-        CommandInstruction instruction
-    )
-    {
-        return methodInfo
-            .GetParameters()
-            .Select(p =>
-            {
-                var argValue = ConstructArgument(p, instruction);
-                if (!p.ParameterType.IsAssignableFrom(argValue?.GetType() ?? typeof(object)))
-                {
-                    return ConvertArgumentTo(argValue, p.ParameterType);
-                }
-
-                return argValue;
-            })
-            .ToArray();
     }
 
     private static object? ConstructArgument(

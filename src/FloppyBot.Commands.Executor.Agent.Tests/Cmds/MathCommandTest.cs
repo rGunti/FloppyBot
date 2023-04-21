@@ -40,7 +40,7 @@ public class MathCommandTest
                 {
                     SupportedFeatures = ChatInterfaceFeatures.MarkdownText
                 }
-            )
+            ),
         };
         var reply = _command.CalculateMathExpression(instruction, inputStr);
 

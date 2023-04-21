@@ -52,6 +52,6 @@ public record CommandInfo
 
     public override string ToString()
     {
-        return $"Cmd {PrimaryCommandName} [Alias={string.Join(",", Names)}]{(IsStatic ? " (static)" : "")} => {HandlerMethod}";
+        return $"Cmd {PrimaryCommandName} [Alias={string.Join(",", Names)}]{(IsStatic ? " (static)" : string.Empty)} => {HandlerMethod}";
     }
 }

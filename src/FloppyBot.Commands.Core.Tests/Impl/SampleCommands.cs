@@ -20,28 +20,28 @@ public class SampleCommands
         C,
     }
 
-    [Command("ping")]
-    public ChatMessage? Ping(CommandInstruction instruction)
-    {
-        return instruction.CreateReply("Pong!");
-    }
-
     [Command("sping")]
     public static ChatMessage? StaticPing(CommandInstruction instruction)
     {
         return instruction.CreateReply("Pong, but static!");
     }
 
-    [Command("simple")]
-    public string Simple(CommandInstruction _)
-    {
-        return "Simple Response";
-    }
-
     [Command("noargs")]
     public static string NoArgsCommand()
     {
         return "No args at all";
+    }
+
+    [Command("ping")]
+    public ChatMessage? Ping(CommandInstruction instruction)
+    {
+        return instruction.CreateReply("Pong!");
+    }
+
+    [Command("simple")]
+    public string Simple(CommandInstruction _)
+    {
+        return "Simple Response";
     }
 
     [Command("args")]
