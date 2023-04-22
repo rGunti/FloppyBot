@@ -180,6 +180,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounter.Agent", "FloppyBot.Aux.MessageCounter.Agent\FloppyBot.Aux.MessageCounter.Agent.csproj", "{90175374-9AF5-4413-B679-5B2601B0F0E6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_IntegrationTests", "_IntegrationTests", "{F8BAD737-D31B-4452-BE05-B13EEEC3C881}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.IntegrationTest", "FloppyBot.IntegrationTest\FloppyBot.IntegrationTest.csproj", "{D99FD467-5EBB-4633-8D93-2E7560B82FAD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -267,6 +271,7 @@ Global
 		{0170115D-E0FE-491A-8479-B78D8A32877E} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
 		{33B0D4C4-4D5D-4989-9A9C-4DC83D2300F1} = {035EAE62-BFE4-4664-B314-DBC7099701C1}
 		{90175374-9AF5-4413-B679-5B2601B0F0E6} = {035EAE62-BFE4-4664-B314-DBC7099701C1}
+		{D99FD467-5EBB-4633-8D93-2E7560B82FAD} = {F8BAD737-D31B-4452-BE05-B13EEEC3C881}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -521,5 +526,9 @@ Global
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D99FD467-5EBB-4633-8D93-2E7560B82FAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D99FD467-5EBB-4633-8D93-2E7560B82FAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D99FD467-5EBB-4633-8D93-2E7560B82FAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D99FD467-5EBB-4633-8D93-2E7560B82FAD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
