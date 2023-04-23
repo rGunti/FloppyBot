@@ -31,4 +31,10 @@
       <ProjectReference Include="..\FloppyBot.FileStorage\FloppyBot.FileStorage.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="xunit.runner.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+    </ItemGroup>
+
 </Project>
