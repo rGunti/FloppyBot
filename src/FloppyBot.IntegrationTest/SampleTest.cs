@@ -9,8 +9,8 @@ namespace FloppyBot.IntegrationTest;
 public class SampleTest : IAsyncLifetime
 {
     private readonly IContainer _container;
-    private IMongoClient _mongoClient;
-    private MongoDbRepositoryFactory _repositoryFactory;
+    private IMongoClient _mongoClient = null!;
+    private MongoDbRepositoryFactory _repositoryFactory = null!;
 
     public SampleTest()
     {
@@ -21,7 +21,7 @@ public class SampleTest : IAsyncLifetime
     public void RunTest()
     {
         var repository = _repositoryFactory.GetRepository<FileHeader>();
-        var fileHeader = new FileHeader(null!, "Raphael", "Sample File", 25000, "text/plain");
+        var fileHeader = new FileHeader(null!, "Panda", "Sample File", 25000, "text/plain");
         repository.Insert(fileHeader);
 
         var fileHeaders = repository.GetAll().ToArray();
