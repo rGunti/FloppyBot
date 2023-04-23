@@ -4,7 +4,13 @@ using StackExchange.Redis;
 using Testcontainers.MongoDb;
 using Testcontainers.Redis;
 
-namespace FloppyBot.IntegrationTest.Setup;
+namespace FloppyBot.IntegrationTest.Fixtures;
+
+[CollectionDefinition(NAME)]
+public class TestContainerCollection : ICollectionFixture<TestContainerFixture>
+{
+    public const string NAME = "TestContainer";
+}
 
 public class TestContainerFixture : IAsyncDisposable
 {

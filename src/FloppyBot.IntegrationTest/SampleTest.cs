@@ -1,12 +1,13 @@
 using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Communication.Redis;
 using FloppyBot.FileStorage.Entities;
-using FloppyBot.IntegrationTest.Setup;
+using FloppyBot.IntegrationTest.Fixtures;
 using FluentAssertions;
 
 namespace FloppyBot.IntegrationTest;
 
-public class SampleTest : IClassFixture<TestContainerFixture>, IAsyncLifetime, IAsyncDisposable
+[Collection(TestContainerCollection.NAME)]
+public class SampleTest : IAsyncLifetime, IAsyncDisposable
 {
     private readonly TestContainerFixture _containers;
     private MongoDbRepositoryFactory _repositoryFactory = null!;
