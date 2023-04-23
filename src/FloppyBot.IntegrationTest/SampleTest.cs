@@ -6,14 +6,14 @@ using FluentAssertions;
 
 namespace FloppyBot.IntegrationTest;
 
-public class SampleTest : IAsyncLifetime
+public class SampleTest : IClassFixture<TestContainerFixture>, IAsyncLifetime, IAsyncDisposable
 {
-    private readonly TestContainerSetup _containers;
+    private readonly TestContainerFixture _containers;
     private MongoDbRepositoryFactory _repositoryFactory = null!;
 
-    public SampleTest()
+    public SampleTest(TestContainerFixture containerFixture)
     {
-        _containers = new TestContainerSetup();
+        _containers = containerFixture;
     }
 
     [Fact]
@@ -77,6 +77,11 @@ public class SampleTest : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await _containers.Shutdown();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
         await _containers.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 }

@@ -6,14 +6,14 @@ using Testcontainers.Redis;
 
 namespace FloppyBot.IntegrationTest.Setup;
 
-public class TestContainerSetup : IAsyncDisposable
+public class TestContainerFixture : IAsyncDisposable
 {
     private readonly Lazy<MongoClient> _mongoClient;
     private readonly IContainer _mongoDbContainer;
     private readonly Lazy<IConnectionMultiplexer> _redisConnection;
     private readonly IContainer _redisContainer;
 
-    public TestContainerSetup()
+    public TestContainerFixture()
     {
         _mongoDbContainer = new MongoDbBuilder().WithPortBinding(27017, true).Build();
         _redisContainer = new RedisBuilder().WithPortBinding(6379, true).Build();
