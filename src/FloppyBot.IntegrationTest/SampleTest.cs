@@ -2,6 +2,7 @@ using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Communication.Redis;
 using FloppyBot.FileStorage.Entities;
 using FloppyBot.IntegrationTest.Setup;
+using FluentAssertions;
 
 namespace FloppyBot.IntegrationTest;
 
@@ -18,18 +19,25 @@ public class SampleTest : IAsyncLifetime
     [Fact]
     public void TestMongoDatabase()
     {
+        // arrange
         var repository = _repositoryFactory.GetRepository<FileHeader>();
-        var fileHeader = new FileHeader(null!, "Panda", "Sample File", 25000, "text/plain");
+        var fileHeader = new FileHeader("my-id", "Panda", "Sample File", 25000, "text/plain");
+
+        // act
         repository.Insert(fileHeader);
 
-        var fileHeaders = repository.GetAll().ToArray();
-
-        Assert.Single(fileHeaders, h => h == fileHeader with { Id = null!, });
+        // assert
+        var storedFileHeaders = repository.GetAll().ToArray();
+        storedFileHeaders
+            .Should()
+            .HaveCount(1, "because we only inserted one document")
+            .And.ContainInOrder(fileHeader);
     }
 
     [Fact]
     public void TestRedis()
     {
+        // arrange
         var sender = new RedisNotificationSender(
             _containers.ConnectionMultiplexer.GetSubscriber(),
             "Sample.Channel"
@@ -40,22 +48,22 @@ public class SampleTest : IAsyncLifetime
         );
 
         var sampleHeader = new FileHeader("sampleHeader", "Panda", "Some Name", 240, "text/plain");
+        using var monitor = receiver.Monitor();
 
-        var receivedHeaders = new List<FileHeader>();
-        receiver.NotificationReceived += (header) =>
-        {
-            receivedHeaders.Add(header);
-        };
+        var pause = new ManualResetEvent(false);
+        receiver.NotificationReceived += _ => pause.Set();
         receiver.StartListening();
 
+        // act
         sender.Send(sampleHeader);
-
-        Thread.Sleep(2000);
-
+        pause.WaitOne(2500).Should().BeTrue();
         receiver.StopListening();
 
-        Assert.Single(receivedHeaders);
-        Assert.Equal(sampleHeader, receivedHeaders.First());
+        // assert
+        monitor
+            .Should()
+            .Raise(nameof(receiver.NotificationReceived))
+            .WithArgs<FileHeader>(receivedHeader => receivedHeader == sampleHeader);
     }
 
     public async Task InitializeAsync()
@@ -69,5 +77,6 @@ public class SampleTest : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await _containers.Shutdown();
+        await _containers.DisposeAsync();
     }
 }
