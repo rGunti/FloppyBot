@@ -8,7 +8,7 @@ on:
 jobs:
   chat-agent:
     name: Publish Chat Agent
-    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@fix-release-procedure
     with:
       dockerfile_path: src/FloppyBot.Chat.Agent/Dockerfile
       project_path: src/FloppyBot.Chat.Agent/FloppyBot.Chat.Agent.csproj
@@ -21,7 +21,7 @@ jobs:
 
   command-executor:
     name: Publish Command Executor Agent
-    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@fix-release-procedure
     with:
       dockerfile_path: src/FloppyBot.Commands.Executor.Agent/Dockerfile
       project_path: src/FloppyBot.Commands.Executor.Agent/FloppyBot.Commands.Executor.Agent.csproj
@@ -34,7 +34,7 @@ jobs:
 
   command-parser:
     name: Publish Command Parser Agent
-    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@fix-release-procedure
     with:
       dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
       project_path: src/FloppyBot.Commands.Parser.Agent/FloppyBot.Commands.Parser.Agent.csproj
@@ -47,7 +47,7 @@ jobs:
 
   message-counter:
     name: Publish Message Counter Agent
-    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@fix-release-procedure
     with:
       dockerfile_path: src/FloppyBot.Aux.MessageCounter.Agent/Dockerfile
       project_path: src/FloppyBot.Aux.MessageCounter.Agent/FloppyBot.Aux.MessageCounter.Agent.csproj
@@ -60,7 +60,7 @@ jobs:
 
   webapi:
     name: Publish Web API Agent
-    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
+    uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@fix-release-procedure
     with:
       dockerfile_path: src/FloppyBot.WebApi.Agent/Dockerfile
       project_path: src/FloppyBot.WebApi.Agent/FloppyBot.WebApi.Agent.csproj
