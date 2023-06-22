@@ -11,6 +11,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.Chat.Agent/Dockerfile
+      project_path: src/FloppyBot.Chat.Agent/FloppyBot.Chat.Agent.csproj
       image_name: floppybot/chat-agent
       image_tag: ${{ github.ref_name }}
       push_latest: true
@@ -23,6 +24,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.Commands.Executor.Agent/Dockerfile
+      project_path: src/FloppyBot.Commands.Executor.Agent/FloppyBot.Commands.Executor.Agent.csproj
       image_name: floppybot/command-executor
       image_tag: ${{ github.ref_name }}
       push_latest: true
@@ -35,6 +37,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.Commands.Parser.Agent/Dockerfile
+      project_path: src/FloppyBot.Commands.Parser.Agent/FloppyBot.Commands.Parser.Agent.csproj
       image_name: floppybot/command-parser
       image_tag: ${{ github.ref_name }}
       push_latest: true
@@ -47,6 +50,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.Aux.MessageCounter.Agent/Dockerfile
+      project_path: src/FloppyBot.Aux.MessageCounter.Agent/FloppyBot.Aux.MessageCounter.Agent.csproj
       image_name: floppybot/message-counter
       image_tag: ${{ github.ref_name }}
       push_latest: true
@@ -59,6 +63,7 @@ jobs:
     uses: rGunti/FloppyBot/.github/workflows/template-release-docker-image.yml@main
     with:
       dockerfile_path: src/FloppyBot.WebApi.Agent/Dockerfile
+      project_path: src/FloppyBot.WebApi.Agent/FloppyBot.WebApi.Agent.csproj
       image_name: floppybot/web-api
       image_tag: ${{ github.ref_name }}
       push_latest: true
