@@ -71,9 +71,9 @@ jobs:
             /p:Version=$(cat ./app-short-version | xargs) \
             /p:InformationalVersion=${{ inputs.image_tag }} \
             ${{ inputs.project_path }}
-      - name: Release binaries
+      - name: Publish binaries
         run: |
-          dotnet release \
+          dotnet publish \
             --no-restore \
             --no-build \
             --configuration Release \
