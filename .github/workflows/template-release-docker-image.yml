@@ -78,7 +78,7 @@ jobs:
             --no-build \
             --configuration Release \
             -o ./out \
-            ${{ inputs.image_tag }}
+            ${{ inputs.project_path }}
       # Build Image
       - name: Build and push (${{ inputs.image_tag }})
         uses: docker/build-push-action@v3
