@@ -73,7 +73,7 @@ jobs:
             ${{ inputs.project_path }}
       - name: Release binaries
         run: |
-          dotnet restore \
+          dotnet release \
             --no-restore \
             --no-build \
             --configuration Release \
