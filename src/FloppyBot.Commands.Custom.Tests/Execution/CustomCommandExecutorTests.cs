@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using FakeItEasy;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Rng;
@@ -12,7 +13,6 @@ using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 
 namespace FloppyBot.Commands.Custom.Tests.Execution;
 
@@ -70,25 +70,17 @@ public class CustomCommandExecutorTests
         var timeProvider = new FixedTimeProvider(RefTime);
         timeProvider.AdvanceTimeBy(advanceBySecond.Seconds());
 
-        var cooldownServiceMock = new Mock<ICooldownService>();
-        cooldownServiceMock
-            .Setup(
-                c =>
-                    c.GetLastExecution(
-                        It.Is<string>(c => c == "Mock/Channel"),
-                        It.Is<string>(u => u == "Mock/User"),
-                        It.Is<string>(c => c == "mycommand")
-                    )
-            )
-            .Returns<string, string, string>((_, _, _) => RefTime);
+        var cooldownService = A.Fake<ICooldownService>();
+        A.CallTo(() => cooldownService.GetLastExecution("Mock/Channel", "Mock/User", "mycommand"))
+            .Returns(RefTime);
 
         var executor = new CustomCommandExecutor(
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object,
-            Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>()
+            cooldownService,
+            A.Fake<ICounterStorageService>(),
+            A.Fake<ISoundCommandInvocationSender>()
         );
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
@@ -113,25 +105,17 @@ public class CustomCommandExecutorTests
     {
         var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
 
-        var cooldownServiceMock = new Mock<ICooldownService>();
-        cooldownServiceMock
-            .Setup(
-                c =>
-                    c.GetLastExecution(
-                        It.Is<string>(ch => ch == "Mock/Channel"),
-                        It.Is<string>(u => u == "Mock/User"),
-                        It.Is<string>(cmd => cmd == "mycommand")
-                    )
-            )
-            .Returns<string, string, string>((_, _, _) => RefTime);
+        var cooldownService = A.Fake<ICooldownService>();
+        A.CallTo(() => cooldownService.GetLastExecution("Mock/Channel", "Mock/User", "mycommand"))
+            .Returns(RefTime);
 
         var executor = new CustomCommandExecutor(
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object,
-            Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>()
+            cooldownService,
+            A.Fake<ICounterStorageService>(),
+            A.Fake<ISoundCommandInvocationSender>()
         );
 
         string?[] reply = executor
@@ -166,20 +150,18 @@ public class CustomCommandExecutorTests
     {
         var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
 
-        var cooldownServiceMock = new Mock<ICooldownService>();
-        var counterMock = new Mock<ICounterStorageService>();
+        var cooldownService = A.Fake<ICooldownService>();
+        var counterService = A.Fake<ICounterStorageService>();
         var counter = 0;
-        counterMock
-            .Setup(s => s.Next(It.Is<string>(c => c == CommandDescription.Id)))
-            .Returns((string _) => ++counter);
+        A.CallTo(() => counterService.Next(CommandDescription.Id)).ReturnsLazily(() => ++counter);
 
         var executor = new CustomCommandExecutor(
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object,
-            counterMock.Object,
-            Mock.Of<ISoundCommandInvocationSender>()
+            cooldownService,
+            counterService,
+            A.Fake<ISoundCommandInvocationSender>()
         );
 
         string?[] reply = executor
@@ -195,7 +177,7 @@ public class CustomCommandExecutorTests
             )
             .ToArray();
 
-        counterMock.Verify(s => s.Next(It.Is<string>(c => c == CommandDescription.Id)), Times.Once);
+        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
         Assert.AreEqual("I am at level 1 now!", reply.First());
 
         // Repeat
@@ -222,14 +204,14 @@ public class CustomCommandExecutorTests
     {
         var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
 
-        var cooldownServiceMock = new Mock<ICooldownService>();
+        var cooldownService = A.Fake<ICooldownService>();
         var executor = new CustomCommandExecutor(
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
-            cooldownServiceMock.Object,
-            Mock.Of<ICounterStorageService>(),
-            Mock.Of<ISoundCommandInvocationSender>()
+            cooldownService,
+            A.Fake<ICounterStorageService>(),
+            A.Fake<ISoundCommandInvocationSender>()
         );
 
         string?[] reply = executor
@@ -270,43 +252,42 @@ public class CustomCommandExecutorTests
     [TestMethod]
     public void CounterWillOnlyIncrementOnce()
     {
-        var counterMock = new Mock<ICounterStorageService>();
+        var counterService = A.Fake<ICounterStorageService>();
         var counter = 0;
-        counterMock.Setup(s => s.Next(It.IsAny<string>())).Returns((string _) => ++counter);
+        A.CallTo(() => counterService.Next(CommandDescription.Id)).ReturnsLazily(() => ++counter);
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterMock.Object
+            counterService
         );
 
         // Access counter
         Assert.AreEqual(1, placeholder.Counter);
-        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Once);
+        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
 
         // Access counter again (ensure it has not been called twice)
         Assert.AreEqual(1, placeholder.Counter);
-        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Once);
+        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void PeekCounterWillNotIncreaseCounterValue()
     {
-        var counterMock = new Mock<ICounterStorageService>();
-        counterMock.Setup(s => s.Peek(It.IsAny<string>())).Returns((string _) => 1);
-        counterMock.Setup(s => s.Next(It.IsAny<string>())).Verifiable();
+        var counterService = A.Fake<ICounterStorageService>();
+        A.CallTo(() => counterService.Peek(A<string>.Ignored)).ReturnsLazily(() => 1);
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterMock.Object
+            counterService
         );
 
         // Access counter
         Assert.AreEqual(1, placeholder.PeekCounter);
-        counterMock.Verify(s => s.Peek(It.IsAny<string>()), Times.Once);
-        counterMock.Verify(s => s.Next(It.IsAny<string>()), Times.Never);
+        A.CallTo(() => counterService.Peek(A<string>.Ignored)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => counterService.Next(A<string>.Ignored)).MustNotHaveHappened();
     }
 }
