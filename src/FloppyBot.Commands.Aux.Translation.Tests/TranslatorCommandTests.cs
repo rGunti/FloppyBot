@@ -1,7 +1,7 @@
+using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Commands.Aux.Translation.Exceptions;
 using FloppyBot.Commands.Core.Entities;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Translation.Tests;
 
@@ -9,18 +9,16 @@ namespace FloppyBot.Commands.Aux.Translation.Tests;
 public class TranslatorCommandTests
 {
     private readonly DeepLCommands _host;
-    private readonly Mock<ITranslator> _translatorMock;
+    private readonly ITranslator _translator;
 
     public TranslatorCommandTests()
     {
-        _translatorMock = new Mock<ITranslator>();
-        _host = new DeepLCommands(LoggingUtils.GetLogger<DeepLCommands>(), _translatorMock.Object);
+        _translator = A.Fake<ITranslator>();
+        _host = new DeepLCommands(LoggingUtils.GetLogger<DeepLCommands>(), _translator);
 
-        _translatorMock
-            .Setup(s => s.ListSupportedLanguages())
+        A.CallTo(() => _translator.ListSupportedLanguages())
             .Returns(new[] { "swedish", "english", "german", "french" });
-        _translatorMock
-            .Setup(s => s.ListSupportedLanguageCodes())
+        A.CallTo(() => _translator.ListSupportedLanguageCodes())
             .Returns(new[] { "zh", "en", "de", "fr", "sv" });
     }
 
@@ -73,13 +71,15 @@ public class TranslatorCommandTests
     [TestMethod]
     public void ReturnsTranslation()
     {
-        _translatorMock
-            .Setup(t => t.ParseRequest(It.IsAny<string>()))
-            .Returns<string>(_ => new TranslationRequest("en", "de", "Hello World"));
-        _translatorMock
-            .Setup(t => t.Translate(It.IsAny<TranslationRequest>()))
-            .Returns<TranslationRequest>(
-                req => new TranslationResponse(req, "Hallo Welt", "German")
+        A.CallTo(() => _translator.ParseRequest("Hello World from English to German"))
+            .Returns(new TranslationRequest("en", "de", "Hello World"));
+        A.CallTo(() => _translator.Translate(A<TranslationRequest>.Ignored))
+            .Returns(
+                new TranslationResponse(
+                    new TranslationRequest("en", "de", "Hello World"),
+                    "Hallo Welt",
+                    "German"
+                )
             );
 
         Assert.AreEqual(
@@ -95,8 +95,7 @@ public class TranslatorCommandTests
     [TestMethod]
     public void ReturnsTranslationError()
     {
-        _translatorMock
-            .Setup(t => t.ParseRequest(It.IsAny<string>()))
+        A.CallTo(() => _translator.ParseRequest(A<string>.Ignored))
             .Throws(new TranslationException("I didn't understand your query"));
 
         Assert.AreEqual(
@@ -110,11 +109,10 @@ public class TranslatorCommandTests
     [TestMethod]
     public void ReturnsErrorOnException()
     {
-        _translatorMock
-            .Setup(t => t.ParseRequest(It.IsAny<string>()))
-            .Returns<string>(_ => new TranslationRequest("en", "de", "Hello World"));
-        _translatorMock
-            .Setup(t => t.Translate(It.IsAny<TranslationRequest>()))
+        A.CallTo(() => _translator.ParseRequest(A<string>.Ignored))
+            .ReturnsLazily(() => new TranslationRequest("en", "de", "Hello World"));
+
+        A.CallTo(() => _translator.Translate(A<TranslationRequest>.Ignored))
             .Throws(new Exception("something happened"));
 
         Assert.AreEqual(
