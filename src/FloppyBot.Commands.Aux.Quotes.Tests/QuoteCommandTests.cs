@@ -1,8 +1,8 @@
+using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Quotes.Tests;
 
@@ -10,31 +10,19 @@ namespace FloppyBot.Commands.Aux.Quotes.Tests;
 public class QuoteCommandTests
 {
     private readonly QuoteCommands _quoteCommands;
-    private readonly Mock<IQuoteService> _quoteServiceMock;
+    private readonly IQuoteService _quoteService;
 
     public QuoteCommandTests()
     {
-        _quoteServiceMock = new Mock<IQuoteService>();
-        _quoteCommands = new QuoteCommands(
-            LoggingUtils.GetLogger<QuoteCommands>(),
-            _quoteServiceMock.Object
-        );
+        _quoteService = A.Fake<IQuoteService>();
+        _quoteCommands = new QuoteCommands(LoggingUtils.GetLogger<QuoteCommands>(), _quoteService);
     }
 
     [TestMethod]
     public void AddQuote()
     {
-        _quoteServiceMock
-            .Setup(
-                q =>
-                    q.AddQuote(
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<string?>(),
-                        It.IsAny<string>()
-                    )
-            )
-            .Returns(
+        A.CallTo(() => _quoteService.AddQuote(A<string>._, A<string>._, A<string?>._, A<string>._))
+            .ReturnsLazily(
                 (string _, string quoteText, string context, string author) =>
                     new Quote(
                         "someId",
@@ -58,29 +46,28 @@ public class QuoteCommandTests
             reply
         );
 
-        _quoteServiceMock.Verify(
-            q =>
-                q.AddQuote(
-                    It.Is<string>(s => s == "Mock/Channel"),
-                    It.Is<string>(s => s == "This is my quote"),
-                    It.Is<string>(s => s == "Cool Game"),
-                    It.Is<string>(s => s == "User Name")
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _quoteService.AddQuote(
+                        "Mock/Channel",
+                        "This is my quote",
+                        "Cool Game",
+                        "User Name"
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void EditQuote()
     {
-        _quoteServiceMock
-            .Setup(q => q.EditQuote(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-            .Returns<string, int, string>(
-                (channelId, quoteId, newContent) =>
+        A.CallTo(() => _quoteService.EditQuote(A<string>._, An<int>._, A<string>._))
+            .ReturnsLazily(
+                (string _, int _, string newContent) =>
                     new Quote(
                         "someId",
-                        "someMappingId",
-                        quoteId,
+                        "someChannelMapping",
+                        1337,
                         newContent,
                         "Cool Game",
                         DateTimeOffset.Parse("2022-10-12T12:34:56Z"),
@@ -91,24 +78,16 @@ public class QuoteCommandTests
         var reply = _quoteCommands.EditQuote("Mock/Channel", 1337, "This is my new text");
 
         Assert.AreEqual("Updated Quote #1337: This is my new text [Cool Game @ 2022-10-12]", reply);
-        _quoteServiceMock.Verify(
-            q =>
-                q.EditQuote(
-                    It.Is<string>(s => s == "Mock/Channel"),
-                    It.Is<int>(i => i == 1337),
-                    It.Is<string>(s => s == "This is my new text")
-                ),
-            Times.Once
-        );
+        A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1337, "This is my new text"))
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void EditQuoteContext()
     {
-        _quoteServiceMock
-            .Setup(q => q.EditQuoteContext(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-            .Returns<string, int, string>(
-                (channelId, quoteId, newContext) =>
+        A.CallTo(() => _quoteService.EditQuoteContext(A<string>._, An<int>._, A<string>._))
+            .ReturnsLazily(
+                (string _, int quoteId, string _) =>
                     new Quote(
                         "someId",
                         "someMappingId",
@@ -123,31 +102,21 @@ public class QuoteCommandTests
         var reply = _quoteCommands.EditQuoteContext("Mock/Channel", 1337, "Uncool Game");
 
         Assert.AreEqual("Updated Quote #1337: This is my quote [Uncool Game @ 2022-10-12]", reply);
-        _quoteServiceMock.Verify(
-            q =>
-                q.EditQuoteContext(
-                    It.Is<string>(s => s == "Mock/Channel"),
-                    It.Is<int>(i => i == 1337),
-                    It.Is<string>(s => s == "Uncool Game")
-                ),
-            Times.Once
-        );
+
+        A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1337, "Uncool Game"))
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void DeleteQuote()
     {
-        _quoteServiceMock
-            .Setup(q => q.DeleteQuote(It.IsAny<string>(), It.IsAny<int>()))
-            .Returns(true);
+        A.CallTo(() => _quoteService.DeleteQuote(A<string>._, An<int>._)).Returns(true);
 
         var reply = _quoteCommands.DeleteQuote("Mock/Channel", 1337);
         Assert.AreEqual("Deleted Quote #1337", reply);
 
-        _quoteServiceMock.Verify(
-            q => q.DeleteQuote(It.Is<string>(s => s == "Mock/Channel"), It.Is<int>(i => i == 1337)),
-            Times.Once
-        );
+        A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1337))
+            .MustHaveHappenedOnceExactly();
     }
 
     [DataTestMethod]
@@ -161,9 +130,7 @@ public class QuoteCommandTests
         bool expectExecution
     )
     {
-        _quoteServiceMock
-            .Setup(q => q.DeleteQuote(It.IsAny<string>(), It.IsAny<int>()))
-            .Returns(true);
+        A.CallTo(() => _quoteService.DeleteQuote(A<string>._, An<int>._)).Returns(true);
 
         var reply = _quoteCommands.Quote(
             "Mock/Channel",
@@ -184,10 +151,8 @@ public class QuoteCommandTests
             Assert.IsNull(reply);
         }
 
-        _quoteServiceMock.Verify(
-            q => q.DeleteQuote(It.Is<string>(s => s == "Mock/Channel"), It.Is<int>(i => i == 1)),
-            expectExecution ? Times.Once : Times.Never
-        );
+        A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1))
+            .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
 
     [DataTestMethod]
@@ -201,10 +166,9 @@ public class QuoteCommandTests
         bool expectExecution
     )
     {
-        _quoteServiceMock
-            .Setup(q => q.EditQuote(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-            .Returns<string, int, string>(
-                (channelId, quoteId, newContent) =>
+        A.CallTo(() => _quoteService.EditQuote(A<string>._, An<int>._, A<string>._))
+            .ReturnsLazily(
+                (string _, int quoteId, string newContent) =>
                     new Quote(
                         "someId",
                         "someMappingId",
@@ -235,15 +199,8 @@ public class QuoteCommandTests
             Assert.IsNull(reply);
         }
 
-        _quoteServiceMock.Verify(
-            q =>
-                q.EditQuote(
-                    It.Is<string>(s => s == "Mock/Channel"),
-                    It.Is<int>(i => i == 1),
-                    It.Is<string>(s => s == "My new text")
-                ),
-            expectExecution ? Times.Once : Times.Never
-        );
+        A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1, "My new text"))
+            .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
 
     [DataTestMethod]
@@ -257,10 +214,9 @@ public class QuoteCommandTests
         bool expectExecution
     )
     {
-        _quoteServiceMock
-            .Setup(q => q.EditQuoteContext(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<string>()))
-            .Returns<string, int, string>(
-                (_, quoteId, newContext) =>
+        A.CallTo(() => _quoteService.EditQuoteContext(A<string>._, An<int>._, A<string>._))
+            .ReturnsLazily(
+                (string _, int quoteId, string newContext) =>
                     new Quote(
                         "someId",
                         "someMappingId",
@@ -291,14 +247,7 @@ public class QuoteCommandTests
             Assert.IsNull(reply);
         }
 
-        _quoteServiceMock.Verify(
-            q =>
-                q.EditQuoteContext(
-                    It.Is<string>(s => s == "Mock/Channel"),
-                    It.Is<int>(i => i == 1),
-                    It.Is<string>(s => s == "My new text")
-                ),
-            expectExecution ? Times.Once : Times.Never
-        );
+        A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1, "My new text"))
+            .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
 }
