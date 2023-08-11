@@ -1,8 +1,8 @@
+using FakeItEasy;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using Microsoft.Extensions.Logging;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Twitch.Tests;
 
@@ -10,31 +10,30 @@ namespace FloppyBot.Commands.Aux.Twitch.Tests;
 public class ShoutoutCommandTests
 {
     private readonly ShoutoutCommand _shoutoutCommand;
-    private readonly Mock<IShoutoutMessageSettingService> _shoutoutMessageSettingServiceMock;
-    private readonly Mock<ITwitchApiService> _twitchApiServiceMock;
+    private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
 
     public ShoutoutCommandTests()
     {
-        _twitchApiServiceMock = new Mock<ITwitchApiService>();
-        _shoutoutMessageSettingServiceMock = new Mock<IShoutoutMessageSettingService>();
+        var twitchApiService = A.Fake<ITwitchApiService>();
+        _shoutoutMessageSettingService = A.Fake<IShoutoutMessageSettingService>();
         _shoutoutCommand = new ShoutoutCommand(
-            _twitchApiServiceMock.Object,
-            _shoutoutMessageSettingServiceMock.Object,
-            Mock.Of<ILogger<ShoutoutCommand>>()
+            twitchApiService,
+            _shoutoutMessageSettingService,
+            A.Fake<ILogger<ShoutoutCommand>>()
         );
 
-        _twitchApiServiceMock
-            .Setup(s => s.LookupUser(It.Is<string>(c => c == "somestreamer")))
-            .Returns(
+        A.CallTo(() => twitchApiService.LookupUser(A<string>.Ignored))
+            .ReturnsLazily((string _) => Task.FromResult<TwitchUserLookupResult?>(null));
+        A.CallTo(() => twitchApiService.LookupUser("somestreamer"))
+            .ReturnsLazily(
                 (string _) =>
-                    Task.FromResult(
+                    Task.FromResult<TwitchUserLookupResult?>(
                         new TwitchUserLookupResult("somestreamer", "SomeStreamer", "Cool Game")
-                    )!
+                    )
             );
-        _shoutoutMessageSettingServiceMock
-            .Setup(s => s.GetSettings(It.Is<string>(c => c == "Twitch/someuser")))
-            .Returns(
-                (string _) =>
+        A.CallTo(() => _shoutoutMessageSettingService.GetSettings("Twitch/someuser"))
+            .ReturnsLazily(
+                () =>
                     new ShoutoutMessageSetting(
                         "Twitch/someuser",
                         "Check out {DisplayName} at {Link}! They last played {LastGame}!"
@@ -67,34 +66,26 @@ public class ShoutoutCommandTests
     [TestMethod]
     public void ConfigureCreatesDatabaseRecord()
     {
-        _shoutoutMessageSettingServiceMock
-            .Setup(s => s.SetShoutoutMessage(It.IsAny<string>(), It.IsAny<string>()))
-            .Verifiable();
         var reply = _shoutoutCommand.SetShoutout("Twitch/someuser", "My new template");
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
-        _shoutoutMessageSettingServiceMock.Verify(
-            s =>
-                s.SetShoutoutMessage(
-                    It.Is<string>(c => c == "Twitch/someuser"),
-                    It.Is<string>(m => m == "My new template")
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _shoutoutMessageSettingService.SetShoutoutMessage(
+                        "Twitch/someuser",
+                        "My new template"
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void ClearIssuesDeleteCommand()
     {
-        _shoutoutMessageSettingServiceMock
-            .Setup(s => s.ClearSettings(It.IsAny<string>()))
-            .Verifiable();
         var reply = _shoutoutCommand.ClearShoutout("Twitch/someuser");
 
         Assert.AreEqual(ShoutoutCommand.REPLY_CLEAR, reply);
-        _shoutoutMessageSettingServiceMock.Verify(
-            s => s.ClearSettings(It.Is<string>(c => c == "Twitch/someuser")),
-            Times.Once
-        );
+        A.CallTo(() => _shoutoutMessageSettingService.ClearSettings("Twitch/someuser"))
+            .MustHaveHappenedOnceExactly();
     }
 }

@@ -1,4 +1,5 @@
-﻿using FloppyBot.Aux.MessageCounter.Core;
+﻿using FakeItEasy;
+using FloppyBot.Aux.MessageCounter.Core;
 using FloppyBot.Aux.MessageCounter.Core.Entities;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.Storage;
@@ -10,7 +11,6 @@ using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using FloppyBot.Commands.Core.Replier;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Twitch.Tests;
 
@@ -28,7 +28,7 @@ public class TimerMessageTests
     private readonly IRepository<TimerMessageExecution> _executionRepo;
     private readonly TimerMessageConfigurationService _messageConfigService;
     private readonly MessageOccurrenceService _messageOccurrenceService;
-    private readonly Mock<IMessageReplier> _messageReplierMock;
+    private readonly IMessageReplier _messageReplier;
 
     private readonly IRepository<MessageOccurrence> _occurrenceRepo;
 
@@ -40,10 +40,9 @@ public class TimerMessageTests
         var db = LiteDbRepositoryFactory.CreateMemoryInstance();
 
         _timeProvider = new FixedTimeProvider(RefTime);
-        _messageReplierMock = new Mock<IMessageReplier>();
-        _messageReplierMock
-            .Setup(s => s.SendMessage(It.IsAny<ChatMessage>()))
-            .Callback<ChatMessage>(chatMessage => _sentMessages.Add(chatMessage));
+        _messageReplier = A.Fake<IMessageReplier>();
+        A.CallTo(() => _messageReplier.SendMessage(A<ChatMessage>.Ignored))
+            .Invokes((ChatMessage chatMessage) => _sentMessages.Add(chatMessage));
         _messageOccurrenceService = new MessageOccurrenceService(db, _timeProvider);
         _messageConfigService = new TimerMessageConfigurationService(db);
 
@@ -54,7 +53,7 @@ public class TimerMessageTests
         _cronJob = new TimerMessageCronJob(
             LoggingUtils.GetLogger<TimerMessageCronJob>(),
             _messageOccurrenceService,
-            _messageReplierMock.Object,
+            _messageReplier,
             _messageConfigService,
             _timeProvider
         );
