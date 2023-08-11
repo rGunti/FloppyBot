@@ -1,4 +1,5 @@
 using System.Globalization;
+using FakeItEasy;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.Extensions;
 using FloppyBot.Base.Testing;
@@ -6,7 +7,6 @@ using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Time.Storage;
 using FloppyBot.Commands.Aux.Time.Storage.Entities;
 using FloppyBot.Commands.Core.Entities;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Time.Tests;
 
@@ -20,22 +20,17 @@ public class TimeCommandsTest
     );
 
     private readonly TimeCommands _host;
-    private readonly Mock<IUserTimeZoneSettingsService> _serviceMock;
+    private readonly IUserTimeZoneSettingsService _service;
     private readonly FixedTimeProvider _timeProvider;
 
     public TimeCommandsTest()
     {
         _timeProvider = new FixedTimeProvider(ReferenceTime);
-        _serviceMock = new Mock<IUserTimeZoneSettingsService>();
-        _host = new TimeCommands(
-            LoggingUtils.GetLogger<TimeCommands>(),
-            _timeProvider,
-            _serviceMock.Object
-        );
+        _service = A.Fake<IUserTimeZoneSettingsService>();
+        _host = new TimeCommands(LoggingUtils.GetLogger<TimeCommands>(), _timeProvider, _service);
 
-        _serviceMock
-            .Setup(s => s.GetTimeZoneForUser(It.IsAny<string>()))
-            .Returns<string>(_ => NullableObject.Empty<UserTimeZoneSetting>());
+        A.CallTo(() => _service.GetTimeZoneForUser(A<string>.Ignored))
+            .Returns(NullableObject.Empty<UserTimeZoneSetting>());
     }
 
     [DataTestMethod]
@@ -56,9 +51,8 @@ public class TimeCommandsTest
     [TestMethod]
     public void OutputsUserTimeZone()
     {
-        _serviceMock
-            .Setup(s => s.GetTimeZoneForUser(It.IsAny<string>()))
-            .Returns<string>(userId => new UserTimeZoneSetting(userId, "Asia/Tokyo"));
+        A.CallTo(() => _service.GetTimeZoneForUser(A<string>.Ignored))
+            .ReturnsLazily((string userId) => new UserTimeZoneSetting(userId, "Asia/Tokyo"));
 
         Assert.AreEqual(
             CommandResult.SuccessWith("The current time is 21:34 in Japan Standard Time"),
@@ -84,10 +78,6 @@ public class TimeCommandsTest
     [TestMethod]
     public void SetUserTimeZone()
     {
-        _serviceMock
-            .Setup(s => s.SetTimeZoneForUser(It.IsAny<string>(), It.IsAny<string>()))
-            .Verifiable();
-
         CommandResult result = _host.SetUserTimeZone(
             new ChatUser("Mock/User", "User", PrivilegeLevel.Viewer),
             "America/Lima"
@@ -98,13 +88,7 @@ public class TimeCommandsTest
             result
         );
 
-        _serviceMock.Verify(
-            s =>
-                s.SetTimeZoneForUser(
-                    It.Is<string>(i => i == "Mock/User"),
-                    It.Is<string>(i => i == "America/Lima")
-                ),
-            Times.Once
-        );
+        A.CallTo(() => _service.SetTimeZoneForUser("Mock/User", "America/Lima"))
+            .MustHaveHappenedOnceExactly();
     }
 }
