@@ -1,8 +1,8 @@
+using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Timer.Storage;
 using FloppyBot.Commands.Core.Entities;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Timer.Tests;
 
@@ -10,32 +10,17 @@ namespace FloppyBot.Commands.Aux.Timer.Tests;
 public class TimerCommandsTests
 {
     private readonly TimerCommands _host;
-    private readonly Mock<ITimerService> _timerServiceMock;
+    private readonly ITimerService _timerService;
 
     public TimerCommandsTests()
     {
-        _timerServiceMock = new Mock<ITimerService>();
-        _host = new TimerCommands(
-            LoggingUtils.GetLogger<TimerCommands>(),
-            _timerServiceMock.Object
-        );
+        _timerService = A.Fake<ITimerService>();
+        _host = new TimerCommands(LoggingUtils.GetLogger<TimerCommands>(), _timerService);
     }
 
     [TestMethod]
     public void CreateNewTimer()
     {
-        _timerServiceMock
-            .Setup(
-                s =>
-                    s.CreateTimer(
-                        It.IsAny<string>(),
-                        It.IsAny<string>(),
-                        It.IsAny<TimeSpan>(),
-                        It.IsAny<string>()
-                    )
-            )
-            .Verifiable();
-
         CommandResult result = _host.CreateTimer(
             "12m",
             "Hello World",
@@ -49,16 +34,16 @@ public class TimerCommandsTests
             ),
             result
         );
-        _timerServiceMock.Verify(
-            s =>
-                s.CreateTimer(
-                    It.Is<string>(i => i == "Mock/Channel/Message"),
-                    It.Is<string>(i => i == "Mock/User"),
-                    It.Is<TimeSpan>(t => t == TimeSpan.FromMinutes(12)),
-                    It.Is<string>(i => i == "Hello World")
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _timerService.CreateTimer(
+                        "Mock/Channel/Message",
+                        "Mock/User",
+                        TimeSpan.FromMinutes(12),
+                        "Hello World"
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [DataTestMethod]

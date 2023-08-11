@@ -1,16 +1,12 @@
-using Moq;
+using FakeItEasy;
+using ITranslator = DeepL.ITranslator;
 
 namespace FloppyBot.Commands.Aux.Translation.Tests;
 
 [TestClass]
 public class TranslatorTests
 {
-    private readonly Translator _translator;
-
-    public TranslatorTests()
-    {
-        _translator = new Translator(new Mock<DeepL.ITranslator>().Object);
-    }
+    private readonly Translator _translator = new(A.Fake<ITranslator>());
 
     [DataTestMethod]
     [DataRow("en>de Hello World", "en", "de", "Hello World")]

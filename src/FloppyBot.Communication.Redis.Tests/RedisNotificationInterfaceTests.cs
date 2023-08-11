@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
+using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Communication.Redis.Config;
-using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using StackExchange.Redis;
 
 namespace FloppyBot.Communication.Redis.Tests;
@@ -13,25 +12,23 @@ namespace FloppyBot.Communication.Redis.Tests;
 public class RedisNotificationInterfaceTests
 {
     private readonly RedisNotificationInterfaceFactory _interfaceFactory;
-    private readonly Mock<ISubscriber> _subscriberMock;
+    private readonly ISubscriber _subscriber;
 
     public RedisNotificationInterfaceTests()
     {
-        _subscriberMock = new Mock<ISubscriber>();
+        _subscriber = A.Fake<ISubscriber>();
 
-        var connectionMultiplexerMock = new Mock<IConnectionMultiplexer>();
-        connectionMultiplexerMock
-            .Setup(s => s.GetSubscriber(It.IsAny<object?>()))
-            .Returns<object?>((asyncState) => _subscriberMock.Object);
+        var connectionMultiplexer = A.Fake<IConnectionMultiplexer>();
+        A.CallTo(() => connectionMultiplexer.GetSubscriber(An<object?>.Ignored))
+            .Returns(_subscriber);
 
-        var factory = new Mock<IRedisConnectionFactory>();
-        factory
-            .Setup(f => f.GetMultiplexer(It.IsAny<RedisConnectionConfig>()))
-            .Returns(() => connectionMultiplexerMock.Object);
+        var factory = A.Fake<IRedisConnectionFactory>();
+        A.CallTo(() => factory.GetMultiplexer(An<RedisConnectionConfig>.Ignored))
+            .Returns(connectionMultiplexer);
 
         _interfaceFactory = new RedisNotificationInterfaceFactory(
             LoggingUtils.GetLogger<RedisNotificationInterfaceFactory>(),
-            factory.Object
+            factory
         );
     }
 
@@ -49,17 +46,21 @@ public class RedisNotificationInterfaceTests
     public void ReceiverIssuesEventCorrectly()
     {
         Action<RedisChannel, RedisValue>? subFn = null;
-        _subscriberMock
-            .Setup(
-                s =>
-                    s.Subscribe(
-                        It.IsAny<RedisChannel>(),
-                        It.IsAny<Action<RedisChannel, RedisValue>>(),
-                        It.IsAny<CommandFlags>()
+
+        A.CallTo(
+                () =>
+                    _subscriber.Subscribe(
+                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<Action<RedisChannel, RedisValue>>.Ignored,
+                        A<CommandFlags>.Ignored
                     )
             )
-            .Callback<RedisChannel, Action<RedisChannel, RedisValue>, CommandFlags>(
-                (_, handler, _) =>
+            .Invokes(
+                (
+                    RedisChannel channel,
+                    Action<RedisChannel, RedisValue> handler,
+                    CommandFlags flags
+                ) =>
                 {
                     subFn = handler;
                 }
@@ -73,15 +74,15 @@ public class RedisNotificationInterfaceTests
         Assert.IsTrue(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         // Verify subscription has happened
-        _subscriberMock.Verify(
-            s =>
-                s.Subscribe(
-                    It.Is<RedisChannel>(c => c == "SomeChannel"),
-                    It.IsAny<Action<RedisChannel, RedisValue>>(),
-                    It.IsAny<CommandFlags>()
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _subscriber.Subscribe(
+                        An<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        An<Action<RedisChannel, RedisValue>>.Ignored,
+                        An<CommandFlags>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
 
         Assert.IsNotNull(subFn);
 
@@ -104,15 +105,15 @@ public class RedisNotificationInterfaceTests
         receiver.StartListening();
         receiver.StartListening();
 
-        _subscriberMock.Verify(
-            s =>
-                s.Subscribe(
-                    It.Is<RedisChannel>(c => c == "SomeChannel"),
-                    It.IsAny<Action<RedisChannel, RedisValue>>(),
-                    It.IsAny<CommandFlags>()
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _subscriber.Subscribe(
+                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<Action<RedisChannel, RedisValue>>.Ignored,
+                        A<CommandFlags>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
@@ -125,15 +126,15 @@ public class RedisNotificationInterfaceTests
 
         receiver.StopListening();
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
-        _subscriberMock.Verify(
-            s =>
-                s.Unsubscribe(
-                    It.Is<RedisChannel>(c => c == "SomeChannel"),
-                    It.IsAny<Action<RedisChannel, RedisValue>?>(),
-                    It.IsAny<CommandFlags>()
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _subscriber.Subscribe(
+                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<Action<RedisChannel, RedisValue>>.Ignored,
+                        A<CommandFlags>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
@@ -145,15 +146,15 @@ public class RedisNotificationInterfaceTests
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         receiver.StopListening();
-        _subscriberMock.Verify(
-            s =>
-                s.Subscribe(
-                    It.Is<RedisChannel>(c => c == "SomeChannel"),
-                    It.IsAny<Action<RedisChannel, RedisValue>>(),
-                    It.IsAny<CommandFlags>()
-                ),
-            Times.Never
-        );
+        A.CallTo(
+                () =>
+                    _subscriber.Subscribe(
+                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<Action<RedisChannel, RedisValue>>.Ignored,
+                        A<CommandFlags>.Ignored
+                    )
+            )
+            .MustNotHaveHappened();
     }
 
     [TestMethod]
@@ -174,14 +175,14 @@ public class RedisNotificationInterfaceTests
         );
         sender.Send(new { Name = "Test", Value = 42 });
 
-        _subscriberMock.Verify(
-            s =>
-                s.Publish(
-                    It.Is<RedisChannel>(c => c == "SomeChannel"),
-                    It.Is<RedisValue>(v => v == "{\"Name\":\"Test\",\"Value\":42}"),
-                    It.IsAny<CommandFlags>()
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _subscriber.Publish(
+                        An<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        An<RedisValue>.That.IsEqualTo("{\"Name\":\"Test\",\"Value\":42}"),
+                        An<CommandFlags>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 }

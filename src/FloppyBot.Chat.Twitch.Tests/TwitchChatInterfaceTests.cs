@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 using TwitchLib.Client;
 using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
@@ -20,14 +20,14 @@ namespace FloppyBot.Chat.Twitch.Tests;
 [TestClass]
 public class TwitchChatInterfaceTests
 {
-    private readonly Mock<ITwitchClient> _clientMock;
-    private readonly Mock<ITwitchChannelOnlineMonitor> _onlineMonitorMock;
+    private readonly ITwitchClient _client;
+    private readonly ITwitchChannelOnlineMonitor _onlineMonitor;
     private TwitchConfiguration _configuration;
 
     public TwitchChatInterfaceTests()
     {
-        _clientMock = new Mock<ITwitchClient>();
-        _onlineMonitorMock = new Mock<ITwitchChannelOnlineMonitor>();
+        _client = A.Fake<ITwitchClient>();
+        _onlineMonitor = A.Fake<ITwitchChannelOnlineMonitor>();
         _configuration = new TwitchConfiguration(
             "atwitchbot",
             "sometoken",
@@ -102,30 +102,26 @@ public class TwitchChatInterfaceTests
     {
         TwitchChatInterface chatInterface = CreateInterface();
 
-        _clientMock
-            .Setup(c => c.SendMessage(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>()))
-            .Verifiable();
-
         chatInterface.SendMessage("A message\n\nwith multiple lines");
 
-        _clientMock.Verify(
-            c =>
-                c.SendMessage(
-                    It.Is<string>(s => s == _configuration.Channel),
-                    It.Is<string>(s => s == "A message"),
-                    It.IsAny<bool>()
-                ),
-            Times.Once
-        );
-        _clientMock.Verify(
-            c =>
-                c.SendMessage(
-                    It.Is<string>(s => s == _configuration.Channel),
-                    It.Is<string>(s => s == "with multiple lines"),
-                    It.IsAny<bool>()
-                ),
-            Times.Once
-        );
+        A.CallTo(
+                () =>
+                    _client.SendMessage(
+                        A<string>.That.IsEqualTo(_configuration.Channel),
+                        A<string>.That.IsEqualTo("A message"),
+                        A<bool>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
+        A.CallTo(
+                () =>
+                    _client.SendMessage(
+                        A<string>.That.IsEqualTo(_configuration.Channel),
+                        A<string>.That.IsEqualTo("with multiple lines"),
+                        A<bool>.Ignored
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
@@ -140,20 +136,14 @@ public class TwitchChatInterfaceTests
         var receivedMessages = 0;
         chatInterface.MessageReceived += (_, _) => receivedMessages++;
 
-        _onlineMonitorMock.Setup(m => m.IsChannelOnline()).Returns(false);
+        A.CallTo(() => _onlineMonitor.IsChannelOnline()).Returns(false);
 
-        _clientMock.Raise(
-            c => c.OnMessageReceived += null,
-            CreateChatMessage("atwitchviewer", "hello world")
-        );
+        _client.OnMessageReceived += Raise.With(CreateChatMessage("atwitchviewer", "hello world"));
         Assert.AreEqual(0, receivedMessages);
 
-        _onlineMonitorMock.Setup(m => m.IsChannelOnline()).Returns(true);
+        A.CallTo(() => _onlineMonitor.IsChannelOnline()).Returns(true);
 
-        _clientMock.Raise(
-            c => c.OnMessageReceived += null,
-            CreateChatMessage("atwitchviewer", "hello world")
-        );
+        _client.OnMessageReceived += Raise.With(CreateChatMessage("atwitchviewer", "hello world"));
         Assert.AreEqual(1, receivedMessages);
     }
 
@@ -167,9 +157,9 @@ public class TwitchChatInterfaceTests
         return new TwitchChatInterface(
             LoggingUtils.GetLogger<TwitchChatInterface>(),
             LoggingUtils.GetLogger<TwitchClient>(),
-            _clientMock.Object,
+            _client,
             _configuration,
-            _onlineMonitorMock.Object
+            _onlineMonitor
         );
     }
 
@@ -231,7 +221,7 @@ public class TwitchChatInterfaceTests
         var messages = new List<Entities.ChatMessage>();
         chatInterface.MessageReceived += (_, chatMessage) => messages.Add(chatMessage);
 
-        _clientMock.Raise(c => c.OnMessageReceived += null, messageReceivedArgs);
+        _client.OnMessageReceived += Raise.With(messageReceivedArgs);
 
         Assert.AreEqual(1, messages.Count);
         Assert.AreEqual(

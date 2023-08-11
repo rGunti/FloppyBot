@@ -1,10 +1,10 @@
-﻿using FloppyBot.Base.Clock;
+﻿using FakeItEasy;
+using FloppyBot.Base.Clock;
 using FloppyBot.Base.Rng;
 using FloppyBot.Base.Storage;
 using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
-using Moq;
 
 namespace FloppyBot.Commands.Aux.Quotes.Tests;
 
@@ -13,7 +13,7 @@ public class QuoteServiceTests
 {
     private const string CHANNEL_ID = "Mock/Channel";
     private const string MAPPING_ID = "MappingId123";
-    private readonly Mock<IQuoteChannelMappingService> _quoteChannelMappingServiceMock;
+    private readonly IQuoteChannelMappingService _quoteChannelMappingService;
     private readonly IRepository<Quote> _quoteRepository;
     private readonly QuoteService _quoteService;
     private readonly StaticNumberGenerator _rng;
@@ -24,20 +24,17 @@ public class QuoteServiceTests
         var memoryDb = LiteDbRepositoryFactory.CreateMemoryInstance();
         _quoteRepository = memoryDb.GetRepository<Quote>();
         _timeProvider = new FixedTimeProvider(DateTimeOffset.Parse("2022-10-12T12:34:56Z"));
-        _quoteChannelMappingServiceMock = new Mock<IQuoteChannelMappingService>();
+        _quoteChannelMappingService = A.Fake<IQuoteChannelMappingService>();
         _rng = new StaticNumberGenerator(1);
         _quoteService = new QuoteService(
             memoryDb,
-            _quoteChannelMappingServiceMock.Object,
+            _quoteChannelMappingService,
             _timeProvider,
             _rng
         );
 
-        _quoteChannelMappingServiceMock
-            .Setup(
-                q => q.GetQuoteChannelMapping(It.Is<string>(s => s == CHANNEL_ID), It.IsAny<bool>())
-            )
-            .Returns<string, bool>((_, _) => MAPPING_ID);
+        A.CallTo(() => _quoteChannelMappingService.GetQuoteChannelMapping(CHANNEL_ID, A<bool>._))
+            .Returns(MAPPING_ID);
     }
 
     [TestMethod]
