@@ -180,6 +180,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounter.Agent", "FloppyBot.Aux.MessageCounter.Agent\FloppyBot.Aux.MessageCounter.Agent.csproj", "{90175374-9AF5-4413-B679-5B2601B0F0E6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch.Events", "FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj", "{B8C87D58-A7C4-47F1-AD97-014718507493}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -267,6 +269,7 @@ Global
 		{0170115D-E0FE-491A-8479-B78D8A32877E} = {DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}
 		{33B0D4C4-4D5D-4989-9A9C-4DC83D2300F1} = {035EAE62-BFE4-4664-B314-DBC7099701C1}
 		{90175374-9AF5-4413-B679-5B2601B0F0E6} = {035EAE62-BFE4-4664-B314-DBC7099701C1}
+		{B8C87D58-A7C4-47F1-AD97-014718507493} = {374B5765-6FDD-4876-AEB0-9CAB04C58472}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -521,5 +524,9 @@ Global
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90175374-9AF5-4413-B679-5B2601B0F0E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8C87D58-A7C4-47F1-AD97-014718507493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8C87D58-A7C4-47F1-AD97-014718507493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8C87D58-A7C4-47F1-AD97-014718507493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8C87D58-A7C4-47F1-AD97-014718507493}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
