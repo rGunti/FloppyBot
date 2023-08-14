@@ -67,5 +67,15 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity>
         return Delete(entities.Select(i => i.Id));
     }
 
+    public TEntity Upsert(TEntity entity)
+    {
+        var result = _collection.ReplaceOne(
+            GetIdFilter(entity.Id),
+            entity,
+            new ReplaceOptions { IsUpsert = true }
+        );
+        return GetById(result.UpsertedId.AsString)!;
+    }
+
     private FilterDefinition<TEntity> GetIdFilter(string id) => Filter.Eq(i => i.Id, id);
 }

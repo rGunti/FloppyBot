@@ -75,4 +75,10 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity>
     {
         return Delete(entities.Select(i => i.Id));
     }
+
+    public TEntity Upsert(TEntity entity)
+    {
+        _collection.Upsert(entity);
+        return GetById(entity.Id)!;
+    }
 }

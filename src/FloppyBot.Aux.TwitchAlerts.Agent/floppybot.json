@@ -1,0 +1,17 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  },
+  "ConnectionStrings": {
+    "MongoDb": "mongodb://localhost:27017/FloppyBot",
+    "Redis": "localhost",
+    "HealthCheck": "{Redis}|HealthCheck",
+    "KillSwitch": "{Redis}|KillSwitch",
+    "MessageInput": "{Redis}|Message.Received",
+    "MessageOutput": "{Redis}|Message.Responded.Twitch"
+  },
+  "InstanceName": "1"
+}

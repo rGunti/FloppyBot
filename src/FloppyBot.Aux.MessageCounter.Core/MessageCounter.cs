@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Base.Configuration;
+using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Communication;
 using Microsoft.Extensions.Configuration;
@@ -48,6 +49,10 @@ public class MessageCounter : IDisposable
 
     private void OnMessageReceived(ChatMessage chatMessage)
     {
+        if (chatMessage.EventName != SharedEventTypes.CHAT_MESSAGE)
+        {
+            return;
+        }
 #if DEBUG
         _logger.LogInformation("Received chat message to count: {@ChatMessage}", chatMessage);
 #endif

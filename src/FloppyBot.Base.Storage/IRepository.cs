@@ -13,4 +13,5 @@ public interface IRepository<TEntity>
     bool Delete(TEntity entity);
     int Delete(IEnumerable<string> ids);
     int Delete(IEnumerable<TEntity> entities);
+    TEntity Upsert(TEntity entity);
 }

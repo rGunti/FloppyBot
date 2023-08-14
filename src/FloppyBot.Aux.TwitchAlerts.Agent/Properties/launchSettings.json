@@ -1,0 +1,11 @@
+﻿{
+  "profiles": {
+    "FloppyBot.Aux.TwitchAlerts.Agent": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
