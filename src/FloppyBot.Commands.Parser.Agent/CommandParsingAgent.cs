@@ -1,4 +1,5 @@
 using FloppyBot.Base.Configuration;
+using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
@@ -55,6 +56,16 @@ public class CommandParsingAgent : BackgroundService
 
     private void OnNotificationReceived(ChatMessage notification)
     {
+        if (notification.EventName != SharedEventTypes.CHAT_MESSAGE)
+        {
+            // Events that aren't chat messages are ignored.
+            _logger.LogDebug(
+                "Received notification with event name {EventName}, ignoring",
+                notification.EventName
+            );
+            return;
+        }
+
 #if DEBUG
         _logger.LogInformation("Received chat message to parse: {@ChatMessage}", notification);
 #endif
