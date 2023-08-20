@@ -11,3 +11,11 @@ updates:
       - dependency-name: "System.*"
         versions:
           - "version-update:semver-major"
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "microsoft/*"
+        versions:
+          - "version-update:semver-major"
