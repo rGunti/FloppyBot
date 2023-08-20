@@ -1,6 +1,9 @@
-﻿using FloppyBot.Chat.Entities;
+﻿using System.Text.Json;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Config;
+using FloppyBot.Chat.Twitch.Events;
+using FloppyBot.Chat.Twitch.Extensions;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Client;
@@ -44,6 +47,11 @@ public class TwitchChatInterface : IChatInterface
         _client.OnJoinedChannel += Client_OnJoinedChannel;
         _client.OnMessageReceived += Client_OnMessageReceived;
         _client.OnReconnected += Client_OnReconnected;
+
+        _client.OnNewSubscriber += Client_OnNewSubscriber;
+        _client.OnReSubscriber += Client_OnReSubscriber;
+        _client.OnGiftedSubscription += Client_OnGiftedSubscription;
+        _client.OnCommunitySubscription += Client_OnCommunitySubscription;
     }
 
     public string Name => _channelIdentifier;
@@ -98,17 +106,30 @@ public class TwitchChatInterface : IChatInterface
         TwitchLib.Client.Models.ChatMessage chatMessage
     )
     {
-        if (chatMessage.IsBroadcaster)
+        return DeterminePrivilegeLevel(
+            chatMessage.IsBroadcaster,
+            chatMessage.IsModerator,
+            chatMessage.IsMe
+        );
+    }
+
+    private static PrivilegeLevel DeterminePrivilegeLevel(
+        bool isBroadcaster,
+        bool isModerator,
+        bool isMe
+    )
+    {
+        if (isBroadcaster)
         {
             return PrivilegeLevel.Administrator;
         }
 
-        if (chatMessage.IsModerator)
+        if (isModerator)
         {
             return PrivilegeLevel.Moderator;
         }
 
-        if (chatMessage.IsMe)
+        if (isMe)
         {
             return PrivilegeLevel.Unknown;
         }
@@ -168,8 +189,8 @@ public class TwitchChatInterface : IChatInterface
 
         var message = new ChatMessage(
             NewChatMessageIdentifier(e.ChatMessage.Id),
-            new ChatUser(
-                new ChannelIdentifier(IF_NAME, chatMessage.Username),
+            TwitchEntityExtensions.ConvertToChatUser(
+                chatMessage.Username,
                 chatMessage.DisplayName,
                 DeterminePrivilegeLevel(chatMessage)
             ),
@@ -180,6 +201,135 @@ public class TwitchChatInterface : IChatInterface
         );
 
         MessageReceived?.Invoke(this, message);
+    }
+
+    private void Client_OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
+    {
+        _logger.LogTrace(
+            "Received new subscriber {TwitchUser}@{TwitchChannel}: {TwitchSubscriptionPlan}",
+            e.Subscriber.DisplayName,
+            e.Subscriber.Channel,
+            e.Subscriber.SubscriptionPlan
+        );
+
+        var eventArgs = new TwitchSubscriptionReceivedEvent(
+            e.Subscriber.SubscriptionPlan.ConvertToPlan(e.Subscriber.SubscriptionPlanName)
+        );
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(e.Subscriber.Id),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.Subscriber.UserId,
+                    e.Subscriber.DisplayName,
+                    DeterminePrivilegeLevel(false, e.Subscriber.IsModerator, false)
+                ),
+                TwitchEventTypes.SUBSCRIPTION,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
+    }
+
+    private void Client_OnReSubscriber(object? sender, OnReSubscriberArgs e)
+    {
+        _logger.LogTrace(
+            "Received re-subscriber {TwitchUser}@{TwitchChannel}: {TwitchSubscriptionPlan} for {TwitchSubscriptionMonths} months",
+            e.ReSubscriber.DisplayName,
+            e.Channel,
+            e.ReSubscriber.SubscriptionPlan,
+            e.ReSubscriber.Months
+        );
+
+        var eventArgs = new TwitchReSubscriptionReceivedEvent(
+            e.ReSubscriber.SubscriptionPlan.ConvertToPlan(e.ReSubscriber.SubscriptionPlanName),
+            e.ReSubscriber.Months
+        );
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(e.ReSubscriber.Id),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.ReSubscriber.UserId,
+                    e.ReSubscriber.DisplayName,
+                    DeterminePrivilegeLevel(false, e.ReSubscriber.IsModerator, false)
+                ),
+                TwitchEventTypes.RE_SUBSCRIPTION,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
+    }
+
+    private void Client_OnGiftedSubscription(object? sender, OnGiftedSubscriptionArgs e)
+    {
+        _logger.LogTrace(
+            "Received gifted subscription {TwitchUser}@{TwitchChannel}: {TwitchSubscriptionPlan} to {TwitchGiftRecipient} for {TwitchSubscriptionMonths} months",
+            e.GiftedSubscription.DisplayName,
+            e.Channel,
+            e.GiftedSubscription.MsgParamSubPlan,
+            e.GiftedSubscription.MsgParamRecipientUserName,
+            e.GiftedSubscription.MsgParamMonths
+        );
+
+        var eventArgs = new TwitchSubscriptionGiftEvent(
+            e.GiftedSubscription.MsgParamSubPlan.ConvertToPlan(
+                e.GiftedSubscription.MsgParamSubPlanName
+            ),
+            TwitchEntityExtensions.ConvertToChatUser(
+                e.GiftedSubscription.MsgParamRecipientUserName,
+                e.GiftedSubscription.MsgParamRecipientDisplayName
+            )
+        );
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(e.GiftedSubscription.Id),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.GiftedSubscription.UserId,
+                    e.GiftedSubscription.DisplayName,
+                    DeterminePrivilegeLevel(false, e.GiftedSubscription.IsModerator, false)
+                ),
+                TwitchEventTypes.RE_SUBSCRIPTION,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
+    }
+
+    private void Client_OnCommunitySubscription(object? sender, OnCommunitySubscriptionArgs e)
+    {
+        _logger.LogTrace(
+            "Received community subscription {TwitchUser}@{TwitchChannel}: User gifted {TwitchMassGiftCount} {TwitchSubscriptionPlan} subscriptions",
+            e.GiftedSubscription.DisplayName,
+            e.Channel,
+            e.GiftedSubscription.MsgParamMassGiftCount,
+            e.GiftedSubscription.MsgParamSubPlan
+        );
+
+        var eventArgs = new TwitchSubscriptionCommunityGiftEvent(
+            e.GiftedSubscription.MsgParamSubPlan.ConvertToPlan(),
+            e.GiftedSubscription.MsgParamMassGiftCount,
+            e.GiftedSubscription.MsgParamMultiMonthGiftDuration
+        );
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(e.GiftedSubscription.Id),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.GiftedSubscription.UserId,
+                    e.GiftedSubscription.DisplayName,
+                    DeterminePrivilegeLevel(false, e.GiftedSubscription.IsModerator, false)
+                ),
+                TwitchEventTypes.RE_SUBSCRIPTION,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
     }
 
     private void Client_OnReconnected(object? sender, OnReconnectedEventArgs e)

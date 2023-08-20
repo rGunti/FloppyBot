@@ -3,7 +3,6 @@ using FloppyBot.Base.Storage.Indexing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Replier;
-using FloppyBot.Commands.Executor.Agent.DistRegistry;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +14,6 @@ namespace FloppyBot.Commands.Executor.Agent;
 public class ExecutorAgent : BackgroundService
 {
     private readonly ICommandExecutor _commandExecutor;
-
-    private readonly DistributedCommandRegistryAdapter _distributedCommandRegistryAdapter;
 
     private readonly IndexInitializer _indexInitializer;
     private readonly INotificationReceiver<CommandInstruction> _instructionReceiver;
@@ -30,7 +27,6 @@ public class ExecutorAgent : BackgroundService
         INotificationReceiverFactory receiverFactory,
         ICommandExecutor commandExecutor,
         IndexInitializer indexInitializer,
-        DistributedCommandRegistryAdapter distributedCommandRegistryAdapter,
         IMessageReplier replier
     )
     {
@@ -44,7 +40,6 @@ public class ExecutorAgent : BackgroundService
         _commandExecutor = commandExecutor;
         _indexInitializer = indexInitializer;
 
-        _distributedCommandRegistryAdapter = distributedCommandRegistryAdapter;
         _replier = replier;
     }
 

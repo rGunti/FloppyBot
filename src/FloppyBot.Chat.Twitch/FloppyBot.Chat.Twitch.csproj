@@ -14,7 +14,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj" />
       <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
     </ItemGroup>
+
 
 </Project>

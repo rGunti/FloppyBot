@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.Json;
 using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Config;
+using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TwitchLib.Client;
@@ -13,7 +15,7 @@ using TwitchLib.Client.Enums;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Interfaces;
 using TwitchLib.Client.Models;
-using ChatMessage = TwitchLib.Client.Models.ChatMessage;
+using ChatMessage = FloppyBot.Chat.Entities.ChatMessage;
 
 namespace FloppyBot.Chat.Twitch.Tests;
 
@@ -147,6 +149,78 @@ public class TwitchChatInterfaceTests
         Assert.AreEqual(1, receivedMessages);
     }
 
+    [TestMethod]
+    public void SubscriptionMessageIsEmitted()
+    {
+        TwitchChatInterface chatInterface = CreateInterface();
+        var receivedMessages = new List<ChatMessage>();
+        chatInterface.MessageReceived += (_, message) => receivedMessages.Add(message);
+        _client.OnNewSubscriber += Raise.With(
+            _client,
+            new OnNewSubscriberArgs
+            {
+                Channel = "atwitchchannel",
+                Subscriber = new Subscriber(
+                    new List<KeyValuePair<string, string>>(),
+                    new List<KeyValuePair<string, string>>(),
+                    "000000",
+                    Color.Black,
+                    "ATwitchUser",
+                    "n/a",
+                    "MSG-ID",
+                    "atwitchuser",
+                    string.Empty,
+                    "sub", // see Twitch Chat API docs
+                    "5",
+                    "5",
+                    true,
+                    "SYS-MSG",
+                    "Here is a resub message",
+                    SubscriptionPlan.Tier2,
+                    "Tier 2",
+                    "ROOM-ID",
+                    "USER-ID",
+                    false,
+                    false,
+                    true,
+                    false,
+                    "111111111",
+                    UserType.Viewer,
+                    "RAW-IRC",
+                    "atwitchchannel"
+                ),
+            }
+        );
+
+        Assert.AreEqual(1, receivedMessages.Count);
+        Assert.IsTrue(receivedMessages.All(m => m.EventName == TwitchEventTypes.SUBSCRIPTION));
+
+        var message = receivedMessages.First();
+        Assert.AreEqual(
+            new ChatMessage(
+                "Twitch/atwitchchannel/MSG-ID",
+                new ChatUser("Twitch/USER-ID", "ATwitchUser", PrivilegeLevel.Viewer),
+                TwitchEventTypes.SUBSCRIPTION,
+                "{\"SubscriptionPlanTier\":{\"Tier\":20,\"Name\":\"Tier 2\"},\"EventName\":\"Twitch.Subscription\"}",
+                null,
+                chatInterface.SupportedFeatures
+            ),
+            message
+        );
+
+        var parsedObject = JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(
+            message.Content
+        );
+
+        Assert.IsNotNull(parsedObject);
+        Assert.AreEqual(
+            new TwitchSubscriptionReceivedEvent(
+                new TwitchSubscriptionPlan(TwitchSubscriptionPlanTier.Tier2, "Tier 2")
+            ),
+            parsedObject
+        );
+    }
+
     private TwitchChatInterface CreateInterface(TwitchConfiguration? configuration = null)
     {
         if (configuration != null)
@@ -178,7 +252,7 @@ public class TwitchChatInterfaceTests
     {
         return new OnMessageReceivedArgs
         {
-            ChatMessage = new ChatMessage(
+            ChatMessage = new TwitchLib.Client.Models.ChatMessage(
                 _configuration.Username,
                 "userid",
                 authorUsername,
