@@ -15,6 +15,10 @@ public class InstanceNameEnricher : ILogEventEnricher
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
     {
-        propertyFactory.CreateProperty("FloppyBotInstanceName", _instanceName);
+        var instanceNameProperty = propertyFactory.CreateProperty(
+            "FloppyBotInstanceName",
+            _instanceName
+        );
+        logEvent.AddOrUpdateProperty(instanceNameProperty);
     }
 }
