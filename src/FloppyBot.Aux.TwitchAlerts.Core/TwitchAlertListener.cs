@@ -53,6 +53,56 @@ public class TwitchAlertListener : IDisposable
         { TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY, s => s.GiftSubCommunityMessage },
     }.ToImmutableDictionary();
 
+    private static string? DetermineTemplate(
+        TwitchEvent twitchEvent,
+        TwitchAlertSettings alertSettings,
+        TwitchSubscriptionPlanTier subTier
+    )
+    {
+        var templateListSelector = MessageTemplateListSelector.GetValueOrDefault(
+            twitchEvent.EventName,
+            _ => Enumerable.Empty<TwitchAlertMessage>()
+        );
+        var templateSelector = MessageTemplateSelectors.GetValueOrDefault(
+            subTier,
+            DefaultTemplateSelector
+        );
+
+        var templates = templateListSelector(alertSettings).Select(templateSelector).ToList();
+        // TODO: Get a random one
+        return templates.FirstOrDefault();
+    }
+
+    private static TwitchSubscriptionPlanTier GetTier(TwitchEvent twitchEvent)
+    {
+        return twitchEvent switch
+        {
+            TwitchSubscriptionReceivedEvent subReceived => subReceived.SubscriptionPlanTier.Tier,
+            TwitchReSubscriptionReceivedEvent reSubscriptionReceivedEvent
+                => reSubscriptionReceivedEvent.SubscriptionPlanTier.Tier,
+            TwitchSubscriptionGiftEvent subGiftEvent => subGiftEvent.SubscriptionPlanTier.Tier,
+            TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent
+                => subCommunityGiftEvent.SubscriptionPlanTier.Tier,
+            _ => throw new ArgumentOutOfRangeException(nameof(twitchEvent)),
+        };
+    }
+
+    private static TwitchEvent? ParseTwitchEvent(string type, string content)
+    {
+        return type switch
+        {
+            TwitchEventTypes.SUBSCRIPTION
+                => JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.RE_SUBSCRIPTION
+                => JsonSerializer.Deserialize<TwitchReSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT
+                => JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY
+                => JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
+            _ => throw new ArgumentOutOfRangeException(nameof(type)),
+        };
+    }
+
     private readonly ILogger<TwitchAlertListener> _logger;
     private readonly INotificationReceiver<ChatMessage> _chatMessageReceiver;
     private readonly INotificationSender _responder;
@@ -157,55 +207,5 @@ public class TwitchAlertListener : IDisposable
         }
 
         return template.Format(twitchEvent);
-    }
-
-    private static string? DetermineTemplate(
-        TwitchEvent twitchEvent,
-        TwitchAlertSettings alertSettings,
-        TwitchSubscriptionPlanTier subTier
-    )
-    {
-        var templateListSelector = MessageTemplateListSelector.GetValueOrDefault(
-            twitchEvent.EventName,
-            _ => Enumerable.Empty<TwitchAlertMessage>()
-        );
-        var templateSelector = MessageTemplateSelectors.GetValueOrDefault(
-            subTier,
-            DefaultTemplateSelector
-        );
-
-        var templates = templateListSelector(alertSettings).Select(templateSelector).ToList();
-        // TODO: Get a random one
-        return templates.FirstOrDefault();
-    }
-
-    private static TwitchSubscriptionPlanTier GetTier(TwitchEvent twitchEvent)
-    {
-        return twitchEvent switch
-        {
-            TwitchSubscriptionReceivedEvent subReceived => subReceived.SubscriptionPlanTier.Tier,
-            TwitchReSubscriptionReceivedEvent reSubscriptionReceivedEvent
-                => reSubscriptionReceivedEvent.SubscriptionPlanTier.Tier,
-            TwitchSubscriptionGiftEvent subGiftEvent => subGiftEvent.SubscriptionPlanTier.Tier,
-            TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent
-                => subCommunityGiftEvent.SubscriptionPlanTier.Tier,
-            _ => throw new ArgumentOutOfRangeException(nameof(twitchEvent)),
-        };
-    }
-
-    private static TwitchEvent? ParseTwitchEvent(string type, string content)
-    {
-        return type switch
-        {
-            TwitchEventTypes.SUBSCRIPTION
-                => JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(content),
-            TwitchEventTypes.RE_SUBSCRIPTION
-                => JsonSerializer.Deserialize<TwitchReSubscriptionReceivedEvent>(content),
-            TwitchEventTypes.SUBSCRIPTION_GIFT
-                => JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
-            TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY
-                => JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
-            _ => throw new ArgumentOutOfRangeException(nameof(type)),
-        };
     }
 }
