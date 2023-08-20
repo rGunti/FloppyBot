@@ -16,6 +16,6 @@ updates:
     schedule:
       interval: "weekly"
     ignore:
-      - dependency-name: "microsoft/*"
+      - dependency-name: "mcr.microsoft.com/dotnet/*"
         versions:
           - "version-update:semver-major"
