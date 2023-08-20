@@ -1,3 +1,4 @@
+using FloppyBot.Base.Logging.Enrichers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -22,7 +23,7 @@ public static class SerilogSetup
     {
         return loggerConfig
             // - Default Log Configuration
-            .ConfigureCommonSerilogSettings()
+            .ConfigureCommonSerilogSettings(hostConfig)
             .WriteTo.Async(s => s.CommonConsoleOutput())
 #if DEBUG
             .MinimumLevel.Verbose()
@@ -34,20 +35,33 @@ public static class SerilogSetup
     }
 
     public static LoggerConfiguration ConfigureSerilogForTesting(
-        this LoggerConfiguration loggerConfig
+        this LoggerConfiguration loggerConfig,
+        IConfiguration? hostConfig = null
     )
     {
         return loggerConfig
-            .ConfigureCommonSerilogSettings()
+            .ConfigureCommonSerilogSettings(hostConfig)
             .WriteTo.CommonConsoleOutput()
             .MinimumLevel.Verbose();
     }
 
     internal static LoggerConfiguration ConfigureCommonSerilogSettings(
-        this LoggerConfiguration loggerConfig
+        this LoggerConfiguration loggerConfig,
+        IConfiguration? hostConfig
     )
     {
-        return loggerConfig.Enrich.FromLogContext().Enrich.WithThreadId();
+        var state = loggerConfig.Enrich
+            .FromLogContext()
+            .Enrich.WithThreadId()
+            .Enrich.WithAssemblyName()
+            .Enrich.WithAssemblyVersion()
+            .Enrich.WithAssemblyInformationalVersion();
+        if (hostConfig is not null)
+        {
+            state = state.Enrich.With(new InstanceNameEnricher(hostConfig));
+        }
+
+        return state;
     }
 
     internal static LoggerConfiguration CommonConsoleOutput(this LoggerSinkConfiguration sinkConfig)
