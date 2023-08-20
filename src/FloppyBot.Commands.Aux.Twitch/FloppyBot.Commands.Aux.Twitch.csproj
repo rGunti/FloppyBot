@@ -8,6 +8,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj" />
+        <ProjectReference Include="..\FloppyBot.Aux.TwitchAlerts.Core\FloppyBot.Aux.TwitchAlerts.Core.csproj" />
         <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj" />
         <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
         <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj" />

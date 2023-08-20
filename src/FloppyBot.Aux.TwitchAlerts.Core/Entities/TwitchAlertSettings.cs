@@ -52,8 +52,8 @@ public record TwitchAlertSettings : IEntity<TwitchAlertSettings>
 
 public record TwitchAlertMessage(
     string DefaultMessage,
-    string? Tier1Message,
-    string? Tier2Message,
-    string? Tier3Message,
-    string? PrimeMessage
+    string? Tier1Message = null,
+    string? Tier2Message = null,
+    string? Tier3Message = null,
+    string? PrimeMessage = null
 );

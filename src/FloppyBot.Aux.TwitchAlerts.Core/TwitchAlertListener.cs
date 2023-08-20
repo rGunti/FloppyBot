@@ -2,6 +2,7 @@
 using System.Text.Json;
 using FloppyBot.Aux.TwitchAlerts.Core.Entities;
 using FloppyBot.Base.Configuration;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
@@ -178,7 +179,12 @@ public class TwitchAlertListener : IDisposable
             return;
         }
 
-        var response = chatMessage with { Content = alertMessage, };
+        var response = chatMessage with
+        {
+            Content = alertMessage.Format(
+                twitchEvent.AsDictionary().Add("User", chatMessage.Author.DisplayName)
+            ),
+        };
 
         _responder.Send(response);
     }
