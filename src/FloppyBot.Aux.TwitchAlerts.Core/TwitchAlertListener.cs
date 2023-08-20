@@ -1,5 +1,10 @@
-﻿using FloppyBot.Base.Configuration;
+﻿using System.Collections.Immutable;
+using System.Text.Json;
+using FloppyBot.Aux.TwitchAlerts.Core.Entities;
+using FloppyBot.Base.Configuration;
+using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Communication;
 using Microsoft.Extensions.Configuration;
@@ -17,18 +22,52 @@ public class TwitchAlertListener : IDisposable
         TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY,
     }.ToHashSet();
 
+    private static readonly IImmutableDictionary<
+        TwitchSubscriptionPlanTier,
+        Func<TwitchAlertMessage, string>
+    > MessageTemplateSelectors = new Dictionary<
+        TwitchSubscriptionPlanTier,
+        Func<TwitchAlertMessage, string>
+    >
+    {
+        { TwitchSubscriptionPlanTier.Tier1, m => m.Tier1Message ?? m.DefaultMessage },
+        { TwitchSubscriptionPlanTier.Tier2, m => m.Tier2Message ?? m.DefaultMessage },
+        { TwitchSubscriptionPlanTier.Tier3, m => m.Tier3Message ?? m.DefaultMessage },
+        { TwitchSubscriptionPlanTier.Prime, m => m.PrimeMessage ?? m.DefaultMessage },
+    }.ToImmutableDictionary();
+
+    private static readonly Func<TwitchAlertMessage, string> DefaultTemplateSelector = m =>
+        m.DefaultMessage;
+
+    private static readonly IImmutableDictionary<
+        string,
+        Func<TwitchAlertSettings, IEnumerable<TwitchAlertMessage>>
+    > MessageTemplateListSelector = new Dictionary<
+        string,
+        Func<TwitchAlertSettings, IEnumerable<TwitchAlertMessage>>
+    >
+    {
+        { TwitchEventTypes.SUBSCRIPTION, s => s.SubMessage },
+        { TwitchEventTypes.RE_SUBSCRIPTION, s => s.ReSubMessage },
+        { TwitchEventTypes.SUBSCRIPTION_GIFT, s => s.GiftSubMessage },
+        { TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY, s => s.GiftSubCommunityMessage },
+    }.ToImmutableDictionary();
+
     private readonly ILogger<TwitchAlertListener> _logger;
     private readonly INotificationReceiver<ChatMessage> _chatMessageReceiver;
     private readonly INotificationSender _responder;
+    private readonly ITwitchAlertService _alertService;
 
     public TwitchAlertListener(
         ILogger<TwitchAlertListener> logger,
         INotificationReceiverFactory receiverFactor,
         INotificationSenderFactory senderFactory,
-        IConfiguration configuration
+        IConfiguration configuration,
+        ITwitchAlertService alertService
     )
     {
         _logger = logger;
+        _alertService = alertService;
         _chatMessageReceiver = receiverFactor.GetNewReceiver<ChatMessage>(
             configuration.GetParsedConnectionString("MessageInput")
         );
@@ -56,6 +95,7 @@ public class TwitchAlertListener : IDisposable
     public void Dispose()
     {
         Stop();
+        GC.SuppressFinalize(this);
     }
 
     private void OnMessageReceived(ChatMessage chatMessage)
@@ -74,10 +114,98 @@ public class TwitchAlertListener : IDisposable
         _logger.LogInformation("Received chat message to count: {@ChatMessage}", chatMessage);
 #endif
 
-        if (false)
+        var twitchEvent = ParseTwitchEvent(chatMessage.EventName, chatMessage.Content);
+        if (twitchEvent == null)
         {
-            // TODO: Send response if required
-            _responder.Send(new object());
+            _logger.LogWarning("Failed to parse chat message content");
+            return;
         }
+
+        var alertMessage = GetFormattedMessage(chatMessage, twitchEvent);
+
+        if (alertMessage == null)
+        {
+            return;
+        }
+
+        var response = chatMessage with { Content = alertMessage, };
+
+        _responder.Send(response);
+    }
+
+    private string? GetFormattedMessage(ChatMessage chatMessage, TwitchEvent twitchEvent)
+    {
+        var channelId = chatMessage.Identifier.GetChannel();
+        var alertSettings = _alertService.GetAlertSettings(channelId);
+        if (alertSettings == null)
+        {
+            _logger.LogDebug("No alert settings found for channel {Channel}, skipping", channelId);
+            return null;
+        }
+
+        var subTier = GetTier(twitchEvent);
+
+        var template = DetermineTemplate(twitchEvent, alertSettings, subTier);
+        if (template == null)
+        {
+            _logger.LogDebug(
+                "No template found for event {EventName} and tier {Tier}, skipping",
+                twitchEvent.EventName,
+                subTier
+            );
+            return null;
+        }
+
+        return template.Format(twitchEvent);
+    }
+
+    private static string? DetermineTemplate(
+        TwitchEvent twitchEvent,
+        TwitchAlertSettings alertSettings,
+        TwitchSubscriptionPlanTier subTier
+    )
+    {
+        var templateListSelector = MessageTemplateListSelector.GetValueOrDefault(
+            twitchEvent.EventName,
+            _ => Enumerable.Empty<TwitchAlertMessage>()
+        );
+        var templateSelector = MessageTemplateSelectors.GetValueOrDefault(
+            subTier,
+            DefaultTemplateSelector
+        );
+
+        var templates = templateListSelector(alertSettings).Select(templateSelector).ToList();
+        // TODO: Get a random one
+        return templates.FirstOrDefault();
+    }
+
+    private static TwitchSubscriptionPlanTier GetTier(TwitchEvent twitchEvent)
+    {
+        return twitchEvent switch
+        {
+            TwitchSubscriptionReceivedEvent subReceived => subReceived.SubscriptionPlanTier.Tier,
+            TwitchReSubscriptionReceivedEvent reSubscriptionReceivedEvent
+                => reSubscriptionReceivedEvent.SubscriptionPlanTier.Tier,
+            TwitchSubscriptionGiftEvent subGiftEvent => subGiftEvent.SubscriptionPlanTier.Tier,
+            TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent
+                => subCommunityGiftEvent.SubscriptionPlanTier.Tier,
+            _ => throw new ArgumentOutOfRangeException(nameof(twitchEvent)),
+        };
+    }
+
+    private static TwitchEvent? ParseTwitchEvent(string type, string content)
+    {
+        return type switch
+        {
+            TwitchEventTypes.SUBSCRIPTION
+                => JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.RE_SUBSCRIPTION
+                => JsonSerializer.Deserialize<TwitchReSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT
+                => JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY
+                => JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
+            _ => throw new ArgumentOutOfRangeException(nameof(type)),
+        };
     }
 }

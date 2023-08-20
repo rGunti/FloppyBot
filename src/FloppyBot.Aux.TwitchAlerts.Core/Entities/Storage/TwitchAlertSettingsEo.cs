@@ -5,7 +5,10 @@ namespace FloppyBot.Aux.TwitchAlerts.Core.Entities.Storage;
 public record TwitchAlertSettingsEo(
     string Id,
     bool SubAlertsEnabled,
-    TwitchAlertMessageEo[] Messages
+    TwitchAlertMessageEo[] SubMessages,
+    TwitchAlertMessageEo[] ReSubMessages,
+    TwitchAlertMessageEo[] GiftSubMessages,
+    TwitchAlertMessageEo[] GiftSubCommunityMessages
 ) : IEntity<TwitchAlertSettingsEo>
 {
     public TwitchAlertSettingsEo WithId(string newId)

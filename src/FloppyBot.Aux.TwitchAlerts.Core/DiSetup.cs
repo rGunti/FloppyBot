@@ -12,6 +12,8 @@ public static class DiSetup
 
     public static IServiceCollection AddTwitchAlertService(this IServiceCollection services)
     {
-        return services.AddTransient<ITwitchAlertService, TwitchAlertService>();
+        return services
+            .AddTransient<ITwitchAlertService, TwitchAlertService>()
+            .AddAutoMapper(typeof(TwitchAlertListener));
     }
 }
