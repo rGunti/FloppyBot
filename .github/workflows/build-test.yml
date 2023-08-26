@@ -23,12 +23,16 @@ jobs:
       - name: Build
         run: dotnet build --no-restore src/FloppyBot.sln
       - name: Test
-        uses: zyborg/dotnet-tests-report@v1
-        with:
-          project_path: src/FloppyBot.sln
-          report_name: floppybot_v2_tests
-          report_title: FloppyBot v2 Tests
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+        run: dotnet test --no-restore --no-build src/FloppyBot.sln
+        env:
+          FLOPPYTEST_DiscordBot1__ClientId: ${{ secrets.DISCORD_1_CLIENT_ID }}
+          FLOPPYTEST_DiscordBot1__ClientSecret: ${{ secrets.DISCORD_1_CLIENT_SECRET }}
+          FLOPPYTEST_DiscordBot1__Token: ${{ secrets.DISCORD_1_TOKEN }}
+          FLOPPYTEST_DiscordBot2__ClientId: ${{ secrets.DISCORD_2_CLIENT_ID }}
+          FLOPPYTEST_DiscordBot2__ClientSecret: ${{ secrets.DISCORD_2_CLIENT_SECRET }}
+          FLOPPYTEST_DiscordBot2__Token: ${{ secrets.DISCORD_2_TOKEN }}
+          FLOPPYTEST_DiscordServerId: ${{ secrets.DISCORD_SERVER_ID }}
+          FLOPPYTEST_DiscordChannelId: ${{ secrets.DISCORD_CHANNEL_ID }}
   code-style:
     name: Check Code Style
     runs-on: ubuntu-latest
