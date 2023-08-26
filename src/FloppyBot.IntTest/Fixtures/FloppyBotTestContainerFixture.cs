@@ -6,6 +6,12 @@ using Testcontainers.Redis;
 
 namespace FloppyBot.IntTest.Fixtures;
 
+[CollectionDefinition(NAME)]
+public class FloppyBotTestCollection : ICollectionFixture<FloppyBotTestContainerFixture>
+{
+    public const string NAME = "FloppyBot";
+}
+
 public class FloppyBotTestContainerFixture : IAsyncDisposable
 {
     private const string MONGO_USERNAME = "floppybot";

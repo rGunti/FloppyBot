@@ -8,7 +8,7 @@ namespace FloppyBot.Base.Logging;
 
 public static class SerilogSetup
 {
-    private const string OUTPUT_TEMPLATE =
+    public const string OUTPUT_TEMPLATE =
         "{Timestamp:HH:mm:ss.fff} | {SourceContext,-75} | {Level:u3} | {Message:lj}{NewLine}{Exception}";
 
     public static IHostBuilder SetupSerilog(this IHostBuilder hostBuilder)
@@ -45,7 +45,7 @@ public static class SerilogSetup
             .MinimumLevel.Verbose();
     }
 
-    internal static LoggerConfiguration ConfigureCommonSerilogSettings(
+    public static LoggerConfiguration ConfigureCommonSerilogSettings(
         this LoggerConfiguration loggerConfig,
         IConfiguration? hostConfig
     )

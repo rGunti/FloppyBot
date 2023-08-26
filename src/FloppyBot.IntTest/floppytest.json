@@ -1,0 +1,20 @@
+{
+  "DiscordBot1": {
+    "ClientId": "~~not for you ~~",
+    "ClientSecret": "~~not for you ~~",
+    "Token": "~~not for you ~~",
+    "Privileges": 339008,
+    "CommandPrefix": "$",
+    "ReadBotMessages": false
+  },
+  "DiscordBot2": {
+    "ClientId": "~~not for you ~~",
+    "ClientSecret": "~~not for you ~~",
+    "Token": "~~not for you ~~",
+    "Privileges": 339008,
+    "CommandPrefix": "$",
+    "ReadBotMessages": true
+  },
+  "DiscordServerId": "",
+  "DiscordChannelId": ""
+}

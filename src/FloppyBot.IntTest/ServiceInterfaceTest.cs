@@ -9,11 +9,11 @@ using Microsoft.Extensions.Logging;
 namespace FloppyBot.IntTest;
 
 [Collection(FloppyBotTestCollection.NAME)]
-public class BasicInterfaceTest : IAsyncDisposable
+public class ServiceInterfaceTest : IAsyncDisposable
 {
     private readonly FloppyBotTestContainerFixture _testContainerFixture;
 
-    public BasicInterfaceTest(FloppyBotTestContainerFixture testContainerFixture)
+    public ServiceInterfaceTest(FloppyBotTestContainerFixture testContainerFixture)
     {
         _testContainerFixture = testContainerFixture;
     }

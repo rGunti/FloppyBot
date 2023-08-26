@@ -14,31 +14,63 @@ public record WaitArgs
 
 public static class Wait
 {
-    public static async Task Until(Func<bool> condition, TimeSpan timeout)
+    public static async Task Until(
+        Func<bool> condition,
+        TimeSpan timeout,
+        string? timeoutMessage = null
+    )
     {
-        var stopwatch = new Stopwatch();
+        using var timer = new Timer();
         while (!condition())
         {
             await Task.Delay(10);
-            if (stopwatch.Elapsed > timeout)
+            if (timer.Elapsed > timeout)
             {
-                throw new TimeoutException("Timed out waiting for condition.");
+                throw new TimeoutException(timeoutMessage ?? "Timed out waiting for condition.");
             }
         }
     }
 
-    public static async Task UntilEventIsRaised(Action<WaitArgs> subscribeEvent, TimeSpan timeout)
+    public static async Task UntilEventIsRaised(
+        Action<WaitArgs> subscribeEvent,
+        TimeSpan timeout,
+        string? timeoutMessage = null
+    )
     {
         var args = new WaitArgs();
         subscribeEvent(args);
-        await Until(() => args.Raised, timeout);
+        await Until(() => args.Raised, timeout, timeoutMessage);
     }
 
-    public static async Task DoAndWaitUntil(Action<WaitArgs> waitUntil, Action fn, TimeSpan timeout)
+    public static async Task DoAndWaitUntil(
+        Action<WaitArgs> waitUntil,
+        Action fn,
+        TimeSpan timeout,
+        string? timeoutMessage = null
+    )
     {
         var args = new WaitArgs();
         waitUntil(args);
         fn();
-        await Until(() => args.Raised, timeout);
+        await Until(() => args.Raised, timeout, timeoutMessage);
+    }
+}
+
+public class Timer : IDisposable
+{
+    private readonly Stopwatch _stopwatch;
+
+    public Timer()
+    {
+        _stopwatch = new Stopwatch();
+        _stopwatch.Start();
+    }
+
+    public TimeSpan Elapsed => _stopwatch.Elapsed;
+
+    public void Dispose()
+    {
+        _stopwatch.Stop();
+        GC.SuppressFinalize(this);
     }
 }
