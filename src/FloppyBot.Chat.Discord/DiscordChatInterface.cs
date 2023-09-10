@@ -65,15 +65,23 @@ public class DiscordChatInterface : IChatInterface
             _logger.LogDebug("Deleted existing command {CommandName} [{CommandId}]", c.Name, c.Id);
             return Task.CompletedTask;
         };
+        _discordClient.Disconnected += (c) =>
+        {
+            _logger.LogWarning("Disconnected from Discord");
+            IsConnected = false;
+            return Task.CompletedTask;
+        };
     }
 
     public string ConnectUrl =>
-        $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.ClientId}";
+        $"https://discordapp.com/oauth2/authorize?client_id={_configuration.ClientId}&scope=bot&permissions={_configuration.Privileges}";
 
     public string Name => IF_NAME;
 
     public ChatInterfaceFeatures SupportedFeatures =>
         ChatInterfaceFeatures.MarkdownText | ChatInterfaceFeatures.Newline;
+
+    public bool IsConnected { get; private set; }
 
     public void Connect()
     {
@@ -229,6 +237,8 @@ public class DiscordChatInterface : IChatInterface
     {
         await _discordClient.SetStatusAsync(UserStatus.Offline);
         await _discordClient.LogoutAsync();
+
+        IsConnected = false;
     }
 
     private async Task DiscordClientOnReady()
@@ -238,6 +248,8 @@ public class DiscordChatInterface : IChatInterface
         await _discordClient.SetStatusAsync(UserStatus.Online);
         await _discordClient.SetGameAsync($"FloppyBot v{AboutThisApp.Info.Version}");
         _logger.LogInformation("Connect using this URL: {ConnectUrl}", ConnectUrl);
+
+        IsConnected = true;
     }
 
     private async Task SetupSlashCommands()
@@ -344,7 +356,7 @@ public class DiscordChatInterface : IChatInterface
 
     private Task DiscordClientOnMessageReceived(SocketMessage socketMessage)
     {
-        if (socketMessage.Author.IsBot)
+        if (socketMessage.Author.IsBot && !_configuration.ReadBotMessages)
         {
             _logger.LogTrace("Received message from a bot, ignoring");
             return Task.CompletedTask;

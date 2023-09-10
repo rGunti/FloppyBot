@@ -2,12 +2,12 @@
 
 public class MockNotificationReceiver<T> : INotificationReceiver<T>
 {
-    private readonly string _channel;
-
     public MockNotificationReceiver(string channel)
     {
-        _channel = channel;
+        Channel = channel;
     }
+
+    public string Channel { get; }
 
     public event NotificationReceivedDelegate<T>? NotificationReceived;
 
@@ -17,6 +17,6 @@ public class MockNotificationReceiver<T> : INotificationReceiver<T>
 
     public override string ToString()
     {
-        return $"{nameof(MockNotificationReceiver<T>)}: {_channel}";
+        return $"{nameof(MockNotificationReceiver<T>)}: {Channel}";
     }
 }

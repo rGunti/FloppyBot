@@ -23,6 +23,10 @@
     <ItemGroup>
         <ProjectReference Include="..\FloppyBot.Version\FloppyBot.Version.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+        <InternalsVisibleTo Include="FloppyBot.IntTest" />
+    </ItemGroup>
 
 
 </Project>

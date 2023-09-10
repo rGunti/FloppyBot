@@ -5,7 +5,8 @@ public record DiscordConfiguration(
     string ClientSecret,
     string Token,
     long Privileges,
-    string CommandPrefix
+    string CommandPrefix,
+    bool ReadBotMessages = false
 )
 {
     [Obsolete("This constructor is only present for configuration purposes and should not be used")]
