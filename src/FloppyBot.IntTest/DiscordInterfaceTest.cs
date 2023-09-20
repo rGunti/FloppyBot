@@ -21,7 +21,11 @@ public class DiscordInterfaceTest : IAsyncDisposable
         _bot2 = discordFixture.Bot2;
     }
 
-    [Fact]
+    [Fact
+#if !DEBUG
+    (Skip = "only to be executed locally")
+#endif
+    ]
     public async Task TestMessageSubmissions()
     {
         await _discordFixture.WaitForConnection();
@@ -62,7 +66,11 @@ public class DiscordInterfaceTest : IAsyncDisposable
         );
     }
 
-    [Fact]
+    [Fact
+#if !DEBUG
+    (Skip = "only to be executed locally")
+#endif
+    ]
     public async Task ExpectNoMessageSubmissionsFromBotsIfNotEnabled()
     {
         await _discordFixture.WaitForConnection();
