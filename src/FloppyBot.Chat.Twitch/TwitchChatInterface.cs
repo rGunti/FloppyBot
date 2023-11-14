@@ -275,9 +275,9 @@ public class TwitchChatInterface : IChatInterface
         );
 
         var eventArgs = new TwitchSubscriptionGiftEvent(
-            e.GiftedSubscription.MsgParamSubPlan.ConvertToPlan(
-                e.GiftedSubscription.MsgParamSubPlanName
-            ),
+            e.GiftedSubscription
+                .MsgParamSubPlan
+                .ConvertToPlan(e.GiftedSubscription.MsgParamSubPlanName),
             TwitchEntityExtensions.ConvertToChatUser(
                 e.GiftedSubscription.MsgParamRecipientUserName,
                 e.GiftedSubscription.MsgParamRecipientDisplayName

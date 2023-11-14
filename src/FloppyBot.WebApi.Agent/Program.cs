@@ -52,12 +52,18 @@ services
         {
             OnChallenge = context =>
             {
-                context.Response.OnStarting(async () =>
-                {
-                    await context.Response.WriteAsync(
-                        JsonSerializer.Serialize(new { Message = "You are not authorized!" })
-                    );
-                });
+                context
+                    .Response
+                    .OnStarting(async () =>
+                    {
+                        await context
+                            .Response
+                            .WriteAsync(
+                                JsonSerializer.Serialize(
+                                    new { Message = "You are not authorized!" }
+                                )
+                            );
+                    });
 
                 return Task.CompletedTask;
             },

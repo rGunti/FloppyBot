@@ -37,7 +37,8 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
         CommandInstruction commandInstruction
     )
     {
-        var scopedArgs = commandInstruction.Parameters
+        var scopedArgs = commandInstruction
+            .Parameters
             .Skip(StartIndex)
             .TakeWhile((_, i) => i < EndIndex)
             .ToArray();

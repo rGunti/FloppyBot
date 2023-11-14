@@ -73,7 +73,8 @@ public class CustomCommandService : ICustomCommandService
     public bool CreateCommand(CustomCommandDescription commandDescription)
     {
         if (
-            commandDescription.Owners
+            commandDescription
+                .Owners
                 .Select(
                     channel =>
                         ExistsAnyWithName(

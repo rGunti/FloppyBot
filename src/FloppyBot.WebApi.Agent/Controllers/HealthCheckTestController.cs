@@ -21,7 +21,8 @@ public class HealthCheckTestController : ControllerBase
     [HttpGet]
     public HealthCheckData[] GetHealthChecks()
     {
-        return _healthCheckReceiver.RecordedHealthChecks
+        return _healthCheckReceiver
+            .RecordedHealthChecks
             .OrderBy(h => h.App.Service)
             .ThenBy(h => h.App.InstanceName)
             .ThenBy(h => h.InstanceId)

@@ -43,7 +43,8 @@ public static class SupportingTaskExtensions
         CommandInstruction instruction
     )
     {
-        return scope.ServiceProvider
+        return scope
+            .ServiceProvider
             .GetSupportingTasks<IPreExecutionTask>()
             .FirstOrDefault(t => !t.ExecutePre(info, instruction));
     }
@@ -55,7 +56,8 @@ public static class SupportingTaskExtensions
         CommandResult result
     )
     {
-        return scope.ServiceProvider
+        return scope
+            .ServiceProvider
             .GetSupportingTasks<IPostExecutionTask>()
             .FirstOrDefault(t => !t.ExecutePost(info, instruction, result));
     }
