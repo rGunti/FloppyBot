@@ -57,9 +57,14 @@ public class MongoDbIndexManager : IIndexManager
             );
         }
 
-        collection.Indexes.CreateOne(
-            new CreateIndexModel<BsonDocument>(index, new CreateIndexOptions { Name = indexName })
-        );
+        collection
+            .Indexes
+            .CreateOne(
+                new CreateIndexModel<BsonDocument>(
+                    index,
+                    new CreateIndexOptions { Name = indexName }
+                )
+            );
     }
 
     public void DeleteIndex(string collectionName, string indexName)

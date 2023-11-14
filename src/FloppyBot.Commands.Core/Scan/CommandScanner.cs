@@ -47,9 +47,11 @@ public class CommandScanner : ICommandScanner
         return commands
             .SelectMany(
                 commandInfo =>
-                    commandInfo.Names.Select(
-                        commandName => new { Name = commandName, CommandInfo = commandInfo }
-                    )
+                    commandInfo
+                        .Names
+                        .Select(
+                            commandName => new { Name = commandName, CommandInfo = commandInfo }
+                        )
             )
             .ToImmutableDictionary(i => i.Name, i => i.CommandInfo);
     }
@@ -86,7 +88,8 @@ public class CommandScanner : ICommandScanner
                     new CommandInfo(
                         method
                             .GetCustomAttribute<CommandAttribute>()!
-                            .Names.ToImmutableListWithValueSemantics(),
+                            .Names
+                            .ToImmutableListWithValueSemantics(),
                         method
                     )
             );
@@ -127,11 +130,13 @@ public class CommandScanner : ICommandScanner
                         method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier
                             ?? GetDefaultIdentifierForVariableCommandHandler(method),
                         method,
-                        method.ReflectedType!.GetMethod(
-                            method
-                                .GetCustomAttribute<VariableCommandHandlerAttribute>()!
-                                .AssertionHandlerName!
-                        )!
+                        method
+                            .ReflectedType!
+                            .GetMethod(
+                                method
+                                    .GetCustomAttribute<VariableCommandHandlerAttribute>()!
+                                    .AssertionHandlerName!
+                            )!
                     )
             );
     }

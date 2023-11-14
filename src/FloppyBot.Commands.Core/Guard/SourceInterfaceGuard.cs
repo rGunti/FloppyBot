@@ -12,8 +12,8 @@ public class SourceInterfaceGuard : BaseGuard<SourceInterfaceGuardAttribute>
         SourceInterfaceGuardAttribute settings
     )
     {
-        return settings.AllowedMessageInterfaces.Contains(
-            instruction.Context!.SourceMessage.Identifier.Interface
-        );
+        return settings
+            .AllowedMessageInterfaces
+            .Contains(instruction.Context!.SourceMessage.Identifier.Interface);
     }
 }

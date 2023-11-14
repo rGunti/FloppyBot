@@ -12,11 +12,13 @@ public class MetadataExtractor : IMetadataExtractor
 {
     public CommandMetadata ExtractMetadataFromCommand(CommandInfo commandInfo)
     {
-        var classAttributes = commandInfo.ImplementingType
+        var classAttributes = commandInfo
+            .ImplementingType
             .GetCustomAttributes<CommandMetadataAttribute>()
             .GroupBy(a => a.Type)
             .ToImmutableDictionary(g => g.Key, g => g.ToImmutableList());
-        var methodAttributes = commandInfo.HandlerMethod
+        var methodAttributes = commandInfo
+            .HandlerMethod
             .GetCustomAttributes<CommandMetadataAttribute>()
             .GroupBy(a => a.Type)
             .ToImmutableDictionary(g => g.Key, g => g.ToImmutableList());
@@ -67,13 +69,15 @@ public class MetadataExtractor : IMetadataExtractor
 
     private PrivilegeLevel TryExtractRequiredPrivilegeLevel(CommandInfo commandInfo)
     {
-        var methodLevel = commandInfo.HandlerMethod
+        var methodLevel = commandInfo
+            .HandlerMethod
             .GetCustomAttributes<PrivilegeGuardAttribute>()
             .Select(g => g.MinLevel)
             .FirstOrDefault();
         if (methodLevel == PrivilegeLevel.Unknown)
         {
-            return commandInfo.ImplementingType
+            return commandInfo
+                .ImplementingType
                 .GetCustomAttributes<PrivilegeGuardAttribute>()
                 .Select(g => g.MinLevel)
                 .FirstOrDefault();
@@ -84,13 +88,15 @@ public class MetadataExtractor : IMetadataExtractor
 
     private string[] TryExtractInterfaceLimit(CommandInfo commandInfo)
     {
-        var methodLevel = commandInfo.HandlerMethod
+        var methodLevel = commandInfo
+            .HandlerMethod
             .GetCustomAttributes<SourceInterfaceGuardAttribute>()
             .Select(g => g.AllowedMessageInterfaces)
             .FirstOrDefault();
         if (methodLevel == null)
         {
-            return commandInfo.ImplementingType
+            return commandInfo
+                    .ImplementingType
                     .GetCustomAttributes<SourceInterfaceGuardAttribute>()
                     .Select(g => g.AllowedMessageInterfaces)
                     .FirstOrDefault()

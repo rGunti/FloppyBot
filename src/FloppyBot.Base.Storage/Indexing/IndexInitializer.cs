@@ -28,7 +28,8 @@ public class IndexInitializer
         }
 
         var interfaceType = typeof(IEntity);
-        var entities = AppDomain.CurrentDomain
+        var entities = AppDomain
+            .CurrentDomain
             .GetAssemblies()
             .SelectMany(a => a.GetTypes())
             .Where(

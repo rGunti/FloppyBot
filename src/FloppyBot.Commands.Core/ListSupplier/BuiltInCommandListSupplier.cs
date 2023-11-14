@@ -37,8 +37,11 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
 
     public IEnumerable<string> GetCommandList(CommandInstruction commandInstruction)
     {
-        ChannelIdentifier channelId =
-            commandInstruction.Context!.SourceMessage.Identifier.GetChannel();
+        ChannelIdentifier channelId = commandInstruction
+            .Context!
+            .SourceMessage
+            .Identifier
+            .GetChannel();
         PrivilegeLevel privilegeLevel = commandInstruction
             .Context!
             .SourceMessage
@@ -94,10 +97,12 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
     private IImmutableSet<string> GetInterfacesForCommand(CommandInfo commandInfo)
     {
         _logger.LogDebug("Calculating allowed interfaces for command {Command}", commandInfo);
-        IEnumerable<string> handlerInterfaces = commandInfo.HandlerMethod
+        IEnumerable<string> handlerInterfaces = commandInfo
+            .HandlerMethod
             .GetCustomAttributes<SourceInterfaceGuardAttribute>()
             .SelectMany(a => a.AllowedMessageInterfaces);
-        IEnumerable<string> hostInterfaces = commandInfo.ImplementingType
+        IEnumerable<string> hostInterfaces = commandInfo
+            .ImplementingType
             .GetCustomAttributes<SourceInterfaceGuardAttribute>()
             .SelectMany(a => a.AllowedMessageInterfaces);
 
@@ -137,10 +142,12 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
     private PrivilegeLevel GetPrivilegeLevelFromCommand(CommandInfo commandInfo)
     {
         _logger.LogDebug("Calculating required privilege level for command {Command}", commandInfo);
-        IEnumerable<PrivilegeLevel> handlerLevel = commandInfo.HandlerMethod
+        IEnumerable<PrivilegeLevel> handlerLevel = commandInfo
+            .HandlerMethod
             .GetCustomAttributes<PrivilegeGuardAttribute>()
             .Select(a => a.MinLevel);
-        IEnumerable<PrivilegeLevel> hostLevel = commandInfo.ImplementingType
+        IEnumerable<PrivilegeLevel> hostLevel = commandInfo
+            .ImplementingType
             .GetCustomAttributes<PrivilegeGuardAttribute>()
             .Select(a => a.MinLevel);
         PrivilegeLevel privilegeLevel = handlerLevel

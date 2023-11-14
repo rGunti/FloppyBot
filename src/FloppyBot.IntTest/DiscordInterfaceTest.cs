@@ -49,7 +49,8 @@ public class DiscordInterfaceTest : IAsyncDisposable
         );
 
         messageMonitor.Should().Raise(nameof(DiscordChatInterface.MessageReceived));
-        messageMonitor.OccurredEvents
+        messageMonitor
+            .OccurredEvents
             .Select(e => e.Parameters.Last())
             .Cast<ChatMessage>()
             .Select(c => c with { Identifier = $"Discord/{_discordFixture.ServerId}/_" })

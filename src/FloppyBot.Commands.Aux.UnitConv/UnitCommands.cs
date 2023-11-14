@@ -123,7 +123,8 @@ public class UnitCommands
                 (supportsMarkdown ? REPLY_HELP_MD : REPLY_HELP).Format(
                     new
                     {
-                        Units = _parsingEngine.RegisteredUnits
+                        Units = _parsingEngine
+                            .RegisteredUnits
                             .OrderBy(u => u.FullName)
                             .Select(u => u.Symbol)
                             .OrderBy(i => i)
