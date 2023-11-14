@@ -194,7 +194,8 @@ public class V1CompatibilityProfile : Profile
                                 .ToImmutableList(),
                         c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
                         c.Limitations.LimitedToUsers.ToImmutableList(),
-                        c.Limitations.Cooldown
+                        c.Limitations
+                            .Cooldown
                             .OrderBy(cd => cd.Level)
                             .Select(cd => cd.Milliseconds)
                             .FirstOrDefault()
@@ -246,7 +247,8 @@ public class V1CompatibilityProfile : Profile
                         c.Limitations.MinLevel >= PrivilegeLevel.Moderator,
                         c.Limitations.LimitedToUsers.ToImmutableList(),
                         false,
-                        c.Limitations.Cooldown
+                        c.Limitations
+                            .Cooldown
                             .OrderBy(cd => cd.Level)
                             .Select(cd => cd.Milliseconds)
                             .FirstOrDefault(),

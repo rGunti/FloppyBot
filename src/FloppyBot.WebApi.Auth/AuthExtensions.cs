@@ -22,7 +22,8 @@ public static class AuthExtensions
     {
         return user.Identities
             .First()
-            .Claims.Where(c => c.Type == USER_PERMISSION_CLAIM)
+            .Claims
+            .Where(c => c.Type == USER_PERMISSION_CLAIM)
             .Select(c => c.Value);
     }
 }

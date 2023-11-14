@@ -62,12 +62,14 @@ public class CustomCommandExecutor : ICustomCommandExecutor
 
         if (
             description.Limitations.LimitedToUsers.Any()
-            && !description.Limitations.LimitedToUsers.Contains(
-                author.Identifier.ToString().ToLowerInvariant()
-            )
-            && !description.Limitations.LimitedToUsers.Contains(
-                author.Identifier.Channel.ToLowerInvariant()
-            )
+            && !description
+                .Limitations
+                .LimitedToUsers
+                .Contains(author.Identifier.ToString().ToLowerInvariant())
+            && !description
+                .Limitations
+                .LimitedToUsers
+                .Contains(author.Identifier.Channel.ToLowerInvariant())
         )
         {
             _logger.LogDebug(
@@ -117,7 +119,9 @@ public class CustomCommandExecutor : ICustomCommandExecutor
     private bool IsOnCooldown(CommandInstruction instruction, CustomCommandDescription description)
     {
         ChatMessage sourceMessage = instruction.Context!.SourceMessage;
-        TimeSpan cooldownTime = description.Limitations.Cooldown
+        TimeSpan cooldownTime = description
+            .Limitations
+            .Cooldown
             .Where(i => i.Level <= sourceMessage.Author.PrivilegeLevel)
             .OrderByDescending(i => i.Level)
             .Select(i => TimeSpan.FromMilliseconds(i.Milliseconds))
@@ -173,15 +177,17 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response.Content.Format(
-                    new PlaceholderContainer(
-                        instruction,
-                        description,
-                        _timeProvider.GetCurrentUtcTime(),
-                        _randomNumberGenerator.Next(0, 100),
-                        _counterStorageService
-                    )
-                );
+                return response
+                    .Content
+                    .Format(
+                        new PlaceholderContainer(
+                            instruction,
+                            description,
+                            _timeProvider.GetCurrentUtcTime(),
+                            _randomNumberGenerator.Next(0, 100),
+                            _counterStorageService
+                        )
+                    );
             case ResponseType.Sound:
                 string[] split = response.Content.Split(SOUND_CMD_SPLIT_CHAR);
                 string payloadName = split[0];

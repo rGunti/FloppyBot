@@ -46,9 +46,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_CREATE_SUCCESS.Format(
-                    new { CommandName = "mycommand" }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_CREATE_SUCCESS
+                    .Format(new { CommandName = "mycommand" })
             ),
             result
         );
@@ -85,9 +85,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_CREATE_FAILED.Format(
-                    new { CommandName = "mycommand" }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_CREATE_FAILED
+                    .Format(new { CommandName = "mycommand" })
             ),
             result
         );
@@ -112,9 +112,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_DELETE_SUCCESS.Format(
-                    new { CommandName = "mycommand" }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_DELETE_SUCCESS
+                    .Format(new { CommandName = "mycommand" })
             ),
             result
         );
@@ -130,9 +130,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_DELETE_FAILED.Format(
-                    new { CommandName = "mycommand" }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_DELETE_FAILED
+                    .Format(new { CommandName = "mycommand" })
             ),
             result
         );
@@ -149,9 +149,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
-                    new { CommandName = "mycommand", Counter = 5 }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_COUNTER_SET
+                    .Format(new { CommandName = "mycommand", Counter = 5 })
             ),
             result
         );
@@ -172,9 +172,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
-                    new { CommandName = "mycommand", Counter = 10 + expectedIncrement }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_COUNTER_SET
+                    .Format(new { CommandName = "mycommand", Counter = 10 + expectedIncrement })
             ),
             result
         );
@@ -194,9 +194,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Success,
-                CustomCommandAdministrationCommands.REPLY_COUNTER_SET.Format(
-                    new { CommandName = "mycommand", Counter = 0 }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_COUNTER_SET
+                    .Format(new { CommandName = "mycommand", Counter = 0 })
             ),
             result
         );
@@ -213,9 +213,9 @@ public class CustomCommandAdministrationCommandsTests
         Assert.AreEqual(
             new CommandResult(
                 CommandOutcome.Failed,
-                CustomCommandAdministrationCommands.REPLY_COMMAND_NOT_FOUND.Format(
-                    new { CommandName = "mycommand" }
-                )
+                CustomCommandAdministrationCommands
+                    .REPLY_COMMAND_NOT_FOUND
+                    .Format(new { CommandName = "mycommand" })
             ),
             result
         );

@@ -24,14 +24,18 @@ public static class SerilogSetup
         return loggerConfig
             // - Default Log Configuration
             .ConfigureCommonSerilogSettings(hostConfig)
-            .WriteTo.Async(s => s.CommonConsoleOutput())
+            .WriteTo
+            .Async(s => s.CommonConsoleOutput())
 #if DEBUG
-            .MinimumLevel.Verbose()
+            .MinimumLevel
+            .Verbose()
 #else
-            .MinimumLevel.Information()
+            .MinimumLevel
+            .Information()
 #endif
             // - Configurable via JSON file
-            .ReadFrom.Configuration(hostConfig);
+            .ReadFrom
+            .Configuration(hostConfig);
     }
 
     public static LoggerConfiguration ConfigureSerilogForTesting(
@@ -41,8 +45,10 @@ public static class SerilogSetup
     {
         return loggerConfig
             .ConfigureCommonSerilogSettings(hostConfig)
-            .WriteTo.CommonConsoleOutput()
-            .MinimumLevel.Verbose();
+            .WriteTo
+            .CommonConsoleOutput()
+            .MinimumLevel
+            .Verbose();
     }
 
     public static LoggerConfiguration ConfigureCommonSerilogSettings(
@@ -50,12 +56,17 @@ public static class SerilogSetup
         IConfiguration? hostConfig
     )
     {
-        var state = loggerConfig.Enrich
+        var state = loggerConfig
+            .Enrich
             .FromLogContext()
-            .Enrich.WithThreadId()
-            .Enrich.WithAssemblyName()
-            .Enrich.WithAssemblyVersion()
-            .Enrich.WithAssemblyInformationalVersion();
+            .Enrich
+            .WithThreadId()
+            .Enrich
+            .WithAssemblyName()
+            .Enrich
+            .WithAssemblyVersion()
+            .Enrich
+            .WithAssemblyInformationalVersion();
         if (hostConfig is not null)
         {
             state = state.Enrich.With(new InstanceNameEnricher(hostConfig));

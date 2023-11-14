@@ -39,7 +39,8 @@ public class SoundCommandInvocationCollector : IDisposable
 
     private void OnNotificationReceived(SoundCommandInvocation notification)
     {
-        _hubContext.Clients
+        _hubContext
+            .Clients
             .Group(notification.InvokedFrom)
             .SendAsync("SoundCommandInvoked", _mapper.Map<InvokeSoundCommandEvent>(notification));
     }
