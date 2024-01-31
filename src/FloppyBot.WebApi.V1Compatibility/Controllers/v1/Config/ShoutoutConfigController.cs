@@ -37,10 +37,9 @@ public class ShoutoutConfigController : ControllerBase
         return _userService
             .GetAccessibleChannelsForUser(User.GetUserId())
             .Where(channelId => channelId.StartsWith("Twitch/"))
-            .Select(
-                channelId =>
-                    _shoutoutMessageSettingService.GetSettings(channelId)
-                    ?? new ShoutoutMessageSetting(channelId, string.Empty)
+            .Select(channelId =>
+                _shoutoutMessageSettingService.GetSettings(channelId)
+                ?? new ShoutoutMessageSetting(channelId, string.Empty)
             )
             .Select(settings => _mapper.Map<ShoutoutMessageConfig>(settings))
             .ToArray();

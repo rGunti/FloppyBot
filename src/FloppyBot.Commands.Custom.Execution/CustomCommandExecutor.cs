@@ -62,14 +62,12 @@ public class CustomCommandExecutor : ICustomCommandExecutor
 
         if (
             description.Limitations.LimitedToUsers.Any()
-            && !description
-                .Limitations
-                .LimitedToUsers
-                .Contains(author.Identifier.ToString().ToLowerInvariant())
-            && !description
-                .Limitations
-                .LimitedToUsers
-                .Contains(author.Identifier.Channel.ToLowerInvariant())
+            && !description.Limitations.LimitedToUsers.Contains(
+                author.Identifier.ToString().ToLowerInvariant()
+            )
+            && !description.Limitations.LimitedToUsers.Contains(
+                author.Identifier.Channel.ToLowerInvariant()
+            )
         )
         {
             _logger.LogDebug(
@@ -120,9 +118,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
     {
         ChatMessage sourceMessage = instruction.Context!.SourceMessage;
         TimeSpan cooldownTime = description
-            .Limitations
-            .Cooldown
-            .Where(i => i.Level <= sourceMessage.Author.PrivilegeLevel)
+            .Limitations.Cooldown.Where(i => i.Level <= sourceMessage.Author.PrivilegeLevel)
             .OrderByDescending(i => i.Level)
             .Select(i => TimeSpan.FromMilliseconds(i.Milliseconds))
             .FirstOrDefault(TimeSpan.Zero);
@@ -156,13 +152,12 @@ public class CustomCommandExecutor : ICustomCommandExecutor
     )
     {
         return commandNames
-            .Select(
-                commandName =>
-                    _cooldownService.GetLastExecution(
-                        sourceMessage.Identifier.GetChannel(),
-                        sourceMessage.Author.Identifier,
-                        commandName
-                    )
+            .Select(commandName =>
+                _cooldownService.GetLastExecution(
+                    sourceMessage.Identifier.GetChannel(),
+                    sourceMessage.Author.Identifier,
+                    commandName
+                )
             )
             .OrderByDescending(i => i)
             .FirstOrDefault(DateTimeOffset.MinValue);
@@ -177,17 +172,15 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response
-                    .Content
-                    .Format(
-                        new PlaceholderContainer(
-                            instruction,
-                            description,
-                            _timeProvider.GetCurrentUtcTime(),
-                            _randomNumberGenerator.Next(0, 100),
-                            _counterStorageService
-                        )
-                    );
+                return response.Content.Format(
+                    new PlaceholderContainer(
+                        instruction,
+                        description,
+                        _timeProvider.GetCurrentUtcTime(),
+                        _randomNumberGenerator.Next(0, 100),
+                        _counterStorageService
+                    )
+                );
             case ResponseType.Sound:
                 string[] split = response.Content.Split(SOUND_CMD_SPLIT_CHAR);
                 string payloadName = split[0];

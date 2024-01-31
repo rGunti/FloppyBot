@@ -16,8 +16,8 @@ public class EoDtoMappingTests
 
     public EoDtoMappingTests()
     {
-        _mapper = new MapperConfiguration(
-            c => c.AddProfile<CustomCommandStorageProfile>()
+        _mapper = new MapperConfiguration(c =>
+            c.AddProfile<CustomCommandStorageProfile>()
         ).CreateMapper();
         _repositoryFactory = LiteDbRepositoryFactory.CreateMemoryInstance();
     }
@@ -67,19 +67,16 @@ public class EoDtoMappingTests
     {
         Assert.IsTrue(
             Enum.GetValues<PrivilegeLevel>()
-                .Select(
-                    l =>
-                        new CommandLimitation
-                        {
-                            MinLevel = l,
-                            Cooldown = new[]
-                            {
-                                new CooldownDescription(PrivilegeLevel.Superuser, 0),
-                                new CooldownDescription(PrivilegeLevel.Administrator, 100),
-                                new CooldownDescription(PrivilegeLevel.Moderator, 30000),
-                            }.ToImmutableHashSet(),
-                        }
-                )
+                .Select(l => new CommandLimitation
+                {
+                    MinLevel = l,
+                    Cooldown = new[]
+                    {
+                        new CooldownDescription(PrivilegeLevel.Superuser, 0),
+                        new CooldownDescription(PrivilegeLevel.Administrator, 100),
+                        new CooldownDescription(PrivilegeLevel.Moderator, 30000),
+                    }.ToImmutableHashSet(),
+                })
                 .All(TestConversion<CommandLimitation, CommandLimitationEo>)
         );
     }

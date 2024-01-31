@@ -24,16 +24,14 @@ public static class Registration
             _ => true
         );
         return services
-            .AddSingleton<MongoUrl>(
-                s =>
-                    MongoUrl.Create(
-                        s.GetRequiredService<IConfiguration>()
-                            .GetConnectionString(connectionStringName)
-                    )
+            .AddSingleton<MongoUrl>(s =>
+                MongoUrl.Create(
+                    s.GetRequiredService<IConfiguration>().GetConnectionString(connectionStringName)
+                )
             )
             .AddSingleton<IMongoClient>(s => new MongoClient(s.GetMongoUrl()))
-            .AddSingleton<IMongoDatabase>(
-                s => s.GetMongoClient().GetDatabase(s.GetMongoUrl().DatabaseName)
+            .AddSingleton<IMongoDatabase>(s =>
+                s.GetMongoClient().GetDatabase(s.GetMongoUrl().DatabaseName)
             )
             .AddStorageImplementation<MongoDbRepositoryFactory, MongoDbIndexManager>();
     }

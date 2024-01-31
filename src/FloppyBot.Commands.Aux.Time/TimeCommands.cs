@@ -82,14 +82,13 @@ public class TimeCommands
     )
     {
         return GetTime(author.Identifier, timeZoneId)
-            .Select(
-                t =>
-                    REPLY_TIME_DEC.Format(
-                        t with
-                        {
-                            TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm"),
-                        }
-                    )
+            .Select(t =>
+                REPLY_TIME_DEC.Format(
+                    t with
+                    {
+                        TimeStr = DateTimeFormat.Format(new DateTime(t.Time.DateTime), "HH:mm"),
+                    }
+                )
             )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(

@@ -29,14 +29,12 @@ public static class TextFormatExtensions
             throw new ArgumentException("HEX sequence has to have an even number of characters");
         }
 
-        return Encoding
-            .UTF8
-            .GetString(
-                hexSequence
-                    .SplitIntoChunksOf(2)
-                    .Select(hex => byte.Parse(hex, NumberStyles.HexNumber))
-                    .ToArray()
-            );
+        return Encoding.UTF8.GetString(
+            hexSequence
+                .SplitIntoChunksOf(2)
+                .Select(hex => byte.Parse(hex, NumberStyles.HexNumber))
+                .ToArray()
+        );
     }
 
     private static IEnumerable<string> SplitIntoChunksOf(this string s, int chunkSize)

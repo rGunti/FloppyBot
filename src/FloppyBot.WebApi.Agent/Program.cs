@@ -31,12 +31,11 @@ IServiceCollection services = builder.Services;
 // - CORS
 services.AddCors(o =>
 {
-    o.AddDefaultPolicy(
-        b =>
-            b.WithOrigins(builder.Configuration.GetSection("Cors").Get<string[]>())
-                .WithMethods("GET", "POST", "PUT", "DELETE")
-                .AllowAnyHeader()
-                .AllowCredentials()
+    o.AddDefaultPolicy(b =>
+        b.WithOrigins(builder.Configuration.GetSection("Cors").Get<string[]>())
+            .WithMethods("GET", "POST", "PUT", "DELETE")
+            .AllowAnyHeader()
+            .AllowCredentials()
     );
 });
 
@@ -52,18 +51,12 @@ services
         {
             OnChallenge = context =>
             {
-                context
-                    .Response
-                    .OnStarting(async () =>
-                    {
-                        await context
-                            .Response
-                            .WriteAsync(
-                                JsonSerializer.Serialize(
-                                    new { Message = "You are not authorized!" }
-                                )
-                            );
-                    });
+                context.Response.OnStarting(async () =>
+                {
+                    await context.Response.WriteAsync(
+                        JsonSerializer.Serialize(new { Message = "You are not authorized!" })
+                    );
+                });
 
                 return Task.CompletedTask;
             },

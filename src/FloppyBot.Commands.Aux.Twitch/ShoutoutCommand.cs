@@ -52,11 +52,10 @@ public class ShoutoutCommand
     public static void RegisterDependencies(IServiceCollection services)
     {
         services
-            .AddSingleton<TwitchApiConfig>(
-                s =>
-                    s.GetRequiredService<IConfiguration>()
-                        .GetSection("TwitchApi")
-                        .Get<TwitchApiConfig>()
+            .AddSingleton<TwitchApiConfig>(s =>
+                s.GetRequiredService<IConfiguration>()
+                    .GetSection("TwitchApi")
+                    .Get<TwitchApiConfig>()
             )
             .AddSingleton<ITwitchAPI>(s =>
             {

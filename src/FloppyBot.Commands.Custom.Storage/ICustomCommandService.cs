@@ -74,14 +74,12 @@ public class CustomCommandService : ICustomCommandService
     {
         if (
             commandDescription
-                .Owners
-                .Select(
-                    channel =>
-                        ExistsAnyWithName(
-                            channel,
-                            commandDescription.Name,
-                            commandDescription.Aliases.ToArray()
-                        )
+                .Owners.Select(channel =>
+                    ExistsAnyWithName(
+                        channel,
+                        commandDescription.Name,
+                        commandDescription.Aliases.ToArray()
+                    )
                 )
                 .Any(exists => exists)
         )

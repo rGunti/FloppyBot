@@ -36,8 +36,8 @@ public class CustomCommandStorageProfile : Profile
                         Name = eo.Name,
                         Aliases = eo.Aliases.ToImmutableSortedSet(),
                         Owners = eo.Owners.ToImmutableSortedSet(),
-                        Responses = eo.Responses
-                            .Select(e => ctx.Mapper.Map<CommandResponse>(e))
+                        Responses = eo
+                            .Responses.Select(e => ctx.Mapper.Map<CommandResponse>(e))
                             .ToImmutableList(),
                         Limitations = ctx.Mapper.Map<CommandLimitation>(eo.Limitations),
                         ResponseMode = eo.ResponseMode,
@@ -53,8 +53,8 @@ public class CustomCommandStorageProfile : Profile
                         LimitedToUsers = (
                             eo.LimitedToUsers ?? Array.Empty<string>()
                         ).ToImmutableHashSet(),
-                        Cooldown = eo.Cooldown
-                            .Select(c => ctx.Mapper.Map<CooldownDescription>(c))
+                        Cooldown = eo
+                            .Cooldown.Select(c => ctx.Mapper.Map<CooldownDescription>(c))
                             .ToImmutableHashSet(),
                     }
             );

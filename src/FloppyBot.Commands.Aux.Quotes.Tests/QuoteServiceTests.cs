@@ -176,11 +176,10 @@ public class QuoteServiceTests
         Assert.IsTrue(
             _quoteRepository
                 .GetAll()
-                .Any(
-                    q =>
-                        q.ChannelMappingId == MAPPING_ID
-                        && q.QuoteId == 1337
-                        && q.QuoteContext == "New Game"
+                .Any(q =>
+                    q.ChannelMappingId == MAPPING_ID
+                    && q.QuoteId == 1337
+                    && q.QuoteContext == "New Game"
                 )
         );
 

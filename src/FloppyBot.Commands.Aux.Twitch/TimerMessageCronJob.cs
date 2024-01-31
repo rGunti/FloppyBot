@@ -41,24 +41,21 @@ public class TimerMessageCronJob : ICronJob
     {
         var messagesToSend = _configurationService
             .GetAllConfigs()
-            .Select(
-                config =>
-                    new
-                    {
-                        Config = config,
-                        LastExecution = _configurationService
-                            .GetLastExecution(config.Id)
-                            .SingleOrDefault(
-                                new TimerMessageExecution(config.Id, DateTimeOffset.MinValue, -1)
-                            ),
-                        MessageCount = config.MinMessages > 0
-                            ? _messageOccurrenceService.GetMessageCountInChannel(
-                                config.Id,
-                                TimeSpan.FromMinutes(config.MinMessages)
-                            )
-                            : -1,
-                    }
-            )
+            .Select(config => new
+            {
+                Config = config,
+                LastExecution = _configurationService
+                    .GetLastExecution(config.Id)
+                    .SingleOrDefault(
+                        new TimerMessageExecution(config.Id, DateTimeOffset.MinValue, -1)
+                    ),
+                MessageCount = config.MinMessages > 0
+                    ? _messageOccurrenceService.GetMessageCountInChannel(
+                        config.Id,
+                        TimeSpan.FromMinutes(config.MinMessages)
+                    )
+                    : -1,
+            })
             .Where(i => IsExecutionRequired(i.Config, i.LastExecution, i.MessageCount))
             .Select(i => CreateChatMessage(i.Config, i.LastExecution))
             .ToImmutableArray();

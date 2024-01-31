@@ -10,8 +10,7 @@ public static class LoggedStartup
     public static Task LogAndRun(this IHost host)
     {
         var appInfo = AboutThisApp.Info;
-        host.Services
-            .GetRequiredService<ILogger<Run>>()
+        host.Services.GetRequiredService<ILogger<Run>>()
             .LogInformation(
                 "Starting up application {AppName} {ServiceName} {ServiceVersion}",
                 appInfo.Name,

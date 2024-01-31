@@ -14,17 +14,15 @@ public class TwitchAlertStorageProfile : Profile
                     new TwitchAlertSettingsEo(
                         dto.Id,
                         dto.SubAlertsEnabled,
-                        dto.SubMessage
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
+                        dto.SubMessage.Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
                             .ToArray(),
-                        dto.ReSubMessage
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
+                        dto.ReSubMessage.Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
                             .ToArray(),
-                        dto.GiftSubMessage
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
+                        dto.GiftSubMessage.Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
                             .ToArray(),
-                        dto.GiftSubCommunityMessage
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
+                        dto.GiftSubCommunityMessage.Select(msg =>
+                            ctx.Mapper.Map<TwitchAlertMessageEo>(msg)
+                        )
                             .ToArray()
                     )
             );
@@ -38,17 +36,19 @@ public class TwitchAlertStorageProfile : Profile
                     {
                         Id = eo.Id,
                         SubAlertsEnabled = eo.SubAlertsEnabled,
-                        SubMessage = eo.SubMessages
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
+                        SubMessage = eo
+                            .SubMessages.Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
                             .ToImmutableList(),
-                        ReSubMessage = eo.ReSubMessages
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
+                        ReSubMessage = eo
+                            .ReSubMessages.Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
                             .ToImmutableList(),
-                        GiftSubMessage = eo.GiftSubMessages
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
+                        GiftSubMessage = eo
+                            .GiftSubMessages.Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
                             .ToImmutableList(),
-                        GiftSubCommunityMessage = eo.GiftSubCommunityMessages
-                            .Select(msg => ctx.Mapper.Map<TwitchAlertMessage>(msg))
+                        GiftSubCommunityMessage = eo
+                            .GiftSubCommunityMessages.Select(msg =>
+                                ctx.Mapper.Map<TwitchAlertMessage>(msg)
+                            )
                             .ToImmutableList(),
                     }
             );

@@ -62,9 +62,9 @@ public class DeepLCommands
     {
         services
             .AddTransient<ITranslator, Translator>()
-            .AddTransient<DeepL.ITranslator, DeepL.Translator>(
-                p => new DeepL.Translator(p.GetRequiredService<IConfiguration>()[CONFIG_KEY])
-            );
+            .AddTransient<DeepL.ITranslator, DeepL.Translator>(p => new DeepL.Translator(
+                p.GetRequiredService<IConfiguration>()[CONFIG_KEY]
+            ));
     }
 
     [Command("translate")]

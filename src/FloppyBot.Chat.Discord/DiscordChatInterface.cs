@@ -258,9 +258,8 @@ public class DiscordChatInterface : IChatInterface
 
         var slashCommands = _commandRegistry
             .GetAllCommands()
-            .Where(
-                c =>
-                    c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME)
+            .Where(c =>
+                c.AvailableOnInterfaces.Length == 0 || c.AvailableOnInterfaces.Contains(IF_NAME)
             )
             .Where(c => !c.Hidden)
             .Select(c =>
@@ -297,8 +296,7 @@ public class DiscordChatInterface : IChatInterface
                 else if (!c.NoParameters)
                 {
                     cmd.AddOptions(
-                        c.Parameters
-                            .OrderBy(p => p.Order)
+                        c.Parameters.OrderBy(p => p.Order)
                             .Select(p =>
                             {
                                 var cmdParam = new SlashCommandOptionBuilder()

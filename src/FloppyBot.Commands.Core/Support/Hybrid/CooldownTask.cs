@@ -112,8 +112,8 @@ public class CooldownTask : IHybridTask
         PrivilegeLevel userPrivilegeLevel
     )
     {
-        return info.HandlerMethod
-            .GetCustomAttributes<CommandCooldownAttribute>()
+        return info
+            .HandlerMethod.GetCustomAttributes<CommandCooldownAttribute>()
             .Where(a => userPrivilegeLevel <= a.MaxLevel)
             .MaxBy(a => a.MaxLevel)
             .Wrap()

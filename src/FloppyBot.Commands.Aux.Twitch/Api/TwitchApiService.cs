@@ -15,18 +15,15 @@ public class TwitchApiService : ITwitchApiService
     public async Task<TwitchUserLookupResult?> LookupUser(string userId)
     {
         GetUsersResponse? userResponse = _twitchApi
-            .Helix
-            .Users
-            .GetUsersAsync(logins: new List<string> { userId })
+            .Helix.Users.GetUsersAsync(logins: new List<string> { userId })
             .Result;
 
         if (userResponse.Users.Any())
         {
             var user = userResponse.Users.First();
-            var channelResponse = await _twitchApi
-                .Helix
-                .Channels
-                .GetChannelInformationAsync(user.Id);
+            var channelResponse = await _twitchApi.Helix.Channels.GetChannelInformationAsync(
+                user.Id
+            );
             return new TwitchUserLookupResult(
                 user.Login,
                 user.DisplayName,

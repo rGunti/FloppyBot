@@ -53,8 +53,8 @@ internal static class AssemblyExtensions
         assembly.GetAssemblyAttribute<AssemblyProductAttribute>(v => v.Product);
 
     internal static string? GetProductVersion(this Assembly assembly) =>
-        assembly.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(
-            v => v.InformationalVersion
+        assembly.GetAssemblyAttribute<AssemblyInformationalVersionAttribute>(v =>
+            v.InformationalVersion
         );
 
     private static string? GetAssemblyAttribute<T>(

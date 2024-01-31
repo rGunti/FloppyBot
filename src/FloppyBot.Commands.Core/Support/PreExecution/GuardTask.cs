@@ -31,24 +31,19 @@ public class GuardTask : IPreExecutionTask
     public bool ExecutePre(CommandInfo info, CommandInstruction instruction)
     {
         _logger.LogDebug("Fetching guard tasks to execute");
-        var guards = info.ImplementingType
-            .GetCustomAttributes<GuardAttribute>()
+        var guards = info
+            .ImplementingType.GetCustomAttributes<GuardAttribute>()
             .Concat(info.HandlerMethod.GetCustomAttributes<GuardAttribute>())
-            .SelectMany(
-                attribute =>
-                    _guardRegistry
-                        .FindGuardImplementation(attribute)
-                        .Select(
-                            guardType =>
-                                new
-                                {
-                                    // ReSharper disable once AccessToDisposedClosure
-                                    GuardImpl = (ICommandGuard)
-                                        _provider.GetRequiredService(guardType),
-                                    GuardType = guardType,
-                                    Settings = attribute,
-                                }
-                        )
+            .SelectMany(attribute =>
+                _guardRegistry
+                    .FindGuardImplementation(attribute)
+                    .Select(guardType => new
+                    {
+                        // ReSharper disable once AccessToDisposedClosure
+                        GuardImpl = (ICommandGuard)_provider.GetRequiredService(guardType),
+                        GuardType = guardType,
+                        Settings = attribute,
+                    })
             )
             .ToArray();
 

@@ -38,8 +38,7 @@ public class ArgumentRangeAttribute : BaseArgumentAttribute
     )
     {
         var scopedArgs = commandInstruction
-            .Parameters
-            .Skip(StartIndex)
+            .Parameters.Skip(StartIndex)
             .TakeWhile((_, i) => i < EndIndex)
             .ToArray();
         if (!scopedArgs.Any() && StopIfMissing)

@@ -44,8 +44,7 @@ public static class SupportingTaskExtensions
     )
     {
         return scope
-            .ServiceProvider
-            .GetSupportingTasks<IPreExecutionTask>()
+            .ServiceProvider.GetSupportingTasks<IPreExecutionTask>()
             .FirstOrDefault(t => !t.ExecutePre(info, instruction));
     }
 
@@ -57,8 +56,7 @@ public static class SupportingTaskExtensions
     )
     {
         return scope
-            .ServiceProvider
-            .GetSupportingTasks<IPostExecutionTask>()
+            .ServiceProvider.GetSupportingTasks<IPostExecutionTask>()
             .FirstOrDefault(t => !t.ExecutePost(info, instruction, result));
     }
 
@@ -66,8 +64,8 @@ public static class SupportingTaskExtensions
     {
         return provider
             .GetRequiredService<IEnumerable<T>>()
-            .OrderBy(
-                t => t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue
+            .OrderBy(t =>
+                t!.GetType().GetCustomAttribute<TaskOrderAttribute>()?.Order ?? int.MaxValue
             )
             .ThenBy(t => t!.GetType().FullName);
     }

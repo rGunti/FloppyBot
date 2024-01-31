@@ -32,8 +32,8 @@ public static class Registration
     {
         return services
             .AddSingleton<LiteDbInstanceFactory>()
-            .AddSingleton<ILiteDatabase>(
-                s => s.GetRequiredService<LiteDbInstanceFactory>().ConstructMemoryDbInstance()
+            .AddSingleton<ILiteDatabase>(s =>
+                s.GetRequiredService<LiteDbInstanceFactory>().ConstructMemoryDbInstance()
             )
             .AddStorageImplementation<LiteDbRepositoryFactory, LiteDbIndexManager>();
     }
