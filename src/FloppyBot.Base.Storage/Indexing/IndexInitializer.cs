@@ -29,13 +29,11 @@ public class IndexInitializer
 
         var interfaceType = typeof(IEntity);
         var entities = AppDomain
-            .CurrentDomain
-            .GetAssemblies()
+            .CurrentDomain.GetAssemblies()
             .SelectMany(a => a.GetTypes())
-            .Where(
-                t =>
-                    t.GetInterfaces().Any(i => i == interfaceType)
-                    && t.GetCustomAttributes<IndexFieldsAttribute>().Any()
+            .Where(t =>
+                t.GetInterfaces().Any(i => i == interfaceType)
+                && t.GetCustomAttributes<IndexFieldsAttribute>().Any()
             )
             .ToImmutableArray();
 

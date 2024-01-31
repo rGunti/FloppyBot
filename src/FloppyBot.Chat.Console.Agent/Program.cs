@@ -16,11 +16,10 @@ IHost host = builder
     {
         services
             .AddRedisCommunication()
-            .AddSingleton(
-                s =>
-                    s.GetRequiredService<IConfiguration>()
-                        .GetSection("UserConfig")
-                        .Get<ConsoleAgentUserConfiguration>()
+            .AddSingleton(s =>
+                s.GetRequiredService<IConfiguration>()
+                    .GetSection("UserConfig")
+                    .Get<ConsoleAgentUserConfiguration>()
             )
             .AddCronJobSupport()
             .AddHealthCheck()

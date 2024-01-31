@@ -28,13 +28,9 @@ public static class LoggingUtils
 
     private static ILoggerFactory InitRealLogger()
     {
-        return Microsoft
-            .Extensions
-            .Logging
-            .LoggerFactory
-            .Create(loggingBuilder =>
-            {
-                loggingBuilder.AddSerilog(SerilogLogger.Value);
-            });
+        return Microsoft.Extensions.Logging.LoggerFactory.Create(loggingBuilder =>
+        {
+            loggingBuilder.AddSerilog(SerilogLogger.Value);
+        });
     }
 }

@@ -14,10 +14,8 @@ public static class LoggingUtils
             loggingBuilder.AddSerilog(
                 new LoggerConfiguration()
                     .ConfigureCommonSerilogSettings(null)
-                    .WriteTo
-                    .Xunit(output, outputTemplate: SerilogSetup.OUTPUT_TEMPLATE)
-                    .MinimumLevel
-                    .Verbose()
+                    .WriteTo.Xunit(output, outputTemplate: SerilogSetup.OUTPUT_TEMPLATE)
+                    .MinimumLevel.Verbose()
                     .CreateLogger()
             );
         });

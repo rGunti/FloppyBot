@@ -8,8 +8,7 @@ public static class AssemblyPreloader
     public static void LoadAssembliesFromDirectory(string? directory = null)
     {
         var loadedAssemblies = AppDomain
-            .CurrentDomain
-            .GetAssemblies()
+            .CurrentDomain.GetAssemblies()
             .ToImmutableDictionary(a => a.Location, a => a);
 
         foreach (

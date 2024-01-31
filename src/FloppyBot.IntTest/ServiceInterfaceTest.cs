@@ -39,8 +39,7 @@ public class ServiceInterfaceTest : IAsyncDisposable
         storedFileHeaders
             .Should()
             .HaveCount(1, "because we only inserted one document")
-            .And
-            .ContainInOrder(fileHeader);
+            .And.ContainInOrder(fileHeader);
     }
 
     [Fact]

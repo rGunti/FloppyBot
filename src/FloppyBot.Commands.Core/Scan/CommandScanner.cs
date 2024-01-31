@@ -45,13 +45,12 @@ public class CommandScanner : ICommandScanner
     )
     {
         return commands
-            .SelectMany(
-                commandInfo =>
-                    commandInfo
-                        .Names
-                        .Select(
-                            commandName => new { Name = commandName, CommandInfo = commandInfo }
-                        )
+            .SelectMany(commandInfo =>
+                commandInfo.Names.Select(commandName => new
+                {
+                    Name = commandName,
+                    CommandInfo = commandInfo
+                })
             )
             .ToImmutableDictionary(i => i.Name, i => i.CommandInfo);
     }
@@ -83,16 +82,12 @@ public class CommandScanner : ICommandScanner
                     throw new InvalidCommandSignatureException(method);
                 }
             })
-            .Select(
-                method =>
-                    new CommandInfo(
-                        method
-                            .GetCustomAttribute<CommandAttribute>()!
-                            .Names
-                            .ToImmutableListWithValueSemantics(),
-                        method
-                    )
-            );
+            .Select(method => new CommandInfo(
+                method
+                    .GetCustomAttribute<CommandAttribute>()!
+                    .Names.ToImmutableListWithValueSemantics(),
+                method
+            ));
     }
 
     public IEnumerable<VariableCommandInfo> ScanTypesForVariableCommandHandlers(
@@ -124,21 +119,16 @@ public class CommandScanner : ICommandScanner
                     throw new InvalidCommandSignatureException(method);
                 }
             })
-            .Select(
-                method =>
-                    new VariableCommandInfo(
-                        method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier
-                            ?? GetDefaultIdentifierForVariableCommandHandler(method),
-                        method,
-                        method
-                            .ReflectedType!
-                            .GetMethod(
-                                method
-                                    .GetCustomAttribute<VariableCommandHandlerAttribute>()!
-                                    .AssertionHandlerName!
-                            )!
-                    )
-            );
+            .Select(method => new VariableCommandInfo(
+                method.GetCustomAttribute<VariableCommandHandlerAttribute>()!.Identifier
+                    ?? GetDefaultIdentifierForVariableCommandHandler(method),
+                method,
+                method.ReflectedType!.GetMethod(
+                    method
+                        .GetCustomAttribute<VariableCommandHandlerAttribute>()!
+                        .AssertionHandlerName!
+                )!
+            ));
     }
 
     private static bool IsCommandSignatureValid(MethodInfo method)

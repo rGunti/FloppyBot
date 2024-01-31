@@ -19,11 +19,10 @@ public static class Registration
     {
         return services
             // - Configuration
-            .AddSingleton<TwitchConfiguration>(
-                p =>
-                    p.GetRequiredService<IConfiguration>()
-                        .GetSection("Twitch")
-                        .Get<TwitchConfiguration>()
+            .AddSingleton<TwitchConfiguration>(p =>
+                p.GetRequiredService<IConfiguration>()
+                    .GetSection("Twitch")
+                    .Get<TwitchConfiguration>()
             )
             .AddSingleton<ConnectionCredentials>(p =>
             {

@@ -37,11 +37,8 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
 
     public IEnumerable<string> GetCommandList(CommandInstruction commandInstruction)
     {
-        ChannelIdentifier channelId = commandInstruction
-            .Context!
-            .SourceMessage
-            .Identifier
-            .GetChannel();
+        ChannelIdentifier channelId =
+            commandInstruction.Context!.SourceMessage.Identifier.GetChannel();
         PrivilegeLevel privilegeLevel = commandInstruction
             .Context!
             .SourceMessage
@@ -98,12 +95,10 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
     {
         _logger.LogDebug("Calculating allowed interfaces for command {Command}", commandInfo);
         IEnumerable<string> handlerInterfaces = commandInfo
-            .HandlerMethod
-            .GetCustomAttributes<SourceInterfaceGuardAttribute>()
+            .HandlerMethod.GetCustomAttributes<SourceInterfaceGuardAttribute>()
             .SelectMany(a => a.AllowedMessageInterfaces);
         IEnumerable<string> hostInterfaces = commandInfo
-            .ImplementingType
-            .GetCustomAttributes<SourceInterfaceGuardAttribute>()
+            .ImplementingType.GetCustomAttributes<SourceInterfaceGuardAttribute>()
             .SelectMany(a => a.AllowedMessageInterfaces);
 
         ImmutableHashSet<string> set = handlerInterfaces
@@ -143,12 +138,10 @@ public class BuiltInCommandListSupplier : ICommandListSupplier
     {
         _logger.LogDebug("Calculating required privilege level for command {Command}", commandInfo);
         IEnumerable<PrivilegeLevel> handlerLevel = commandInfo
-            .HandlerMethod
-            .GetCustomAttributes<PrivilegeGuardAttribute>()
+            .HandlerMethod.GetCustomAttributes<PrivilegeGuardAttribute>()
             .Select(a => a.MinLevel);
         IEnumerable<PrivilegeLevel> hostLevel = commandInfo
-            .ImplementingType
-            .GetCustomAttributes<PrivilegeGuardAttribute>()
+            .ImplementingType.GetCustomAttributes<PrivilegeGuardAttribute>()
             .Select(a => a.MinLevel);
         PrivilegeLevel privilegeLevel = handlerLevel
             .Concat(hostLevel)

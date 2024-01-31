@@ -149,15 +149,12 @@ public class TimerMessageTests
     {
         var _ = Enumerable
             .Range(startId, amount)
-            .Select(
-                i =>
-                    new MessageOccurrence(
-                        $"Mock/Channel/Message{i}",
-                        "Mock/Channel",
-                        "Mock/User",
-                        _timeProvider.GetCurrentUtcTime() - ((i - startId) * gap)
-                    )
-            )
+            .Select(i => new MessageOccurrence(
+                $"Mock/Channel/Message{i}",
+                "Mock/Channel",
+                "Mock/User",
+                _timeProvider.GetCurrentUtcTime() - ((i - startId) * gap)
+            ))
             .Select(_occurrenceRepo.Insert)
             .ToArray();
     }

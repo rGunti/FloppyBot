@@ -22,8 +22,7 @@ public class HealthCheckTestController : ControllerBase
     public HealthCheckData[] GetHealthChecks()
     {
         return _healthCheckReceiver
-            .RecordedHealthChecks
-            .OrderBy(h => h.App.Service)
+            .RecordedHealthChecks.OrderBy(h => h.App.Service)
             .ThenBy(h => h.App.InstanceName)
             .ThenBy(h => h.InstanceId)
             .ToArray();

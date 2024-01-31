@@ -11,27 +11,23 @@ public static class Registration
     {
         return services
             // - Configuration
-            .AddSingleton<DiscordConfiguration>(
-                p =>
-                    p.GetRequiredService<IConfiguration>()
-                        .GetSection("Discord")
-                        .Get<DiscordConfiguration>()
+            .AddSingleton<DiscordConfiguration>(p =>
+                p.GetRequiredService<IConfiguration>()
+                    .GetSection("Discord")
+                    .Get<DiscordConfiguration>()
             )
             // - Discord Client
-            .AddSingleton<DiscordSocketClient>(
-                _ =>
-                    new DiscordSocketClient(
-                        new()
-                        {
-                            GatewayIntents =
-                                (
-                                    GatewayIntents.AllUnprivileged
-                                    & ~GatewayIntents.GuildScheduledEvents
-                                    & ~GatewayIntents.GuildInvites
-                                ) | GatewayIntents.MessageContent,
-                        }
-                    )
-            )
+            .AddSingleton<DiscordSocketClient>(_ => new DiscordSocketClient(
+                new()
+                {
+                    GatewayIntents =
+                        (
+                            GatewayIntents.AllUnprivileged
+                            & ~GatewayIntents.GuildScheduledEvents
+                            & ~GatewayIntents.GuildInvites
+                        ) | GatewayIntents.MessageContent,
+                }
+            ))
             // - Chat Interface
             .AddSingleton<IChatInterface, DiscordChatInterface>();
     }

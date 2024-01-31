@@ -20,10 +20,9 @@ public static class AuthExtensions
 
     public static IEnumerable<string> GetUserPermissions(this ClaimsPrincipal user)
     {
-        return user.Identities
-            .First()
-            .Claims
-            .Where(c => c.Type == USER_PERMISSION_CLAIM)
+        return user
+            .Identities.First()
+            .Claims.Where(c => c.Type == USER_PERMISSION_CLAIM)
             .Select(c => c.Value);
     }
 }

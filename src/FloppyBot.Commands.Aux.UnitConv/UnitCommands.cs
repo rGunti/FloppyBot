@@ -124,8 +124,7 @@ public class UnitCommands
                     new
                     {
                         Units = _parsingEngine
-                            .RegisteredUnits
-                            .OrderBy(u => u.FullName)
+                            .RegisteredUnits.OrderBy(u => u.FullName)
                             .Select(u => u.Symbol)
                             .OrderBy(i => i)
                             .ToArray(),
@@ -164,13 +163,12 @@ public class UnitCommands
             .FindConversion(sourceValue.Unit, parsedUnit)
             .Wrap()
             .Select(conversion => conversion.ConvertToUnit(sourceValue, parsedUnit))
-            .Select(
-                convertedValue =>
-                    CommandResult.SuccessWith(
-                        (supportsMarkdown ? REPLY_CONVERTED_MD : REPLY_CONVERTED).Format(
-                            new { Original = sourceValue, Converted = convertedValue }
-                        )
+            .Select(convertedValue =>
+                CommandResult.SuccessWith(
+                    (supportsMarkdown ? REPLY_CONVERTED_MD : REPLY_CONVERTED).Format(
+                        new { Original = sourceValue, Converted = convertedValue }
                     )
+                )
             )
             .FirstOrDefault(
                 CommandResult.FailedWith(
@@ -223,11 +221,10 @@ public class UnitCommands
         return _parsingEngine
             .GetUnit(unitSymbol)
             .Wrap()
-            .Select(
-                unit =>
-                    (supportsMarkdown ? REPLY_DEBUG_UNIT_MD : REPLY_DEBUG_UNIT).Format(
-                        new { Unit = unit }
-                    )
+            .Select(unit =>
+                (supportsMarkdown ? REPLY_DEBUG_UNIT_MD : REPLY_DEBUG_UNIT).Format(
+                    new { Unit = unit }
+                )
             )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(CommandResult.FailedWith("failed"));
@@ -288,16 +285,15 @@ public class UnitCommands
         return _conversionEngine
             .FindConversion(sourceUnit, destinationUnit)
             .Wrap()
-            .Select(
-                conversion =>
-                    (supportsMarkdown ? REPLY_DEBUG_CONVERT_MD : REPLY_DEBUG_CONVERT).Format(
-                        new
-                        {
-                            SourceUnit = sourceUnit,
-                            DestinationUnit = destinationUnit,
-                            Conversion = conversion,
-                        }
-                    )
+            .Select(conversion =>
+                (supportsMarkdown ? REPLY_DEBUG_CONVERT_MD : REPLY_DEBUG_CONVERT).Format(
+                    new
+                    {
+                        SourceUnit = sourceUnit,
+                        DestinationUnit = destinationUnit,
+                        Conversion = conversion,
+                    }
+                )
             )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(
@@ -319,11 +315,10 @@ public class UnitCommands
         return _parsingEngine
             .ParseUnit(inputString)
             .Wrap()
-            .Select(
-                parsedValue =>
-                    (supportsMarkdown ? REPLY_DEBUG_PARSE_MD : REPLY_DEBUG_PARSE).Format(
-                        new { Value = parsedValue }
-                    )
+            .Select(parsedValue =>
+                (supportsMarkdown ? REPLY_DEBUG_PARSE_MD : REPLY_DEBUG_PARSE).Format(
+                    new { Value = parsedValue }
+                )
             )
             .Select(CommandResult.SuccessWith)
             .FirstOrDefault(CommandResult.FailedWith(REPLY_ERROR_PARSE_SOURCE));

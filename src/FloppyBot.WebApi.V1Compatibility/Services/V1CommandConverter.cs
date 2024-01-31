@@ -43,8 +43,7 @@ public class V1CommandConverter
             commandAbstract.Name,
             commandAbstract.Description ?? string.Empty,
             commandAbstract
-                .Aliases
-                .Except(new[] { commandAbstract.Name })
+                .Aliases.Except(new[] { commandAbstract.Name })
                 .ToImmutableListWithValueSemantics(),
             commandAbstract.AvailableOnInterfaces.ToImmutableListWithValueSemantics(),
             commandAbstract.MinPrivilegeLevel ?? PrivilegeLevel.Unknown,
@@ -52,14 +51,11 @@ public class V1CommandConverter
             // TODO: Implement once available
             new CooldownInfo("None", null, null, null),
             (commandAbstract.Syntax ?? Array.Empty<string>())
-                .Select(
-                    s =>
-                        new CommandSyntax(
-                            s,
-                            string.Empty,
-                            Array.Empty<string>().ToImmutableListWithValueSemantics()
-                        )
-                )
+                .Select(s => new CommandSyntax(
+                    s,
+                    string.Empty,
+                    Array.Empty<string>().ToImmutableListWithValueSemantics()
+                ))
                 .ToImmutableListWithValueSemantics(),
             false
         );

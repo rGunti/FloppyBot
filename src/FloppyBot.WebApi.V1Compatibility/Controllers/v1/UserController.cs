@@ -49,9 +49,9 @@ public class UserController : ControllerBase
     )
     {
         var userInfo = _userService.GetUserInfo(User.GetUserId());
-        var channelAlias = userInfo
-            ?.ChannelAliases
-            .GetValueOrDefault(new ChannelIdentifier(messageInterface, channel));
+        var channelAlias = userInfo?.ChannelAliases.GetValueOrDefault(
+            new ChannelIdentifier(messageInterface, channel)
+        );
 
         if (channelAlias == null)
         {

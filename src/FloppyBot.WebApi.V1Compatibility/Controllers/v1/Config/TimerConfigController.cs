@@ -34,13 +34,12 @@ public class TimerConfigController : ControllerBase
     {
         return _userService
             .GetAccessibleChannelsForUser(User.GetUserId())
-            .Select(
-                channelId =>
-                    _timerMessageConfigurationService
-                        .GetConfigForChannel(channelId)
-                        .SingleOrDefault(
-                            new TimerMessageConfiguration(channelId, Array.Empty<string>(), 5, 0)
-                        )
+            .Select(channelId =>
+                _timerMessageConfigurationService
+                    .GetConfigForChannel(channelId)
+                    .SingleOrDefault(
+                        new TimerMessageConfiguration(channelId, Array.Empty<string>(), 5, 0)
+                    )
             )
             .Select(_mapper.Map<TimerMessageConfig>)
             .ToArray();

@@ -46,10 +46,10 @@ public class CommandConfigController : ControllerBase
             .ToDictionary(c => c.CommandName, c => c);
         return _commandConverter
             .GetAllKnownCommands()
-            .Select(
-                command =>
-                    new CommandConfigInfo(command, availableConfigs.GetValueOrDefault(command.Name))
-            )
+            .Select(command => new CommandConfigInfo(
+                command,
+                availableConfigs.GetValueOrDefault(command.Name)
+            ))
             .OrderBy(c => c.Info.Name)
             .ToArray();
     }

@@ -42,8 +42,7 @@ public class DistributedCommandRegistryAdapter
     public void ScanAndStoreCommands()
     {
         _storedCommandAbstracts = _commandExecutor
-            .KnownCommands
-            .OrderBy(c => c.CommandId)
+            .KnownCommands.OrderBy(c => c.CommandId)
             .Select(ConvertToAbstract)
             .ToImmutableList();
         _logger.LogInformation(
@@ -89,18 +88,14 @@ public class DistributedCommandRegistryAdapter
             metadata.HasNoParameters,
             metadata.HiddenCommand,
             metadata
-                .Parameters
-                .Select(
-                    p =>
-                        new CommandParameterAbstract(
-                            p.Order,
-                            p.Name,
-                            ToCommandParameterAbstractType(p.Type),
-                            p.Required,
-                            p.Description,
-                            p.PossibleValues
-                        )
-                )
+                .Parameters.Select(p => new CommandParameterAbstract(
+                    p.Order,
+                    p.Name,
+                    ToCommandParameterAbstractType(p.Type),
+                    p.Required,
+                    p.Description,
+                    p.PossibleValues
+                ))
                 .ToArray(),
             metadata.GetRawDataAsDictionary()
         );

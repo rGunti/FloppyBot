@@ -493,10 +493,9 @@ public class V1DataImportService
                 soundCommand.CommandName
             );
             if (
-                !knownFiles.Any(
-                    file =>
-                        file.Item1 == soundCommand.ChannelId
-                        && file.Item2 == $"{soundCommand.CommandName}.wav"
+                !knownFiles.Any(file =>
+                    file.Item1 == soundCommand.ChannelId
+                    && file.Item2 == $"{soundCommand.CommandName}.wav"
                 )
             )
             {
