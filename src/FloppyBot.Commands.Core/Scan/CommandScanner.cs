@@ -49,7 +49,7 @@ public class CommandScanner : ICommandScanner
                 commandInfo.Names.Select(commandName => new
                 {
                     Name = commandName,
-                    CommandInfo = commandInfo
+                    CommandInfo = commandInfo,
                 })
             )
             .ToImmutableDictionary(i => i.Name, i => i.CommandInfo);
