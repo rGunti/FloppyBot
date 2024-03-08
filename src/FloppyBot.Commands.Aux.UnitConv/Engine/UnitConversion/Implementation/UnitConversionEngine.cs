@@ -329,11 +329,11 @@ internal class UnitConversionEngine : IUnitConversionEngine
         string from,
         string to,
         (string From, string To) usingBaseChain,
-        out IUnitConversion? conversion,
+        out IUnitConversion conversion,
         bool reverse = false
     )
     {
-        conversion = default;
+        conversion = default!;
 
         if (reverse)
         {
@@ -406,10 +406,10 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindAndConstructCompoundProxyConversion(
         string from,
         string to,
-        out IUnitConversion? conversion
+        out IUnitConversion conversion
     )
     {
-        conversion = null;
+        conversion = null!;
         var conversionsForSource = GetConversionsForUnit(from).ToArray();
         if (conversionsForSource.Any())
         {

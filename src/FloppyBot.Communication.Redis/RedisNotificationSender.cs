@@ -18,7 +18,7 @@ public class RedisNotificationSender : INotificationSender
 
     public void Send(object obj)
     {
-        _subscriber.Publish(_channel, JsonSerializer.Serialize(obj));
+        _subscriber.Publish(RedisChannel.Literal(_channel), JsonSerializer.Serialize(obj));
     }
 
     public override string ToString()

@@ -12,7 +12,7 @@ public class AppConfigurationTests
     public void ConnectionStringsListedCorrectly()
     {
         IConfiguration config = BuildTestConfig();
-        IReadOnlyDictionary<string, string> configStrings = config.GetConnectionStrings();
+        IReadOnlyDictionary<string, string?> configStrings = config.GetConnectionStrings();
         CollectionAssert.AreEquivalent(new[] { "A", "B", "C" }, configStrings.Keys.ToArray());
         CollectionAssert.AreEquivalent(
             new[] { "aConnectionString", "{A}WithB", "{A}With\\{SomeValue\\}" },
