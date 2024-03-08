@@ -28,7 +28,7 @@ public class RedisNotificationReceiver<T> : INotificationReceiver<T>
             return;
         }
 
-        _subscriber.Subscribe(_channel, HandleNewMessage);
+        _subscriber.Subscribe(RedisChannel.Literal(_channel), HandleNewMessage);
         _isStarted = true;
     }
 
@@ -39,7 +39,7 @@ public class RedisNotificationReceiver<T> : INotificationReceiver<T>
             return;
         }
 
-        _subscriber.Unsubscribe(_channel, HandleNewMessage);
+        _subscriber.Unsubscribe(RedisChannel.Literal(_channel), HandleNewMessage);
         _isStarted = false;
     }
 

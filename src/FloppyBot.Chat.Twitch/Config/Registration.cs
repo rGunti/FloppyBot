@@ -23,6 +23,7 @@ public static class Registration
                 p.GetRequiredService<IConfiguration>()
                     .GetSection("Twitch")
                     .Get<TwitchConfiguration>()
+                ?? throw new ArgumentException("Twitch configuration is missing.")
             )
             .AddSingleton<ConnectionCredentials>(p =>
             {

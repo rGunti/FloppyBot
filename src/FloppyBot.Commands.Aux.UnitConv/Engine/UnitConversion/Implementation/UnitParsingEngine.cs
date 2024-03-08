@@ -24,13 +24,13 @@ internal class UnitParsingEngine : IUnitParsingEngine
 
     public bool TryGetUnit(string name, out Unit unit)
     {
-        unit = null;
         if (HasUnit(name))
         {
             unit = GetUnit(name);
             return true;
         }
 
+        unit = Units.DefaultUnit;
         return false;
     }
 
@@ -38,7 +38,8 @@ internal class UnitParsingEngine : IUnitParsingEngine
     {
         foreach (var (_, unit) in _units)
         {
-            var expr = unit.ParsingExpression;
+            var expr =
+                unit.ParsingExpression ?? throw new ArgumentException("Parsing Expression missing");
             if (expr.IsMatch(input))
             {
                 return new UnitValue(unit.ParsingFunction(input, expr.Matches(input)), unit);

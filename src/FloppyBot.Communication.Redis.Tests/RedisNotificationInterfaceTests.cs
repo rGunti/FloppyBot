@@ -50,7 +50,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         A<Action<RedisChannel, RedisValue>>.Ignored,
                         A<CommandFlags>.Ignored
                     )
@@ -77,7 +77,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Subscribe(
-                        An<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         An<Action<RedisChannel, RedisValue>>.Ignored,
                         An<CommandFlags>.Ignored
                     )
@@ -108,7 +108,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         A<Action<RedisChannel, RedisValue>>.Ignored,
                         A<CommandFlags>.Ignored
                     )
@@ -129,7 +129,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         A<Action<RedisChannel, RedisValue>>.Ignored,
                         A<CommandFlags>.Ignored
                     )
@@ -149,7 +149,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         A<Action<RedisChannel, RedisValue>>.Ignored,
                         A<CommandFlags>.Ignored
                     )
@@ -178,7 +178,7 @@ public class RedisNotificationInterfaceTests
         A.CallTo(
                 () =>
                     _subscriber.Publish(
-                        An<RedisChannel>.That.IsEqualTo("SomeChannel"),
+                        An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
                         An<RedisValue>.That.IsEqualTo("{\"Name\":\"Test\",\"Value\":42}"),
                         An<CommandFlags>.Ignored
                     )

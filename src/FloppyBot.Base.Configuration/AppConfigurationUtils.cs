@@ -36,7 +36,7 @@ public static class AppConfigurationUtils
         return hostBuilder.ConfigureAppConfiguration((_, c) => c.SetupCommonConfig());
     }
 
-    public static IReadOnlyDictionary<string, string> GetConnectionStrings(
+    public static IReadOnlyDictionary<string, string?> GetConnectionStrings(
         this IConfiguration configuration
     )
     {
@@ -46,7 +46,7 @@ public static class AppConfigurationUtils
             .ToImmutableDictionary(i => i.Key, i => i.Value);
     }
 
-    public static IReadOnlyDictionary<string, string> GetConfigValues(
+    public static IReadOnlyDictionary<string, string?> GetConfigValues(
         this IConfiguration configuration
     )
     {
@@ -62,7 +62,7 @@ public static class AppConfigurationUtils
     )
     {
         var s = configuration
-            .GetConnectionString(name)
+            .GetConnectionString(name)!
             .FormatSmart(configuration.GetConnectionStrings());
         if (rootLevelPass)
         {
@@ -74,6 +74,6 @@ public static class AppConfigurationUtils
 
     public static string GetParsedConfigString(this IConfiguration configuration, string name)
     {
-        return configuration[name].FormatSmart(configuration.GetConfigValues());
+        return configuration[name]!.FormatSmart(configuration.GetConfigValues());
     }
 }

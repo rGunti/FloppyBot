@@ -32,7 +32,9 @@ IServiceCollection services = builder.Services;
 services.AddCors(o =>
 {
     o.AddDefaultPolicy(b =>
-        b.WithOrigins(builder.Configuration.GetSection("Cors").Get<string[]>())
+        b.WithOrigins(
+                builder.Configuration.GetSection("Cors").Get<string[]>() ?? Array.Empty<string>()
+            )
             .WithMethods("GET", "POST", "PUT", "DELETE")
             .AllowAnyHeader()
             .AllowCredentials()
@@ -171,7 +173,7 @@ app.UseCors();
 app.UseAuthentication().UseAuthorization();
 
 // - Controllers
-app.UseEndpoints(e => e.MapControllers());
+app.MapControllers();
 
 // - SignalR
 app.MapV1SignalRHub();

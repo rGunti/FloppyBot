@@ -107,7 +107,7 @@ internal static class Units
         ConstructDefaultUnit(UNIT_TSP, "teaspoon (US)", false),
     };
 
-    public static readonly DTOs.Unit DefaultUnit = new(null, "Default Unit", null, null);
+    public static readonly DTOs.Unit DefaultUnit = new(null!, "Default Unit", null, null!);
 
     public static readonly Dictionary<(string, string), IUnitConversion> AllConversions;
     public static readonly Dictionary<

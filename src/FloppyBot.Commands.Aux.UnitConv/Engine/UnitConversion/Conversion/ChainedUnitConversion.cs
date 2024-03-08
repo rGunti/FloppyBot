@@ -5,7 +5,7 @@ namespace FloppyBot.Commands.Aux.UnitConv.Engine.UnitConversion.Conversion;
 internal class ChainedUnitConversion : IUnitConversion
 {
     private readonly IUnitConversion[] _conversions;
-    private readonly string _customLabel = null;
+    private readonly string? _customLabel = null;
 
     public ChainedUnitConversion(params IUnitConversion[] conversions)
     {
@@ -14,7 +14,7 @@ internal class ChainedUnitConversion : IUnitConversion
 
     public ChainedUnitConversion(
         IEnumerable<IUnitConversion> conversions,
-        string customLabel = null
+        string? customLabel = null
     )
         : this(conversions.ToArray())
     {

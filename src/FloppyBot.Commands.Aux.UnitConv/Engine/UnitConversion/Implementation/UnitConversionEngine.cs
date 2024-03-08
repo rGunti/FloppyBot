@@ -73,7 +73,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
         var proxyConversion = _proxyConversions[(from, to)];
         var conversionSteps = new List<IUnitConversion>();
         var stepList = new List<string>();
-        string lastStepTo = null;
+        string? lastStepTo = null;
         foreach (var (stepFrom, stepTo) in proxyConversion)
         {
             var conversion = FindSafeConversion(stepFrom, stepTo);
@@ -240,7 +240,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindAndConstructProxyConversion(
         string from,
         string to,
-        out IUnitConversion conversion
+        out IUnitConversion? conversion
     )
     {
         conversion = null;
@@ -333,13 +333,11 @@ internal class UnitConversionEngine : IUnitConversionEngine
         bool reverse = false
     )
     {
-        conversion = default;
+        conversion = default!;
 
         if (reverse)
         {
-            var tmp = to;
-            to = from;
-            from = tmp;
+            (to, from) = (from, to);
         }
 
         var baseChain = _proxyConversions[usingBaseChain];
@@ -411,7 +409,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
         out IUnitConversion conversion
     )
     {
-        conversion = null;
+        conversion = null!;
         var conversionsForSource = GetConversionsForUnit(from).ToArray();
         if (conversionsForSource.Any())
         {

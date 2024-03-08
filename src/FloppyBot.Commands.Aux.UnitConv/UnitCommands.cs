@@ -149,7 +149,7 @@ public class UnitCommands
             return CommandResult.FailedWith(REPLY_ERROR_PARSE_SOURCE);
         }
 
-        if (!_parsingEngine.TryGetUnit(destinationUnit, out Unit parsedUnit))
+        if (!_parsingEngine.TryGetUnit(destinationUnit, out var parsedUnit))
         {
             return CommandResult.FailedWith(REPLY_ERROR_DESTINATION_UNIT);
         }

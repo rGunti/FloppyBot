@@ -15,6 +15,7 @@ public static class Registration
                 p.GetRequiredService<IConfiguration>()
                     .GetSection("Discord")
                     .Get<DiscordConfiguration>()
+                ?? throw new ArgumentException("Discord configuration missing")
             )
             // - Discord Client
             .AddSingleton<DiscordSocketClient>(_ => new DiscordSocketClient(

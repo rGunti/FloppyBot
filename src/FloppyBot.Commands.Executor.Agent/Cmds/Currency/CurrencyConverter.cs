@@ -10,7 +10,9 @@ public class CurrencyConverter : ICurrencyConverter, IDisposable
 
     public CurrencyConverter(IConfiguration configuration)
     {
-        _currencyCommandConfig = configuration.GetSection("Currency").Get<CurrencyCommandConfig>();
+        _currencyCommandConfig =
+            configuration.GetSection("Currency").Get<CurrencyCommandConfig>()
+            ?? throw new ArgumentException("Currency command configuration missing");
         _restClient = new RestClient(_currencyCommandConfig.SourceUrl);
     }
 
