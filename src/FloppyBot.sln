@@ -1,56 +1,56 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Chat", "Chat", "{CF76941F-AA27-49CA-B273-EDBD93F28F03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Tests", "FloppyBot.Chat.Tests\FloppyBot.Chat.Tests.csproj", "{67258FB8-8B58-4F1B-B099-3F177074B50F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Tests", "FloppyBot.Chat.Tests\FloppyBot.Chat.Tests.csproj", "{67258FB8-8B58-4F1B-B099-3F177074B50F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat", "FloppyBot.Chat\FloppyBot.Chat.csproj", "{55B7F8B6-5BAF-4BC3-AD6F-EBBE3B0244C7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat", "FloppyBot.Chat\FloppyBot.Chat.csproj", "{55B7F8B6-5BAF-4BC3-AD6F-EBBE3B0244C7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Base", "Base", "{7F239034-8411-4F30-9E57-B0F5B4F9E1EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.EquatableCollections", "FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj", "{EF4C031C-53F5-4EFA-B843-C3E04D15DFFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.EquatableCollections", "FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj", "{EF4C031C-53F5-4EFA-B843-C3E04D15DFFC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Tests", "FloppyBot.Base.Tests\FloppyBot.Base.Tests.csproj", "{86A73693-A198-4878-9DFC-304F1BB26C55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Tests", "FloppyBot.Base.Tests\FloppyBot.Base.Tests.csproj", "{86A73693-A198-4878-9DFC-304F1BB26C55}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch", "FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj", "{3B4E2962-1152-4A10-A320-591690CB61DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Twitch", "FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj", "{3B4E2962-1152-4A10-A320-591690CB61DE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch.Tests", "FloppyBot.Chat.Twitch.Tests\FloppyBot.Chat.Twitch.Tests.csproj", "{61FF8262-384B-4898-A219-1A068DA18BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Twitch.Tests", "FloppyBot.Chat.Twitch.Tests\FloppyBot.Chat.Twitch.Tests.csproj", "{61FF8262-384B-4898-A219-1A068DA18BA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Testing", "FloppyBot.Base.Testing\FloppyBot.Base.Testing.csproj", "{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Testing", "FloppyBot.Base.Testing\FloppyBot.Base.Testing.csproj", "{1404EDC1-5BAF-4A98-A122-CB08B017B8DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Twitch", "Twitch", "{374B5765-6FDD-4876-AEB0-9CAB04C58472}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Discord", "Discord", "{35047F63-691E-4553-8215-88DBB3802F56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Discord", "FloppyBot.Chat.Discord\FloppyBot.Chat.Discord.csproj", "{1EAC9FAE-50B9-4C0C-A588-0F951B3D6F17}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Discord", "FloppyBot.Chat.Discord\FloppyBot.Chat.Discord.csproj", "{1EAC9FAE-50B9-4C0C-A588-0F951B3D6F17}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Discord.Tests", "FloppyBot.Chat.Discord.Tests\FloppyBot.Chat.Discord.Tests.csproj", "{D56CB9BC-44A3-4BE0-8DE2-D90635435B8E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Discord.Tests", "FloppyBot.Chat.Discord.Tests\FloppyBot.Chat.Discord.Tests.csproj", "{D56CB9BC-44A3-4BE0-8DE2-D90635435B8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Agent", "FloppyBot.Chat.Agent\FloppyBot.Chat.Agent.csproj", "{2D242F67-A446-481E-B199-D80EC70DD2B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Agent", "FloppyBot.Chat.Agent\FloppyBot.Chat.Agent.csproj", "{2D242F67-A446-481E-B199-D80EC70DD2B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Logging", "FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj", "{159AAC30-157C-4F14-A17C-D5635D5A1DD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Logging", "FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj", "{159AAC30-157C-4F14-A17C-D5635D5A1DD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Configuration", "FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj", "{42710246-D2F2-4971-B058-0DDE840859C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Configuration", "FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj", "{42710246-D2F2-4971-B058-0DDE840859C5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Communication", "Communication", "{8A108F9D-F458-4DA5-A986-60521EC60BF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Communication", "FloppyBot.Communication\FloppyBot.Communication.csproj", "{A818EFAF-2752-4FAB-AC14-6D38DB64267B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Communication", "FloppyBot.Communication\FloppyBot.Communication.csproj", "{A818EFAF-2752-4FAB-AC14-6D38DB64267B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Communication.Redis", "FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj", "{541C64C8-028D-4F72-93DD-956EB4FAEE4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Communication.Redis", "FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj", "{541C64C8-028D-4F72-93DD-956EB4FAEE4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.TextFormatting", "FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj", "{07366644-BB6B-4F22-8D6D-36A27ADFAC52}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.TextFormatting", "FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj", "{07366644-BB6B-4F22-8D6D-36A27ADFAC52}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Configuration.Tests", "FloppyBot.Base.Configuration.Tests\FloppyBot.Base.Configuration.Tests.csproj", "{F57AE64E-1A31-4C61-BB7D-05D27F0CEECC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Configuration.Tests", "FloppyBot.Base.Configuration.Tests\FloppyBot.Base.Configuration.Tests.csproj", "{F57AE64E-1A31-4C61-BB7D-05D27F0CEECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Communication.Redis.Tests", "FloppyBot.Communication.Redis.Tests\FloppyBot.Communication.Redis.Tests.csproj", "{8A414818-A949-416A-A2DD-45D19D8D687A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Communication.Redis.Tests", "FloppyBot.Communication.Redis.Tests\FloppyBot.Communication.Redis.Tests.csproj", "{8A414818-A949-416A-A2DD-45D19D8D687A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commands", "Commands", "{6D6EECC1-FEDD-474E-91FD-9406E9CF88F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser", "FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj", "{ACEE1691-04EC-4471-BB20-0B37B106F3BE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Parser", "FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj", "{ACEE1691-04EC-4471-BB20-0B37B106F3BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser.Tests", "FloppyBot.Commands.Parser.Tests\FloppyBot.Commands.Parser.Tests.csproj", "{7E445B00-6021-4FDB-A681-FC855DA39D78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Parser.Tests", "FloppyBot.Commands.Parser.Tests\FloppyBot.Commands.Parser.Tests.csproj", "{7E445B00-6021-4FDB-A681-FC855DA39D78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser.Agent", "FloppyBot.Commands.Parser.Agent\FloppyBot.Commands.Parser.Agent.csproj", "{303A7ED1-BB8B-444B-8620-68587E84EDB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Parser.Agent", "FloppyBot.Commands.Parser.Agent\FloppyBot.Commands.Parser.Agent.csproj", "{303A7ED1-BB8B-444B-8620-68587E84EDB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Parser", "Parser", "{45B5E62D-4999-4F6C-8C59-A94B7D3F7B0F}"
 EndProject
@@ -58,143 +58,143 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executor", "Executor", "{76
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{683F1685-08D1-466E-A572-2912D1C80CE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Console.Agent", "FloppyBot.Chat.Console.Agent\FloppyBot.Chat.Console.Agent.csproj", "{C9A5D9A3-75CC-4D7E-9C49-CB4BE51E87B1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Console.Agent", "FloppyBot.Chat.Console.Agent\FloppyBot.Chat.Console.Agent.csproj", "{C9A5D9A3-75CC-4D7E-9C49-CB4BE51E87B1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Executor.Agent", "FloppyBot.Commands.Executor.Agent\FloppyBot.Commands.Executor.Agent.csproj", "{8F4155B5-2D3A-4863-A668-0434F7BBC395}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Executor.Agent", "FloppyBot.Commands.Executor.Agent\FloppyBot.Commands.Executor.Agent.csproj", "{8F4155B5-2D3A-4863-A668-0434F7BBC395}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Parser.Entities", "FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj", "{2EB67611-E7D8-477A-A381-C5010B032A51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Parser.Entities", "FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj", "{2EB67611-E7D8-477A-A381-C5010B032A51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Executor.Agent.Tests", "FloppyBot.Commands.Executor.Agent.Tests\FloppyBot.Commands.Executor.Agent.Tests.csproj", "{E9D73033-0EEB-494F-87C4-7B3F196B012F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Executor.Agent.Tests", "FloppyBot.Commands.Executor.Agent.Tests\FloppyBot.Commands.Executor.Agent.Tests.csproj", "{E9D73033-0EEB-494F-87C4-7B3F196B012F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Version", "Version", "{3C84BF62-37D5-4EEB-A458-2D82AAF9008A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Version", "FloppyBot.Version\FloppyBot.Version.csproj", "{3C519309-BB9D-4D07-B531-91E9A8E1E4DD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Version", "FloppyBot.Version\FloppyBot.Version.csproj", "{3C519309-BB9D-4D07-B531-91E9A8E1E4DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{4765C187-070B-40C9-8DC6-38006E8DA501}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Core", "FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj", "{5E56F592-4198-49BB-B2B6-1A9A9685F51E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Core", "FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj", "{5E56F592-4198-49BB-B2B6-1A9A9685F51E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Core.Tests", "FloppyBot.Commands.Core.Tests\FloppyBot.Commands.Core.Tests.csproj", "{8B6BB80F-AF31-4DF7-874C-9E9701A98F69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Core.Tests", "FloppyBot.Commands.Core.Tests\FloppyBot.Commands.Core.Tests.csproj", "{8B6BB80F-AF31-4DF7-874C-9E9701A98F69}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aux", "Aux", "{EBBD7204-782A-4642-AFBF-F52D97C0B985}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Twitch", "FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj", "{51173F3A-A263-4645-BF42-81635D8F169F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Twitch", "FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj", "{51173F3A-A263-4645-BF42-81635D8F169F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.BinLoader", "FloppyBot.Base.BinLoader\FloppyBot.Base.BinLoader.csproj", "{92F045DB-AF75-4B4A-A762-8F4FB51FE30D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.BinLoader", "FloppyBot.Base.BinLoader\FloppyBot.Base.BinLoader.csproj", "{92F045DB-AF75-4B4A-A762-8F4FB51FE30D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Storage", "Storage", "{AF31BD9B-2F13-42AC-80CF-DDCB2F9E316B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Storage", "FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj", "{0E6CF011-BCA1-4081-A296-3B7FE8F7687C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Storage", "FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj", "{0E6CF011-BCA1-4081-A296-3B7FE8F7687C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Storage.LiteDb", "FloppyBot.Base.Storage.LiteDb\FloppyBot.Base.Storage.LiteDb.csproj", "{F3589958-47F4-4C5B-B399-9F4E38866877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Storage.LiteDb", "FloppyBot.Base.Storage.LiteDb\FloppyBot.Base.Storage.LiteDb.csproj", "{F3589958-47F4-4C5B-B399-9F4E38866877}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Storage.MongoDb", "FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj", "{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Storage.MongoDb", "FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj", "{D94B7F60-D5E3-4E72-9B47-DD29B2774F79}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Twitch.Tests", "FloppyBot.Commands.Aux.Twitch.Tests\FloppyBot.Commands.Aux.Twitch.Tests.csproj", "{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Twitch.Tests", "FloppyBot.Commands.Aux.Twitch.Tests\FloppyBot.Commands.Aux.Twitch.Tests.csproj", "{BB23ECE4-1701-4FD8-9290-E412A8BF8F6A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Twitch", "Twitch", "{FEC264C0-C683-4D4B-B026-A1DBE584F406}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Quotes", "Quotes", "{68B5B1C4-2CE8-4352-85F6-99969D0A2CDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Quotes", "FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj", "{D745C804-9F03-4B33-92FA-65B8318DFD0C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Quotes", "FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj", "{D745C804-9F03-4B33-92FA-65B8318DFD0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Quotes.Tests", "FloppyBot.Commands.Aux.Quotes.Tests\FloppyBot.Commands.Aux.Quotes.Tests.csproj", "{E8BFA787-DF32-433E-9B51-5730242B8928}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Quotes.Tests", "FloppyBot.Commands.Aux.Quotes.Tests\FloppyBot.Commands.Aux.Quotes.Tests.csproj", "{E8BFA787-DF32-433E-9B51-5730242B8928}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Clock", "FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj", "{6FE0B539-F2F2-45EC-99C6-47DA56D293D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Clock", "FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj", "{6FE0B539-F2F2-45EC-99C6-47DA56D293D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Rng", "FloppyBot.Base.Rng\FloppyBot.Base.Rng.csproj", "{AE2EBDF7-DF7B-4BCB-AFC0-55697343937C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Rng", "FloppyBot.Base.Rng\FloppyBot.Base.Rng.csproj", "{AE2EBDF7-DF7B-4BCB-AFC0-55697343937C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web API", "Web API", "{C02AD856-26DD-4559-BAF3-74A036ED5EA1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.WebApi.Agent", "FloppyBot.WebApi.Agent\FloppyBot.WebApi.Agent.csproj", "{618FAD1C-6E39-4037-AD5F-BC4578352F9D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.WebApi.Agent", "FloppyBot.WebApi.Agent\FloppyBot.WebApi.Agent.csproj", "{618FAD1C-6E39-4037-AD5F-BC4578352F9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.WebApi.V1Compatibility", "FloppyBot.WebApi.V1Compatibility\FloppyBot.WebApi.V1Compatibility.csproj", "{67481CFE-346E-473A-9B16-13F545F20EC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.WebApi.V1Compatibility", "FloppyBot.WebApi.V1Compatibility\FloppyBot.WebApi.V1Compatibility.csproj", "{67481CFE-346E-473A-9B16-13F545F20EC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.WebApi.Auth", "FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj", "{BB8E7910-2797-437D-B2BA-5F25D6622564}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.WebApi.Auth", "FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj", "{BB8E7910-2797-437D-B2BA-5F25D6622564}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.WebApi.Base", "FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj", "{4934C60A-E6BB-4239-8B90-65252B8B3491}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.WebApi.Base", "FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj", "{4934C60A-E6BB-4239-8B90-65252B8B3491}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Registry", "Registry", "{1FD179E4-3C43-468D-8335-8733002ACFA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Registry", "FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj", "{E93C138C-DCFD-4127-B894-4E5231369159}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Registry", "FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj", "{E93C138C-DCFD-4127-B894-4E5231369159}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "HealthCheck", "HealthCheck", "{335F3E0E-B972-4F18-B3B5-4323A46C0A6E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.HealthCheck.Core", "FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj", "{8C1B7C87-8A2F-43C1-B9E3-309E643046B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.HealthCheck.Core", "FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj", "{8C1B7C87-8A2F-43C1-B9E3-309E643046B0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cron", "Cron", "{8C05047D-6665-4816-A5A3-A8EDBFD48103}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Cron", "FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj", "{59476942-4650-4AB1-A126-B041BCFEAE03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Cron", "FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj", "{59476942-4650-4AB1-A126-B041BCFEAE03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.HealthCheck.Receiver", "FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj", "{795B3128-F662-4546-80E0-B73B2097AF58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.HealthCheck.Receiver", "FloppyBot.HealthCheck.Receiver\FloppyBot.HealthCheck.Receiver.csproj", "{795B3128-F662-4546-80E0-B73B2097AF58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.HealthCheck.KillSwitch", "FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj", "{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.HealthCheck.KillSwitch", "FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj", "{5DA9A4F0-FF2F-4022-B490-A7DC960E7551}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Custom", "Custom", "{EB2C4423-A34B-4287-B7A1-F2E83E9EE935}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Storage", "FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj", "{BC26BEB2-4CB7-4EAF-BA4E-1DF9452ED52D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Custom.Storage", "FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj", "{BC26BEB2-4CB7-4EAF-BA4E-1DF9452ED52D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Tests", "FloppyBot.Commands.Custom.Tests\FloppyBot.Commands.Custom.Tests.csproj", "{FEF38D6D-1C5B-4E2A-8E45-EC788F8E5839}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Custom.Tests", "FloppyBot.Commands.Custom.Tests\FloppyBot.Commands.Custom.Tests.csproj", "{FEF38D6D-1C5B-4E2A-8E45-EC788F8E5839}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Execution", "FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj", "{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Custom.Execution", "FloppyBot.Commands.Custom.Execution\FloppyBot.Commands.Custom.Execution.csproj", "{5C3AE7A4-17C8-4317-97A2-6C540AF8FD87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Extensions", "FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj", "{F844D228-57D4-47BE-B176-1EB7E7EA4AB6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Base.Extensions", "FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj", "{F844D228-57D4-47BE-B176-1EB7E7EA4AB6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FIleStorage", "FIleStorage", "{282A2EF5-E0CE-47BE-832A-B43B1E447287}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.FileStorage", "FloppyBot.FileStorage\FloppyBot.FileStorage.csproj", "{B681BADE-684E-40B8-8178-F324E78D0C5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.FileStorage", "FloppyBot.FileStorage\FloppyBot.FileStorage.csproj", "{B681BADE-684E-40B8-8178-F324E78D0C5C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Custom.Communication", "FloppyBot.Commands.Custom.Communication\FloppyBot.Commands.Custom.Communication.csproj", "{43763F7E-CD96-4169-ADCD-C935E9B5B00C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Custom.Communication", "FloppyBot.Commands.Custom.Communication\FloppyBot.Commands.Custom.Communication.csproj", "{43763F7E-CD96-4169-ADCD-C935E9B5B00C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Time", "Time", "{60929F61-CB5D-4E9C-A598-1DB850A56961}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Time", "FloppyBot.Commands.Aux.Time\FloppyBot.Commands.Aux.Time.csproj", "{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Time", "FloppyBot.Commands.Aux.Time\FloppyBot.Commands.Aux.Time.csproj", "{EFCBC0B3-90F2-4145-BE66-B49D0F35E4F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Time.Tests", "FloppyBot.Commands.Aux.Time.Tests\FloppyBot.Commands.Aux.Time.Tests.csproj", "{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Time.Tests", "FloppyBot.Commands.Aux.Time.Tests\FloppyBot.Commands.Aux.Time.Tests.csproj", "{023BAFAE-FCDD-4B3D-8780-EB8AE047E804}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DeepL", "DeepL", "{D24E58E1-DAD7-4683-9193-38C3F0DFE010}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Translation", "FloppyBot.Commands.Aux.Translation\FloppyBot.Commands.Aux.Translation.csproj", "{AA7B0A7B-BEDF-44E0-AFDD-0488F8D350F6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Translation", "FloppyBot.Commands.Aux.Translation\FloppyBot.Commands.Aux.Translation.csproj", "{AA7B0A7B-BEDF-44E0-AFDD-0488F8D350F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Translation.Tests", "FloppyBot.Commands.Aux.Translation.Tests\FloppyBot.Commands.Aux.Translation.Tests.csproj", "{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Translation.Tests", "FloppyBot.Commands.Aux.Translation.Tests\FloppyBot.Commands.Aux.Translation.Tests.csproj", "{C1F3A8D2-4E27-42AD-AF64-A6EE15A88474}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Unit", "Unit", "{B34926A9-FD38-4887-A240-7283E1A79033}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv", "FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj", "{224C088D-E4D5-49F4-91A7-3163B44455CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.UnitConv", "FloppyBot.Commands.Aux.UnitConv\FloppyBot.Commands.Aux.UnitConv.csproj", "{224C088D-E4D5-49F4-91A7-3163B44455CD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UnitConv.Tests", "FloppyBot.Commands.Aux.UnitConv.Tests\FloppyBot.Commands.Aux.UnitConv.Tests.csproj", "{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.UnitConv.Tests", "FloppyBot.Commands.Aux.UnitConv.Tests\FloppyBot.Commands.Aux.UnitConv.Tests.csproj", "{2AB521B3-36DC-47DF-BB4D-81C3763A9A5A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UrbanDictionary", "UrbanDictionary", "{55E4803D-D915-4C43-95D1-C79AB0A30A81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.UrbanDictionary", "FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj", "{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.UrbanDictionary", "FloppyBot.Commands.Aux.UrbanDictionary\FloppyBot.Commands.Aux.UrbanDictionary.csproj", "{B6EECA9E-C9BB-4F15-A614-F4F95AF6D64E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Timer", "Timer", "{DE6DCAA6-4E22-484E-BAF6-ED7DE2FD523E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Timer", "FloppyBot.Commands.Aux.Timer\FloppyBot.Commands.Aux.Timer.csproj", "{0DC72F20-5325-44E0-AA31-F00BBAF2F110}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Timer", "FloppyBot.Commands.Aux.Timer\FloppyBot.Commands.Aux.Timer.csproj", "{0DC72F20-5325-44E0-AA31-F00BBAF2F110}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Timer.Tests", "FloppyBot.Commands.Aux.Timer.Tests\FloppyBot.Commands.Aux.Timer.Tests.csproj", "{0170115D-E0FE-491A-8479-B78D8A32877E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Commands.Aux.Timer.Tests", "FloppyBot.Commands.Aux.Timer.Tests\FloppyBot.Commands.Aux.Timer.Tests.csproj", "{0170115D-E0FE-491A-8479-B78D8A32877E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aux", "Aux", "{035EAE62-BFE4-4664-B314-DBC7099701C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounter.Core", "FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj", "{33B0D4C4-4D5D-4989-9A9C-4DC83D2300F1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Aux.MessageCounter.Core", "FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj", "{33B0D4C4-4D5D-4989-9A9C-4DC83D2300F1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.MessageCounter.Agent", "FloppyBot.Aux.MessageCounter.Agent\FloppyBot.Aux.MessageCounter.Agent.csproj", "{90175374-9AF5-4413-B679-5B2601B0F0E6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Aux.MessageCounter.Agent", "FloppyBot.Aux.MessageCounter.Agent\FloppyBot.Aux.MessageCounter.Agent.csproj", "{90175374-9AF5-4413-B679-5B2601B0F0E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Chat.Twitch.Events", "FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj", "{B8C87D58-A7C4-47F1-AD97-014718507493}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Chat.Twitch.Events", "FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj", "{B8C87D58-A7C4-47F1-AD97-014718507493}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageCounter", "MessageCounter", "{FCF25164-838D-4EDF-95DB-D304E4A5CD66}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TwitchAlerts", "TwitchAlerts", "{F77A1C8D-1D24-4C7E-B3B6-94054E861B2F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.TwitchAlerts.Core", "FloppyBot.Aux.TwitchAlerts.Core\FloppyBot.Aux.TwitchAlerts.Core.csproj", "{3DB9575C-A45C-43C3-A393-689F095D5C40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Aux.TwitchAlerts.Core", "FloppyBot.Aux.TwitchAlerts.Core\FloppyBot.Aux.TwitchAlerts.Core.csproj", "{3DB9575C-A45C-43C3-A393-689F095D5C40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Aux.TwitchAlerts.Agent", "FloppyBot.Aux.TwitchAlerts.Agent\FloppyBot.Aux.TwitchAlerts.Agent.csproj", "{74116ADF-DE02-4091-BED7-430E45E2DE91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Aux.TwitchAlerts.Agent", "FloppyBot.Aux.TwitchAlerts.Agent\FloppyBot.Aux.TwitchAlerts.Agent.csproj", "{74116ADF-DE02-4091-BED7-430E45E2DE91}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_Testing", "_Testing", "{86E04322-0C5A-4EDA-8D4C-198A8F2196D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.IntTest", "FloppyBot.IntTest\FloppyBot.IntTest.csproj", "{8774C2B2-7139-469E-94A3-751A9CC7A766}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.IntTest", "FloppyBot.IntTest\FloppyBot.IntTest.csproj", "{8774C2B2-7139-469E-94A3-751A9CC7A766}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Communication.Tests", "FloppyBot.Communication.Tests\FloppyBot.Communication.Tests.csproj", "{75624ECA-B818-48CD-9189-AA40ABA4497F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Communication.Tests", "FloppyBot.Communication.Tests\FloppyBot.Communication.Tests.csproj", "{75624ECA-B818-48CD-9189-AA40ABA4497F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
