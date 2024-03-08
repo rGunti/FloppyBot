@@ -1,25 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
-
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-FloppyBot.Commands.Parser.Agent-BEBA2852-9E90-4CFE-82E6-49EA8C490C41</UserSecretsId>
-        <Company>FloppyBot</Company>
-        <Product>Command Parser</Product>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
-        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
-        <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
-        <ProjectReference Include="..\FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj" />
-        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
-        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
-        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
-    </ItemGroup>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-FloppyBot.Commands.Parser.Agent-BEBA2852-9E90-4CFE-82E6-49EA8C490C41</UserSecretsId>
+    <Company>FloppyBot</Company>
+    <Product>Command Parser</Product>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
+    <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+    <ProjectReference Include="..\FloppyBot.Commands.Parser\FloppyBot.Commands.Parser.csproj" />
+    <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
+    <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
+    <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
 </Project>

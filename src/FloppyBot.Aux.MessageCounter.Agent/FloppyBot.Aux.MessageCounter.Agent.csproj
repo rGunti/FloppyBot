@@ -1,47 +1,42 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <OutputType>Exe</OutputType>
-        <TargetFramework>net6.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-        <Company>FloppyBot</Company>
-        <Product>Message Parser</Product>
-    </PropertyGroup>
-
-    <ItemGroup>
-        <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj" />
-        <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj" />
-        <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
-        <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj" />
-        <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
-        <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
-        <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Content Update="floppybot.json">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
-        <Content Update="floppybot.Development.json">
-            <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-            <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-        </Content>
-        <None Remove="floppybot.json" />
-        <Content Include="floppybot.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-        <None Remove="floppybot.Development.json" />
-        <Content Include="floppybot.Development.json">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </Content>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.1" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Company>FloppyBot</Company>
+    <Product>Message Parser</Product>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FloppyBot.Aux.MessageCounter.Core\FloppyBot.Aux.MessageCounter.Core.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj" />
+    <ProjectReference Include="..\FloppyBot.Communication.Redis\FloppyBot.Communication.Redis.csproj" />
+    <ProjectReference Include="..\FloppyBot.HealthCheck.Core\FloppyBot.HealthCheck.Core.csproj" />
+    <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="floppybot.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="floppybot.Development.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <None Remove="floppybot.json" />
+    <Content Include="floppybot.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Remove="floppybot.Development.json" />
+    <Content Include="floppybot.Development.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+  </ItemGroup>
 </Project>
