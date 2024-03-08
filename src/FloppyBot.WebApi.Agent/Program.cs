@@ -171,7 +171,7 @@ app.UseCors();
 app.UseAuthentication().UseAuthorization();
 
 // - Controllers
-app.UseEndpoints(e => e.MapControllers());
+app.MapControllers();
 
 // - SignalR
 app.MapV1SignalRHub();
