@@ -9,7 +9,7 @@ public class CommandMetadataAttribute : Attribute
         Value = value;
     }
 
-    public string Type { get; }
+    public virtual string Type { get; }
     public virtual string Value { get; }
 
     public override string ToString()

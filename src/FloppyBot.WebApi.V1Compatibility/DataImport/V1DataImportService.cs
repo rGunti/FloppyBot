@@ -279,6 +279,12 @@ public class V1DataImportService
 
     private void ValidateOwnership(IEnumerable<string> content, string? userId)
     {
+        if (userId is null)
+        {
+            // TODO: Make argument required
+            throw new ArgumentNullException(nameof(userId));
+        }
+
         var userInfo = _userService.GetUserInfo(userId, true)!;
         var userChannels = userInfo.OwnerOf.ToHashSet();
         var payloadChannels = content.ToHashSet();

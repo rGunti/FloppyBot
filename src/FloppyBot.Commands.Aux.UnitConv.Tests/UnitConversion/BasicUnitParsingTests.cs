@@ -46,7 +46,7 @@
             var val = UnitParsingEngine.ParseUnit(input);
             Assert.IsNotNull(val);
             Assert.AreEqual(expectedOutput, val.Value);
-            Assert.AreEqual(expectedUnitSymbol, val.Unit.Symbol);
+            Assert.AreEqual(expectedUnitSymbol, val.Unit?.Symbol);
         }
 
         [TestMethod]

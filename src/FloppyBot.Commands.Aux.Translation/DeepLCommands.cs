@@ -64,6 +64,7 @@ public class DeepLCommands
             .AddTransient<ITranslator, Translator>()
             .AddTransient<DeepL.ITranslator, DeepL.Translator>(p => new DeepL.Translator(
                 p.GetRequiredService<IConfiguration>()[CONFIG_KEY]
+                    ?? throw new ArgumentException("DeepL API key missing")
             ));
     }
 

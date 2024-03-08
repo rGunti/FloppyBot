@@ -9,7 +9,9 @@ public class MockNotificationReceiver<T> : INotificationReceiver<T>
 
     public string Channel { get; }
 
+#pragma warning disable 0169
     public event NotificationReceivedDelegate<T>? NotificationReceived;
+#pragma warning restore 0169
 
     public void StartListening() { }
 

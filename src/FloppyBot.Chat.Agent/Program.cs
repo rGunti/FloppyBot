@@ -19,7 +19,7 @@ IHost host = builder
     .ConfigureServices(services =>
     {
         services
-            .RegisterChatInterface(config.GetValue<string>("InterfaceType"))
+            .RegisterChatInterface(config.GetValue<string>("InterfaceType")!)
             .AddRedisCommunication()
             .AddCronJobSupport()
             .AddHealthCheck()

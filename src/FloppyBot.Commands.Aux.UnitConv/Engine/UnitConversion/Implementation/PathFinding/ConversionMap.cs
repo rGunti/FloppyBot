@@ -15,46 +15,6 @@ public class ConversionMap
 
     public ConversionNode GetNode(string node) => Nodes[node];
 
-    [Obsolete("This method has not yet been implemented", error: true)]
-    public IEnumerable<ConversionNode> FindPaths(string origin, string target)
-    {
-        if (origin == null)
-        {
-            throw new ArgumentNullException(nameof(origin));
-        }
-
-        if (target == null)
-        {
-            throw new ArgumentNullException(nameof(target));
-        }
-
-        if (!HasNode(origin))
-        {
-            throw new ArgumentOutOfRangeException(nameof(origin), "Origin node doesn't exist");
-        }
-
-        if (!HasNode(target))
-        {
-            throw new ArgumentOutOfRangeException(nameof(target), "Target node doesn't exist");
-        }
-
-        ConversionNode originNode = Nodes[origin],
-            targetNode = Nodes[target];
-
-        // Easy case: They are already neighbors
-        if (originNode.IsNeighborOf(targetNode))
-        {
-            return new[] { originNode, targetNode };
-        }
-
-        if (!IsNodeReachable(originNode, targetNode, out _))
-        {
-            return null;
-        }
-
-        throw new NotImplementedException();
-    }
-
     public bool IsNodeReachable(
         string originNode,
         string targetNode,

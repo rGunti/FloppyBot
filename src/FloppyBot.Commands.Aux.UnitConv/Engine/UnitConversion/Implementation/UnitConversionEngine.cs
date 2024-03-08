@@ -73,7 +73,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
         var proxyConversion = _proxyConversions[(from, to)];
         var conversionSteps = new List<IUnitConversion>();
         var stepList = new List<string>();
-        string lastStepTo = null;
+        string? lastStepTo = null;
         foreach (var (stepFrom, stepTo) in proxyConversion)
         {
             var conversion = FindSafeConversion(stepFrom, stepTo);

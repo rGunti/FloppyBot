@@ -17,6 +17,7 @@ public static class IntegrationTestingConfigurationUtils
         this IConfigurationRoot configuration
     )
     {
-        return configuration.Get<IntegrationTestingConfiguration>();
+        return configuration.Get<IntegrationTestingConfiguration>()
+            ?? throw new ArgumentException("Integration testing configuration missing");
     }
 }

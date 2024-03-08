@@ -20,6 +20,7 @@ IHost host = builder
                 s.GetRequiredService<IConfiguration>()
                     .GetSection("UserConfig")
                     .Get<ConsoleAgentUserConfiguration>()
+                ?? throw new ArgumentException("User configuration missing")
             )
             .AddCronJobSupport()
             .AddHealthCheck()

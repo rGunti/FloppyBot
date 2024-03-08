@@ -28,7 +28,7 @@ public class CommandParameterHintAttribute : CommandOnlyMetadataAttribute
 
     public int Order { get; }
     public string ParamName { get; }
-    public CommandParameterType Type { get; }
+    public new CommandParameterType Type { get; }
     public bool Required { get; }
     public string? Description { get; }
     public string[] PossibleValues { get; }

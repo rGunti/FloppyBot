@@ -21,6 +21,7 @@ public static class Registration
                     .ConstructDatabaseInstance(
                         s.GetRequiredService<IConfiguration>()
                             .GetConnectionString(connectionStringName)
+                            ?? throw new ArgumentException("LiteDb Connection string not found")
                     );
                 inst.Pragma("UTC_DATE", true);
                 return inst;

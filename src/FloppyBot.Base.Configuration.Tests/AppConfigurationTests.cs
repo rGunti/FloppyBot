@@ -40,7 +40,7 @@ public class AppConfigurationTests
     {
         return new ConfigurationBuilder()
             .AddInMemoryCollection(
-                new Dictionary<string, string>
+                new Dictionary<string, string?>
                 {
                     { "ConnectionStrings:A", "aConnectionString" },
                     { "ConnectionStrings:B", "{A}WithB" },
