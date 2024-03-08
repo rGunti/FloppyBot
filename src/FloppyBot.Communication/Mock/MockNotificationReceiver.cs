@@ -5,12 +5,13 @@ public class MockNotificationReceiver<T> : INotificationReceiver<T>
     public MockNotificationReceiver(string channel)
     {
         Channel = channel;
-        NotificationReceived += _ => { };
     }
 
     public string Channel { get; }
 
+#pragma warning disable CS0067
     public event NotificationReceivedDelegate<T>? NotificationReceived;
+#pragma warning restore CS0067
 
     public void StartListening() { }
 
