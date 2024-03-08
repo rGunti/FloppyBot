@@ -240,7 +240,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindAndConstructProxyConversion(
         string from,
         string to,
-        out IUnitConversion conversion
+        out IUnitConversion? conversion
     )
     {
         conversion = null;
@@ -329,7 +329,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
         string from,
         string to,
         (string From, string To) usingBaseChain,
-        out IUnitConversion conversion,
+        out IUnitConversion? conversion,
         bool reverse = false
     )
     {
@@ -337,9 +337,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
 
         if (reverse)
         {
-            var tmp = to;
-            to = from;
-            from = tmp;
+            (to, from) = (from, to);
         }
 
         var baseChain = _proxyConversions[usingBaseChain];
@@ -408,7 +406,7 @@ internal class UnitConversionEngine : IUnitConversionEngine
     private bool TryFindAndConstructCompoundProxyConversion(
         string from,
         string to,
-        out IUnitConversion conversion
+        out IUnitConversion? conversion
     )
     {
         conversion = null;
