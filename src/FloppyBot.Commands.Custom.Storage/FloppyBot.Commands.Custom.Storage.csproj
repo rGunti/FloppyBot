@@ -11,6 +11,6 @@
     <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
   </ItemGroup>
 </Project>
