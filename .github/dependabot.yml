@@ -11,6 +11,25 @@ updates:
       - dependency-name: "System.*"
         update-types:
           - "version-update:semver-major"
+    groups:
+      # Core Packages (Microsoft. / System.) shall be grouped together
+      core-packages:
+        patterns:
+          - "Microsoft.*"
+          - "System.*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Serilog packages shall be grouped together
+      serilog:
+        patterns:
+          - "Serilog"
+          - "Serilog.*"
+      # Testcontainers
+      testcontainers:
+        patterns:
+          - "Testcontainers"
+          - "Testcontainers.*"
   - package-ecosystem: docker
     directory: "/"
     schedule:
