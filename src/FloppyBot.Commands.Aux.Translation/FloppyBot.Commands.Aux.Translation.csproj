@@ -8,6 +8,6 @@
     <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DeepL.net" Version="1.8.0" />
+    <PackageReference Include="DeepL.net" Version="1.9.0" />
   </ItemGroup>
 </Project>
