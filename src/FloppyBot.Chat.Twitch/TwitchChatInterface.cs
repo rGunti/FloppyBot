@@ -57,31 +57,6 @@ public class TwitchChatInterface : IChatInterface
     public string Name => _channelIdentifier;
     public ChatInterfaceFeatures SupportedFeatures => ChatInterfaceFeatures.None;
 
-    private static void LineSplitter(
-        string message,
-        Action<string> lineAction,
-        int sleepTimeMs = 5_000
-    )
-    {
-        var lines = message.Split("\n\n");
-        var currentLineIndex = 0;
-        var currentLine = lines[currentLineIndex];
-
-        while (currentLineIndex < lines.Length)
-        {
-            lineAction(currentLine);
-
-            if (currentLineIndex + 1 >= lines.Length)
-            {
-                break;
-            }
-
-            currentLineIndex++;
-            currentLine = lines[currentLineIndex];
-            Thread.Sleep(sleepTimeMs);
-        }
-    }
-
     public void Connect()
     {
         _logger.LogInformation("Connecting to Twitch ...");
@@ -136,6 +111,31 @@ public class TwitchChatInterface : IChatInterface
             chatMessage.IsModerator,
             chatMessage.IsMe
         );
+    }
+
+    private static void LineSplitter(
+        string message,
+        Action<string> lineAction,
+        int sleepTimeMs = 5_000
+    )
+    {
+        var lines = message.Split("\n\n");
+        var currentLineIndex = 0;
+        var currentLine = lines[currentLineIndex];
+
+        while (currentLineIndex < lines.Length)
+        {
+            lineAction(currentLine);
+
+            if (currentLineIndex + 1 >= lines.Length)
+            {
+                break;
+            }
+
+            currentLineIndex++;
+            currentLine = lines[currentLineIndex];
+            Thread.Sleep(sleepTimeMs);
+        }
     }
 
     private static PrivilegeLevel DeterminePrivilegeLevel(
