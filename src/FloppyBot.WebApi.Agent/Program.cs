@@ -11,6 +11,7 @@ using FloppyBot.HealthCheck.Core;
 using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.Version;
+using FloppyBot.WebApi.Agent.Hubs;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
 using FloppyBot.WebApi.V1Compatibility;
@@ -71,8 +72,11 @@ services
         {
             opts.AddPermissionAsPolicy(permission);
         }
+
+        opts.AddPolicy("ApiKey", policy => policy.Requirements.Add(ApiKeyAuthRequirement.Instance));
     })
-    .AddSingleton<IAuthorizationHandler, HasPermissionHandler>();
+    .AddSingleton<IAuthorizationHandler, HasPermissionHandler>()
+    .AddSingleton<IAuthorizationHandler, ApiKeyAuthHandler>();
 
 // - Swagger
 services
@@ -144,7 +148,8 @@ services
     .AddHealthCheckReceiver()
     .AddKillSwitchTrigger()
     .AddKillSwitch()
-    .AddV1Compatibility();
+    .AddV1Compatibility()
+    .AddSingleton<StreamSourceListener>();
 
 // *** CONFIGURE ************************************************************************
 var app = builder.Build();
@@ -177,10 +182,16 @@ app.MapControllers();
 
 // - SignalR
 app.MapV1SignalRHub();
+app.MapHub<StreamSourceHub>("/hub/stream-source");
 
 // *** START ****************************************************************************
 app.BootCronJobs()
     .ArmKillSwitch()
     .StartHealthCheckReceiver()
     .StartSoundCommandInvocationReceiver()
+    .Do(host =>
+    {
+        // Start the StreamSourceListener
+        host.Services.GetRequiredService<StreamSourceListener>();
+    })
     .Run();

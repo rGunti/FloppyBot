@@ -4,6 +4,8 @@ namespace FloppyBot.WebApi.Auth;
 
 public static class AuthExtensions
 {
+    public const string API_KEY_CHANNEL_CLAIM = "floppybot/apiKey/channelId";
+
     private const string USER_ID_CLAIM =
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
     private const string USER_PERMISSION_CLAIM = "permissions";
@@ -24,5 +26,14 @@ public static class AuthExtensions
             .Identities.First()
             .Claims.Where(c => c.Type == USER_PERMISSION_CLAIM)
             .Select(c => c.Value);
+    }
+
+    public static string? GetChannelIdForApiKeyUser(this ClaimsPrincipal user)
+    {
+        return user
+            .Identities.SelectMany(i => i.Claims)
+            .Where(c => c.Type == API_KEY_CHANNEL_CLAIM)
+            .Select(c => c.Value)
+            .FirstOrDefault();
     }
 }
