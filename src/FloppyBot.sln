@@ -196,6 +196,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.IntTest", "Floppy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloppyBot.Communication.Tests", "FloppyBot.Communication.Tests\FloppyBot.Communication.Tests.csproj", "{75624ECA-B818-48CD-9189-AA40ABA4497F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.WebApi.V2", "FloppyBot.WebApi.V2\FloppyBot.WebApi.V2.csproj", "{7452532E-ADB9-4AE3-B303-A2026B6FFED5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -290,6 +292,7 @@ Global
 		{74116ADF-DE02-4091-BED7-430E45E2DE91} = {F77A1C8D-1D24-4C7E-B3B6-94054E861B2F}
 		{8774C2B2-7139-469E-94A3-751A9CC7A766} = {86E04322-0C5A-4EDA-8D4C-198A8F2196D9}
 		{75624ECA-B818-48CD-9189-AA40ABA4497F} = {8A108F9D-F458-4DA5-A986-60521EC60BF7}
+		{7452532E-ADB9-4AE3-B303-A2026B6FFED5} = {C02AD856-26DD-4559-BAF3-74A036ED5EA1}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -564,5 +567,9 @@ Global
 		{75624ECA-B818-48CD-9189-AA40ABA4497F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75624ECA-B818-48CD-9189-AA40ABA4497F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75624ECA-B818-48CD-9189-AA40ABA4497F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7452532E-ADB9-4AE3-B303-A2026B6FFED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7452532E-ADB9-4AE3-B303-A2026B6FFED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7452532E-ADB9-4AE3-B303-A2026B6FFED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7452532E-ADB9-4AE3-B303-A2026B6FFED5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
