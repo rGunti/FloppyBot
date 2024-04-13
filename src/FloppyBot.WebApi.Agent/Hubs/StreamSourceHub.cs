@@ -1,4 +1,5 @@
 using FloppyBot.Commands.Custom.Communication.Entities;
+using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Dtos;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,10 +8,12 @@ namespace FloppyBot.WebApi.Agent.Hubs;
 public class StreamSourceHub : Hub<IStreamSource>
 {
     private readonly ILogger<StreamSourceHub> _logger;
+    private readonly IApiKeyService _apiKeyService;
 
-    public StreamSourceHub(ILogger<StreamSourceHub> logger)
+    public StreamSourceHub(ILogger<StreamSourceHub> logger, IApiKeyService apiKeyService)
     {
         _logger = logger;
+        _apiKeyService = apiKeyService;
     }
 
     public async void Login(StreamSourceLoginArgs loginArgs)
@@ -20,7 +23,17 @@ public class StreamSourceHub : Hub<IStreamSource>
             Context.ConnectionId,
             loginArgs.Channel
         );
-        // TODO: Validate token
+
+        if (!_apiKeyService.ValidateApiKeyForChannel(loginArgs.Channel, loginArgs.Token))
+        {
+            _logger.LogWarning(
+                "Invalid API key provided for channel {ChannelId}, terminating connection",
+                loginArgs.Channel
+            );
+            Context.Abort();
+            return;
+        }
+
         await Groups.AddToGroupAsync(Context.ConnectionId, loginArgs.Channel);
     }
 
