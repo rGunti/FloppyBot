@@ -12,6 +12,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+      <ProjectReference Include="..\FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj" />
       <ProjectReference Include="..\FloppyBot.FileStorage\FloppyBot.FileStorage.csproj" />
       <ProjectReference Include="..\FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj" />
       <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj" />
