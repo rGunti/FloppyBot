@@ -21,8 +21,8 @@ public class TwitchAlertStorageProfile : Profile
                         dto.GiftSubMessage.Select(msg => ctx.Mapper.Map<TwitchAlertMessageEo>(msg))
                             .ToArray(),
                         dto.GiftSubCommunityMessage.Select(msg =>
-                            ctx.Mapper.Map<TwitchAlertMessageEo>(msg)
-                        )
+                                ctx.Mapper.Map<TwitchAlertMessageEo>(msg)
+                            )
                             .ToArray()
                     )
             );
