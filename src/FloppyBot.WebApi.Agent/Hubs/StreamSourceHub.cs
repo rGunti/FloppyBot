@@ -9,11 +9,17 @@ public class StreamSourceHub : Hub<IStreamSource>
 {
     private readonly ILogger<StreamSourceHub> _logger;
     private readonly IApiKeyService _apiKeyService;
+    private readonly IUserService _userService;
 
-    public StreamSourceHub(ILogger<StreamSourceHub> logger, IApiKeyService apiKeyService)
+    public StreamSourceHub(
+        ILogger<StreamSourceHub> logger,
+        IApiKeyService apiKeyService,
+        IUserService userService
+    )
     {
         _logger = logger;
         _apiKeyService = apiKeyService;
+        _userService = userService;
     }
 
     public async void Login(StreamSourceLoginArgs loginArgs)
@@ -24,10 +30,25 @@ public class StreamSourceHub : Hub<IStreamSource>
             loginArgs.Channel
         );
 
-        if (!_apiKeyService.ValidateApiKeyForUser(loginArgs.Channel, loginArgs.Token))
+        var apiKey = _apiKeyService.GetApiKey(loginArgs.Token);
+        if (apiKey is null)
         {
             _logger.LogWarning(
-                "Invalid API key provided for channel {ChannelId}, terminating connection",
+                "API key {ApiKey} not found, terminating connection",
+                loginArgs.Token
+            );
+            Context.Abort();
+            return;
+        }
+
+        var accessibleChannelsForUser = _userService.GetAccessibleChannelsForUser(
+            apiKey.OwnedByUser
+        );
+        if (!accessibleChannelsForUser.Contains(loginArgs.Channel))
+        {
+            _logger.LogWarning(
+                "User {UserId} does not have access to channel {ChannelId}, terminating connection",
+                apiKey.OwnedByUser,
                 loginArgs.Channel
             );
             Context.Abort();
