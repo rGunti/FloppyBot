@@ -24,7 +24,7 @@ public class StreamSourceHub : Hub<IStreamSource>
             loginArgs.Channel
         );
 
-        if (!_apiKeyService.ValidateApiKeyForChannel(loginArgs.Channel, loginArgs.Token))
+        if (!_apiKeyService.ValidateApiKeyForUser(loginArgs.Channel, loginArgs.Token))
         {
             _logger.LogWarning(
                 "Invalid API key provided for channel {ChannelId}, terminating connection",

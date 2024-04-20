@@ -2,8 +2,14 @@ using FloppyBot.Base.Storage;
 
 namespace FloppyBot.WebApi.Auth.Dtos;
 
-public record ApiKey(string Id, string OwnedByChannelId, string Token, bool Disabled)
-    : IEntity<ApiKey>
+public record ApiKey(
+    string Id,
+    string OwnedByUser,
+    string Token,
+    bool Disabled,
+    DateTimeOffset CreatedAt,
+    DateTimeOffset? DisabledAt
+) : IEntity<ApiKey>
 {
     public ApiKey WithId(string newId)
     {

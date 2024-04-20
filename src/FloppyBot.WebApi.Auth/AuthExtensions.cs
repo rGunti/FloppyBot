@@ -5,9 +5,9 @@ namespace FloppyBot.WebApi.Auth;
 public static class AuthExtensions
 {
     public const string API_KEY_CHANNEL_CLAIM = "floppybot/apiKey/channelId";
-
-    private const string USER_ID_CLAIM =
+    public const string USER_ID_CLAIM =
         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+
     private const string USER_PERMISSION_CLAIM = "permissions";
 
     public static string GetUserId(this ClaimsPrincipal user)

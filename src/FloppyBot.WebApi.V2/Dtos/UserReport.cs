@@ -6,11 +6,22 @@ public record UserReport(
     string UserId,
     List<string> OwnerOf,
     Dictionary<string, string> ChannelAliases,
-    string[] Permissions
+    string[] Permissions,
+    DateTimeOffset? ApiKeyCreatedAt
 )
 {
-    public static UserReport FromUser(User user, string[] permissions)
+    public static UserReport FromUser(
+        User user,
+        string[] permissions,
+        DateTimeOffset? apiKeyCreatedAt
+    )
     {
-        return new UserReport(user.Id, user.OwnerOf, user.ChannelAliases, permissions);
+        return new UserReport(
+            user.Id,
+            user.OwnerOf,
+            user.ChannelAliases,
+            permissions,
+            apiKeyCreatedAt
+        );
     }
 }
