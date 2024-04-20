@@ -39,21 +39,29 @@ public record CustomCommandDto(
     }
 }
 
-public record CommandResponseDto(CommandResponseType Type, string Content)
+public record CommandResponseDto(
+    CommandResponseType Type,
+    string Content,
+    string? AuxiliaryContent = null
+)
 {
     public static CommandResponseDto FromEntity(CommandResponse entity)
     {
-        return new CommandResponseDto(ToDtoType(entity.Type), entity.Content);
+        return entity.Type switch
+        {
+            ResponseType.Text => new CommandResponseDto(CommandResponseType.Text, entity.Content),
+            ResponseType.Sound => ConvertSoundCommand(entity),
+            _ => throw new ArgumentOutOfRangeException(nameof(entity.Type), entity.Type, null),
+        };
     }
 
-    private static CommandResponseType ToDtoType(ResponseType entityType)
+    private static CommandResponseDto ConvertSoundCommand(CommandResponse entity)
     {
-        return entityType switch
-        {
-            ResponseType.Text => CommandResponseType.Text,
-            ResponseType.Sound => CommandResponseType.Sound,
-            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null),
-        };
+        var split = entity.Content.Split(CommandResponse.SOUND_CMD_SPLIT_CHAR);
+        var soundFile = split[0];
+        var replyMessage = split.Length > 1 ? split[1] : null;
+
+        return new CommandResponseDto(CommandResponseType.Sound, soundFile, replyMessage);
     }
 }
 
