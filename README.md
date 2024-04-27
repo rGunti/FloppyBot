@@ -31,3 +31,6 @@ streamer [pinsrlTrex](https://twitch.tv/pinsrltrex) but has since been extended 
   ![Twitch Alerts Image Size](https://img.shields.io/docker/image-size/floppybot/twitch-alerts/latest)
 - ![Web API Version](https://img.shields.io/docker/v/floppybot/web-api?logo=docker&label=Web%20API%20Agent)
   ![Web API Image Size](https://img.shields.io/docker/image-size/floppybot/web-api/latest)
+
+- ![FloppyBot Admin Console Version](https://img.shields.io/docker/v/floppybot/admin-console?logo=docker&label=FloppyBot%20Admin%20Console)
+  ![FloppyBot Admin Console Image Size](https://img.shields.io/docker/image-size/floppybot/admin-console/main)
