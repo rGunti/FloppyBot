@@ -51,9 +51,7 @@ public class ApiKeyAuthHandler : AuthorizationHandler<ApiKeyAuthRequirement>
         context.Succeed(authRequirement);
         context
             .User.Identities.First()
-            .AddClaim(
-                new Claim(AuthExtensions.API_KEY_CHANNEL_CLAIM, apiKeyDetails.OwnedByChannelId)
-            );
+            .AddClaim(new Claim(AuthExtensions.USER_ID_CLAIM, apiKeyDetails.OwnedByUser));
         return Task.CompletedTask;
     }
 

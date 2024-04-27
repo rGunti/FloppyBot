@@ -371,7 +371,7 @@ public class DiscordChatInterface : IChatInterface
             NewChatMessageIdentifier(socketMessage.Channel.Id, socketMessage.Id),
             new ChatUser(
                 new ChannelIdentifier(IF_NAME, $"{socketMessage.Author.Id}"),
-                socketMessage.Author.Username,
+                $"@{socketMessage.Author.Username}",
                 DeterminePrivilegeLevel(socketMessage.Author)
             ),
             SharedEventTypes.CHAT_MESSAGE,

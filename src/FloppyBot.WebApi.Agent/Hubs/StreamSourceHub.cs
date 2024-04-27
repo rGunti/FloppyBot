@@ -1,4 +1,5 @@
 using FloppyBot.Commands.Custom.Communication.Entities;
+using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Dtos;
 using Microsoft.AspNetCore.SignalR;
 
@@ -7,10 +8,18 @@ namespace FloppyBot.WebApi.Agent.Hubs;
 public class StreamSourceHub : Hub<IStreamSource>
 {
     private readonly ILogger<StreamSourceHub> _logger;
+    private readonly IApiKeyService _apiKeyService;
+    private readonly IUserService _userService;
 
-    public StreamSourceHub(ILogger<StreamSourceHub> logger)
+    public StreamSourceHub(
+        ILogger<StreamSourceHub> logger,
+        IApiKeyService apiKeyService,
+        IUserService userService
+    )
     {
         _logger = logger;
+        _apiKeyService = apiKeyService;
+        _userService = userService;
     }
 
     public async void Login(StreamSourceLoginArgs loginArgs)
@@ -20,7 +29,32 @@ public class StreamSourceHub : Hub<IStreamSource>
             Context.ConnectionId,
             loginArgs.Channel
         );
-        // TODO: Validate token
+
+        var apiKey = _apiKeyService.GetApiKey(loginArgs.Token);
+        if (apiKey is null)
+        {
+            _logger.LogWarning(
+                "API key {ApiKey} not found, terminating connection",
+                loginArgs.Token
+            );
+            Context.Abort();
+            return;
+        }
+
+        var accessibleChannelsForUser = _userService.GetAccessibleChannelsForUser(
+            apiKey.OwnedByUser
+        );
+        if (!accessibleChannelsForUser.Contains(loginArgs.Channel))
+        {
+            _logger.LogWarning(
+                "User {UserId} does not have access to channel {ChannelId}, terminating connection",
+                apiKey.OwnedByUser,
+                loginArgs.Channel
+            );
+            Context.Abort();
+            return;
+        }
+
         await Groups.AddToGroupAsync(Context.ConnectionId, loginArgs.Channel);
     }
 

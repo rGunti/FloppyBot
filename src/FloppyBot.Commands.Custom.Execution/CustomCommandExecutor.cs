@@ -25,7 +25,10 @@ public interface ICustomCommandExecutor
 
 public class CustomCommandExecutor : ICustomCommandExecutor
 {
-    public const char SOUND_CMD_SPLIT_CHAR = '\0';
+    [Obsolete(
+        $"Refer to {nameof(CommandResponse)}.{nameof(CommandResponse.SOUND_CMD_SPLIT_CHAR)} instead"
+    )]
+    public const char SOUND_CMD_SPLIT_CHAR = CommandResponse.SOUND_CMD_SPLIT_CHAR;
 
     private readonly ICooldownService _cooldownService;
     private readonly ICounterStorageService _counterStorageService;

@@ -24,5 +24,6 @@
     <ProjectReference Include="..\FloppyBot.WebApi.Auth\FloppyBot.WebApi.Auth.csproj" />
     <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj" />
     <ProjectReference Include="..\FloppyBot.WebApi.V1Compatibility\FloppyBot.WebApi.V1Compatibility.csproj" />
+    <ProjectReference Include="..\FloppyBot.WebApi.V2\FloppyBot.WebApi.V2.csproj" />
   </ItemGroup>
 </Project>

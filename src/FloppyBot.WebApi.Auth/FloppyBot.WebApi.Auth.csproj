@@ -7,6 +7,8 @@
   <ItemGroup>
     <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
+    <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
+    <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.3" />

@@ -5,38 +5,46 @@ namespace FloppyBot.WebApi.Auth.UserProfiles;
 
 public interface IApiKeyService
 {
-    void CreateApiKeyForChannel(string channelId);
-    ApiKey? GetApiKeyForChannel(string channelId);
+    void CreateApiKeyForUser(string userId);
+    ApiKey? GetApiKeyForUser(string userId);
     ApiKey? GetApiKey(string key);
 
-    bool ValidateApiKeyForChannel(string channelId, string key);
+    bool ValidateApiKeyForUser(string userId, string key);
+    void InvalidateApiKeysForUser(string userId);
 }
 
 public class ApiKeyService : IApiKeyService
 {
     private readonly IRepository<ApiKey> _repository;
+    private readonly TimeProvider _timeProvider;
 
-    public ApiKeyService(IRepositoryFactory repositoryFactory)
+    public ApiKeyService(IRepositoryFactory repositoryFactory, TimeProvider timeProvider)
     {
+        _timeProvider = timeProvider;
         _repository = repositoryFactory.GetRepository<ApiKey>();
     }
 
-    public void CreateApiKeyForChannel(string channelId)
+    public void CreateApiKeyForUser(string userId)
     {
-        if (GetApiKeyForChannel(channelId) is not null)
+        if (GetApiKeyForUser(userId) is not null)
         {
             return;
         }
 
-        var apiKey = new ApiKey(null!, channelId, Guid.NewGuid().ToString(), false);
+        var apiKey = new ApiKey(
+            null!,
+            userId,
+            Guid.NewGuid().ToString(),
+            false,
+            _timeProvider.GetUtcNow(),
+            null
+        );
         _repository.Insert(apiKey);
     }
 
-    public ApiKey? GetApiKeyForChannel(string channelId)
+    public ApiKey? GetApiKeyForUser(string userId)
     {
-        return _repository
-            .GetAll()
-            .FirstOrDefault(k => k.OwnedByChannelId == channelId && !k.Disabled);
+        return _repository.GetAll().FirstOrDefault(k => k.OwnedByUser == userId && !k.Disabled);
     }
 
     public ApiKey? GetApiKey(string key)
@@ -44,8 +52,23 @@ public class ApiKeyService : IApiKeyService
         return _repository.GetAll().FirstOrDefault(k => k.Token == key && !k.Disabled);
     }
 
-    public bool ValidateApiKeyForChannel(string channelId, string key)
+    public bool ValidateApiKeyForUser(string userId, string key)
     {
-        return _repository.GetAll().Any(k => k.OwnedByChannelId == channelId && k.Token == key);
+        return _repository
+            .GetAll()
+            .Any(k => k.OwnedByUser == userId && k.Token == key && !k.Disabled);
+    }
+
+    public void InvalidateApiKeysForUser(string userId)
+    {
+        var apiKeys = _repository
+            .GetAll()
+            .Where(k => k.OwnedByUser == userId && !k.Disabled)
+            .Select(k => k with { Disabled = true, DisabledAt = _timeProvider.GetUtcNow() })
+            .ToList();
+        if (apiKeys.Count != 0)
+        {
+            apiKeys.ForEach(k => _repository.Update(k));
+        }
     }
 }

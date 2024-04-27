@@ -1,9 +1,8 @@
 using FloppyBot.Base.Extensions;
-using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.FileStorage;
-using FloppyBot.WebApi.Auth;
+using FloppyBot.WebApi.Auth.Controllers;
 using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Exceptions;
@@ -16,20 +15,19 @@ namespace FloppyBot.WebApi.Agent.Controllers;
 [ApiController]
 [Route("api/v1/stream-source/{messageInterface}/{channel}")]
 [Authorize(Policy = "ApiKey")]
-public class StreamSourceController : ControllerBase
+public class StreamSourceController : ChannelScopedController
 {
-    private readonly IApiKeyService _apiKeyService;
     private readonly IFileService _fileService;
     private readonly ICustomCommandService _customCommandService;
 
     public StreamSourceController(
         IFileService fileService,
-        IApiKeyService apiKeyService,
-        ICustomCommandService customCommandService
+        ICustomCommandService customCommandService,
+        IUserService userService
     )
+        : base(userService)
     {
         _fileService = fileService;
-        _apiKeyService = apiKeyService;
         _customCommandService = customCommandService;
     }
 
@@ -71,17 +69,5 @@ public class StreamSourceController : ControllerBase
                 c.Responses.First(r => r.Type == ResponseType.Sound).Content
             ))
             .ToArray();
-    }
-
-    private ChannelIdentifier EnsureChannelAccess(string messageInterface, string channel)
-    {
-        var channelId = new ChannelIdentifier(messageInterface, channel);
-        var apiKeyChannel = User.GetChannelIdForApiKeyUser();
-        if (apiKeyChannel is null || channelId != apiKeyChannel)
-        {
-            throw new UnauthorizedException("You are not allowed to access this channel");
-        }
-
-        return channelId;
     }
 }

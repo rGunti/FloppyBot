@@ -30,15 +30,18 @@ public class CommandConfigurationService : ICommandConfigurationService
 
     public void SetCommandConfiguration(CommandConfiguration commandConfiguration)
     {
-        _repository.Insert(
-            commandConfiguration with
-            {
-                Id = GenerateCommandConfigurationId(
-                    commandConfiguration.ChannelId,
-                    commandConfiguration.CommandName
-                ),
-            }
+        var id = GenerateCommandConfigurationId(
+            commandConfiguration.ChannelId,
+            commandConfiguration.CommandName
         );
+        if (_repository.GetById(id) is null)
+        {
+            _repository.Insert(commandConfiguration.WithId(id));
+        }
+        else
+        {
+            _repository.Update(commandConfiguration.WithId(id));
+        }
     }
 
     public void DeleteCommandConfiguration(string channelId, string commandName)
