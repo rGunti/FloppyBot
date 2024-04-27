@@ -36,4 +36,75 @@ public class CustomCommandController : ChannelScopedController
             .Select(CustomCommandDto.FromEntity)
             .ToList();
     }
+
+    [HttpGet("{commandName}")]
+    public ActionResult<CustomCommandDto> GetCommand(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromRoute] string commandName
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        var command = _customCommandService.GetCommand(channelId, commandName);
+        if (command is null)
+        {
+            return NotFound();
+        }
+
+        return CustomCommandDto.FromEntity(command);
+    }
+
+    [HttpPost]
+    public IActionResult CreateCommand(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromBody] CustomCommandDto createDto
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        var command = createDto.ToEntity() with { Owners = [channelId] };
+        if (!_customCommandService.CreateCommand(command))
+        {
+            return BadRequest();
+        }
+
+        return NoContent();
+    }
+
+    [HttpPut("{commandName}")]
+    public IActionResult UpdateCommand(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromRoute] string commandName,
+        [FromBody] CustomCommandDto updateDto
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        var command = _customCommandService.GetCommand(channelId, commandName);
+        if (command is null)
+        {
+            return NotFound();
+        }
+
+        command = updateDto.ToEntity().WithId(command.Id) with { Owners = command.Owners, };
+        _customCommandService.UpdateCommand(command);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{commandName}")]
+    public IActionResult DeleteCommand(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromRoute] string commandName
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        if (!_customCommandService.DeleteCommand(channelId, commandName))
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }
