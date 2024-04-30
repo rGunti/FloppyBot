@@ -17,6 +17,11 @@ jobs:
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: 8.0.x
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          build-mode: manual
       - name: Restore dependencies
         run: |
           dotnet restore src/FloppyBot.sln
@@ -33,6 +38,10 @@ jobs:
           FLOPPYTEST_DiscordBot2__Token: ${{ secrets.DISCORD_2_TOKEN }}
           FLOPPYTEST_DiscordServerId: ${{ secrets.DISCORD_SERVER_ID }}
           FLOPPYTEST_DiscordChannelId: ${{ secrets.DISCORD_CHANNEL_ID }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:csharp"
   code-style:
     name: Check Code Style
     runs-on: ubuntu-latest
