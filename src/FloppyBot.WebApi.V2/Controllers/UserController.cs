@@ -34,6 +34,13 @@ public class UserController : ControllerBase
         );
     }
 
+    [HttpPost("me/channel-aliases")]
+    public IActionResult UpdateAliases([FromBody] Dictionary<string, string> channelNames)
+    {
+        _userService.UpdateChannelAlias(User.GetUserId(), channelNames);
+        return NoContent();
+    }
+
     [HttpGet("access-key")]
     public IActionResult GetAccessKey()
     {
