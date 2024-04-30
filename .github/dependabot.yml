@@ -30,6 +30,15 @@ updates:
         patterns:
           - "Testcontainers"
           - "Testcontainers.*"
+      # MSTest
+      mstest:
+        patterns:
+          - "MSTest.*"
+      # xUnit
+      xunit:
+        patterns:
+          - "xunit"
+          - "xunit.*"
   - package-ecosystem: docker
     directory: "/"
     schedule:
