@@ -55,7 +55,7 @@ public class ShoutoutCommand
             .AddSingleton<TwitchApiConfig>(s =>
                 s.GetRequiredService<IConfiguration>()
                     .GetSection("TwitchApi")
-                    .Get<TwitchApiConfig>()
+                    .Get<TwitchApiConfig>()!
             )
             .AddSingleton<ITwitchAPI>(s =>
             {
