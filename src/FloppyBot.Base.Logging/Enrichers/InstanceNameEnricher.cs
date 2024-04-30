@@ -10,7 +10,7 @@ public class InstanceNameEnricher : ILogEventEnricher
 
     public InstanceNameEnricher(IConfiguration config)
     {
-        _instanceName = config["HealthCheck"];
+        _instanceName = config["HealthCheck"]!;
     }
 
     public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
