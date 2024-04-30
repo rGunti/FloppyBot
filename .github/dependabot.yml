@@ -30,6 +30,11 @@ updates:
         patterns:
           - "Testcontainers"
           - "Testcontainers.*"
+      # xUnit
+      xunit:
+        patterns:
+          - "xunit"
+          - "xunit.*"
   - package-ecosystem: docker
     directory: "/"
     schedule:
