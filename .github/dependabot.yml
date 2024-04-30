@@ -30,6 +30,10 @@ updates:
         patterns:
           - "Testcontainers"
           - "Testcontainers.*"
+      # MSTest
+      mstest:
+        patterns:
+          - "MSTest.*"
       # xUnit
       xunit:
         patterns:
