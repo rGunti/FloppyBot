@@ -6,7 +6,6 @@ using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Custom.Communication.Entities;
-using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.HealthCheck.Core.Entities;
 using FloppyBot.WebApi.Auth.Dtos;
@@ -230,9 +229,7 @@ public class V1CompatibilityProfile : Profile
                     .FirstOrDefault(),
                 c.Responses.Where(r => r.Type == ResponseType.Text)
                     .Select(r =>
-                        r.Content.Substring(
-                                r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR)
-                            )
+                        r.Content.Substring(r.Content.IndexOf(CommandResponse.SOUND_CMD_SPLIT_CHAR))
                             .Trim()
                     )
                     .FirstOrDefault()!,
@@ -240,7 +237,7 @@ public class V1CompatibilityProfile : Profile
                     .Select(r =>
                         r.Content.Substring(
                             0,
-                            r.Content.IndexOf(CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR)
+                            r.Content.IndexOf(CommandResponse.SOUND_CMD_SPLIT_CHAR)
                         )
                     )
                     .ToImmutableListWithValueSemantics(),
@@ -266,7 +263,7 @@ public class V1CompatibilityProfile : Profile
                 {
                     new CommandResponse(
                         ResponseType.Sound,
-                        $"{c.SoundFiles[0]}{CustomCommandExecutor.SOUND_CMD_SPLIT_CHAR}{c.Response}"
+                        $"{c.SoundFiles[0]}{CommandResponse.SOUND_CMD_SPLIT_CHAR}{c.Response}"
                     ),
                 }.ToImmutableList(),
                 Id = null!,

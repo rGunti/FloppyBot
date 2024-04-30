@@ -25,11 +25,6 @@ public interface ICustomCommandExecutor
 
 public class CustomCommandExecutor : ICustomCommandExecutor
 {
-    [Obsolete(
-        $"Refer to {nameof(CommandResponse)}.{nameof(CommandResponse.SOUND_CMD_SPLIT_CHAR)} instead"
-    )]
-    public const char SOUND_CMD_SPLIT_CHAR = CommandResponse.SOUND_CMD_SPLIT_CHAR;
-
     private readonly ICooldownService _cooldownService;
     private readonly ICounterStorageService _counterStorageService;
     private readonly ISoundCommandInvocationSender _invocationSender;
@@ -185,7 +180,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                     )
                 );
             case ResponseType.Sound:
-                string[] split = response.Content.Split(SOUND_CMD_SPLIT_CHAR);
+                string[] split = response.Content.Split(CommandResponse.SOUND_CMD_SPLIT_CHAR);
                 string payloadName = split[0];
                 string? reply = split.Length > 1 ? split[1] : null;
 
