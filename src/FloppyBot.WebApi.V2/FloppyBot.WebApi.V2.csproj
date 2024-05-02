@@ -13,6 +13,7 @@
     <ItemGroup>
       <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj" />
+      <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj" />
       <ProjectReference Include="..\FloppyBot.FileStorage\FloppyBot.FileStorage.csproj" />
