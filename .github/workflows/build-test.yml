@@ -22,6 +22,7 @@ jobs:
         with:
           languages: csharp
           build-mode: manual
+          config-file: .github/codeql.yml
       - name: Restore dependencies
         run: |
           dotnet restore src/FloppyBot.sln

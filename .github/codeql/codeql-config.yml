@@ -1,0 +1,5 @@
+name: "FloppyBot CodeQL Config"
+
+query-filters:
+  - exclude:
+      id: cs/log-forging
