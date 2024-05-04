@@ -10,6 +10,7 @@ namespace FloppyBot.WebApi.V2.Controllers;
 
 [ApiController]
 [Route("api/v2/custom-commands/{messageInterface}/{channel}")]
+[Route("api/v2/commands/custom/{messageInterface}/{channel}")]
 [Authorize(Policy = Permissions.READ_CUSTOM_COMMANDS)]
 public class CustomCommandController : ChannelScopedController
 {
