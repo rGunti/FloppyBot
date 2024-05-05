@@ -4,7 +4,7 @@ using FloppyBot.Commands.Core.Config;
 namespace FloppyBot.WebApi.V2.Dtos;
 
 public record CommandConfigurationDto(
-    string Id,
+    string? Id,
     string ChannelId,
     string CommandName,
     PrivilegeLevel? RequiredPrivilegeLevel,
@@ -24,5 +24,21 @@ public record CommandConfigurationDto(
             entity.CustomCooldown,
             entity.CustomCooldownConfiguration.Select(CooldownConfigurationDto.FromEntity).ToArray()
         );
+    }
+
+    public CommandConfiguration ToEntity()
+    {
+        return new CommandConfiguration
+        {
+            Id = Id,
+            ChannelId = ChannelId,
+            CommandName = CommandName,
+            RequiredPrivilegeLevel = RequiredPrivilegeLevel,
+            Disabled = Disabled,
+            CustomCooldown = CustomCooldown,
+            CustomCooldownConfiguration = CustomCooldownConfiguration
+                .Select(c => c.ToEntity())
+                .ToArray(),
+        };
     }
 }

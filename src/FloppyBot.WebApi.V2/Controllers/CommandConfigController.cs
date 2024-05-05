@@ -79,7 +79,53 @@ public class CommandConfigController : ChannelScopedController
         );
     }
 
+    [HttpPost("{commandName}")]
+    [Authorize(Policy = Permissions.EDIT_CONFIG)]
+    public IActionResult SetCommandConfig(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromRoute] string commandName,
+        [FromBody] CommandConfigurationDto commandConfigurationDto
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        var command = _distributedCommandRegistry
+            .GetCommand(commandName)
+            .OrThrow(() => new NotFoundException("Command does not exist"));
+        var commandConfiguration =
+            _commandConfigurationService
+                .GetCommandConfiguration(channelId, commandName)
+                .FirstOrDefault()
+            ?? new CommandConfiguration
+            {
+                CommandName = command.Name,
+                ChannelId = channelId,
+                Disabled = false,
+            };
+
+        _commandConfigurationService.SetCommandConfiguration(
+            (commandConfigurationDto with { Id = commandConfiguration.Id, }).ToEntity()
+        );
+
+        return NoContent();
+    }
+
+    [HttpDelete("{commandName}")]
+    [Authorize(Policy = Permissions.EDIT_CONFIG)]
+    public IActionResult ResetCommand(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel,
+        [FromRoute] string commandName
+    )
+    {
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        _commandConfigurationService.DeleteCommandConfiguration(channelId, commandName);
+
+        return NoContent();
+    }
+
     [HttpPost("{commandName}/disable")]
+    [Authorize(Policy = Permissions.EDIT_CONFIG)]
     public IActionResult DisableCommand(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
