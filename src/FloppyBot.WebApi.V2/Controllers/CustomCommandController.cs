@@ -15,14 +15,17 @@ namespace FloppyBot.WebApi.V2.Controllers;
 public class CustomCommandController : ChannelScopedController
 {
     private readonly ICustomCommandService _customCommandService;
+    private readonly ICounterStorageService _counterStorageService;
 
     public CustomCommandController(
         IUserService userService,
-        ICustomCommandService customCommandService
+        ICustomCommandService customCommandService,
+        ICounterStorageService counterStorageService
     )
         : base(userService)
     {
         _customCommandService = customCommandService;
+        _counterStorageService = counterStorageService;
     }
 
     [HttpGet]
@@ -34,7 +37,9 @@ public class CustomCommandController : ChannelScopedController
         var channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
             .GetCommandsOfChannel(channelId)
-            .Select(CustomCommandDto.FromEntity)
+            .Select(command =>
+                CustomCommandDto.FromEntity(command, _counterStorageService.Peek(command.Id))
+            )
             .ToList();
     }
 
@@ -52,10 +57,11 @@ public class CustomCommandController : ChannelScopedController
             return NotFound();
         }
 
-        return CustomCommandDto.FromEntity(command);
+        return CustomCommandDto.FromEntity(command, _counterStorageService.Peek(command.Id));
     }
 
     [HttpPost]
+    [Authorize(Policy = Permissions.EDIT_CUSTOM_COMMANDS)]
     public IActionResult CreateCommand(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
@@ -69,10 +75,19 @@ public class CustomCommandController : ChannelScopedController
             return BadRequest();
         }
 
+        if (createDto.Counter is not null)
+        {
+            var createdCommand =
+                _customCommandService.GetCommand(channelId, createDto.Name)
+                ?? throw new InvalidOperationException("Command not found after creation.");
+            _counterStorageService.Set(createdCommand.Id, createDto.Counter.Value);
+        }
+
         return NoContent();
     }
 
     [HttpPut("{commandName}")]
+    [Authorize(Policy = Permissions.EDIT_CUSTOM_COMMANDS)]
     public IActionResult UpdateCommand(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,
@@ -90,10 +105,16 @@ public class CustomCommandController : ChannelScopedController
         command = updateDto.ToEntity().WithId(command.Id) with { Owners = command.Owners, };
         _customCommandService.UpdateCommand(command);
 
+        if (updateDto.Counter is not null)
+        {
+            _counterStorageService.Set(command.Id, updateDto.Counter.Value);
+        }
+
         return NoContent();
     }
 
     [HttpDelete("{commandName}")]
+    [Authorize(Policy = Permissions.EDIT_CUSTOM_COMMANDS)]
     public IActionResult DeleteCommand(
         [FromRoute] string messageInterface,
         [FromRoute] string channel,

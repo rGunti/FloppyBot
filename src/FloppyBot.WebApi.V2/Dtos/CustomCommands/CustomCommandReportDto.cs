@@ -10,10 +10,11 @@ public record CustomCommandDto(
     string[] Aliases,
     CommandResponseDto[] Responses,
     CommandLimitationDto Limitations,
-    CommandResponseMode ResponseMode
+    CommandResponseMode ResponseMode,
+    CounterValueDto? Counter
 )
 {
-    public static CustomCommandDto FromEntity(CustomCommandDescription entity)
+    public static CustomCommandDto FromEntity(CustomCommandDescription entity, int? counter)
     {
         return new CustomCommandDto(
             entity.Id,
@@ -21,7 +22,8 @@ public record CustomCommandDto(
             entity.Aliases.OrderBy(s => s).ToArray(),
             entity.Responses.Select(CommandResponseDto.FromEntity).ToArray(),
             CommandLimitationDto.FromEntity(entity.Limitations),
-            ToEntityMode(entity.ResponseMode)
+            ToEntityMode(entity.ResponseMode),
+            counter.HasValue ? new CounterValueDto(counter.Value) : null
         );
     }
 
@@ -148,6 +150,8 @@ public enum CommandResponseMode
     PickOneRandom,
     All,
 }
+
+public record CounterValueDto(int Value);
 
 public static class CommandResponseModeExtensions
 {
