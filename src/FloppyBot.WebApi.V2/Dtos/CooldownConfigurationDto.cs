@@ -9,4 +9,13 @@ public record CooldownConfigurationDto(PrivilegeLevel PrivilegeLevel, int Cooldo
     {
         return new CooldownConfigurationDto(entity.PrivilegeLevel, entity.CooldownMs);
     }
+
+    public CooldownConfiguration ToEntity()
+    {
+        return new CooldownConfiguration
+        {
+            PrivilegeLevel = PrivilegeLevel,
+            CooldownMs = CooldownMs,
+        };
+    }
 }
