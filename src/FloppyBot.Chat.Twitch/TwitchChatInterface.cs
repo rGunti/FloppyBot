@@ -37,6 +37,7 @@ public class TwitchChatInterface : IChatInterface
         _clientLogger = clientLogger;
         _configuration = configuration;
         _onlineMonitor = onlineMonitor;
+        _onlineMonitor.OnlineStatusChanged += OnlineMonitor_OnlineStatusChanged;
 
         _channelIdentifier = new ChannelIdentifier(IF_NAME, _configuration.Channel);
 
@@ -360,5 +361,28 @@ public class TwitchChatInterface : IChatInterface
     private void Client_OnReconnected(object? sender, OnReconnectedEventArgs e)
     {
         _logger.LogInformation("Reconnected");
+    }
+
+    private void OnlineMonitor_OnlineStatusChanged(
+        ITwitchChannelOnlineMonitor sender,
+        TwitchChannelOnlineStatusChangedEventArgs e
+    )
+    {
+        _logger.LogInformation(
+            "Channel online status changed to {IsChannelOnline}: {TwitchStream}",
+            e.IsOnline,
+            e.Stream
+        );
+
+        if (e.Stream is null || !_configuration.AnnounceChannelOnlineStatus)
+        {
+            return;
+        }
+
+        var channelId = new ChannelIdentifier(IF_NAME, e.Stream.ChannelName);
+        SendMessage(
+            channelId,
+            e.IsOnline ? Resources.ChannelOnlineMessage : Resources.ChannelOfflineMessage
+        );
     }
 }

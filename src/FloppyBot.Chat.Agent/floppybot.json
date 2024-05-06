@@ -35,6 +35,7 @@
     "ClientId": "",
     "AccessToken": "",
     "DisableWhenChannelIsOffline": true,
-    "MonitorInterface": 30
+    "MonitorInterface": 30,
+    "AnnounceChannelOnlineStatus": true
   }
 }
