@@ -62,7 +62,7 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
 
     private void OnStreamUpdate(object? sender, OnStreamUpdateArgs e)
     {
-        _logger.LogInformation("Channel {ChannelName} has updated", e.Channel);
+        _logger.LogTrace("Channel {ChannelName} has updated", e.Channel);
         var stream = e.Stream.ToTwitchStream(_stream?.IsOnline ?? false);
         var onlineChanged = _stream?.IsOnline != stream.IsOnline;
         _stream = _stream != null ? stream with { IsOnline = _stream.IsOnline } : stream;
@@ -77,7 +77,7 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
 
     private void OnStreamOnline(object? sender, OnStreamOnlineArgs e)
     {
-        _logger.LogInformation("Channel {ChannelName} has come online", e.Channel);
+        _logger.LogTrace("Channel {ChannelName} has come online", e.Channel);
         var changed = _stream?.IsOnline != true;
         _stream = e.Stream.ToTwitchStream(true);
 
@@ -91,7 +91,7 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
 
     private void OnStreamOffline(object? sender, OnStreamOfflineArgs e)
     {
-        _logger.LogInformation("Channel {ChannelName} has come offline", e.Channel);
+        _logger.LogTrace("Channel {ChannelName} has come offline", e.Channel);
         var changed = _stream?.IsOnline != false;
         _stream = e.Stream.ToTwitchStream(false);
 
