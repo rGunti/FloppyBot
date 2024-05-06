@@ -37,7 +37,8 @@ public class TwitchChatInterfaceTests
             "aclientid",
             "anaccesstoken",
             false,
-            0
+            0,
+            false
         );
     }
 

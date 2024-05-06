@@ -27,9 +27,7 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
             _liveStreamMonitorService.OnStreamOnline += OnStreamOnline;
             _liveStreamMonitorService.OnStreamUpdate += OnStreamUpdate;
 
-            _liveStreamMonitorService.SetChannelsByName(
-                new List<string> { twitchConfiguration.Channel }
-            );
+            _liveStreamMonitorService.SetChannelsByName([twitchConfiguration.Channel]);
 
             _logger.LogInformation("Starting Live Stream Monitor ...");
             _liveStreamMonitorService.Start();
@@ -49,6 +47,9 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
         return _stream?.IsOnline ?? false;
     }
 
+    public event TwitchChannelOnlineStatusChangedDelegate? OnlineStatusChanged;
+    public event TwitchChannelStatusChangedDelegate? StatusChanged;
+
     public void Dispose()
     {
         _logger.LogInformation("Stopping and disposing Live Stream Monitor ...");
@@ -62,19 +63,43 @@ public sealed class TwitchChannelOnlineMonitor : ITwitchChannelOnlineMonitor, ID
     private void OnStreamUpdate(object? sender, OnStreamUpdateArgs e)
     {
         _logger.LogInformation("Channel {ChannelName} has updated", e.Channel);
-        var stream = e.Stream.ToTwitchStream(false);
+        var stream = e.Stream.ToTwitchStream(_stream?.IsOnline ?? false);
+        var onlineChanged = _stream?.IsOnline != stream.IsOnline;
         _stream = _stream != null ? stream with { IsOnline = _stream.IsOnline } : stream;
+
+        var eventArgs = new TwitchChannelOnlineStatusChangedEventArgs(_stream);
+        StatusChanged?.Invoke(this, eventArgs);
+        if (onlineChanged)
+        {
+            OnlineStatusChanged?.Invoke(this, eventArgs);
+        }
     }
 
     private void OnStreamOnline(object? sender, OnStreamOnlineArgs e)
     {
         _logger.LogInformation("Channel {ChannelName} has come online", e.Channel);
+        var changed = _stream?.IsOnline != true;
         _stream = e.Stream.ToTwitchStream(true);
+
+        var eventArgs = new TwitchChannelOnlineStatusChangedEventArgs(_stream);
+        StatusChanged?.Invoke(this, eventArgs);
+        if (changed)
+        {
+            OnlineStatusChanged?.Invoke(this, eventArgs);
+        }
     }
 
     private void OnStreamOffline(object? sender, OnStreamOfflineArgs e)
     {
         _logger.LogInformation("Channel {ChannelName} has come offline", e.Channel);
+        var changed = _stream?.IsOnline != false;
         _stream = e.Stream.ToTwitchStream(false);
+
+        var eventArgs = new TwitchChannelOnlineStatusChangedEventArgs(_stream);
+        StatusChanged?.Invoke(this, eventArgs);
+        if (changed)
+        {
+            OnlineStatusChanged?.Invoke(this, eventArgs);
+        }
     }
 }
