@@ -4,5 +4,7 @@ public record TwitchRaidEvent(
     string ChannelName,
     string ChannelDisplayName,
     int ViewerCount,
-    string? StreamTeamName
+    StreamTeam? StreamTeam
 ) : TwitchEvent(TwitchEventTypes.RAID);
+
+public record StreamTeam(string Name, string DisplayName);

@@ -1,3 +1,4 @@
+using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,6 +61,7 @@ public static class Registration
                 return new LiveStreamMonitorService(api, config.MonitorInterval);
             })
             .AddSingleton<ITwitchChannelOnlineMonitor, TwitchChannelOnlineMonitor>()
+            .AddSingleton<ITwitchApiService, TwitchApiService>()
             // - Chat Interface
             .AddSingleton<IChatInterface, TwitchChatInterface>();
     }

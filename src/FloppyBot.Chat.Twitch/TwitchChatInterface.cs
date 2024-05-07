@@ -2,6 +2,7 @@
 using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Chat.Twitch.Extensions;
@@ -24,6 +25,7 @@ public class TwitchChatInterface : IChatInterface
 
     private readonly ILogger<TwitchChatInterface> _logger;
     private readonly ITwitchChannelOnlineMonitor _onlineMonitor;
+    private readonly ITwitchApiService _twitchApiService;
 
     public TwitchChatInterface(
         ILogger<TwitchChatInterface> logger,
@@ -31,12 +33,15 @@ public class TwitchChatInterface : IChatInterface
         ILogger<TwitchClient> clientLogger,
         ITwitchClient client,
         TwitchConfiguration configuration,
-        ITwitchChannelOnlineMonitor onlineMonitor
+        ITwitchChannelOnlineMonitor onlineMonitor,
+        ITwitchApiService twitchApiService
     )
     {
         _logger = logger;
         _clientLogger = clientLogger;
         _configuration = configuration;
+        _twitchApiService = twitchApiService;
+
         _onlineMonitor = onlineMonitor;
         _onlineMonitor.OnlineStatusChanged += OnlineMonitor_OnlineStatusChanged;
 
@@ -373,7 +378,26 @@ public class TwitchChatInterface : IChatInterface
             e.RaidNotification.MsgParamLogin,
             e.RaidNotification.MsgParamDisplayName,
             e.RaidNotification.MsgParamViewerCount.ParseInt(),
-            null
+            TryExtensions.TryOr(
+                () =>
+                {
+                    var response = _twitchApiService.GetStreamTeamsOfChannel(
+                        e.RaidNotification.MsgParamLogin
+                    );
+                    return response
+                        .Select(t => new StreamTeam(t.Name, t.DisplayName))
+                        .FirstOrDefault();
+                },
+                (ex) =>
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to retrieve stream team information for {RaidChannelName}, returning null as default",
+                        e.RaidNotification.MsgParamLogin
+                    );
+                    return null;
+                }
+            )
         );
         MessageReceived?.Invoke(
             this,
