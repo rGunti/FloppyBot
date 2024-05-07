@@ -23,6 +23,10 @@ public class TwitchAlertStorageProfile : Profile
                         dto.GiftSubCommunityMessage.Select(msg =>
                                 ctx.Mapper.Map<TwitchAlertMessageEo>(msg)
                             )
+                            .ToArray(),
+                        dto.RaidAlertMessage.Select(msg =>
+                                ctx.Mapper.Map<TwitchAlertMessageEo>(msg)
+                            )
                             .ToArray()
                     )
             );
@@ -47,6 +51,11 @@ public class TwitchAlertStorageProfile : Profile
                             .ToImmutableList(),
                         GiftSubCommunityMessage = eo
                             .GiftSubCommunityMessages.Select(msg =>
+                                ctx.Mapper.Map<TwitchAlertMessage>(msg)
+                            )
+                            .ToImmutableList(),
+                        RaidAlertMessage = eo
+                            .RaidAlertMessages.Select(msg =>
                                 ctx.Mapper.Map<TwitchAlertMessage>(msg)
                             )
                             .ToImmutableList(),

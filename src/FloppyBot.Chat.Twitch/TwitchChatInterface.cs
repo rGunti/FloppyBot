@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Config;
@@ -53,6 +54,7 @@ public class TwitchChatInterface : IChatInterface
         _client.OnReSubscriber += Client_OnReSubscriber;
         _client.OnGiftedSubscription += Client_OnGiftedSubscription;
         _client.OnCommunitySubscription += Client_OnCommunitySubscription;
+        _client.OnRaidNotification += Client_OnRaidNotification;
     }
 
     public string Name => _channelIdentifier;
@@ -358,6 +360,38 @@ public class TwitchChatInterface : IChatInterface
         );
     }
 
+    private void Client_OnRaidNotification(object? sender, OnRaidNotificationArgs e)
+    {
+        _logger.LogTrace(
+            "Raid inbound from {TwitchUser}@{TwitchChannel}: {TwitchRaidViewerCount} viewers",
+            e.RaidNotification.DisplayName,
+            e.Channel,
+            e.RaidNotification.MsgParamViewerCount
+        );
+
+        var eventArgs = new TwitchRaidEvent(
+            e.RaidNotification.MsgParamLogin,
+            e.RaidNotification.MsgParamDisplayName,
+            e.RaidNotification.MsgParamViewerCount.ParseInt(),
+            null
+        );
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(e.RaidNotification.Id),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.RaidNotification.MsgParamLogin,
+                    e.RaidNotification.MsgParamDisplayName,
+                    DeterminePrivilegeLevel(false, false, false)
+                ),
+                TwitchEventTypes.RAID,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
+    }
+
     private void Client_OnReconnected(object? sender, OnReconnectedEventArgs e)
     {
         _logger.LogInformation("Reconnected");
@@ -368,7 +402,7 @@ public class TwitchChatInterface : IChatInterface
         TwitchChannelOnlineStatusChangedEventArgs e
     )
     {
-        _logger.LogInformation(
+        _logger.LogTrace(
             "Channel online status changed to {IsChannelOnline}: {TwitchStream}",
             e.IsOnline,
             e.Stream
