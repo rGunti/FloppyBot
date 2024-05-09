@@ -31,12 +31,46 @@ public class ShoutoutCommandTests
                         new TwitchUserLookupResult("somestreamer", "SomeStreamer", "Cool Game")
                     )
             );
+        A.CallTo(
+                () =>
+                    twitchApiService.LookupTeam(
+                        A<string>.That.Matches(s => s == "somestreamer" || s == "someteamuser")
+                    )
+            )
+            .ReturnsLazily(
+                (string accountName) =>
+                    Task.FromResult<TwitchStreamTeamResult?>(
+                        new TwitchStreamTeamResult(
+                            accountName,
+                            "1234567890",
+                            "coolteam",
+                            "The Really Cool Stream Team"
+                        )
+                    )
+            );
         A.CallTo(() => _shoutoutMessageSettingService.GetSettings("Twitch/someuser"))
             .ReturnsLazily(
                 () =>
                     new ShoutoutMessageSetting(
                         "Twitch/someuser",
-                        "Check out {DisplayName} at {Link}! They last played {LastGame}!"
+                        "Check out {DisplayName} at {Link}! They last played {LastGame}!",
+                        null
+                    )
+            );
+        A.CallTo(
+                () =>
+                    _shoutoutMessageSettingService.GetSettings(
+                        A<string>.That.Matches(s =>
+                            s == "Twitch/someteamuser" || s == "Twitch/somestreamer"
+                        )
+                    )
+            )
+            .ReturnsLazily(
+                () =>
+                    new ShoutoutMessageSetting(
+                        "Twitch/someteamuser",
+                        "Check out {DisplayName} at {Link}! They last played {LastGame}!",
+                        "Check out my team mate {DisplayName} at {Link}! They last played {LastGame}! Also go checkout {TeamName} at {TeamLink}!"
                     )
             );
     }
@@ -47,6 +81,16 @@ public class ShoutoutCommandTests
         var reply = await _shoutoutCommand.Shoutout("Twitch/someuser", "somestreamer");
         Assert.AreEqual(
             "Check out SomeStreamer at https://twitch.tv/somestreamer! They last played Cool Game!",
+            reply
+        );
+    }
+
+    [TestMethod]
+    public async Task RepliesWithTeamShoutoutMessage()
+    {
+        var reply = await _shoutoutCommand.Shoutout("Twitch/someteamuser", "somestreamer");
+        Assert.AreEqual(
+            "Check out my team mate SomeStreamer at https://twitch.tv/somestreamer! They last played Cool Game! Also go checkout The Really Cool Stream Team at https://www.twitch.tv/team/coolteam!",
             reply
         );
     }
@@ -74,6 +118,24 @@ public class ShoutoutCommandTests
                     _shoutoutMessageSettingService.SetShoutoutMessage(
                         "Twitch/someuser",
                         "My new template"
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
+    }
+
+    [TestMethod]
+    public void ConfigureTeamShoutoutSavesToDatabase()
+    {
+        var reply = _shoutoutCommand.SetTeamShoutout("Twitch/someuser", "My new team template");
+
+        Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
+        A.CallTo(
+                () =>
+                    _shoutoutMessageSettingService.SetShoutoutMessage(
+                        A<ShoutoutMessageSetting>.That.Matches(setting =>
+                            setting.Id == "Twitch/someuser"
+                            && setting.TeamMessage == "My new team template"
+                        )
                     )
             )
             .MustHaveHappenedOnceExactly();

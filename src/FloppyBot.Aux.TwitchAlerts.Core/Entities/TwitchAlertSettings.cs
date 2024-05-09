@@ -15,6 +15,8 @@ public record TwitchAlertSettings : IEntity<TwitchAlertSettings>
         ImmutableList<TwitchAlertMessage>.Empty;
     private readonly IImmutableList<TwitchAlertMessage> _giftSubCommunityMessages =
         ImmutableList<TwitchAlertMessage>.Empty;
+    private readonly IImmutableList<TwitchAlertMessage> _raidAlertMessage =
+        ImmutableList<TwitchAlertMessage>.Empty;
 
     public string Id { get; init; }
 
@@ -42,6 +44,12 @@ public record TwitchAlertSettings : IEntity<TwitchAlertSettings>
     {
         get => _giftSubCommunityMessages;
         init => _giftSubCommunityMessages = value.WithValueSemantics();
+    }
+
+    public IImmutableList<TwitchAlertMessage> RaidAlertMessage
+    {
+        get => _raidAlertMessage;
+        init => _raidAlertMessage = value.WithValueSemantics();
     }
 
     public TwitchAlertSettings WithId(string newId)

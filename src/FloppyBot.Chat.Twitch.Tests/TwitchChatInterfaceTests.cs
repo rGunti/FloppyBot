@@ -6,6 +6,7 @@ using FakeItEasy;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Chat.Twitch.Monitor;
@@ -22,15 +23,12 @@ namespace FloppyBot.Chat.Twitch.Tests;
 [TestClass]
 public class TwitchChatInterfaceTests
 {
-    private readonly ITwitchClient _client;
-    private readonly ITwitchChannelOnlineMonitor _onlineMonitor;
-    private TwitchConfiguration _configuration;
+    private readonly ITwitchClient _client = A.Fake<ITwitchClient>();
+    private readonly ITwitchChannelOnlineMonitor _onlineMonitor =
+        A.Fake<ITwitchChannelOnlineMonitor>();
 
-    public TwitchChatInterfaceTests()
-    {
-        _client = A.Fake<ITwitchClient>();
-        _onlineMonitor = A.Fake<ITwitchChannelOnlineMonitor>();
-        _configuration = new TwitchConfiguration(
+    private TwitchConfiguration _configuration =
+        new(
             "atwitchbot",
             "sometoken",
             "atwitchchannel",
@@ -40,7 +38,6 @@ public class TwitchChatInterfaceTests
             0,
             false
         );
-    }
 
     [TestMethod]
     public void BroadcasterHasAdminRights()
@@ -234,7 +231,8 @@ public class TwitchChatInterfaceTests
             LoggingUtils.GetLogger<TwitchClient>(),
             _client,
             _configuration,
-            _onlineMonitor
+            _onlineMonitor,
+            A.Fake<ITwitchApiService>()
         );
     }
 

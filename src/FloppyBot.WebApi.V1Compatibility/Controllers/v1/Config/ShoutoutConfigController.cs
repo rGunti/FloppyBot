@@ -39,7 +39,7 @@ public class ShoutoutConfigController : ControllerBase
             .Where(channelId => channelId.StartsWith("Twitch/"))
             .Select(channelId =>
                 _shoutoutMessageSettingService.GetSettings(channelId)
-                ?? new ShoutoutMessageSetting(channelId, string.Empty)
+                ?? new ShoutoutMessageSetting(channelId, string.Empty, null)
             )
             .Select(settings => _mapper.Map<ShoutoutMessageConfig>(settings))
             .ToArray();

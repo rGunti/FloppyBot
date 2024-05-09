@@ -8,7 +8,8 @@ public record TwitchAlertSettingsEo(
     TwitchAlertMessageEo[] SubMessages,
     TwitchAlertMessageEo[] ReSubMessages,
     TwitchAlertMessageEo[] GiftSubMessages,
-    TwitchAlertMessageEo[] GiftSubCommunityMessages
+    TwitchAlertMessageEo[] GiftSubCommunityMessages,
+    TwitchAlertMessageEo[] RaidAlertMessages
 ) : IEntity<TwitchAlertSettingsEo>
 {
     public TwitchAlertSettingsEo WithId(string newId)

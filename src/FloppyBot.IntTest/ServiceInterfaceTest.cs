@@ -24,7 +24,8 @@ public class ServiceInterfaceTest : IAsyncDisposable
         await _testContainerFixture.Startup();
 
         var repositoryFactory = new MongoDbRepositoryFactory(
-            _testContainerFixture.GetMongoDatabase()
+            _testContainerFixture.GetMongoDatabase(),
+            A.Fake<ILogger<MongoDbRepositoryFactory>>()
         );
 
         // arrange

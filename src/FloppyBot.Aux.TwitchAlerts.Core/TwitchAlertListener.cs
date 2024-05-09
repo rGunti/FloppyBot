@@ -1,4 +1,5 @@
-﻿using System.Collections.Immutable;
+﻿using System.Collections.Frozen;
+using System.Collections.Immutable;
 using System.Text.Json;
 using FloppyBot.Aux.TwitchAlerts.Core.Entities;
 using FloppyBot.Base.Configuration;
@@ -15,13 +16,13 @@ namespace FloppyBot.Aux.TwitchAlerts.Core;
 
 public class TwitchAlertListener : IDisposable
 {
-    private static readonly ISet<string> AllowedEvents = new[]
+    private static readonly FrozenSet<string> AllowedEvents = new[]
     {
         TwitchEventTypes.SUBSCRIPTION,
         TwitchEventTypes.RE_SUBSCRIPTION,
         TwitchEventTypes.SUBSCRIPTION_GIFT,
         TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY,
-    }.ToHashSet();
+    }.ToFrozenSet();
 
     private static readonly IImmutableDictionary<
         TwitchSubscriptionPlanTier,
@@ -52,6 +53,7 @@ public class TwitchAlertListener : IDisposable
         { TwitchEventTypes.RE_SUBSCRIPTION, s => s.ReSubMessage },
         { TwitchEventTypes.SUBSCRIPTION_GIFT, s => s.GiftSubMessage },
         { TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY, s => s.GiftSubCommunityMessage },
+        { TwitchEventTypes.RAID, s => s.RaidAlertMessage },
     }.ToImmutableDictionary();
 
     private static string? DetermineTemplate(
@@ -84,6 +86,7 @@ public class TwitchAlertListener : IDisposable
             TwitchSubscriptionGiftEvent subGiftEvent => subGiftEvent.SubscriptionPlanTier.Tier,
             TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent
                 => subCommunityGiftEvent.SubscriptionPlanTier.Tier,
+            TwitchRaidEvent _ => TwitchSubscriptionPlanTier.Unknown,
             _ => throw new ArgumentOutOfRangeException(nameof(twitchEvent)),
         };
     }
@@ -100,6 +103,7 @@ public class TwitchAlertListener : IDisposable
                 => JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
             TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY
                 => JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
+            TwitchEventTypes.RAID => JsonSerializer.Deserialize<TwitchRaidEvent>(content),
             _ => throw new ArgumentOutOfRangeException(nameof(type)),
         };
     }
@@ -166,15 +170,14 @@ public class TwitchAlertListener : IDisposable
 #endif
 
         var twitchEvent = ParseTwitchEvent(chatMessage.EventName, chatMessage.Content);
-        if (twitchEvent == null)
+        if (twitchEvent is null)
         {
             _logger.LogWarning("Failed to parse chat message content");
             return;
         }
 
         var alertMessage = GetFormattedMessage(chatMessage, twitchEvent);
-
-        if (alertMessage == null)
+        if (alertMessage is null)
         {
             return;
         }
@@ -193,7 +196,7 @@ public class TwitchAlertListener : IDisposable
     {
         var channelId = chatMessage.Identifier.GetChannel();
         var alertSettings = _alertService.GetAlertSettings(channelId);
-        if (alertSettings == null)
+        if (alertSettings is null)
         {
             _logger.LogDebug("No alert settings found for channel {Channel}, skipping", channelId);
             return null;
@@ -202,7 +205,7 @@ public class TwitchAlertListener : IDisposable
         var subTier = GetTier(twitchEvent);
 
         var template = DetermineTemplate(twitchEvent, alertSettings, subTier);
-        if (template == null)
+        if (template is null)
         {
             _logger.LogDebug(
                 "No template found for event {EventName} and tier {Tier}, skipping",

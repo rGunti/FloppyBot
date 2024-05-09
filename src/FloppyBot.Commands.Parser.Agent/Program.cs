@@ -25,6 +25,7 @@ IHost host = builder
                     config.GetSection("CommandPrefixes").Get<string[]>() ?? new[] { "?" };
                 return new CommandParser(prefixes);
             })
+            .AddMemoryCache()
             .AddHostedService<CommandParsingAgent>();
     })
     .Build();

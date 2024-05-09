@@ -26,7 +26,20 @@ public class ShoutoutMessageSettingService : IShoutoutMessageSettingService
         }
         else
         {
-            _repository.Insert(new ShoutoutMessageSetting(channelId, message));
+            _repository.Insert(new ShoutoutMessageSetting(channelId, message, null));
+        }
+    }
+
+    public void SetShoutoutMessage(ShoutoutMessageSetting setting)
+    {
+        var existingSetting = GetSettings(setting.Id);
+        if (existingSetting != null)
+        {
+            _repository.Update(setting);
+        }
+        else
+        {
+            _repository.Insert(setting);
         }
     }
 
