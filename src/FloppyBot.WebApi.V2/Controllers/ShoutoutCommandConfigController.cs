@@ -49,7 +49,7 @@ public class ShoutoutCommandConfigController : ChannelScopedController
     )
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
-        _shoutoutMessageSettingService.SetShoutoutMessage(channelId, config.Message);
+        _shoutoutMessageSettingService.SetShoutoutMessage(config.ToEntity(channelId));
         return NoContent();
     }
 }

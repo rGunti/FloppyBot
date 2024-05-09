@@ -136,7 +136,7 @@ public class V1CompatibilityProfile : Profile
     private void MapShoutoutMessage()
     {
         CreateMap<ShoutoutMessageConfig, ShoutoutMessageSetting>()
-            .ConstructUsing(c => new ShoutoutMessageSetting(c.Id, c.Message));
+            .ConstructUsing(c => new ShoutoutMessageSetting(c.Id, c.Message, null));
         CreateMap<ShoutoutMessageSetting, ShoutoutMessageConfig>()
             .ConstructUsing(c => new ShoutoutMessageConfig(c.Id, c.Message));
     }

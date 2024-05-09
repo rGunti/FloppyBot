@@ -2,9 +2,12 @@
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Config;
+using FloppyBot.Commands.Aux.Twitch.Helpers;
 using FloppyBot.Commands.Aux.Twitch.Storage;
+using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
 using FloppyBot.Commands.Core.Attributes.Dependencies;
@@ -102,15 +105,44 @@ public class ShoutoutCommand
             return null;
         }
 
-        var query = await _twitchApiService.LookupUser(channel);
-        if (query == null)
+        var userLookup = await _twitchApiService.LookupUser(channel);
+        if (userLookup == null)
         {
             return null;
         }
 
+        string messageTemplate = setting.Message;
+        TwitchStreamTeamResult? raiderTeamLookup = null;
+
+        if (!string.IsNullOrWhiteSpace(setting.TeamMessage))
+        {
+            var userTeamLookup = await _twitchApiService.LookupTeam(
+                sourceChannel.ParseAsChannelId().Channel
+            );
+            raiderTeamLookup = await _twitchApiService.LookupTeam(channel);
+
+            if (
+                userTeamLookup is not null
+                && raiderTeamLookup is not null
+                && userTeamLookup.IsSameTeam(raiderTeamLookup)
+            )
+            {
+                messageTemplate = setting.TeamMessage;
+            }
+        }
+        else
+        {
+            _logger.LogTrace(
+                "No team message configured for {Channel}, skipping lookup",
+                sourceChannel
+            );
+        }
+
         try
         {
-            return setting.Message.Format(query);
+            return messageTemplate.Format(
+                MessageTemplateParams.FromLookups(userLookup, raiderTeamLookup)
+            );
         }
         catch (FormattingException ex)
         {
@@ -123,14 +155,14 @@ public class ShoutoutCommand
         }
     }
 
-    [Command("setshoutout")]
+    [Command("setshoutout", "setso")]
     [CommandDescription(
         "Sets the shoutout template for the requesting channel. "
             + "The following placeholders are supported, when surrounded by {}: "
-            + $"{nameof(TwitchUserLookupResult.AccountName)}, "
-            + $"{nameof(TwitchUserLookupResult.DisplayName)}, "
-            + $"{nameof(TwitchUserLookupResult.LastGame)}, "
-            + $"{nameof(TwitchUserLookupResult.Link)}"
+            + $"{nameof(MessageTemplateParams.AccountName)}, "
+            + $"{nameof(MessageTemplateParams.DisplayName)}, "
+            + $"{nameof(MessageTemplateParams.LastGame)}, "
+            + $"{nameof(MessageTemplateParams.Link)}"
     )]
     [CommandSyntax(
         "<Message>",
@@ -143,7 +175,38 @@ public class ShoutoutCommand
         return REPLY_SAVE;
     }
 
-    [Command("clearshoutout")]
+    [Command("setteamshoutout", "setteamso")]
+    [CommandDescription(
+        "Sets the shoutout template for the requesting channel when the raiding channel is part of the same team. "
+            + "The following placeholders are supported, when surrounded by {}: "
+            + $"{nameof(MessageTemplateParams.AccountName)}, "
+            + $"{nameof(MessageTemplateParams.DisplayName)}, "
+            + $"{nameof(MessageTemplateParams.LastGame)}, "
+            + $"{nameof(MessageTemplateParams.Link)}, "
+            + $"{nameof(MessageTemplateParams.TeamId)}, "
+            + $"{nameof(MessageTemplateParams.TeamSlug)}, "
+            + $"{nameof(MessageTemplateParams.TeamName)}, "
+            + $"{nameof(MessageTemplateParams.TeamLink)}"
+    )]
+    public string? SetTeamShoutout(
+        [SourceChannel] string sourceChannel,
+        [AllArguments] string template
+    )
+    {
+        var settings =
+            _shoutoutMessageSettingService.GetSettings(sourceChannel)
+            ?? new ShoutoutMessageSetting(sourceChannel, template, null);
+
+        _shoutoutMessageSettingService.SetShoutoutMessage(
+            settings with
+            {
+                TeamMessage = template,
+            }
+        );
+        return REPLY_SAVE;
+    }
+
+    [Command("clearshoutout", "clearso")]
     [CommandDescription(
         "Clears the channels shoutout message, effectively disabling the shoutout command"
     )]

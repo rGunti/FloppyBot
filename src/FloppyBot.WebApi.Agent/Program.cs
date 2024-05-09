@@ -149,7 +149,8 @@ services
     .AddKillSwitchTrigger()
     .AddKillSwitch()
     .AddV1Compatibility()
-    .AddSingleton<StreamSourceListener>();
+    .AddSingleton<StreamSourceListener>()
+    .AddMemoryCache();
 
 // *** CONFIGURE ************************************************************************
 var app = builder.Build();
