@@ -21,6 +21,8 @@ public static class Permissions
     public const string READ_FILES = "read:files";
     public const string EDIT_FILES = "edit:files";
 
+    public const string READ_LOGS = "read:logs";
+
     public static readonly string[] AllPermissions;
 
     static Permissions()
