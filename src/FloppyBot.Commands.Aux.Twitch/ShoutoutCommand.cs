@@ -70,7 +70,8 @@ public class ShoutoutCommand
                 return api;
             })
             .AddScoped<ITwitchApiService, TwitchApiService>()
-            .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>();
+            .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>()
+            .AddMemoryCache();
     }
 
     [DependencyRegistration]
