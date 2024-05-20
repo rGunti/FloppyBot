@@ -11,6 +11,7 @@
     </ItemGroup>
     
     <ItemGroup>
+      <ProjectReference Include="..\FloppyBot.Base.Logging.MongoDb\FloppyBot.Base.Logging.MongoDb.csproj" />
       <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Aux.Quotes\FloppyBot.Commands.Aux.Quotes.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Aux.Twitch\FloppyBot.Commands.Aux.Twitch.csproj" />
