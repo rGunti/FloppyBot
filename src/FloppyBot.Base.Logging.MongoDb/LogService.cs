@@ -61,9 +61,23 @@ public class LogService
             filters.Add(filterBuilder.In(l => l.Properties["SourceContext"], searchParams.Context));
         }
 
+        if (searchParams.ExcludeContext is { Length: > 0 })
+        {
+            filters.Add(
+                filterBuilder.Nin(l => l.Properties["SourceContext"], searchParams.ExcludeContext)
+            );
+        }
+
         if (searchParams.Service is { Length: > 0 })
         {
             filters.Add(filterBuilder.In(l => l.Properties["AssemblyName"], searchParams.Service));
+        }
+
+        if (searchParams.ExcludeService is { Length: > 0 })
+        {
+            filters.Add(
+                filterBuilder.Nin(l => l.Properties["AssemblyName"], searchParams.ExcludeService)
+            );
         }
 
         if (searchParams.InstanceName is { Length: > 0 })
@@ -72,6 +86,16 @@ public class LogService
                 filterBuilder.In(
                     l => l.Properties["FloppyBotInstanceName"],
                     searchParams.InstanceName
+                )
+            );
+        }
+
+        if (searchParams.ExcludeInstanceName is { Length: > 0 })
+        {
+            filters.Add(
+                filterBuilder.Nin(
+                    l => l.Properties["FloppyBotInstanceName"],
+                    searchParams.ExcludeInstanceName
                 )
             );
         }

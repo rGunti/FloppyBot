@@ -15,6 +15,11 @@ public class LogRecordSearchParameters
     public string[]? InstanceName { get; set; }
     public string[]? MessageTemplate { get; set; }
 
+    public string[]? ExcludeContext { get; set; }
+    public string[]? ExcludeService { get; set; }
+    public string[]? ExcludeInstanceName { get; set; }
+    public string[]? ExcludeMessageTemplate { get; set; }
+
     public bool IncludeProperties { get; set; }
 
     public int MaxRecords { get; set; } = 100_000;
