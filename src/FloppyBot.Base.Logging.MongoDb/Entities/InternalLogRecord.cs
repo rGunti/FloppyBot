@@ -1,3 +1,4 @@
+using System.Dynamic;
 using MongoDB.Bson;
 
 namespace FloppyBot.Base.Logging.MongoDb.Entities;
@@ -34,16 +35,41 @@ internal class InternalLogRecord
         );
     }
 
+    private static IEnumerable<KeyValuePair<string, string?>> ConvertPropertiesFromDictionary(
+        IEnumerable<KeyValuePair<string, object?>> expandoObjectDict
+    )
+    {
+        foreach (var kvp in expandoObjectDict)
+        {
+            if (kvp.Value is ExpandoObject expandoObject)
+            {
+                foreach (
+                    var (key, value) in ConvertPropertiesFromDictionary(
+                        expandoObject.ToDictionary()
+                    )
+                )
+                {
+                    yield return new KeyValuePair<string, string?>($"{kvp.Key}.{key}", value);
+                }
+            }
+            else
+            {
+                yield return new KeyValuePair<string, string?>(kvp.Key, kvp.Value?.ToString());
+            }
+        }
+    }
+
     private Dictionary<string, string?> ConvertPropertyDictionary()
     {
-        return Properties
-            .Where(kvp =>
-                kvp.Key != "AssemblyName"
-                && kvp.Key != "AssemblyVersion"
-                && kvp.Key != "AssemblyInformationalVersion"
-                && kvp.Key != "FloppyBotInstanceName"
-                && kvp.Key != "SourceContext"
+        return ConvertPropertiesFromDictionary(
+                Properties.Where(kvp =>
+                    kvp.Key != "AssemblyName"
+                    && kvp.Key != "AssemblyVersion"
+                    && kvp.Key != "AssemblyInformationalVersion"
+                    && kvp.Key != "FloppyBotInstanceName"
+                    && kvp.Key != "SourceContext"
+                )!
             )
-            .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ToString());
+            .ToDictionary();
     }
 }
