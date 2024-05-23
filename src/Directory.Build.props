@@ -2,6 +2,7 @@
     <PropertyGroup>
         <Version>2.0.0.42</Version>
         <InformationalVersion>2.0.0-indev</InformationalVersion>
+        <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
         <CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
