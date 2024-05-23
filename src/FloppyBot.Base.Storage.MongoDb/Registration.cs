@@ -20,7 +20,11 @@ public static class Registration
         BsonSerializer.RegisterIdGenerator(typeof(string), StringObjectIdGenerator.Instance);
         ConventionRegistry.Register(
             "Enum2String",
-            new ConventionPack { new EnumRepresentationConvention(BsonType.String) },
+            new ConventionPack
+            {
+                new EnumRepresentationConvention(BsonType.String),
+                new IgnoreExtraElementsConvention(true),
+            },
             _ => true
         );
         return services
