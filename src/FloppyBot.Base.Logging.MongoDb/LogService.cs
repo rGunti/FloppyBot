@@ -105,6 +105,13 @@ public class LogService
             filters.Add(filterBuilder.In(l => l.MessageTemplate, searchParams.MessageTemplate));
         }
 
+        if (searchParams.ExcludeMessageTemplate is { Length: > 0 })
+        {
+            filters.Add(
+                filterBuilder.Nin(l => l.MessageTemplate, searchParams.ExcludeMessageTemplate)
+            );
+        }
+
         return _collection
             .FindSync(filterBuilder.And(filters), GetFindOptions(searchParams))
             .ToList()
