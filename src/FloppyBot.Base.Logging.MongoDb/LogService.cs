@@ -20,105 +20,119 @@ public class LogService
         _collection = database.GetCollection<InternalLogRecord>("_Logs");
     }
 
-    public IEnumerable<LogRecord> GetLog()
-    {
-        return _collection
-            .AsQueryable()
-            .OrderByDescending(l => l.Timestamp)
-            .Take(10_000)
-            .ToList()
-            .Select(l => l.ToLogRecord());
-    }
+    private static FilterDefinitionBuilder<InternalLogRecord> Filter =>
+        Builders<InternalLogRecord>.Filter;
+
+    private static ProjectionDefinitionBuilder<InternalLogRecord> Projection =>
+        Builders<InternalLogRecord>.Projection;
 
     public IEnumerable<LogRecord> GetLog(LogRecordSearchParameters searchParams)
     {
-        var (minTime, maxTime) = GetTimeFilter(searchParams);
+        return _collection
+            .FindSync(Filter.And(GetFilter(searchParams)), GetFindOptions(searchParams))
+            .ToList()
+            .Select(l => l.ToLogRecord(searchParams.IncludeProperties));
+    }
 
-        var filterBuilder = Builders<InternalLogRecord>.Filter;
-        List<FilterDefinition<InternalLogRecord>> filters =
-        [
-            filterBuilder.Gte(l => l.Timestamp, minTime),
-            filterBuilder.Lte(l => l.Timestamp, maxTime)
-        ];
+    public LogStats GetLogStats(LogRecordSearchParameters searchParameters)
+    {
+        var filters = GetFilter(searchParameters).ToList();
+        var aggregation = _collection.Aggregate();
+        if (filters.Count != 0)
+        {
+            aggregation = aggregation.Match(Filter.And(filters));
+        }
+
+        var data = aggregation
+            .Group(
+                l => true,
+                g => new
+                {
+                    Count = g.Count(),
+                    Oldest = g.Min(l => l.Timestamp),
+                    Newest = g.Max(l => l.Timestamp),
+                }
+            )
+            .ToList();
+        return data.Select(d => new LogStats(d.Count, d.Oldest, d.Newest))
+            .FirstOrDefault(new LogStats(0, null, null));
+    }
+
+    private IEnumerable<FilterDefinition<InternalLogRecord>> GetFilter(
+        LogRecordSearchParameters searchParams
+    )
+    {
+        var (minTime, maxTime) = GetTimeFilter(searchParams);
+        yield return Filter.Gte(l => l.Timestamp, minTime);
+        yield return Filter.Lte(l => l.Timestamp, maxTime);
 
         if (searchParams.MinLevel is not null || searchParams.MaxLevel is not null)
         {
-            filters.Add(
-                filterBuilder.In(
-                    l => l.Level,
-                    GetFilters(searchParams.MinLevel, searchParams.MaxLevel)
-                )
+            yield return Filter.In(
+                l => l.Level,
+                GetLogLevelsToFilterFor(searchParams.MinLevel, searchParams.MaxLevel)
             );
         }
 
         if (searchParams.HasException.HasValue)
         {
-            filters.Add(filterBuilder.Exists(l => l.Exception, searchParams.HasException.Value));
+            yield return Filter.Exists(l => l.Exception, searchParams.HasException.Value);
         }
 
         if (searchParams.Context is { Length: > 0 })
         {
-            filters.Add(filterBuilder.In(l => l.Properties["SourceContext"], searchParams.Context));
+            yield return Filter.In(l => l.Properties["SourceContext"], searchParams.Context);
         }
 
         if (searchParams.ExcludeContext is { Length: > 0 })
         {
-            filters.Add(
-                filterBuilder.Nin(l => l.Properties["SourceContext"], searchParams.ExcludeContext)
+            yield return Filter.Nin(
+                l => l.Properties["SourceContext"],
+                searchParams.ExcludeContext
             );
         }
 
         if (searchParams.Service is { Length: > 0 })
         {
-            filters.Add(filterBuilder.In(l => l.Properties["AssemblyName"], searchParams.Service));
+            yield return Filter.In(l => l.Properties["AssemblyName"], searchParams.Service);
         }
 
         if (searchParams.ExcludeService is { Length: > 0 })
         {
-            filters.Add(
-                filterBuilder.Nin(l => l.Properties["AssemblyName"], searchParams.ExcludeService)
-            );
+            yield return Filter.Nin(l => l.Properties["AssemblyName"], searchParams.ExcludeService);
         }
 
         if (searchParams.InstanceName is { Length: > 0 })
         {
-            filters.Add(
-                filterBuilder.In(
-                    l => l.Properties["FloppyBotInstanceName"],
-                    searchParams.InstanceName
-                )
+            yield return Filter.In(
+                l => l.Properties["FloppyBotInstanceName"],
+                searchParams.InstanceName
             );
         }
 
         if (searchParams.ExcludeInstanceName is { Length: > 0 })
         {
-            filters.Add(
-                filterBuilder.Nin(
-                    l => l.Properties["FloppyBotInstanceName"],
-                    searchParams.ExcludeInstanceName
-                )
+            yield return Filter.Nin(
+                l => l.Properties["FloppyBotInstanceName"],
+                searchParams.ExcludeInstanceName
             );
         }
 
         if (searchParams.MessageTemplate is { Length: > 0 })
         {
-            filters.Add(filterBuilder.In(l => l.MessageTemplate, searchParams.MessageTemplate));
+            yield return Filter.In(l => l.MessageTemplate, searchParams.MessageTemplate);
         }
 
         if (searchParams.ExcludeMessageTemplate is { Length: > 0 })
         {
-            filters.Add(
-                filterBuilder.Nin(l => l.MessageTemplate, searchParams.ExcludeMessageTemplate)
-            );
+            yield return Filter.Nin(l => l.MessageTemplate, searchParams.ExcludeMessageTemplate);
         }
-
-        return _collection
-            .FindSync(filterBuilder.And(filters), GetFindOptions(searchParams))
-            .ToList()
-            .Select(l => l.ToLogRecord(searchParams.IncludeProperties));
     }
 
-    private static IEnumerable<LogLevel> GetFilters(LogLevel? minLevel, LogLevel? maxLevel)
+    private static IEnumerable<LogLevel> GetLogLevelsToFilterFor(
+        LogLevel? minLevel,
+        LogLevel? maxLevel
+    )
     {
         return LogLevels.All.Where(l =>
             l <= (minLevel ?? LogLevel.Verbose) && l >= (maxLevel ?? LogLevel.Fatal)

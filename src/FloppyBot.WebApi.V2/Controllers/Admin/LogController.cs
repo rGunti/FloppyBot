@@ -18,15 +18,17 @@ public class LogController : ControllerBase
         _logService = logService;
     }
 
-    [HttpGet]
-    public IActionResult GetLog([FromQuery] LogRecordSearchParameters searchParams)
+    [HttpPost]
+    public ActionResult<LogRecord[]> GetLogEntries(
+        [FromBody] LogRecordSearchParameters searchParams
+    )
     {
         return Ok(_logService.GetLog(searchParams));
     }
 
-    [HttpPost]
-    public IActionResult GetLogEntries([FromBody] LogRecordSearchParameters searchParams)
+    [HttpPost("stats")]
+    public ActionResult<LogStats> GetStats([FromBody] LogRecordSearchParameters searchParams)
     {
-        return Ok(_logService.GetLog(searchParams));
+        return _logService.GetLogStats(searchParams);
     }
 }
