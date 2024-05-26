@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
+using FloppyBot.Base.Logging.MongoDb;
 using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Registry;
@@ -150,6 +151,7 @@ services
     .AddKillSwitch()
     .AddV1Compatibility()
     .AddSingleton<StreamSourceListener>()
+    .AddSingleton<LogService>()
     .AddMemoryCache();
 
 // *** CONFIGURE ************************************************************************
