@@ -58,6 +58,27 @@ public class LogService
             .FirstOrDefault(new LogStats(0, null, null));
     }
 
+    private static IEnumerable<LogLevel> GetLogLevelsToFilterFor(
+        LogLevel? minLevel,
+        LogLevel? maxLevel
+    )
+    {
+        return LogLevels.All.Where(l =>
+            l <= (minLevel ?? LogLevel.Verbose) && l >= (maxLevel ?? LogLevel.Fatal)
+        );
+    }
+
+    private static FindOptions<InternalLogRecord> GetFindOptions(
+        LogRecordSearchParameters searchParams
+    )
+    {
+        return new FindOptions<InternalLogRecord>
+        {
+            Limit = Math.Max(1, Math.Min(searchParams.MaxRecords, MAX_RECORDS)),
+            Sort = Builders<InternalLogRecord>.Sort.Descending(l => l.Timestamp),
+        };
+    }
+
     private IEnumerable<FilterDefinition<InternalLogRecord>> GetFilter(
         LogRecordSearchParameters searchParams
     )
@@ -127,27 +148,6 @@ public class LogService
         {
             yield return Filter.Nin(l => l.MessageTemplate, searchParams.ExcludeMessageTemplate);
         }
-    }
-
-    private static IEnumerable<LogLevel> GetLogLevelsToFilterFor(
-        LogLevel? minLevel,
-        LogLevel? maxLevel
-    )
-    {
-        return LogLevels.All.Where(l =>
-            l <= (minLevel ?? LogLevel.Verbose) && l >= (maxLevel ?? LogLevel.Fatal)
-        );
-    }
-
-    private static FindOptions<InternalLogRecord> GetFindOptions(
-        LogRecordSearchParameters searchParams
-    )
-    {
-        return new FindOptions<InternalLogRecord>
-        {
-            Limit = Math.Max(1, Math.Min(searchParams.MaxRecords, MAX_RECORDS)),
-            Sort = Builders<InternalLogRecord>.Sort.Descending(l => l.Timestamp),
-        };
     }
 
     private (DateTime From, DateTime To) GetTimeFilter(LogRecordSearchParameters searchParams)
