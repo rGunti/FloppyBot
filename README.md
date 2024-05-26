@@ -1,6 +1,10 @@
 # FloppyBot
 
-<!-- TODO: Logo -->
+[![FloppyBot][img-floppybot]][floppybot]
+[![FloppyBot][img-floppybot-ac]][floppybot-ac]
+[![FloppyBot][img-floppybot-ss]][floppybot-ss]
+
+---
 
 [![BSD-3-Clause](https://img.shields.io/github/license/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/blob/master/LICENSE)
 [![GitHub issues](https://img.shields.io/github/issues/rGunti/FloppyBot)](https://github.com/rGunti/FloppyBot/issues)
@@ -45,3 +49,12 @@ FloppyBot consists of multiple components:
 
 - ![FloppyBot Admin Console Version](https://img.shields.io/docker/v/floppybot/admin-console?logo=docker&label=FloppyBot%20Admin%20Console)
   ![FloppyBot Admin Console Image Size](https://img.shields.io/docker/image-size/floppybot/admin-console/main)
+
+---
+
+[floppybot]: https://github.com/rgunti/floppybot
+[floppybot-ac]: https://github.com/rGunti/FloppyBot-AdminConsole
+[floppybot-ss]: https://github.com/rGunti/FloppyBot-StreamSource
+[img-floppybot]: https://img.shields.io/badge/FloppyBot-blue?logo=.net
+[img-floppybot-ac]: https://img.shields.io/badge/Admin_Console-gray?logo=googlechrome
+[img-floppybot-ss]: https://img.shields.io/badge/Stream_Source-gray?logo=obsstudio
