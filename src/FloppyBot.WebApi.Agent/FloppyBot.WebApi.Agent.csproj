@@ -25,4 +25,9 @@
     <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj" />
     <ProjectReference Include="..\FloppyBot.WebApi.V2\FloppyBot.WebApi.V2.csproj" />
   </ItemGroup>
+
+  <!-- Exclude Web API V1 in debug builds by default -->
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>EXCLUDE_WEB_API_V1</DefineConstants>
+  </PropertyGroup>
 </Project>

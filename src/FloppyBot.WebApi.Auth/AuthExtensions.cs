@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Entities.Identifiers;
 
 namespace FloppyBot.WebApi.Auth;
 
@@ -35,5 +37,14 @@ public static class AuthExtensions
             .Where(c => c.Type == API_KEY_CHANNEL_CLAIM)
             .Select(c => c.Value)
             .FirstOrDefault();
+    }
+
+    public static ChatUser AsChatUser(this ClaimsPrincipal user)
+    {
+        return new ChatUser(
+            new ChannelIdentifier("WebApi", user.GetUserId()),
+            string.Empty,
+            PrivilegeLevel.Unknown
+        );
     }
 }

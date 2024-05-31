@@ -1,3 +1,4 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Commands.Aux.Quotes.Storage;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.Controllers;
@@ -14,11 +15,13 @@ namespace FloppyBot.WebApi.V2.Controllers;
 public class QuotesController : ChannelScopedController
 {
     private readonly IQuoteService _quoteService;
+    private readonly IAuditor _auditor;
 
-    public QuotesController(IUserService userService, IQuoteService quoteService)
+    public QuotesController(IUserService userService, IQuoteService quoteService, IAuditor auditor)
         : base(userService)
     {
         _quoteService = quoteService;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -40,11 +43,13 @@ public class QuotesController : ChannelScopedController
     )
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
-        if (!_quoteService.UpdateQuote(channelId, quoteId, quote.ToEntity()))
+        var quoteEntity = quote.ToEntity();
+        if (!_quoteService.UpdateQuote(channelId, quoteId, quoteEntity))
         {
             return NotFound();
         }
 
+        _auditor.QuoteUpdated(User.AsChatUser(), channelId, quoteEntity);
         return NoContent();
     }
 
@@ -61,6 +66,7 @@ public class QuotesController : ChannelScopedController
             return NotFound();
         }
 
+        _auditor.QuoteDeleted(User.AsChatUser(), channelId, quoteId);
         return NoContent();
     }
 }
