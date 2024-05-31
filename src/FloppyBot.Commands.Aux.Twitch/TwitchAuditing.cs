@@ -1,3 +1,4 @@
+using FloppyBot.Aux.TwitchAlerts.Core.Entities;
 using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
@@ -8,6 +9,7 @@ namespace FloppyBot.Commands.Aux.Twitch;
 public static class TwitchAuditing
 {
     public const string ShoutoutMessageType = "ShoutoutMessage";
+    public const string SubAlertMessageType = "SubAlertMessage";
 
     public static void ShoutoutMessageSet(
         this IAuditor auditor,
@@ -71,6 +73,53 @@ public static class TwitchAuditing
             channel,
             ShoutoutMessageType,
             string.Empty,
+            CommonActions.Deleted
+        );
+    }
+
+    public static void SubAlertMessageSet(
+        this IAuditor auditor,
+        ChatUser user,
+        ChannelIdentifier channel,
+        string message
+    )
+    {
+        auditor.Record(
+            user.Identifier,
+            channel,
+            nameof(TwitchAlertSettings),
+            nameof(TwitchAlertSettings.SubMessage),
+            CommonActions.Updated,
+            message
+        );
+    }
+
+    public static void SubAlertMessageDisabled(
+        this IAuditor auditor,
+        ChatUser user,
+        ChannelIdentifier channel
+    )
+    {
+        auditor.Record(
+            user.Identifier,
+            channel,
+            nameof(TwitchAlertSettings),
+            nameof(TwitchAlertSettings.SubMessage),
+            CommonActions.Disabled
+        );
+    }
+
+    public static void SubAlertMessageCleared(
+        this IAuditor auditor,
+        ChatUser user,
+        ChannelIdentifier channel
+    )
+    {
+        auditor.Record(
+            user.Identifier,
+            channel,
+            nameof(TwitchAlertSettings),
+            nameof(TwitchAlertSettings.SubMessage),
             CommonActions.Deleted
         );
     }
