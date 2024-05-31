@@ -1,4 +1,7 @@
 using FakeItEasy;
+using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Base.Auditing.Abstraction.Entities;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Twitch.Api;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.Commands.Aux.Twitch.Storage.Entities;
@@ -11,15 +14,19 @@ public class ShoutoutCommandTests
 {
     private readonly ShoutoutCommand _shoutoutCommand;
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
+    private readonly IAuditor _auditor;
 
     public ShoutoutCommandTests()
     {
+        _auditor = A.Fake<IAuditor>();
+
         var twitchApiService = A.Fake<ITwitchApiService>();
         _shoutoutMessageSettingService = A.Fake<IShoutoutMessageSettingService>();
         _shoutoutCommand = new ShoutoutCommand(
             twitchApiService,
             _shoutoutMessageSettingService,
-            A.Fake<ILogger<ShoutoutCommand>>()
+            A.Fake<ILogger<ShoutoutCommand>>(),
+            _auditor
         );
 
         A.CallTo(() => twitchApiService.LookupUser(A<string>.Ignored))
@@ -110,7 +117,11 @@ public class ShoutoutCommandTests
     [TestMethod]
     public void ConfigureCreatesDatabaseRecord()
     {
-        var reply = _shoutoutCommand.SetShoutout("Twitch/someuser", "My new template");
+        var reply = _shoutoutCommand.SetShoutout(
+            new ChatUser("Twitch/someuser", "Some User", PrivilegeLevel.Moderator),
+            "Twitch/someuser",
+            "My new template"
+        );
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
         A.CallTo(
@@ -121,12 +132,32 @@ public class ShoutoutCommandTests
                     )
             )
             .MustHaveHappenedOnceExactly();
+        A.CallTo(
+                () =>
+                    _auditor.Record(
+                        new AuditRecord(
+                            null!,
+                            DateTimeOffset.MinValue,
+                            "Twitch/someuser",
+                            "Twitch/someuser",
+                            TwitchAuditing.ShoutoutMessageType,
+                            "Message",
+                            CommonActions.Updated,
+                            "My new template"
+                        )
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void ConfigureTeamShoutoutSavesToDatabase()
     {
-        var reply = _shoutoutCommand.SetTeamShoutout("Twitch/someuser", "My new team template");
+        var reply = _shoutoutCommand.SetTeamShoutout(
+            new ChatUser("Twitch/someuser", "Some User", PrivilegeLevel.Moderator),
+            "Twitch/someuser",
+            "My new team template"
+        );
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
         A.CallTo(
@@ -139,15 +170,50 @@ public class ShoutoutCommandTests
                     )
             )
             .MustHaveHappenedOnceExactly();
+        A.CallTo(
+                () =>
+                    _auditor.Record(
+                        new AuditRecord(
+                            null!,
+                            DateTimeOffset.MinValue,
+                            "Twitch/someuser",
+                            "Twitch/someuser",
+                            TwitchAuditing.ShoutoutMessageType,
+                            "TeamMessage",
+                            CommonActions.Updated,
+                            "My new team template"
+                        )
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void ClearIssuesDeleteCommand()
     {
-        var reply = _shoutoutCommand.ClearShoutout("Twitch/someuser");
+        var reply = _shoutoutCommand.ClearShoutout(
+            new ChatUser("Twitch/someuser", "Some User", PrivilegeLevel.Moderator),
+            "Twitch/someuser"
+        );
 
         Assert.AreEqual(ShoutoutCommand.REPLY_CLEAR, reply);
         A.CallTo(() => _shoutoutMessageSettingService.ClearSettings("Twitch/someuser"))
+            .MustHaveHappenedOnceExactly();
+        A.CallTo(
+                () =>
+                    _auditor.Record(
+                        new AuditRecord(
+                            null!,
+                            DateTimeOffset.MinValue,
+                            "Twitch/someuser",
+                            "Twitch/someuser",
+                            TwitchAuditing.ShoutoutMessageType,
+                            string.Empty,
+                            CommonActions.Deleted,
+                            null
+                        )
+                    )
+            )
             .MustHaveHappenedOnceExactly();
     }
 }

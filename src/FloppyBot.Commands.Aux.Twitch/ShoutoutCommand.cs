@@ -1,4 +1,5 @@
 ﻿using FloppyBot.Aux.MessageCounter.Core;
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
@@ -39,16 +40,19 @@ public class ShoutoutCommand
 
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
     private readonly ITwitchApiService _twitchApiService;
+    private readonly IAuditor _auditor;
 
     public ShoutoutCommand(
         ITwitchApiService twitchApiService,
         IShoutoutMessageSettingService shoutoutMessageSettingService,
-        ILogger<ShoutoutCommand> logger
+        ILogger<ShoutoutCommand> logger,
+        IAuditor auditor
     )
     {
         _twitchApiService = twitchApiService;
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
         _logger = logger;
+        _auditor = auditor;
     }
 
     [DependencyRegistration]
@@ -170,9 +174,14 @@ public class ShoutoutCommand
         "Shoutout to {DisplayName} at {Link}. They last played {LastGame}!"
     )]
     // ReSharper disable once UnusedMember.Global
-    public string SetShoutout([SourceChannel] string sourceChannel, [AllArguments] string template)
+    public string SetShoutout(
+        [Author] ChatUser author,
+        [SourceChannel] ChannelIdentifier sourceChannel,
+        [AllArguments] string template
+    )
     {
         _shoutoutMessageSettingService.SetShoutoutMessage(sourceChannel, template);
+        _auditor.ShoutoutMessageSet(author, sourceChannel, template);
         return REPLY_SAVE;
     }
 
@@ -190,7 +199,8 @@ public class ShoutoutCommand
             + $"{nameof(MessageTemplateParams.TeamLink)}"
     )]
     public string? SetTeamShoutout(
-        [SourceChannel] string sourceChannel,
+        [Author] ChatUser author,
+        [SourceChannel] ChannelIdentifier sourceChannel,
         [AllArguments] string template
     )
     {
@@ -204,6 +214,7 @@ public class ShoutoutCommand
                 TeamMessage = template,
             }
         );
+        _auditor.TeamShoutoutMessageSet(author, sourceChannel, template);
         return REPLY_SAVE;
     }
 
@@ -212,9 +223,13 @@ public class ShoutoutCommand
         "Clears the channels shoutout message, effectively disabling the shoutout command"
     )]
     // ReSharper disable once UnusedMember.Global
-    public string ClearShoutout([SourceChannel] string sourceChannel)
+    public string ClearShoutout(
+        [Author] ChatUser author,
+        [SourceChannel] ChannelIdentifier sourceChannel
+    )
     {
         _shoutoutMessageSettingService.ClearSettings(sourceChannel);
+        _auditor.ShoutoutMessageCleared(author, sourceChannel);
         return REPLY_CLEAR;
     }
 }
