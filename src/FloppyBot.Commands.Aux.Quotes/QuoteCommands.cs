@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Base.Auditing.Storage;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.Rng;
 using FloppyBot.Base.TextFormatting;
@@ -54,11 +56,17 @@ public class QuoteCommands
 
     private readonly ILogger<QuoteCommands> _logger;
     private readonly IQuoteService _quoteService;
+    private readonly IAuditor _auditor;
 
-    public QuoteCommands(ILogger<QuoteCommands> logger, IQuoteService quoteService)
+    public QuoteCommands(
+        ILogger<QuoteCommands> logger,
+        IQuoteService quoteService,
+        IAuditor auditor
+    )
     {
         _logger = logger;
         _quoteService = quoteService;
+        _auditor = auditor;
     }
 
     [DependencyRegistration]
@@ -68,6 +76,7 @@ public class QuoteCommands
         services
             .AddSingleton<ITimeProvider, RealTimeProvider>()
             .AddSingleton<IRandomNumberGenerator, RandomNumberGenerator>()
+            .AddAuditor<StorageAuditor>()
             .AddScoped<IQuoteService, QuoteService>()
             .AddScoped<IQuoteChannelMappingService, QuoteChannelMappingService>();
     }
@@ -115,6 +124,7 @@ public class QuoteCommands
             sourceContext ?? sourceChannel.Interface,
             author.DisplayName
         );
+        _auditor.QuoteCreated(author, sourceChannel, quote);
         return REPLY_CREATED.Format(new { Quote = quote });
     }
 
@@ -128,7 +138,8 @@ public class QuoteCommands
     public string EditQuote(
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteText
+        [ArgumentRange(1)] string newQuoteText,
+        [Author] ChatUser author
     )
     {
         var editedQuote = _quoteService.EditQuote(sourceChannel, quoteId, newQuoteText);
@@ -137,6 +148,7 @@ public class QuoteCommands
             return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
         }
 
+        _auditor.QuoteUpdated(author, sourceChannel, editedQuote);
         return REPLY_EDITED.Format(new { Quote = editedQuote });
     }
 
@@ -150,7 +162,8 @@ public class QuoteCommands
     public string EditQuoteContext(
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] int quoteId,
-        [ArgumentRange(1)] string newQuoteContext
+        [ArgumentRange(1)] string newQuoteContext,
+        [Author] ChatUser author
     )
     {
         var editedQuote = _quoteService.EditQuoteContext(sourceChannel, quoteId, newQuoteContext);
@@ -159,6 +172,7 @@ public class QuoteCommands
             return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
         }
 
+        _auditor.QuoteUpdated(author, sourceChannel, editedQuote);
         return REPLY_EDITED.Format(new { Quote = editedQuote });
     }
 
@@ -168,11 +182,21 @@ public class QuoteCommands
     [CommandSyntax("<Quote No.>", "123")]
     [PrivilegeGuard(PrivilegeLevel.Moderator)]
     [CommandParameterHint(1, "id", CommandParameterType.Number)]
-    public string DeleteQuote([SourceChannel] string sourceChannel, [ArgumentIndex(0)] int quoteId)
+    public string DeleteQuote(
+        [SourceChannel] string sourceChannel,
+        [ArgumentIndex(0)] int quoteId,
+        [Author] ChatUser author
+    )
     {
-        return _quoteService.DeleteQuote(sourceChannel, quoteId)
-            ? REPLY_DELETED.Format(new { QuoteId = quoteId })
-            : REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
+        var deleted = _quoteService.DeleteQuote(sourceChannel, quoteId);
+
+        if (!deleted)
+        {
+            return REPLY_QUOTE_NOT_FOUND.Format(new { QuoteId = quoteId });
+        }
+
+        _auditor.QuoteDeleted(author, sourceChannel, quoteId);
+        return REPLY_DELETED.Format(new { QuoteId = quoteId });
     }
 
     private string? DoQuote(
@@ -221,7 +245,7 @@ public class QuoteCommands
                 return REPLY_TEXT_MISSING;
             }
 
-            return EditQuote(sourceChannel, editQuoteId, subOpText);
+            return EditQuote(sourceChannel, editQuoteId, subOpText, author);
         }
 
         if (OpEditContext.Contains(op))
@@ -238,7 +262,7 @@ public class QuoteCommands
                 return REPLY_CONTEXT_MISSING;
             }
 
-            return EditQuoteContext(sourceChannel, editQuoteId, subOpText);
+            return EditQuoteContext(sourceChannel, editQuoteId, subOpText, author);
         }
 
         if (OpDelete.Contains(op))
@@ -250,7 +274,7 @@ public class QuoteCommands
                 return REPLY_QUOTE_ID_INVALID;
             }
 
-            return DeleteQuote(sourceChannel, deleteQuoteId);
+            return DeleteQuote(sourceChannel, deleteQuoteId, author);
         }
 
         _logger.LogInformation(

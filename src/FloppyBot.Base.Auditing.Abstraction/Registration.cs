@@ -7,6 +7,6 @@ public static class Registration
     public static IServiceCollection AddAuditor<T>(this IServiceCollection services)
         where T : class, IAuditor
     {
-        return services.AddSingleton<IAuditor, T>();
+        return services.AddScoped<IAuditor, T>();
     }
 }

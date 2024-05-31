@@ -4,6 +4,7 @@ using FloppyBot.Chat.Entities.Identifiers;
 
 namespace FloppyBot.Base.Auditing.Abstraction;
 
+[StackTraceHidden]
 public static class AuditorExtensions
 {
     /// <summary>
@@ -18,7 +19,6 @@ public static class AuditorExtensions
     /// <param name="action">The action performed on the object</param>
     /// <param name="additionalData">Additional context data</param>
     /// <param name="timestamp">Optional timestamp</param>
-    [StackTraceHidden]
     public static void Record(
         this IAuditor auditor,
         string userIdentifier,
@@ -56,7 +56,6 @@ public static class AuditorExtensions
     /// <param name="action">The action performed on the object</param>
     /// <param name="additionalData">Additional context data</param>
     /// <param name="timestamp">Optional timestamp</param>
-    [StackTraceHidden]
     public static void Record(
         this IAuditor auditor,
         ChannelIdentifier user,
@@ -90,7 +89,6 @@ public static class AuditorExtensions
     /// <param name="action">The action performed on the object</param>
     /// <param name="additionalData">Additional context data</param>
     /// <param name="timestamp">Optional timestamp</param>
-    [StackTraceHidden]
     public static void Record<T>(
         this IAuditor auditor,
         ChannelIdentifier user,

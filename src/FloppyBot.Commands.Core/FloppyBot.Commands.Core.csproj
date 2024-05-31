@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FloppyBot.Base.Auditing.Abstraction\FloppyBot.Base.Auditing.Abstraction.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Auditing.Storage\FloppyBot.Base.Auditing.Storage.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj" />
