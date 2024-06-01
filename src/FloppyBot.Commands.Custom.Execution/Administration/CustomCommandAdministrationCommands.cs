@@ -1,3 +1,4 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Extensions;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
@@ -7,6 +8,7 @@ using FloppyBot.Commands.Core.Attributes.Guards;
 using FloppyBot.Commands.Core.Attributes.Metadata;
 using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Custom.Storage;
+using FloppyBot.Commands.Custom.Storage.Auditing;
 
 namespace FloppyBot.Commands.Custom.Execution.Administration;
 
@@ -35,20 +37,24 @@ public class CustomCommandAdministrationCommands
 
     private readonly ICustomCommandService _commandService;
     private readonly ICounterStorageService _counterStorageService;
+    private readonly IAuditor _auditor;
 
     public CustomCommandAdministrationCommands(
         ICustomCommandService commandService,
-        ICounterStorageService counterStorageService
+        ICounterStorageService counterStorageService,
+        IAuditor auditor
     )
     {
         _commandService = commandService;
         _counterStorageService = counterStorageService;
+        _auditor = auditor;
     }
 
     [Command("newcmd")]
     [CommandDescription("Creates a new custom text command")]
     [CommandSyntax("<Command Name> <Reply Text>")]
     public CommandResult CreateCommand(
+        [Author] ChatUser author,
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] string commandName,
         [ArgumentRange(1)] string commandResponse
@@ -60,24 +66,40 @@ public class CustomCommandAdministrationCommands
             commandResponse
         );
         var formatParams = new CustomCommandFormattingParams(commandName);
-        return created
-            ? new CommandResult(CommandOutcome.Success, REPLY_CREATE_SUCCESS.Format(formatParams))
-            : new CommandResult(CommandOutcome.Failed, REPLY_CREATE_FAILED.Format(formatParams));
+        if (!created)
+        {
+            return new CommandResult(
+                CommandOutcome.Failed,
+                REPLY_CREATE_FAILED.Format(formatParams)
+            );
+        }
+
+        _auditor.CommandCreated(author, sourceChannel, commandName, commandResponse);
+        return new CommandResult(CommandOutcome.Success, REPLY_CREATE_SUCCESS.Format(formatParams));
     }
 
     [Command("deletecmd")]
     [CommandDescription("Deletes a custom text command")]
     [CommandSyntax("<Command Name>")]
     public CommandResult DeleteCommand(
+        [Author] ChatUser author,
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0)] string commandName
     )
     {
         bool deleted = _commandService.DeleteCommand(sourceChannel, commandName);
         var formatParams = new CustomCommandFormattingParams(commandName);
-        return deleted
-            ? new CommandResult(CommandOutcome.Success, REPLY_DELETE_SUCCESS.Format(formatParams))
-            : new CommandResult(CommandOutcome.Failed, REPLY_DELETE_FAILED.Format(formatParams));
+
+        if (!deleted)
+        {
+            return new CommandResult(
+                CommandOutcome.Failed,
+                REPLY_DELETE_FAILED.Format(formatParams)
+            );
+        }
+
+        _auditor.CommandDeleted(author, sourceChannel, commandName);
+        return new CommandResult(CommandOutcome.Success, REPLY_DELETE_SUCCESS.Format(formatParams));
     }
 
     [Command("counter", "count")]
@@ -85,6 +107,7 @@ public class CustomCommandAdministrationCommands
     [CommandDescription("Sets the counter for a custom command")]
     [CommandSyntax("<Command Name> <Operation>|<Value>")]
     public CommandResult SetCounter(
+        [Author] ChatUser author,
         [SourceChannel] string sourceChannel,
         [ArgumentIndex(0, stopIfMissing: true)] string commandName,
         [ArgumentIndex(1, stopIfMissing: true)] string operationOrValue
@@ -108,6 +131,7 @@ public class CustomCommandAdministrationCommands
         {
             case CMD_COUNTER_CLEAR:
                 _counterStorageService.Set(commandId, 0);
+                _auditor.CounterUpdated(author, sourceChannel, commandName, 0);
                 return CreateCounterResult(formatParams with { Counter = 0 });
         }
 
@@ -128,6 +152,13 @@ public class CustomCommandAdministrationCommands
         {
             // Relative
             int incrementedValue = _counterStorageService.Increase(commandId, incrementValue);
+            _auditor.CounterUpdated(
+                author,
+                sourceChannel,
+                commandName,
+                incrementedValue,
+                incrementValue
+            );
             return CreateCounterResult(formatParams with { Counter = incrementedValue });
         }
 
@@ -135,6 +166,7 @@ public class CustomCommandAdministrationCommands
         {
             // Absolute
             _counterStorageService.Set(commandId, newValue);
+            _auditor.CounterUpdated(author, sourceChannel, commandName, newValue);
             return CreateCounterResult(formatParams with { Counter = newValue });
         }
 
