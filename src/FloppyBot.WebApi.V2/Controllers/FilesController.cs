@@ -1,5 +1,7 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Extensions;
 using FloppyBot.FileStorage;
+using FloppyBot.FileStorage.Auditing;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.Controllers;
 using FloppyBot.WebApi.Auth.UserProfiles;
@@ -17,11 +19,13 @@ namespace FloppyBot.WebApi.V2.Controllers;
 public class FilesController : ChannelScopedController
 {
     private readonly IFileService _fileService;
+    private readonly IAuditor _auditor;
 
-    public FilesController(IUserService userService, IFileService fileService)
+    public FilesController(IUserService userService, IFileService fileService, IAuditor auditor)
         : base(userService)
     {
         _fileService = fileService;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -64,6 +68,7 @@ public class FilesController : ChannelScopedController
             );
         }
 
+        _auditor.FileCreated(User.AsChatUser(), channelId, file.FileName, file.Length);
         return NoContent();
     }
 
@@ -77,6 +82,7 @@ public class FilesController : ChannelScopedController
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
         _fileService.DeleteFile(channelId, fileName);
+        _auditor.FileDeleted(User.AsChatUser(), channelId, fileName);
         return NoContent();
     }
 
