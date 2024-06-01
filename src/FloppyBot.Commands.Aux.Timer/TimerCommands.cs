@@ -1,3 +1,4 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
@@ -25,11 +26,17 @@ public class TimerCommands
 
     private readonly ILogger<TimerCommands> _logger;
     private readonly ITimerService _timerService;
+    private readonly IAuditor _auditor;
 
-    public TimerCommands(ILogger<TimerCommands> logger, ITimerService timerService)
+    public TimerCommands(
+        ILogger<TimerCommands> logger,
+        ITimerService timerService,
+        IAuditor auditor
+    )
     {
         _logger = logger;
         _timerService = timerService;
+        _auditor = auditor;
     }
 
     [DependencyRegistration]
@@ -48,7 +55,8 @@ public class TimerCommands
         [ArgumentIndex(0)] string timeExpression,
         [ArgumentRange(1)] string timerMessage,
         [Author] ChatUser author,
-        [SourceMessageIdentifier] ChatMessageIdentifier sourceMessageId
+        [SourceMessageIdentifier] ChatMessageIdentifier sourceMessageId,
+        [SourceChannel] ChannelIdentifier sourceChannel
     )
     {
         TimeSpan? timespan = TimeExpressionParser.ParseTimeExpression(timeExpression);
@@ -58,6 +66,7 @@ public class TimerCommands
         }
 
         _timerService.CreateTimer(sourceMessageId, author.Identifier, timespan.Value, timerMessage);
+        _auditor.TimerCreated(author, sourceChannel, sourceMessageId, timerMessage, timespan.Value);
         return CommandResult.SuccessWith(REPLY_CREATED.Format(new { Time = timespan }));
     }
 }
