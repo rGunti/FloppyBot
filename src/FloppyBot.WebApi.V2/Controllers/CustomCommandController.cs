@@ -1,4 +1,6 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Commands.Custom.Storage;
+using FloppyBot.Commands.Custom.Storage.Auditing;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.Controllers;
 using FloppyBot.WebApi.Auth.UserProfiles;
@@ -16,16 +18,19 @@ public class CustomCommandController : ChannelScopedController
 {
     private readonly ICustomCommandService _customCommandService;
     private readonly ICounterStorageService _counterStorageService;
+    private readonly IAuditor _auditor;
 
     public CustomCommandController(
         IUserService userService,
         ICustomCommandService customCommandService,
-        ICounterStorageService counterStorageService
+        ICounterStorageService counterStorageService,
+        IAuditor auditor
     )
         : base(userService)
     {
         _customCommandService = customCommandService;
         _counterStorageService = counterStorageService;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -75,12 +80,19 @@ public class CustomCommandController : ChannelScopedController
             return BadRequest();
         }
 
+        _auditor.CommandCreated(User.AsChatUser(), channelId, command);
         if (createDto.Counter is not null)
         {
             var createdCommand =
                 _customCommandService.GetCommand(channelId, createDto.Name)
                 ?? throw new InvalidOperationException("Command not found after creation.");
             _counterStorageService.Set(createdCommand.Id, createDto.Counter.Value);
+            _auditor.CounterUpdated(
+                User.AsChatUser(),
+                channelId,
+                command.Name,
+                createDto.Counter.Value
+            );
         }
 
         return NoContent();
@@ -105,9 +117,16 @@ public class CustomCommandController : ChannelScopedController
         command = updateDto.ToEntity().WithId(command.Id) with { Owners = command.Owners, };
         _customCommandService.UpdateCommand(command);
 
+        _auditor.CommandUpdated(User.AsChatUser(), channelId, command);
         if (updateDto.Counter is not null)
         {
             _counterStorageService.Set(command.Id, updateDto.Counter.Value);
+            _auditor.CounterUpdated(
+                User.AsChatUser(),
+                channelId,
+                command.Name,
+                updateDto.Counter.Value
+            );
         }
 
         return NoContent();
@@ -127,6 +146,7 @@ public class CustomCommandController : ChannelScopedController
             return NotFound();
         }
 
+        _auditor.CommandDeleted(User.AsChatUser(), channelId, commandName);
         return NoContent();
     }
 }

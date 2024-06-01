@@ -1,7 +1,9 @@
 using System.Diagnostics;
+using System.Text.Json;
 using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Commands.Custom.Storage.Entities;
 
 namespace FloppyBot.Commands.Custom.Storage.Auditing;
 
@@ -30,6 +32,24 @@ public static class CustomCommandAuditing
             commandName,
             CommonActions.Created,
             response
+        );
+    }
+
+    public static void CommandCreated(
+        this IAuditor auditor,
+        ChatUser author,
+        ChannelIdentifier channel,
+        CustomCommandDescription commandDescription
+    )
+    {
+        var commandJson = JsonSerializer.Serialize(commandDescription);
+        auditor.Record(
+            author.Identifier,
+            channel,
+            CustomCommandType,
+            commandDescription.Name,
+            CommonActions.Created,
+            commandJson
         );
     }
 
@@ -69,6 +89,24 @@ public static class CustomCommandAuditing
             commandName,
             CustomCommandActions.CounterUpdated,
             detail
+        );
+    }
+
+    public static void CommandUpdated(
+        this IAuditor auditor,
+        ChatUser author,
+        ChannelIdentifier channel,
+        CustomCommandDescription commandDescription
+    )
+    {
+        var commandJson = JsonSerializer.Serialize(commandDescription);
+        auditor.Record(
+            author.Identifier,
+            channel,
+            CustomCommandType,
+            commandDescription.Name,
+            CommonActions.Updated,
+            commandJson
         );
     }
 }
