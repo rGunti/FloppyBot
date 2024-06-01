@@ -1,3 +1,5 @@
+using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Commands.Aux.Twitch;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.Controllers;
@@ -14,14 +16,17 @@ namespace FloppyBot.WebApi.V2.Controllers;
 public class TimerMessageController : ChannelScopedController
 {
     private readonly ITimerMessageConfigurationService _timerMessageConfigurationService;
+    private readonly IAuditor _auditor;
 
     public TimerMessageController(
         IUserService userService,
-        ITimerMessageConfigurationService timerMessageConfigurationService
+        ITimerMessageConfigurationService timerMessageConfigurationService,
+        IAuditor auditor
     )
         : base(userService)
     {
         _timerMessageConfigurationService = timerMessageConfigurationService;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -46,10 +51,9 @@ public class TimerMessageController : ChannelScopedController
     )
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
-        _timerMessageConfigurationService.UpdateConfigurationForChannel(
-            channelId,
-            config.ToEntity()
-        );
+        var entity = config.ToEntity();
+        _timerMessageConfigurationService.UpdateConfigurationForChannel(channelId, entity);
+        _auditor.TimerMessagesChanged(User.AsChatUser(), channelId, entity);
         return NoContent();
     }
 }

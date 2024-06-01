@@ -1,4 +1,6 @@
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Extensions;
+using FloppyBot.Commands.Core.Auditing;
 using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Registry;
 using FloppyBot.WebApi.Auth;
@@ -18,16 +20,19 @@ public class CommandConfigController : ChannelScopedController
 {
     private readonly ICommandConfigurationService _commandConfigurationService;
     private readonly IDistributedCommandRegistry _distributedCommandRegistry;
+    private readonly IAuditor _auditor;
 
     public CommandConfigController(
         IUserService userService,
         ICommandConfigurationService commandConfigurationService,
-        IDistributedCommandRegistry distributedCommandRegistry
+        IDistributedCommandRegistry distributedCommandRegistry,
+        IAuditor auditor
     )
         : base(userService)
     {
         _commandConfigurationService = commandConfigurationService;
         _distributedCommandRegistry = distributedCommandRegistry;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -103,10 +108,9 @@ public class CommandConfigController : ChannelScopedController
                 Disabled = false,
             };
 
-        _commandConfigurationService.SetCommandConfiguration(
-            (commandConfigurationDto with { Id = commandConfiguration.Id, }).ToEntity()
-        );
-
+        var entity = (commandConfigurationDto with { Id = commandConfiguration.Id, }).ToEntity();
+        _commandConfigurationService.SetCommandConfiguration(entity);
+        _auditor.CommandConfigurationUpdated(User.AsChatUser(), channelId, entity);
         return NoContent();
     }
 
@@ -120,7 +124,7 @@ public class CommandConfigController : ChannelScopedController
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
         _commandConfigurationService.DeleteCommandConfiguration(channelId, commandName);
-
+        _auditor.CommandConfigurationDeleted(User.AsChatUser(), channelId, commandName);
         return NoContent();
     }
 
@@ -153,6 +157,12 @@ public class CommandConfigController : ChannelScopedController
             {
                 Disabled = isDisabled,
             }
+        );
+        _auditor.CommandConfigurationDisabledSet(
+            User.AsChatUser(),
+            channelId,
+            commandName,
+            isDisabled
         );
 
         return NoContent();
