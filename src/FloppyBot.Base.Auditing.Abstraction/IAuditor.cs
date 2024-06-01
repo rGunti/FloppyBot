@@ -16,8 +16,7 @@ public interface IAuditor
     /// <summary>
     /// Get a list of audit records for the specified channels
     /// </summary>
-    /// <param name="channel">Channel to query from</param>
-    /// <param name="channels">Additional channels to query from</param>
+    /// <param name="channels">Channels to query from</param>
     /// <returns></returns>
-    IEnumerable<AuditRecord> GetAuditRecords(string channel, params string[] channels);
+    IEnumerable<AuditRecord> GetAuditRecords(params string[] channels);
 }

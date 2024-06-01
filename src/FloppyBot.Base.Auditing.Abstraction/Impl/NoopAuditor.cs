@@ -11,7 +11,7 @@ public class NoopAuditor : IAuditor
     public void Record(AuditRecord auditRecord) { }
 
     /// <inheritdoc />
-    public IEnumerable<AuditRecord> GetAuditRecords(string channel, params string[] channels)
+    public IEnumerable<AuditRecord> GetAuditRecords(params string[] channels)
     {
         return [];
     }

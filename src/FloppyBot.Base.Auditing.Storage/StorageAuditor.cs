@@ -31,13 +31,13 @@ public class StorageAuditor : IAuditor
     }
 
     /// <inheritdoc />
-    public IEnumerable<AuditRecord> GetAuditRecords(string channel, params string[] channels)
+    public IEnumerable<AuditRecord> GetAuditRecords(params string[] channels)
     {
-        var channelList = channels.Prepend(channel).ToList();
         return _repository
             .GetAll()
-            .Where(c => channelList.Contains(c.ChannelIdentifier))
+            .Where(c => channels.Contains(c.ChannelIdentifier))
             .ToList()
-            .Select(i => i.ToAuditRecord());
+            .Select(i => i.ToAuditRecord())
+            .OrderByDescending(i => i.Timestamp);
     }
 }
