@@ -1,18 +1,25 @@
 [*.cs]
 # csharpier exceptions
 dotnet_diagnostic.IDE0055.severity = none
+
+# StyleCop.Analyzers
 dotnet_diagnostic.SA1000.severity = none
 dotnet_diagnostic.SA1009.severity = none
 dotnet_diagnostic.SA1111.severity = none
 dotnet_diagnostic.SA1118.severity = none
 dotnet_diagnostic.SA1137.severity = none
+dotnet_diagnostic.SA1413.severity = none
 dotnet_diagnostic.SA1500.severity = none
 dotnet_diagnostic.SA1501.severity = none
 dotnet_diagnostic.SA1502.severity = none
 dotnet_diagnostic.SA1504.severity = none
+dotnet_diagnostic.SA1515.severity = none
 dotnet_diagnostic.SA1516.severity = none
+
+# for csharpier <= 0.21.0
 dotnet_diagnostic.SA1127.severity = none
 dotnet_diagnostic.SA1128.severity = none
+
 dotnet_diagnostic.SA1001.severity = none
 dotnet_diagnostic.SA1002.severity = none
 dotnet_diagnostic.SA1003.severity = none
