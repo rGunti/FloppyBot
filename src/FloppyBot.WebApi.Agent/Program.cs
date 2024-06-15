@@ -13,6 +13,7 @@ using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.Version;
 using FloppyBot.WebApi.Agent.Hubs;
+using FloppyBot.WebApi.Agent.Utils;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
 using FloppyBot.WebApi.V1Compatibility;
@@ -152,13 +153,14 @@ services
     .AddV1Compatibility()
     .AddSingleton<StreamSourceListener>()
     .AddSingleton<LogService>()
-    .AddMemoryCache();
+    .AddMemoryCache()
+    .ConfigureRateLimiter(builder.Configuration);
 
 // *** CONFIGURE ************************************************************************
 var app = builder.Build();
 
 // - Routing
-app.UseRouting();
+app.UseRouting().UseRateLimiter();
 
 // - Swagger only in development
 if (app.Environment.IsDevelopment())
