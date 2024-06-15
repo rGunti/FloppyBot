@@ -7,12 +7,12 @@ internal class InternalLogRecord
 {
     public ObjectId Id { get; set; }
     public DateTime Timestamp { get; set; }
-    public string UtcTimestamp { get; set; }
+    public string UtcTimestamp { get; set; } = string.Empty;
     public LogLevel Level { get; set; }
-    public string MessageTemplate { get; set; }
-    public string RenderedMessage { get; set; }
+    public string MessageTemplate { get; set; } = string.Empty;
+    public string RenderedMessage { get; set; } = string.Empty;
     public string? Exception { get; set; }
-    public Dictionary<string, object> Properties { get; set; }
+    public Dictionary<string, object> Properties { get; set; } = new();
 
     public LogRecord ToLogRecord(bool includeProperties = false)
     {

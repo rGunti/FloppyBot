@@ -30,7 +30,7 @@ public record CommandConfigurationDto(
     {
         return new CommandConfiguration
         {
-            Id = Id,
+            Id = Id!,
             ChannelId = ChannelId,
             CommandName = CommandName,
             RequiredPrivilegeLevel = RequiredPrivilegeLevel,
