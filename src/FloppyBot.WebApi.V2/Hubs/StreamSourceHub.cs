@@ -2,8 +2,9 @@ using FloppyBot.Commands.Custom.Communication.Entities;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Dtos;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
 
-namespace FloppyBot.WebApi.Agent.Hubs;
+namespace FloppyBot.WebApi.V2.Hubs;
 
 public class StreamSourceHub : Hub<IStreamSource>
 {
