@@ -15,7 +15,6 @@ using FloppyBot.Version;
 using FloppyBot.WebApi.Agent.Utils;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
-using FloppyBot.WebApi.V1Compatibility.Mapping;
 using FloppyBot.WebApi.V2;
 using FloppyBot.WebApi.V2.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -140,7 +139,6 @@ services
 
 // - Dependencies
 services
-    .AddAutoMapper(typeof(V1CompatibilityProfile))
     .AddMongoDbStorage()
     .AddRedisCommunication()
     .AddDistributedCommandRegistry()

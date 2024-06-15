@@ -6,11 +6,10 @@ using FloppyBot.WebApi.Auth.Controllers;
 using FloppyBot.WebApi.Auth.Dtos;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using FloppyBot.WebApi.Base.Exceptions;
-using FloppyBot.WebApi.V1Compatibility.Mapping;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FloppyBot.WebApi.Agent.Controllers;
+namespace FloppyBot.WebApi.V2.Controllers;
 
 [ApiController]
 [Route("api/v1/stream-source/{messageInterface}/{channel}")]
@@ -63,7 +62,7 @@ public class StreamSourceController : ChannelScopedController
         var channelId = EnsureChannelAccess(messageInterface, channel);
         return _customCommandService
             .GetCommandsOfChannel(channelId)
-            .Where(V1CompatibilityProfile.IsConvertableForSoundCommand)
+            .Where(c => c.IsSoundCommand)
             .Select(c => new SoundCommandAbstract(
                 c.Name,
                 c.Responses.First(r => r.Type == ResponseType.Sound).Content

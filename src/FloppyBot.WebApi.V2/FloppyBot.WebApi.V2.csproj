@@ -5,10 +5,6 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <Folder Include="Mapping\" />
-    </ItemGroup>
     
     <ItemGroup>
       <ProjectReference Include="..\FloppyBot.Base.Logging.MongoDb\FloppyBot.Base.Logging.MongoDb.csproj" />
