@@ -2,8 +2,9 @@ using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Communication.Entities;
 using FloppyBot.Communication;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 
-namespace FloppyBot.WebApi.Agent.Hubs;
+namespace FloppyBot.WebApi.V2.Hubs;
 
 public class StreamSourceListener : IDisposable
 {

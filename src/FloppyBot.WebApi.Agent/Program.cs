@@ -12,12 +12,11 @@ using FloppyBot.HealthCheck.Core;
 using FloppyBot.HealthCheck.KillSwitch;
 using FloppyBot.HealthCheck.Receiver;
 using FloppyBot.Version;
-using FloppyBot.WebApi.Agent.Hubs;
 using FloppyBot.WebApi.Agent.Utils;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Base.ExceptionHandler;
-using FloppyBot.WebApi.V1Compatibility;
-using FloppyBot.WebApi.V1Compatibility.Mapping;
+using FloppyBot.WebApi.V2;
+using FloppyBot.WebApi.V2.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
@@ -140,7 +139,6 @@ services
 
 // - Dependencies
 services
-    .AddAutoMapper(typeof(V1CompatibilityProfile))
     .AddMongoDbStorage()
     .AddRedisCommunication()
     .AddDistributedCommandRegistry()
@@ -150,7 +148,7 @@ services
     .AddHealthCheckReceiver()
     .AddKillSwitchTrigger()
     .AddKillSwitch()
-    .AddV1Compatibility()
+    .AddV2Dependencies()
     .AddSingleton<StreamSourceListener>()
     .AddSingleton<LogService>()
     .AddMemoryCache()
@@ -186,8 +184,7 @@ app.UseAuthentication().UseAuthorization();
 app.MapControllers();
 
 // - SignalR
-app.MapV1SignalRHub();
-app.MapHub<StreamSourceHub>("/hub/stream-source");
+app.MapV2SignalRHub();
 
 // *** START ****************************************************************************
 app.BootCronJobs()
