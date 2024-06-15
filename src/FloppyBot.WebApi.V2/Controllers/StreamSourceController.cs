@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FloppyBot.WebApi.V2.Controllers;
 
 [ApiController]
-[Route("api/v1/stream-source/{messageInterface}/{channel}")]
+[Route("api/v1/stream-source/{messageInterface}/{channel}")] // todo: remove this link
 [Route("api/v2/stream-source/{messageInterface}/{channel}")]
 [Authorize(Policy = "ApiKey")]
 public class StreamSourceController : ChannelScopedController
