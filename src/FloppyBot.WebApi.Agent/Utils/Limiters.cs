@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
@@ -9,6 +11,8 @@ internal static class Limiters
 {
     private const string KEY_GLOBAL = "global";
     private const string KEY_AUTH = "auth";
+
+    private const string LOGGER_CATEGORY = "RateLimiter";
 
     private const string SECTION_DEFAULT = "RateLimiter:Default";
     private const string SECTION_AUTH = "RateLimiter:Authenticated";
@@ -31,20 +35,30 @@ internal static class Limiters
             {
                 rl.OnRejected = RateLimiter_OnRejected;
                 rl.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-                rl.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
-                {
-                    string? accessToken = httpContext.Request.Headers.Authorization;
-                    return RateLimitPartition.GetTokenBucketLimiter(
-                        accessToken ?? KEY_GLOBAL,
-                        key =>
-                            httpContext
-                                .RequestServices.GetRequiredService<
-                                    IOptionsFactory<TokenBucketRateLimiterOptions>
-                                >()
-                                .Create(key == KEY_GLOBAL ? KEY_GLOBAL : KEY_AUTH)
-                    );
-                });
+                rl.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(
+                    RateLimiter_Build
+                );
             });
+    }
+
+    private static RateLimitPartition<string> RateLimiter_Build(HttpContext httpContext)
+    {
+        var logger = httpContext.GetLogger(LOGGER_CATEGORY);
+
+        string? accessToken = httpContext.Request.Headers.Authorization.ToString().HashString();
+        string? remoteIp = httpContext.GetRemoteHostIpFromHeaders()?.ToString();
+
+        var partitionKey = accessToken ?? remoteIp ?? KEY_GLOBAL;
+        logger.LogTrace("Building rate limiter for partition={PartitionKey}", partitionKey);
+        return RateLimitPartition.GetTokenBucketLimiter(
+            accessToken ?? remoteIp ?? KEY_GLOBAL,
+            _ =>
+                httpContext
+                    .RequestServices.GetRequiredService<
+                        IOptionsFactory<TokenBucketRateLimiterOptions>
+                    >()
+                    .Create(!string.IsNullOrWhiteSpace(accessToken) ? KEY_AUTH : KEY_GLOBAL)
+        );
     }
 
     private static async ValueTask RateLimiter_OnRejected(
@@ -64,16 +78,22 @@ internal static class Limiters
         response.StatusCode = StatusCodes.Status429TooManyRequests;
 
         context
-            .HttpContext.RequestServices.GetRequiredService<ILoggerFactory>()
-            .CreateLogger("RateLimiter")
+            .HttpContext.GetLogger(LOGGER_CATEGORY)
             .LogWarning(
                 "Request rejected from addr={UserRequestAddress} to path={UserRequestPath}",
-                context.HttpContext.Connection.RemoteIpAddress,
+                context.HttpContext.GetRemoteHostIpFromHeaders(),
                 context.HttpContext.Request.Path
             );
         await response.WriteAsync(
             "Whoo there, calm down, mate! You're exceeding the speed limit here, gonna call the cops next time.",
             cancellationToken
         );
+    }
+
+    private static string? HashString(this string? s)
+    {
+        return string.IsNullOrWhiteSpace(s)
+            ? null
+            : Convert.ToBase64String(SHA256.HashData(Encoding.UTF8.GetBytes(s)));
     }
 }
