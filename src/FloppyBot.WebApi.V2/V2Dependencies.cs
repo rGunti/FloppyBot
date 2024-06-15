@@ -25,8 +25,6 @@ public static class V2Dependencies
 
     public static HubEndpointConventionBuilder MapV2SignalRHub(this IEndpointRouteBuilder endpoints)
     {
-        // Start collector
-        //endpoints.ServiceProvider.GetRequiredService<SoundCommandInvocationCollector>();
         return endpoints.MapHub<StreamSourceHub>($"/hub/stream-source");
     }
 }
