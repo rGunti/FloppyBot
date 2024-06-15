@@ -13,6 +13,7 @@ namespace FloppyBot.WebApi.V2.Controllers;
 
 [ApiController]
 [Route("api/v1/stream-source/{messageInterface}/{channel}")]
+[Route("api/v2/stream-source/{messageInterface}/{channel}")]
 [Authorize(Policy = "ApiKey")]
 public class StreamSourceController : ChannelScopedController
 {
