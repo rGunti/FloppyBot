@@ -7,6 +7,11 @@ check: restore
 	dotnet format style --verify-no-changes src/
 	dotnet format analyzers --verify-no-changes src/
 
+fix: restore
+	dotnet csharpier src/
+	dotnet format style src/
+	dotnet format analyzers src/
+
 format: restore
 	dotnet csharpier src/
 	dotnet format style src/
