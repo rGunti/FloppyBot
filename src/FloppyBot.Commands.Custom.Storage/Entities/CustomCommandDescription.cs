@@ -38,6 +38,8 @@ public record CustomCommandDescription : IEntity<CustomCommandDescription>
 
     public CommandResponseMode ResponseMode { get; init; }
 
+    public bool AllowCounterOperations { get; init; }
+
     public bool IsSoundCommand =>
         Aliases.Count == 0 && Responses.All(r => r.Type == ResponseType.Sound);
 

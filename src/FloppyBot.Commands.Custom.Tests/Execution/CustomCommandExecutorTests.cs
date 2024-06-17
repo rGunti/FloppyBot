@@ -3,6 +3,7 @@ using FakeItEasy;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Rng;
+using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Cooldown;
@@ -56,6 +57,16 @@ public class CustomCommandExecutorTests
                 )
             )
         );
+
+    private readonly ICounterStorageService _counterStorageService;
+
+    public CustomCommandExecutorTests()
+    {
+        var liteDb = LiteDbRepositoryFactory.CreateMemoryInstance();
+        _counterStorageService = A.Fake<ICounterStorageService>(x =>
+            x.Wrapping(new CounterStorageService(liteDb))
+        );
+    }
 
     [DataTestMethod]
     [DataRow(0, false)]
@@ -114,7 +125,7 @@ public class CustomCommandExecutorTests
             timeProvider,
             new RandomNumberGenerator(),
             cooldownService,
-            A.Fake<ICounterStorageService>(),
+            _counterStorageService,
             A.Fake<ISoundCommandInvocationSender>()
         );
 
@@ -151,16 +162,13 @@ public class CustomCommandExecutorTests
         var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
 
         var cooldownService = A.Fake<ICooldownService>();
-        var counterService = A.Fake<ICounterStorageService>();
-        var counter = 0;
-        A.CallTo(() => counterService.Next(CommandDescription.Id)).ReturnsLazily(() => ++counter);
 
         var executor = new CustomCommandExecutor(
             NullLogger<CustomCommandExecutor>.Instance,
             timeProvider,
             new RandomNumberGenerator(),
             cooldownService,
-            counterService,
+            _counterStorageService,
             A.Fake<ISoundCommandInvocationSender>()
         );
 
@@ -177,7 +185,8 @@ public class CustomCommandExecutorTests
             )
             .ToArray();
 
-        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _counterStorageService.Next(CommandDescription.Id))
+            .MustHaveHappenedOnceExactly();
         Assert.AreEqual("I am at level 1 now!", reply.First());
 
         // Repeat
@@ -210,7 +219,7 @@ public class CustomCommandExecutorTests
             timeProvider,
             new RandomNumberGenerator(),
             cooldownService,
-            A.Fake<ICounterStorageService>(),
+            _counterStorageService,
             A.Fake<ISoundCommandInvocationSender>()
         );
 
@@ -252,42 +261,114 @@ public class CustomCommandExecutorTests
     [TestMethod]
     public void CounterWillOnlyIncrementOnce()
     {
-        var counterService = A.Fake<ICounterStorageService>();
         var counter = 0;
-        A.CallTo(() => counterService.Next(CommandDescription.Id)).ReturnsLazily(() => ++counter);
+        A.CallTo(() => _counterStorageService.Next(CommandDescription.Id))
+            .ReturnsLazily(() => ++counter);
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterService
+            _counterStorageService
         );
 
         // Access counter
         Assert.AreEqual(1, placeholder.Counter);
-        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _counterStorageService.Next(CommandDescription.Id))
+            .MustHaveHappenedOnceExactly();
 
         // Access counter again (ensure it has not been called twice)
         Assert.AreEqual(1, placeholder.Counter);
-        A.CallTo(() => counterService.Next(CommandDescription.Id)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => _counterStorageService.Next(CommandDescription.Id))
+            .MustHaveHappenedOnceExactly();
     }
 
     [TestMethod]
     public void PeekCounterWillNotIncreaseCounterValue()
     {
-        var counterService = A.Fake<ICounterStorageService>();
-        A.CallTo(() => counterService.Peek(A<string>.Ignored)).ReturnsLazily(() => 1);
+        _counterStorageService.Set(CommandDescription.Id, 1);
         var placeholder = new PlaceholderContainer(
             CommandInstruction,
             CommandDescription,
             RefTime,
             42,
-            counterService
+            _counterStorageService
         );
 
         // Access counter
         Assert.AreEqual(1, placeholder.PeekCounter);
-        A.CallTo(() => counterService.Peek(A<string>.Ignored)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => counterService.Next(A<string>.Ignored)).MustNotHaveHappened();
+        A.CallTo(() => _counterStorageService.Peek(A<string>.Ignored))
+            .MustHaveHappenedOnceExactly();
+        A.CallTo(() => _counterStorageService.Next(A<string>.Ignored)).MustNotHaveHappened();
+    }
+
+    [TestMethod]
+    public void AssumingOperationsAllowed_CounterWillIncrementWithCorrectCommand()
+    {
+        var timeProvider = new FixedTimeProvider(RefTime.Add(5.Seconds()));
+
+        var cooldownService = A.Fake<ICooldownService>();
+        var counterService = _counterStorageService;
+        _counterStorageService.Set(CommandDescription.Id, 10);
+
+        var executor = new CustomCommandExecutor(
+            NullLogger<CustomCommandExecutor>.Instance,
+            timeProvider,
+            new RandomNumberGenerator(),
+            cooldownService,
+            counterService,
+            A.Fake<ISoundCommandInvocationSender>()
+        );
+
+        var customizedCommandDescription = CommandDescription with
+        {
+            Responses = new[]
+            {
+                new CommandResponse(ResponseType.Text, "I am at level {PeekCounter} now!"),
+            }.ToImmutableListWithValueSemantics(),
+            AllowCounterOperations = true,
+        };
+
+        string?[] reply = executor
+            .Execute(
+                CommandInstruction with
+                {
+                    Parameters = new[] { "+" }.ToImmutableListWithValueSemantics(),
+                    Context = new CommandContext(
+                        SourceMessage: CommandInstruction.Context!.SourceMessage with
+                        {
+                            Author = CommandInstruction.Context!.SourceMessage.Author with
+                            {
+                                PrivilegeLevel = PrivilegeLevel.Moderator,
+                            },
+                        }
+                    ),
+                },
+                customizedCommandDescription
+            )
+            .ToArray();
+
+        Assert.AreEqual("I am at level 11 now!", reply.First());
+
+        // Repeat
+        reply = executor
+            .Execute(
+                CommandInstruction with
+                {
+                    Parameters = new[] { "-" }.ToImmutableListWithValueSemantics(),
+                    Context = new CommandContext(
+                        SourceMessage: CommandInstruction.Context!.SourceMessage with
+                        {
+                            Author = CommandInstruction.Context!.SourceMessage.Author with
+                            {
+                                PrivilegeLevel = PrivilegeLevel.Moderator,
+                            },
+                        }
+                    ),
+                },
+                customizedCommandDescription
+            )
+            .ToArray();
+        Assert.AreEqual("I am at level 10 now!", reply.First());
     }
 }
