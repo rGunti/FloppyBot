@@ -11,7 +11,8 @@ public record CustomCommandDto(
     CommandResponseDto[] Responses,
     CommandLimitationDto Limitations,
     CommandResponseMode ResponseMode,
-    CounterValueDto? Counter
+    CounterValueDto? Counter,
+    bool AllowCounterOperations
 )
 {
     public static CustomCommandDto FromEntity(CustomCommandDescription entity, int? counter)
@@ -23,7 +24,8 @@ public record CustomCommandDto(
             entity.Responses.Select(CommandResponseDto.FromEntity).ToArray(),
             CommandLimitationDto.FromEntity(entity.Limitations),
             ToEntityMode(entity.ResponseMode),
-            counter.HasValue ? new CounterValueDto(counter.Value) : null
+            counter.HasValue ? new CounterValueDto(counter.Value) : null,
+            entity.AllowCounterOperations
         );
     }
 
@@ -37,6 +39,7 @@ public record CustomCommandDto(
             Responses = Responses.Select(r => r.ToEntity()).ToImmutableListWithValueSemantics(),
             Limitations = Limitations.ToEntity(),
             ResponseMode = ResponseMode.ToEntity(),
+            AllowCounterOperations = AllowCounterOperations,
         };
     }
 

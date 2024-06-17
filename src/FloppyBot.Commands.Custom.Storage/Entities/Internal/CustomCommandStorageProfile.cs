@@ -41,6 +41,7 @@ public class CustomCommandStorageProfile : Profile
                             .ToImmutableList(),
                         Limitations = ctx.Mapper.Map<CommandLimitation>(eo.Limitations),
                         ResponseMode = eo.ResponseMode,
+                        AllowCounterOperations = eo.AllowCounterOperations,
                     }
             );
         CreateMap<CommandResponseEo, CommandResponse>();
