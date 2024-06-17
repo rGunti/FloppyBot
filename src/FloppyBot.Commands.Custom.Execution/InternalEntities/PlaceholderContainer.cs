@@ -29,7 +29,8 @@ public class PlaceholderContainer : IPlaceholderContainer
         CustomCommandDescription commandDescription,
         DateTimeOffset now,
         int newRandomNumber,
-        ICounterStorageService counterStorageService
+        ICounterStorageService counterStorageService,
+        int? newCounterValue = null
     )
     {
         _commandInstruction = instruction;
@@ -41,6 +42,7 @@ public class PlaceholderContainer : IPlaceholderContainer
         Random = newRandomNumber;
 
         _counterStorageService = counterStorageService;
+        _newCounterValue = newCounterValue;
     }
 
     public string Caller => _commandInstruction.Context!.SourceMessage.Author.DisplayName;

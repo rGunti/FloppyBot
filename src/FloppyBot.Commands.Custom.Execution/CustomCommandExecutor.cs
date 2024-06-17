@@ -167,18 +167,19 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         CommandResponse response
     )
     {
+        var placeholderContainer = new PlaceholderContainer(
+            instruction,
+            description,
+            _timeProvider.GetCurrentUtcTime(),
+            _randomNumberGenerator.Next(0, 100),
+            _counterStorageService,
+            HandleCounterCommands(instruction, description)
+        );
+
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response.Content.Format(
-                    new PlaceholderContainer(
-                        instruction,
-                        description,
-                        _timeProvider.GetCurrentUtcTime(),
-                        _randomNumberGenerator.Next(0, 100),
-                        _counterStorageService
-                    )
-                );
+                return response.Content.Format(placeholderContainer);
             case ResponseType.Sound:
                 string[] split = response.Content.Split(CommandResponse.SOUND_CMD_SPLIT_CHAR);
                 string payloadName = split[0];
@@ -193,9 +194,67 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                         _timeProvider.GetCurrentUtcTime()
                     )
                 );
-                return reply;
+                return reply?.Format(placeholderContainer);
             default:
                 throw new NotImplementedException($"Response Type {response.Type} not implemented");
         }
+    }
+
+    private int? HandleCounterCommands(
+        CommandInstruction instruction,
+        CustomCommandDescription description
+    )
+    {
+        var authorPrivilegeLevel = instruction.Context!.SourceMessage.Author.PrivilegeLevel;
+        if (instruction.Parameters.Count < 1 || authorPrivilegeLevel < PrivilegeLevel.Moderator)
+        {
+            _logger.LogTrace(
+                "No counter operation specified or user does not have the required privilege level (had {AuthorPrivilegeLevel}), nothing to do",
+                authorPrivilegeLevel
+            );
+            return null;
+        }
+
+        var firstArg = instruction.Parameters[0].Trim();
+        if (string.IsNullOrEmpty(instruction.Parameters[0]))
+        {
+            _logger.LogTrace("First Argument was empty, ignoring");
+            return null;
+        }
+
+        var prefix = firstArg[..1];
+        if (prefix != "+" && prefix != "-")
+        {
+            _logger.LogTrace("First Argument did not start with + or -, ignoring");
+            return null;
+        }
+
+        var number = firstArg[1..];
+        if (number.Length == 0)
+        {
+            number = "1";
+        }
+
+        if (!int.TryParse(number, out var increment))
+        {
+            _logger.LogWarning(
+                "Could not parse number, ignoring (Input was: {InputArgument})",
+                firstArg
+            );
+            return null;
+        }
+
+        switch (prefix)
+        {
+            case "+":
+                _logger.LogDebug("Found +, increasing counter by {IncrementValue}", increment);
+                return _counterStorageService.Increase(description.Id, increment);
+            case "-":
+                _logger.LogDebug("Found -, decreasing counter by {IncrementValue}", increment);
+                return _counterStorageService.Increase(description.Id, -increment);
+        }
+
+        _logger.LogTrace("No valid input found, ignoring (Input was: {InputArgument})", firstArg);
+        return null;
     }
 }

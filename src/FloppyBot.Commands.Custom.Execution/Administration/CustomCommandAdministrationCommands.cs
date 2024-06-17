@@ -111,6 +111,16 @@ public class CustomCommandAdministrationCommands
                 return CreateCounterResult(formatParams with { Counter = 0 });
         }
 
+        // For convenience, "+/-" without a number is read as "+/- 1"
+        if (operationOrValue == "+")
+        {
+            operationOrValue = "+1";
+        }
+        else if (operationOrValue == "-")
+        {
+            operationOrValue = "-1";
+        }
+
         if (
             (operationOrValue.StartsWith("+") || operationOrValue.StartsWith("-"))
             && int.TryParse(operationOrValue, out int incrementValue)

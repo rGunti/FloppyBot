@@ -11,6 +11,7 @@ public record CustomCommandDescriptionEo : IEntity<CustomCommandDescriptionEo>
     public CommandResponseEo[] Responses { get; set; }
     public CommandLimitationEo Limitations { get; set; }
     public CommandResponseMode ResponseMode { get; init; }
+    public bool AllowCounterOperations { get; set; }
     public string Id { get; set; }
 
     public CustomCommandDescriptionEo WithId(string newId)
