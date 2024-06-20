@@ -1,6 +1,7 @@
 using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Auditing.Abstraction.Entities;
 using FloppyBot.WebApi.Auth;
+using FloppyBot.WebApi.Auth.Controllers;
 using FloppyBot.WebApi.Auth.UserProfiles;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,24 +9,25 @@ using Microsoft.AspNetCore.Mvc;
 namespace FloppyBot.WebApi.V2.Controllers.Admin;
 
 [ApiController]
-[Route("api/v2/admin/audit")]
+[Route("api/v2/admin/audit/{messageInterface}/{channel}")]
 [Authorize(Permissions.READ_AUDIT)]
-public class AuditController : ControllerBase
+public class AuditController : ChannelScopedController
 {
     private readonly IAuditor _auditor;
-    private readonly IUserService _userService;
 
     public AuditController(IUserService userService, IAuditor auditor)
+        : base(userService)
     {
         _auditor = auditor;
-        _userService = userService;
     }
 
     [HttpGet]
-    public ActionResult<AuditRecord[]> GetRecords()
+    public ActionResult<AuditRecord[]> GetRecords(
+        [FromRoute] string messageInterface,
+        [FromRoute] string channel
+    )
     {
-        // TODO: Introduce filtering parameters (like seen with logs)
-        var ownerOf = _userService.GetAccessibleChannelsForUser(User.GetUserId());
-        return Ok(_auditor.GetAuditRecords(ownerOf.ToArray()));
+        var channelId = EnsureChannelAccess(messageInterface, channel);
+        return Ok(_auditor.GetAuditRecords(channelId));
     }
 }
