@@ -1,4 +1,5 @@
-﻿using FloppyBot.Base.Clock;
+﻿using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Base.Clock;
 using FloppyBot.Base.Rng;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
@@ -9,6 +10,7 @@ using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Communication.Entities;
 using FloppyBot.Commands.Custom.Execution.InternalEntities;
 using FloppyBot.Commands.Custom.Storage;
+using FloppyBot.Commands.Custom.Storage.Auditing;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Parser.Entities;
 using Microsoft.Extensions.Logging;
@@ -31,6 +33,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
     private readonly ILogger<CustomCommandExecutor> _logger;
     private readonly IRandomNumberGenerator _randomNumberGenerator;
     private readonly ITimeProvider _timeProvider;
+    private readonly IAuditor _auditor;
 
     public CustomCommandExecutor(
         ILogger<CustomCommandExecutor> logger,
@@ -38,7 +41,8 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         IRandomNumberGenerator randomNumberGenerator,
         ICooldownService cooldownService,
         ICounterStorageService counterStorageService,
-        ISoundCommandInvocationSender invocationSender
+        ISoundCommandInvocationSender invocationSender,
+        IAuditor auditor
     )
     {
         _logger = logger;
@@ -47,6 +51,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         _cooldownService = cooldownService;
         _counterStorageService = counterStorageService;
         _invocationSender = invocationSender;
+        _auditor = auditor;
     }
 
     public IEnumerable<string?> Execute(
@@ -244,14 +249,31 @@ public class CustomCommandExecutor : ICustomCommandExecutor
             return null;
         }
 
+        int? result = null;
         switch (prefix)
         {
             case "+":
                 _logger.LogDebug("Found +, increasing counter by {IncrementValue}", increment);
-                return _counterStorageService.Increase(description.Id, increment);
+                result = _counterStorageService.Increase(description.Id, increment);
+                _auditor.CounterUpdated(
+                    instruction.Context!.SourceMessage.Author,
+                    instruction.Context!.SourceMessage.Identifier.GetChannel(),
+                    description.Name,
+                    result.Value,
+                    increment
+                );
+                return result;
             case "-":
                 _logger.LogDebug("Found -, decreasing counter by {IncrementValue}", increment);
-                return _counterStorageService.Increase(description.Id, -increment);
+                result = _counterStorageService.Increase(description.Id, -increment);
+                _auditor.CounterUpdated(
+                    instruction.Context!.SourceMessage.Author,
+                    instruction.Context!.SourceMessage.Identifier.GetChannel(),
+                    description.Name,
+                    result.Value,
+                    -increment
+                );
+                return result.Value;
         }
 
         _logger.LogTrace("No valid input found, ignoring (Input was: {InputArgument})", firstArg);

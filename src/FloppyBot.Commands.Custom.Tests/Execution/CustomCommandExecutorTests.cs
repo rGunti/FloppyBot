@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using FakeItEasy;
+using FloppyBot.Base.Auditing.Abstraction.Impl;
 using FloppyBot.Base.Clock;
 using FloppyBot.Base.EquatableCollections;
 using FloppyBot.Base.Rng;
@@ -91,7 +92,8 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownService,
             A.Fake<ICounterStorageService>(),
-            A.Fake<ISoundCommandInvocationSender>()
+            A.Fake<ISoundCommandInvocationSender>(),
+            new NoopAuditor()
         );
 
         string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
@@ -126,7 +128,8 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownService,
             _counterStorageService,
-            A.Fake<ISoundCommandInvocationSender>()
+            A.Fake<ISoundCommandInvocationSender>(),
+            new NoopAuditor()
         );
 
         string?[] reply = executor
@@ -169,7 +172,8 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownService,
             _counterStorageService,
-            A.Fake<ISoundCommandInvocationSender>()
+            A.Fake<ISoundCommandInvocationSender>(),
+            new NoopAuditor()
         );
 
         string?[] reply = executor
@@ -220,7 +224,8 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownService,
             _counterStorageService,
-            A.Fake<ISoundCommandInvocationSender>()
+            A.Fake<ISoundCommandInvocationSender>(),
+            new NoopAuditor()
         );
 
         string?[] reply = executor
@@ -317,7 +322,8 @@ public class CustomCommandExecutorTests
             new RandomNumberGenerator(),
             cooldownService,
             counterService,
-            A.Fake<ISoundCommandInvocationSender>()
+            A.Fake<ISoundCommandInvocationSender>(),
+            new NoopAuditor()
         );
 
         var customizedCommandDescription = CommandDescription with
