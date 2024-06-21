@@ -45,6 +45,11 @@ internal static class Limiters
     {
         var logger = httpContext.GetLogger(LOGGER_CATEGORY);
 
+        if (HttpMethods.IsOptions(httpContext.Request.Method))
+        {
+            return RateLimitPartition.GetNoLimiter(KEY_GLOBAL);
+        }
+
         string? accessToken = httpContext.Request.Headers.Authorization.ToString().HashString();
         string? remoteIp = httpContext.GetRemoteHostIpFromHeaders()?.ToString();
 
@@ -67,6 +72,9 @@ internal static class Limiters
     )
     {
         var response = context.HttpContext.Response;
+        // Ensure that the response can be read by frontends
+        response.Headers["Access-Control-Allow-Origin"] = "*";
+
         if (context.Lease.TryGetMetadata(MetadataName.RetryAfter, out var retryAfter))
         {
             // Add a Retry-After header to the response

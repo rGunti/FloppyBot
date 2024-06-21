@@ -1,3 +1,5 @@
+using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Commands.Aux.Twitch;
 using FloppyBot.Commands.Aux.Twitch.Storage;
 using FloppyBot.WebApi.Auth;
 using FloppyBot.WebApi.Auth.Controllers;
@@ -14,14 +16,17 @@ namespace FloppyBot.WebApi.V2.Controllers;
 public class ShoutoutCommandConfigController : ChannelScopedController
 {
     private readonly IShoutoutMessageSettingService _shoutoutMessageSettingService;
+    private readonly IAuditor _auditor;
 
     public ShoutoutCommandConfigController(
         IUserService userService,
-        IShoutoutMessageSettingService shoutoutMessageSettingService
+        IShoutoutMessageSettingService shoutoutMessageSettingService,
+        IAuditor auditor
     )
         : base(userService)
     {
         _shoutoutMessageSettingService = shoutoutMessageSettingService;
+        _auditor = auditor;
     }
 
     [HttpGet]
@@ -49,7 +54,9 @@ public class ShoutoutCommandConfigController : ChannelScopedController
     )
     {
         var channelId = EnsureChannelAccess(messageInterface, channel);
-        _shoutoutMessageSettingService.SetShoutoutMessage(config.ToEntity(channelId));
+        var entity = config.ToEntity(channelId);
+        _shoutoutMessageSettingService.SetShoutoutMessage(entity);
+        _auditor.ShoutoutMessageSet(User.AsChatUser(), channelId, entity);
         return NoContent();
     }
 }

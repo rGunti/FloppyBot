@@ -1,4 +1,6 @@
 using FakeItEasy;
+using FloppyBot.Base.Auditing.Abstraction;
+using FloppyBot.Base.Auditing.Abstraction.Entities;
 using FloppyBot.Base.Testing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Timer.Storage;
@@ -11,11 +13,13 @@ public class TimerCommandsTests
 {
     private readonly TimerCommands _host;
     private readonly ITimerService _timerService;
+    private readonly IAuditor _auditor;
 
     public TimerCommandsTests()
     {
         _timerService = A.Fake<ITimerService>();
-        _host = new TimerCommands(LoggingUtils.GetLogger<TimerCommands>(), _timerService);
+        _auditor = A.Fake<IAuditor>();
+        _host = new TimerCommands(LoggingUtils.GetLogger<TimerCommands>(), _timerService, _auditor);
     }
 
     [TestMethod]
@@ -25,7 +29,8 @@ public class TimerCommandsTests
             "12m",
             "Hello World",
             new ChatUser("Mock/User", "User", PrivilegeLevel.Moderator),
-            "Mock/Channel/Message"
+            "Mock/Channel/Message",
+            "Mock/Channel"
         );
 
         Assert.AreEqual(
@@ -44,6 +49,22 @@ public class TimerCommandsTests
                     )
             )
             .MustHaveHappenedOnceExactly();
+        A.CallTo(
+                () =>
+                    _auditor.Record(
+                        new AuditRecord(
+                            null!,
+                            DateTimeOffset.MinValue,
+                            "Mock/User",
+                            "Mock/Channel",
+                            TimerAuditing.TimerType,
+                            "Mock/Channel/Message",
+                            CommonActions.Created,
+                            "[00:12:00]: Hello World"
+                        )
+                    )
+            )
+            .MustHaveHappenedOnceExactly();
     }
 
     [DataTestMethod]
@@ -57,8 +78,11 @@ public class TimerCommandsTests
                 input,
                 "Some Text",
                 new ChatUser("Mock/User", "User", PrivilegeLevel.Moderator),
-                "Mock/Channel/Message"
+                "Mock/Channel/Message",
+                "Mock/Channel"
             )
         );
+
+        A.CallTo(() => _auditor.Record(A<AuditRecord>._)).MustNotHaveHappened();
     }
 }

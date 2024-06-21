@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using FloppyBot.Aux.TwitchAlerts.Core;
 using FloppyBot.Aux.TwitchAlerts.Core.Entities;
+using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Attributes;
 using FloppyBot.Commands.Core.Attributes.Args;
@@ -24,10 +25,12 @@ public class SubAlertCommands
         "{User} just subscribed with {SubscriptionTier}! Thank you so much for the support! 🎉";
 
     private readonly ITwitchAlertService _alertService;
+    private readonly IAuditor _auditor;
 
-    public SubAlertCommands(ITwitchAlertService alertService)
+    public SubAlertCommands(ITwitchAlertService alertService, IAuditor auditor)
     {
         _alertService = alertService;
+        _auditor = auditor;
     }
 
     [DependencyRegistration]
@@ -42,6 +45,7 @@ public class SubAlertCommands
     [CommandSyntax("<Sub Alert Message>")]
     // ReSharper disable once UnusedMember.Global
     public string SetAlertMessage(
+        [Author] ChatUser author,
         [SourceChannel] string sourceChannel,
         [AllArguments] string message
     )
@@ -59,6 +63,7 @@ public class SubAlertCommands
         };
 
         _alertService.StoreAlertSettings(settings);
+        _auditor.SubAlertMessageSet(author, sourceChannel, message);
         return REPLY_ALERT_SET;
     }
 
@@ -66,13 +71,14 @@ public class SubAlertCommands
     [CommandDescription("Clears the message to be sent when someone subscribes to the channel.")]
     [CommandSyntax("")]
     // ReSharper disable once UnusedMember.Global
-    public string ClearAlertMessage([SourceChannel] string sourceChannel)
+    public string ClearAlertMessage([Author] ChatUser author, [SourceChannel] string sourceChannel)
     {
         var settings = _alertService.GetAlertSettings(sourceChannel);
         if (settings is not null)
         {
             settings = settings with { SubAlertsEnabled = false, };
             _alertService.StoreAlertSettings(settings);
+            _auditor.SubAlertMessageDisabled(author, sourceChannel);
         }
 
         return REPLY_ALERT_CLEAR;
@@ -82,7 +88,10 @@ public class SubAlertCommands
     [CommandDescription("Resets the sub alert message to the default message")]
     [CommandSyntax("")]
     // ReSharper disable once UnusedMember.Global
-    public string SetDefaultAlertMessage([SourceChannel] string sourceChannel)
+    public string SetDefaultAlertMessage(
+        [Author] ChatUser author,
+        [SourceChannel] string sourceChannel
+    )
     {
         var settings =
             _alertService.GetAlertSettings(sourceChannel)
@@ -97,6 +106,7 @@ public class SubAlertCommands
         };
 
         _alertService.StoreAlertSettings(settings);
+        _auditor.SubAlertMessageCleared(author, sourceChannel);
         return REPLY_ALERT_SET;
     }
 }
