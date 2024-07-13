@@ -186,12 +186,24 @@ public class CustomCommandExecutor : ICustomCommandExecutor
             case ResponseType.Text:
                 return response.Content.Format(placeholderContainer);
             case ResponseType.Sound:
-                string[] split = response.Content.Split(CommandResponse.SOUND_CMD_SPLIT_CHAR);
+            case ResponseType.Visual:
+            {
+                string[] split = response.Content.Split(CommandResponse.ReplySplitChar);
                 string payloadName = split[0];
                 string? reply = split.Length > 1 ? split[1] : null;
 
                 _invocationSender.InvokeSoundCommand(
                     new SoundCommandInvocation(
+                        // ReSharper disable once SwitchExpressionHandlesSomeKnownEnumValuesWithExceptionInDefault
+                        response.Type switch
+                        {
+                            ResponseType.Sound => PayloadType.Sound,
+                            ResponseType.Visual => PayloadType.Visual,
+                            _
+                                => throw new NotImplementedException(
+                                    $"Response Type {response.Type} not implemented"
+                                ),
+                        },
                         instruction.Context!.SourceMessage.Author.Identifier,
                         instruction.Context!.SourceMessage.Identifier.GetChannel(),
                         description.Name,
@@ -200,6 +212,11 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                     )
                 );
                 return reply?.Format(placeholderContainer);
+            }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+            case ResponseType.JavaScript:
+#pragma warning restore CS0618 // Type or member is obsolete
             default:
                 throw new NotImplementedException($"Response Type {response.Type} not implemented");
         }

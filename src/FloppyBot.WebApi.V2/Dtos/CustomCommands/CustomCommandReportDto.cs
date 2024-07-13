@@ -69,7 +69,8 @@ public record CommandResponseDto(
         return entity.Type switch
         {
             ResponseType.Text => new CommandResponseDto(CommandResponseType.Text, entity.Content),
-            ResponseType.Sound => ConvertSoundCommand(entity),
+            ResponseType.Sound => ConvertInvocationCommand(entity, CommandResponseType.Sound),
+            ResponseType.Visual => ConvertInvocationCommand(entity, CommandResponseType.Visual),
             _ => throw new ArgumentOutOfRangeException(nameof(entity.Type), entity.Type, null),
         };
     }
@@ -79,29 +80,36 @@ public record CommandResponseDto(
         return Type switch
         {
             CommandResponseType.Text => new CommandResponse(ResponseType.Text, Content),
-            CommandResponseType.Sound => ConvertSoundCommand(this),
+            CommandResponseType.Sound => ConvertInvocationCommand(this, ResponseType.Sound),
+            CommandResponseType.Visual => ConvertInvocationCommand(this, ResponseType.Visual),
             _ => throw new ArgumentOutOfRangeException(nameof(Type), Type, null),
         };
     }
 
-    private static CommandResponseDto ConvertSoundCommand(CommandResponse entity)
+    private static CommandResponseDto ConvertInvocationCommand(
+        CommandResponse entity,
+        CommandResponseType responseType
+    )
     {
-        var split = entity.Content.Split(CommandResponse.SOUND_CMD_SPLIT_CHAR);
+        var split = entity.Content.Split(CommandResponse.ReplySplitChar);
         var soundFile = split[0];
         var replyMessage = split.Length > 1 ? split[1] : null;
 
-        return new CommandResponseDto(CommandResponseType.Sound, soundFile, replyMessage);
+        return new CommandResponseDto(responseType, soundFile, replyMessage);
     }
 
-    private static CommandResponse ConvertSoundCommand(CommandResponseDto dto)
+    private static CommandResponse ConvertInvocationCommand(
+        CommandResponseDto dto,
+        ResponseType responseType
+    )
     {
         var content = dto.Content;
         if (dto.AuxiliaryContent is not null)
         {
-            content += CommandResponse.SOUND_CMD_SPLIT_CHAR + dto.AuxiliaryContent;
+            content += CommandResponse.ReplySplitChar + dto.AuxiliaryContent;
         }
 
-        return new CommandResponse(ResponseType.Sound, content);
+        return new CommandResponse(responseType, content);
     }
 }
 
@@ -177,4 +185,5 @@ public enum CommandResponseType
 {
     Text,
     Sound,
+    Visual,
 }
