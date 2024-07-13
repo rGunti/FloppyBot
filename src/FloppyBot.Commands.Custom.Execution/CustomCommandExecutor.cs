@@ -207,7 +207,11 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                         instruction.Context!.SourceMessage.Author.Identifier,
                         instruction.Context!.SourceMessage.Identifier.GetChannel(),
                         description.Name,
-                        payloadName,
+                        response.Type switch
+                        {
+                            ResponseType.Visual => payloadName.Format(placeholderContainer),
+                            _ => payloadName,
+                        },
                         _timeProvider.GetCurrentUtcTime()
                     )
                 );
