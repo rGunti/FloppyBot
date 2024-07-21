@@ -206,6 +206,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Auditing.Abs
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Base.Auditing.Storage", "FloppyBot.Base.Auditing.Storage\FloppyBot.Base.Auditing.Storage.csproj", "{D0C19855-9BB0-4F33-831A-8F3897B17522}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Currency", "Currency", "{B84B1773-CB7D-485A-88AD-D033AB6ECE61}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Currency", "FloppyBot.Commands.Aux.Currency\FloppyBot.Commands.Aux.Currency.csproj", "{FAD42B6F-8BF9-4D5B-B094-826593F0548D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloppyBot.Commands.Aux.Currency.Tests", "FloppyBot.Commands.Aux.Currency.Tests\FloppyBot.Commands.Aux.Currency.Tests.csproj", "{E3416A1E-5ED6-4308-A281-590447E5882C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -305,6 +311,9 @@ Global
 		{B9371406-4567-483D-B66B-3324D1BBE279} = {7F239034-8411-4F30-9E57-B0F5B4F9E1EA}
 		{3F3A2311-C9FE-478E-980A-8EC697A5E0C0} = {B9371406-4567-483D-B66B-3324D1BBE279}
 		{D0C19855-9BB0-4F33-831A-8F3897B17522} = {B9371406-4567-483D-B66B-3324D1BBE279}
+		{B84B1773-CB7D-485A-88AD-D033AB6ECE61} = {EBBD7204-782A-4642-AFBF-F52D97C0B985}
+		{FAD42B6F-8BF9-4D5B-B094-826593F0548D} = {B84B1773-CB7D-485A-88AD-D033AB6ECE61}
+		{E3416A1E-5ED6-4308-A281-590447E5882C} = {B84B1773-CB7D-485A-88AD-D033AB6ECE61}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{67258FB8-8B58-4F1B-B099-3F177074B50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -591,5 +600,13 @@ Global
 		{D0C19855-9BB0-4F33-831A-8F3897B17522}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0C19855-9BB0-4F33-831A-8F3897B17522}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0C19855-9BB0-4F33-831A-8F3897B17522}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAD42B6F-8BF9-4D5B-B094-826593F0548D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAD42B6F-8BF9-4D5B-B094-826593F0548D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAD42B6F-8BF9-4D5B-B094-826593F0548D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAD42B6F-8BF9-4D5B-B094-826593F0548D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3416A1E-5ED6-4308-A281-590447E5882C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3416A1E-5ED6-4308-A281-590447E5882C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3416A1E-5ED6-4308-A281-590447E5882C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3416A1E-5ED6-4308-A281-590447E5882C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
