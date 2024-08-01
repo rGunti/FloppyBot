@@ -86,6 +86,16 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity>
 
     public TEntity? IncrementField(string id, Expression<Func<TEntity, int>> field, int increment)
     {
+        if (
+            field.Body
+            is not MemberExpression { Member: PropertyInfo memberPropertyInfo } memberExpression
+        )
+        {
+            throw new ArgumentException("Only field expressions are supported", nameof(field));
+        }
+
+        var fieldName = memberPropertyInfo.Name;
+
         var record = _collection.FindById(id);
         if (record is null)
         {
@@ -94,7 +104,10 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity>
 
         var newFieldValue = field.Compile().Invoke(record) + increment;
 
-        var property = typeof(TEntity).GetProperty(field.Name!, BindingFlags.Public);
+        var property = typeof(TEntity).GetProperty(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.Public
+        );
         property!.SetValue(record, newFieldValue);
         return Update(record);
     }

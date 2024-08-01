@@ -7,6 +7,15 @@ namespace FloppyBot.Commands.Aux.Currency.Storage.Entities;
 public record ChannelCurrencyRecord(string Id, string Channel, string User, int Balance)
     : IEntity<ChannelCurrencyRecord>
 {
+    public static ChannelCurrencyRecord ForUserInChannel(
+        string channelId,
+        string userId,
+        int balance = 0
+    )
+    {
+        return new(null!, channelId.ToLowerInvariant(), userId.ToLowerInvariant(), balance);
+    }
+
     public ChannelCurrencyRecord WithId(string newId)
     {
         return this with { Id = newId };
@@ -31,4 +40,32 @@ public record ChannelCurrencySettings(
     {
         return this with { Id = newId };
     }
+}
+
+public record ChannelUserState(string Id, UserState State, DateTimeOffset LastStateChange)
+    : IEntity<ChannelUserState>
+{
+    private static readonly ChannelUserState Default =
+        new(null!, UserState.Offline, DateTimeOffset.MaxValue);
+
+    public static ChannelUserState ForUserInChannel(string userId, string channelId)
+    {
+        return Default with { Id = GetId(channelId, userId) };
+    }
+
+    public static string GetId(string userId, string channelId)
+    {
+        return $"{userId}@{channelId}";
+    }
+
+    public ChannelUserState WithId(string newId)
+    {
+        return this with { Id = newId };
+    }
+}
+
+public enum UserState
+{
+    Offline,
+    Online,
 }

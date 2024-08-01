@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\FloppyBot.Base.Storage.LiteDb\FloppyBot.Base.Storage.LiteDb.csproj" />
       <ProjectReference Include="..\FloppyBot.Base.Testing\FloppyBot.Base.Testing.csproj" />
       <ProjectReference Include="..\FloppyBot.Commands.Aux.Currency\FloppyBot.Commands.Aux.Currency.csproj" />
     </ItemGroup>

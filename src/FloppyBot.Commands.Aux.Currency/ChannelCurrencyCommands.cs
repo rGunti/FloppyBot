@@ -3,6 +3,7 @@ using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Auditing.Storage;
 using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Commands.Aux.Currency.BackgroundServices;
 using FloppyBot.Commands.Aux.Currency.Storage;
 using FloppyBot.Commands.Aux.Currency.Storage.Entities;
 using FloppyBot.Commands.Core.Attributes;
@@ -18,6 +19,7 @@ namespace FloppyBot.Commands.Aux.Currency;
 [CommandHost]
 [PrivilegeGuard(PrivilegeLevel.Viewer)]
 [CommandCategory("Currency")]
+// ReSharper disable once UnusedType.Global
 public class ChannelCurrencyCommands
 {
     public const string ReplyCurrentBalance = "Your current balance is: {Balance} {CurrencyName}";
@@ -63,7 +65,9 @@ public class ChannelCurrencyCommands
         services
             .AddScoped<IChannelCurrencyService, ChannelCurrencyService>()
             .AddScoped<IChannelCurrencySettingsService, ChannelCurrencySettingsService>()
-            .AddAuditor<StorageAuditor>();
+            .AddScoped<IChannelUserStateService, ChannelUserStateService>()
+            .AddAuditor<StorageAuditor>()
+            .AddHostedService<ChannelCurrencyMaintainer>();
     }
 
     [Command("cash")]
@@ -80,7 +84,12 @@ public class ChannelCurrencyCommands
         var record = _channelCurrencyService
             .GetChannelCurrency(sourceChannel, author.Identifier.Channel)
             .FirstOrDefault(
-                new ChannelCurrencyRecord(null!, sourceChannel, author.Identifier.Channel, 0)
+                new ChannelCurrencyRecord(
+                    null!,
+                    sourceChannel,
+                    author.Identifier.Channel,
+                    settings.Value.StartingBalance
+                )
             );
 
         return ReplyCurrentBalance.Format(MessageParameters.From(record, settings));
