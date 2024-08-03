@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using System.Linq.Expressions;
+using MongoDB.Driver;
 
 namespace FloppyBot.Base.Storage.MongoDb;
 
@@ -74,7 +75,24 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity>
             entity,
             new ReplaceOptions { IsUpsert = true }
         );
+        if (!result.IsAcknowledged)
+        {
+            throw new Exception($"Could not upsert entity {typeof(TEntity).Name} {entity}");
+        }
+
         return GetById(result.UpsertedId.AsString)!;
+    }
+
+    public TEntity? IncrementField(string id, Expression<Func<TEntity, int>> field, int increment)
+    {
+        var update = Builders<TEntity>.Update.Inc(field, increment);
+        var result = _collection.UpdateOne(GetIdFilter(id), update);
+        if (result.MatchedCount == 0)
+        {
+            return null;
+        }
+
+        return GetById(id);
     }
 
     private FilterDefinition<TEntity> GetIdFilter(string id) => Filter.Eq(i => i.Id, id);

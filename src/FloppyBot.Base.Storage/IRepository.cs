@@ -1,4 +1,6 @@
-﻿namespace FloppyBot.Base.Storage;
+﻿using System.Linq.Expressions;
+
+namespace FloppyBot.Base.Storage;
 
 public interface IRepository<TEntity>
     where TEntity : class, IEntity<TEntity>
@@ -14,4 +16,5 @@ public interface IRepository<TEntity>
     int Delete(IEnumerable<string> ids);
     int Delete(IEnumerable<TEntity> entities);
     TEntity Upsert(TEntity entity);
+    TEntity? IncrementField(string id, Expression<Func<TEntity, int>> field, int increment);
 }

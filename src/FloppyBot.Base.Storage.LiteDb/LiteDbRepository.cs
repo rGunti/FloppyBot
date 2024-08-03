@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.Linq.Expressions;
+using System.Reflection;
 using LiteDB;
 
 namespace FloppyBot.Base.Storage.LiteDb;
@@ -80,5 +82,33 @@ public class LiteDbRepository<TEntity> : IRepository<TEntity>
     {
         _collection.Upsert(entity);
         return GetById(entity.Id)!;
+    }
+
+    public TEntity? IncrementField(string id, Expression<Func<TEntity, int>> field, int increment)
+    {
+        if (
+            field.Body
+            is not MemberExpression { Member: PropertyInfo memberPropertyInfo } memberExpression
+        )
+        {
+            throw new ArgumentException("Only field expressions are supported", nameof(field));
+        }
+
+        var fieldName = memberPropertyInfo.Name;
+
+        var record = _collection.FindById(id);
+        if (record is null)
+        {
+            return null;
+        }
+
+        var newFieldValue = field.Compile().Invoke(record) + increment;
+
+        var property = typeof(TEntity).GetProperty(
+            fieldName,
+            BindingFlags.Instance | BindingFlags.Public
+        );
+        property!.SetValue(record, newFieldValue);
+        return Update(record);
     }
 }

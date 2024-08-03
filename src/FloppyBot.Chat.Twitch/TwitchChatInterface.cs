@@ -55,6 +55,9 @@ public class TwitchChatInterface : IChatInterface
         _client.OnMessageReceived += Client_OnMessageReceived;
         _client.OnReconnected += Client_OnReconnected;
 
+        _client.OnUserJoined += Client_OnUserJoined;
+        _client.OnUserLeft += Client_OnUserLeft;
+
         _client.OnNewSubscriber += Client_OnNewSubscriber;
         _client.OnReSubscriber += Client_OnReSubscriber;
         _client.OnGiftedSubscription += Client_OnGiftedSubscription;
@@ -419,6 +422,56 @@ public class TwitchChatInterface : IChatInterface
     private void Client_OnReconnected(object? sender, OnReconnectedEventArgs e)
     {
         _logger.LogInformation("Reconnected");
+    }
+
+    private void Client_OnUserJoined(object? sender, OnUserJoinedArgs e)
+    {
+        _logger.LogInformation(
+            "User {TwitchUser} joined the channel {TwitchChannel}",
+            e.Username,
+            e.Channel
+        );
+        var eventArgs = new TwitchUserJoinedEvent(e.Channel, e.Username);
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(null),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.Username,
+                    e.Username,
+                    DeterminePrivilegeLevel(false, false, false)
+                ),
+                TwitchEventTypes.USER_JOINED,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
+    }
+
+    private void Client_OnUserLeft(object? sender, OnUserLeftArgs e)
+    {
+        _logger.LogInformation(
+            "User {TwitchUser} left the channel {TwitchChannel}",
+            e.Username,
+            e.Channel
+        );
+        var eventArgs = new TwitchUserLeftEvent(e.Channel, e.Username);
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier(null),
+                TwitchEntityExtensions.ConvertToChatUser(
+                    e.Username,
+                    e.Username,
+                    DeterminePrivilegeLevel(false, false, false)
+                ),
+                TwitchEventTypes.USER_LEFT,
+                JsonSerializer.Serialize(eventArgs),
+                null,
+                SupportedFeatures
+            )
+        );
     }
 
     private void OnlineMonitor_OnlineStatusChanged(
