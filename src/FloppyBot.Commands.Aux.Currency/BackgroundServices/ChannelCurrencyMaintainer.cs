@@ -1,9 +1,11 @@
 using System.Collections.Immutable;
 using System.Text.Json;
+using FloppyBot.Base.Configuration;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Commands.Aux.Currency.Storage;
 using FloppyBot.Communication;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -24,12 +26,15 @@ public class ChannelCurrencyMaintainer : BackgroundService
     public ChannelCurrencyMaintainer(
         ILogger<ChannelCurrencyMaintainer> logger,
         INotificationReceiverFactory receiverFactory,
-        IChannelUserStateService channelUserStateService
+        IChannelUserStateService channelUserStateService,
+        IConfiguration configuration
     )
     {
         _logger = logger;
         _channelUserStateService = channelUserStateService;
-        _receiver = receiverFactory.GetNewReceiver<ChatMessage>("CurrencyMaintainer");
+        _receiver = receiverFactory.GetNewReceiver<ChatMessage>(
+            configuration.GetParsedConnectionString("CurrencyMaintainer")
+        );
         _receiver.NotificationReceived += OnNotificationReceived;
     }
 

@@ -13,7 +13,8 @@
     "CommandInput": "{Redis}|Command.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}",
     "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry",
-    "SoundCommandInvocation": "{Redis}|FloppyBot.SoundCommandInvocation"
+    "SoundCommandInvocation": "{Redis}|FloppyBot.SoundCommandInvocation",
+    "CurrencyMaintainer": "{Redis}|Message.Received"
   },
   "Currency": {
     "ApiKey": "not_provided",
