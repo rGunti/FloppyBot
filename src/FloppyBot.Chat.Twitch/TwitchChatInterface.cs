@@ -88,6 +88,19 @@ public class TwitchChatInterface : IChatInterface
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
     {
+        if (referenceMessage.IsNewMessage)
+        {
+            _logger.LogDebug("Message is not linked to a request, sending it as a new one instead");
+            SendMessage(message);
+            return;
+        }
+
+        _logger.LogTrace(
+            "Sending reply message to channel {TwitchChannel} refering to message {ReplyMessageId}: {ChatMessage}",
+            referenceMessage.Channel,
+            referenceMessage.ToString(),
+            message
+        );
         LineSplitter(
             message,
             line => _client.SendReply(referenceMessage.Channel, referenceMessage.MessageId, line)
@@ -110,6 +123,11 @@ public class TwitchChatInterface : IChatInterface
     public void SendMessage(ChannelIdentifier channel, string message)
     {
         var twitchChannel = channel.Channel.ToLowerInvariant();
+        _logger.LogTrace(
+            "Sending message to channel {TwitchChannel}: {ChatMessage}",
+            twitchChannel,
+            message
+        );
         LineSplitter(message, line => _client.SendMessage(twitchChannel, line));
     }
 
