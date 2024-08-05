@@ -52,7 +52,7 @@ public class TimerMessageCronJob : ICronJob
                 MessageCount = config.MinMessages > 0
                     ? _messageOccurrenceService.GetMessageCountInChannel(
                         config.Id,
-                        TimeSpan.FromMinutes(config.MinMessages)
+                        TimeSpan.FromMinutes(config.Interval)
                     )
                     : -1,
             })
