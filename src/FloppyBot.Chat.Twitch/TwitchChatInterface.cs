@@ -91,7 +91,7 @@ public class TwitchChatInterface : IChatInterface
         if (referenceMessage.IsNewMessage)
         {
             _logger.LogDebug("Message is not linked to a request, sending it as a new one instead");
-            SendMessage(message);
+            SendMessage(referenceMessage.GetChannel(), message);
             return;
         }
 
