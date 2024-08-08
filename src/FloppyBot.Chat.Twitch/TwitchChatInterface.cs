@@ -96,7 +96,7 @@ public class TwitchChatInterface : IChatInterface
         }
 
         _logger.LogTrace(
-            "Sending reply message to channel {TwitchChannel} refering to message {ReplyMessageId}: {ChatMessage}",
+            "Sending reply message to channel {TwitchChannel} referring to message {ReplyMessageId}: {ChatMessage}",
             referenceMessage.Channel,
             referenceMessage.ToString(),
             message
