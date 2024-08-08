@@ -107,6 +107,13 @@ public class TwitchChatInterface : IChatInterface
         );
     }
 
+    public bool CanHandleMessageAsResponse(ChatMessage message)
+    {
+        var msgIdentifier = message.Identifier;
+        return msgIdentifier.Interface == IF_NAME
+            && msgIdentifier.Channel == _configuration.Channel;
+    }
+
     public event ChatMessageReceivedDelegate? MessageReceived;
 
     public void Dispose()

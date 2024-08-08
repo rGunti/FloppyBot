@@ -69,6 +69,16 @@ public class ChatAgent : BackgroundService
     private void OnReplyReceived(ChatMessage message)
     {
         _logger.LogTrace("Received reply message {@Message}", message);
+        if (!_chatInterface.CanHandleMessageAsResponse(message))
+        {
+            _logger.LogDebug(
+                "Received reply message that cannot be handled by {ChatInterface} (Message Identifier={@MessageIdentifier})",
+                _chatInterface.Name,
+                message.Identifier
+            );
+            return;
+        }
+
         _chatInterface.SendMessage(message.Identifier, message.Content);
     }
 }
