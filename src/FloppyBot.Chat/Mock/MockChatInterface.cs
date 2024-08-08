@@ -54,6 +54,11 @@ public class MockChatInterface : IChatInterface
         SendMessage(message);
     }
 
+    public bool CanHandleMessageAsResponse(ChatMessage message)
+    {
+        return true;
+    }
+
     public event ChatMessageReceivedDelegate? MessageReceived;
 
     public void Dispose()

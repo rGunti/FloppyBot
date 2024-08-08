@@ -10,6 +10,8 @@ public record ChatMessageIdentifier(string Interface, string Channel, string Mes
 {
     public const string NEW_MESSAGE_ID = "new";
 
+    public bool IsNewMessage => MessageId == NEW_MESSAGE_ID;
+
     public static implicit operator string(ChatMessageIdentifier identifier) =>
         identifier.ToString();
 
