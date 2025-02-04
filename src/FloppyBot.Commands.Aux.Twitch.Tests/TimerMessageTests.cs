@@ -19,8 +19,12 @@ public class TimerMessageTests
 {
     private static readonly DateTimeOffset RefTime = DateTimeOffset.Parse("2022-12-12T12:00:00Z");
 
-    private static readonly TimerMessageConfiguration RefConfig =
-        new("Mock/Channel", new[] { "Hello World", "This is a test" }, 5, 5);
+    private static readonly TimerMessageConfiguration RefConfig = new(
+        "Mock/Channel",
+        new[] { "Hello World", "This is a test" },
+        5,
+        5
+    );
 
     private readonly IRepository<TimerMessageConfiguration> _configRepo;
 

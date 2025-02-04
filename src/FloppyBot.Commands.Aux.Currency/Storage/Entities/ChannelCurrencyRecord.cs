@@ -45,8 +45,11 @@ public record ChannelCurrencySettings(
 public record ChannelUserState(string Id, UserState State, DateTimeOffset LastStateChange)
     : IEntity<ChannelUserState>
 {
-    private static readonly ChannelUserState Default =
-        new(null!, UserState.Offline, DateTimeOffset.MaxValue);
+    private static readonly ChannelUserState Default = new(
+        null!,
+        UserState.Offline,
+        DateTimeOffset.MaxValue
+    );
 
     public static ChannelUserState ForUserInChannel(string userId, string channelId)
     {

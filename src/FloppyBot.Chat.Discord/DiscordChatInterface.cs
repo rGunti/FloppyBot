@@ -152,12 +152,11 @@ public class DiscordChatInterface : IChatInterface
             CommandParameterAbstractType.String => ApplicationCommandOptionType.String,
             CommandParameterAbstractType.Enum => ApplicationCommandOptionType.String,
             CommandParameterAbstractType.Number => ApplicationCommandOptionType.Number,
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(commandParameterAbstractType),
-                    commandParameterAbstractType,
-                    "This value is not supported!"
-                ),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(commandParameterAbstractType),
+                commandParameterAbstractType,
+                "This value is not supported!"
+            ),
         };
     }
 

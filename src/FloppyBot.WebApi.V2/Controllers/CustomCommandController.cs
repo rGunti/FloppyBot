@@ -114,7 +114,7 @@ public class CustomCommandController : ChannelScopedController
             return NotFound();
         }
 
-        command = updateDto.ToEntity().WithId(command.Id) with { Owners = command.Owners, };
+        command = updateDto.ToEntity().WithId(command.Id) with { Owners = command.Owners };
         _customCommandService.UpdateCommand(command);
 
         _auditor.CommandUpdated(User.AsChatUser(), channelId, command);

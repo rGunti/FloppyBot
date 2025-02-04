@@ -27,17 +27,16 @@ public class TwitchChatInterfaceTests
     private readonly ITwitchChannelOnlineMonitor _onlineMonitor =
         A.Fake<ITwitchChannelOnlineMonitor>();
 
-    private TwitchConfiguration _configuration =
-        new(
-            "atwitchbot",
-            "sometoken",
-            "atwitchchannel",
-            "aclientid",
-            "anaccesstoken",
-            false,
-            0,
-            false
-        );
+    private TwitchConfiguration _configuration = new(
+        "atwitchbot",
+        "sometoken",
+        "atwitchchannel",
+        "aclientid",
+        "anaccesstoken",
+        false,
+        0,
+        false
+    );
 
     [TestMethod]
     public void BroadcasterHasAdminRights()
@@ -291,14 +290,14 @@ public class TwitchChatInterfaceTests
     {
         TwitchChatInterface chatInterface = CreateInterface();
 
-        var messages = new List<Entities.ChatMessage>();
+        var messages = new List<ChatMessage>();
         chatInterface.MessageReceived += (_, chatMessage) => messages.Add(chatMessage);
 
         _client.OnMessageReceived += Raise.With(messageReceivedArgs);
 
         Assert.AreEqual(1, messages.Count);
         Assert.AreEqual(
-            new Entities.ChatMessage(
+            new ChatMessage(
                 messages[0].Identifier,
                 new ChatUser(
                     new ChannelIdentifier(

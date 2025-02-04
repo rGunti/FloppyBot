@@ -23,41 +23,39 @@ public class CustomCommandExecutorTests
 {
     private static readonly DateTimeOffset RefTime = DateTimeOffset.Parse("2022-11-01T12:30:00Z");
 
-    private static readonly CustomCommandDescription CommandDescription =
-        new()
+    private static readonly CustomCommandDescription CommandDescription = new()
+    {
+        Id = "id",
+        Name = "mycommand",
+        Aliases = Enumerable.Empty<string>().ToImmutableHashSetWithValueSemantics(),
+        Owners = new[] { "Mock/Channel" }.ToImmutableHashSetWithValueSemantics(),
+        Limitations = new CommandLimitation
         {
-            Id = "id",
-            Name = "mycommand",
-            Aliases = Enumerable.Empty<string>().ToImmutableHashSetWithValueSemantics(),
-            Owners = new[] { "Mock/Channel" }.ToImmutableHashSetWithValueSemantics(),
-            Limitations = new CommandLimitation
+            Cooldown = new CooldownDescription[]
             {
-                Cooldown = new CooldownDescription[]
-                {
-                    new(PrivilegeLevel.Moderator, 0),
-                    new(PrivilegeLevel.Viewer, 15 * 1000),
-                }.ToImmutableHashSetWithValueSemantics(),
-            },
-            ResponseMode = CommandResponseMode.First,
-            Responses = new CommandResponse[]
-            {
-                new(ResponseType.Text, "Hello World"),
-            }.ToImmutableListWithValueSemantics(),
-        };
+                new(PrivilegeLevel.Moderator, 0),
+                new(PrivilegeLevel.Viewer, 15 * 1000),
+            }.ToImmutableHashSetWithValueSemantics(),
+        },
+        ResponseMode = CommandResponseMode.First,
+        Responses = new CommandResponse[]
+        {
+            new(ResponseType.Text, "Hello World"),
+        }.ToImmutableListWithValueSemantics(),
+    };
 
-    private static readonly CommandInstruction CommandInstruction =
-        new(
-            "mycommand",
-            Enumerable.Empty<string>().ToImmutableListWithValueSemantics(),
-            new CommandContext(
-                new ChatMessage(
-                    "Mock/Channel/abcdefg",
-                    new ChatUser("Mock/User", "Mock User", PrivilegeLevel.Viewer),
-                    SharedEventTypes.CHAT_MESSAGE,
-                    "content"
-                )
+    private static readonly CommandInstruction CommandInstruction = new(
+        "mycommand",
+        Enumerable.Empty<string>().ToImmutableListWithValueSemantics(),
+        new CommandContext(
+            new ChatMessage(
+                "Mock/Channel/abcdefg",
+                new ChatUser("Mock/User", "Mock User", PrivilegeLevel.Viewer),
+                SharedEventTypes.CHAT_MESSAGE,
+                "content"
             )
-        );
+        )
+    );
 
     private readonly ICounterStorageService _counterStorageService;
 

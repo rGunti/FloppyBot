@@ -19,16 +19,15 @@ public class DiscordFixtureCollection : ICollectionFixture<DiscordFixture>
 
 public class DiscordFixture : IAsyncDisposable
 {
-    private static readonly DiscordSocketConfig DiscordSocketConfig =
-        new()
-        {
-            GatewayIntents =
-                (
-                    GatewayIntents.AllUnprivileged
-                    & ~GatewayIntents.GuildScheduledEvents
-                    & ~GatewayIntents.GuildInvites
-                ) | GatewayIntents.MessageContent,
-        };
+    private static readonly DiscordSocketConfig DiscordSocketConfig = new()
+    {
+        GatewayIntents =
+            (
+                GatewayIntents.AllUnprivileged
+                & ~GatewayIntents.GuildScheduledEvents
+                & ~GatewayIntents.GuildInvites
+            ) | GatewayIntents.MessageContent,
+    };
 
     private readonly ILoggerFactory _loggerFactory;
     private readonly ILogger<DiscordFixture> _logger;

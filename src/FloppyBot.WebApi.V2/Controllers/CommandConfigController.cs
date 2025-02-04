@@ -108,7 +108,7 @@ public class CommandConfigController : ChannelScopedController
                 Disabled = false,
             };
 
-        var entity = (commandConfigurationDto with { Id = commandConfiguration.Id, }).ToEntity();
+        var entity = (commandConfigurationDto with { Id = commandConfiguration.Id }).ToEntity();
         _commandConfigurationService.SetCommandConfiguration(entity);
         _auditor.CommandConfigurationUpdated(User.AsChatUser(), channelId, entity);
         return NoContent();

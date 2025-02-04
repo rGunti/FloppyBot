@@ -50,8 +50,8 @@ public record CustomCommandDto(
         return dtoMode switch
         {
             Commands.Custom.Storage.Entities.CommandResponseMode.First => CommandResponseMode.First,
-            Commands.Custom.Storage.Entities.CommandResponseMode.PickOneRandom
-                => CommandResponseMode.PickOneRandom,
+            Commands.Custom.Storage.Entities.CommandResponseMode.PickOneRandom =>
+                CommandResponseMode.PickOneRandom,
             Commands.Custom.Storage.Entities.CommandResponseMode.All => CommandResponseMode.All,
             _ => throw new ArgumentOutOfRangeException(nameof(dtoMode), dtoMode, null),
         };
@@ -173,8 +173,12 @@ public static class CommandResponseModeExtensions
         return dtoMode switch
         {
             CommandResponseMode.First => Commands.Custom.Storage.Entities.CommandResponseMode.First,
-            CommandResponseMode.PickOneRandom
-                => Commands.Custom.Storage.Entities.CommandResponseMode.PickOneRandom,
+            CommandResponseMode.PickOneRandom => Commands
+                .Custom
+                .Storage
+                .Entities
+                .CommandResponseMode
+                .PickOneRandom,
             CommandResponseMode.All => Commands.Custom.Storage.Entities.CommandResponseMode.All,
             _ => throw new ArgumentOutOfRangeException(nameof(dtoMode), dtoMode, null),
         };

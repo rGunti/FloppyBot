@@ -81,11 +81,12 @@ public class TwitchAlertListener : IDisposable
         return twitchEvent switch
         {
             TwitchSubscriptionReceivedEvent subReceived => subReceived.SubscriptionPlanTier.Tier,
-            TwitchReSubscriptionReceivedEvent reSubscriptionReceivedEvent
-                => reSubscriptionReceivedEvent.SubscriptionPlanTier.Tier,
+            TwitchReSubscriptionReceivedEvent reSubscriptionReceivedEvent =>
+                reSubscriptionReceivedEvent.SubscriptionPlanTier.Tier,
             TwitchSubscriptionGiftEvent subGiftEvent => subGiftEvent.SubscriptionPlanTier.Tier,
-            TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent
-                => subCommunityGiftEvent.SubscriptionPlanTier.Tier,
+            TwitchSubscriptionCommunityGiftEvent subCommunityGiftEvent => subCommunityGiftEvent
+                .SubscriptionPlanTier
+                .Tier,
             TwitchRaidEvent _ => TwitchSubscriptionPlanTier.Unknown,
             _ => throw new ArgumentOutOfRangeException(nameof(twitchEvent)),
         };
@@ -95,14 +96,14 @@ public class TwitchAlertListener : IDisposable
     {
         return type switch
         {
-            TwitchEventTypes.SUBSCRIPTION
-                => JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(content),
-            TwitchEventTypes.RE_SUBSCRIPTION
-                => JsonSerializer.Deserialize<TwitchReSubscriptionReceivedEvent>(content),
-            TwitchEventTypes.SUBSCRIPTION_GIFT
-                => JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
-            TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY
-                => JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION =>
+                JsonSerializer.Deserialize<TwitchSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.RE_SUBSCRIPTION =>
+                JsonSerializer.Deserialize<TwitchReSubscriptionReceivedEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT =>
+                JsonSerializer.Deserialize<TwitchSubscriptionGiftEvent>(content),
+            TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY =>
+                JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
             TwitchEventTypes.RAID => JsonSerializer.Deserialize<TwitchRaidEvent>(content),
             _ => throw new ArgumentOutOfRangeException(nameof(type)),
         };

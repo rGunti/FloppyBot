@@ -208,12 +208,7 @@ public class ShoutoutCommand
             _shoutoutMessageSettingService.GetSettings(sourceChannel)
             ?? new ShoutoutMessageSetting(sourceChannel, template, null);
 
-        _shoutoutMessageSettingService.SetShoutoutMessage(
-            settings with
-            {
-                TeamMessage = template,
-            }
-        );
+        _shoutoutMessageSettingService.SetShoutoutMessage(settings with { TeamMessage = template });
         _auditor.TeamShoutoutMessageSet(author, sourceChannel, template);
         return REPLY_SAVE;
     }

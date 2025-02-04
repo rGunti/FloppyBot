@@ -38,7 +38,7 @@ public class SampleCommands
         [ArgumentIndex(0)] string arg0
     )
     {
-        return JsonSerializer.Serialize(new { arg0, arg1, });
+        return JsonSerializer.Serialize(new { arg0, arg1 });
     }
 
     [Command("add")]

@@ -17,8 +17,10 @@ public class CurrencyCommands
     private const string REPLY = "{Input} are about {Output}";
     private const string REPLY_MD = "**{Input}** are about **{Output}**";
 
-    private static readonly Regex CurrencyExtraction =
-        new("^((in|to) )?(([A-Za-z]){3})$", RegexOptions.Compiled);
+    private static readonly Regex CurrencyExtraction = new(
+        "^((in|to) )?(([A-Za-z]){3})$",
+        RegexOptions.Compiled
+    );
 
     private readonly ICurrencyConverter _currencyConverter;
 
@@ -58,7 +60,7 @@ public class CurrencyCommands
 
         var output = await _currencyConverter.Convert(inputValue, targetCurrency);
         return (features.Supports(ChatInterfaceFeatures.MarkdownText) ? REPLY_MD : REPLY).Format(
-            new { Input = inputValue, Output = output, }
+            new { Input = inputValue, Output = output }
         );
     }
 }
