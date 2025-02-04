@@ -8,8 +8,9 @@ namespace FloppyBot.Base.Testing;
 
 public static class LoggingUtils
 {
-    public static readonly Lazy<ILogger> SerilogLogger =
-        new(() => new LoggerConfiguration().ConfigureSerilogForTesting().CreateLogger());
+    public static readonly Lazy<ILogger> SerilogLogger = new(
+        () => new LoggerConfiguration().ConfigureSerilogForTesting().CreateLogger()
+    );
 
     private static readonly Lazy<ILoggerFactory> LoggerFactory = new(InitRealLogger);
     private static readonly Lazy<ILoggerFactory> NullLoggerFac = new(NullLoggerFactory.Instance);

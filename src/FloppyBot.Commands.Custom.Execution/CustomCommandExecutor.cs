@@ -199,10 +199,9 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                         {
                             ResponseType.Sound => PayloadType.Sound,
                             ResponseType.Visual => PayloadType.Visual,
-                            _
-                                => throw new NotImplementedException(
-                                    $"Response Type {response.Type} not implemented"
-                                ),
+                            _ => throw new NotImplementedException(
+                                $"Response Type {response.Type} not implemented"
+                            ),
                         },
                         instruction.Context!.SourceMessage.Author.Identifier,
                         instruction.Context!.SourceMessage.Identifier.GetChannel(),

@@ -12,20 +12,25 @@ public class Translator : ITranslator
 {
     private const string LANGUAGE_CODE = "[a-z]{2}(-[A-Z]{2})?";
 
-    private static readonly Regex LanguageCodeSelector =
-        new($"^{LANGUAGE_CODE}$", RegexOptions.Compiled);
+    private static readonly Regex LanguageCodeSelector = new(
+        $"^{LANGUAGE_CODE}$",
+        RegexOptions.Compiled
+    );
 
-    private static readonly Regex LanguageSelector =
-        new(
-            $"^({LANGUAGE_CODE})>({LANGUAGE_CODE})$",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase
-        );
+    private static readonly Regex LanguageSelector = new(
+        $"^({LANGUAGE_CODE})>({LANGUAGE_CODE})$",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase
+    );
 
-    private static readonly Regex NaturalTextToSelector =
-        new("^(.+) (to ([A-Za-z-]+))$", RegexOptions.Compiled);
+    private static readonly Regex NaturalTextToSelector = new(
+        "^(.+) (to ([A-Za-z-]+))$",
+        RegexOptions.Compiled
+    );
 
-    private static readonly Regex NaturalTextFromToSelector =
-        new("^(.+) (from ([A-Za-z-]+)) (to ([A-Za-z-]+))$", RegexOptions.Compiled);
+    private static readonly Regex NaturalTextFromToSelector = new(
+        "^(.+) (from ([A-Za-z-]+)) (to ([A-Za-z-]+))$",
+        RegexOptions.Compiled
+    );
 
     private static readonly ImmutableDictionary<string, string> LanguageCodeDictionary;
     private static readonly ImmutableDictionary<string, string> LanguageNameDictionary;

@@ -76,7 +76,7 @@ public class SubAlertCommands
         var settings = _alertService.GetAlertSettings(sourceChannel);
         if (settings is not null)
         {
-            settings = settings with { SubAlertsEnabled = false, };
+            settings = settings with { SubAlertsEnabled = false };
             _alertService.StoreAlertSettings(settings);
             _auditor.SubAlertMessageDisabled(author, sourceChannel);
         }

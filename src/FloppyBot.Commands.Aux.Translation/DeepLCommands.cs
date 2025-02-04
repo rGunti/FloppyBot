@@ -12,6 +12,7 @@ using FloppyBot.Commands.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Translator = DeepL.Translator;
 
 namespace FloppyBot.Commands.Aux.Translation;
 
@@ -61,8 +62,8 @@ public class DeepLCommands
     public static void DiSetup(IServiceCollection services)
     {
         services
-            .AddTransient<ITranslator, Translator>()
-            .AddTransient<DeepL.ITranslator, DeepL.Translator>(p => new DeepL.Translator(
+            .AddTransient<ITranslator, Commands.Translator>()
+            .AddTransient<DeepL.ITranslator, Translator>(p => new Translator(
                 p.GetRequiredService<IConfiguration>()[CONFIG_KEY]
                     ?? throw new ArgumentException("DeepL API key missing")
             ));
@@ -101,10 +102,9 @@ public class DeepLCommands
                 (PARAM_LIST_LANGUAGES, false) => REPLY_SUPPORTED_LANGUAGES,
                 (PARAM_LIST_LANGUAGE_CODES, true) => REPLY_SUPPORTED_LANGUAGE_CODES_MD,
                 (PARAM_LIST_LANGUAGE_CODES, false) => REPLY_SUPPORTED_LANGUAGE_CODES,
-                _
-                    => throw new ArgumentOutOfRangeException(
-                        $"Combination of parameter {inputString} and markdown support {supportsMarkdown} is not implemented"
-                    ),
+                _ => throw new ArgumentOutOfRangeException(
+                    $"Combination of parameter {inputString} and markdown support {supportsMarkdown} is not implemented"
+                ),
             };
 
             return CommandResult.SuccessWith(template.Format(languages));

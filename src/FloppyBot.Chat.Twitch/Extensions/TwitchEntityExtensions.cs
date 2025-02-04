@@ -38,12 +38,11 @@ internal static class TwitchEntityExtensions
             SubscriptionPlan.Tier1 => TwitchSubscriptionPlanTier.Tier1,
             SubscriptionPlan.Tier2 => TwitchSubscriptionPlanTier.Tier2,
             SubscriptionPlan.Tier3 => TwitchSubscriptionPlanTier.Tier3,
-            _
-                => throw new ArgumentOutOfRangeException(
-                    nameof(plan),
-                    plan,
-                    "Subscription plan is not convertible"
-                ),
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(plan),
+                plan,
+                "Subscription plan is not convertible"
+            ),
         };
     }
 

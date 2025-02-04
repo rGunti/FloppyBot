@@ -8,6 +8,6 @@ public static class ErrorResponseExceptions
 {
     public static JsonResult ToJsonResult(this ErrorResponse response)
     {
-        return new JsonResult(response) { StatusCode = response.StatusCode, };
+        return new JsonResult(response) { StatusCode = response.StatusCode };
     }
 }

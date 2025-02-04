@@ -299,7 +299,7 @@ public class UnitCommands
             .FirstOrDefault(
                 CommandResult.FailedWith(
                     (supportsMarkdown ? REPLY_DEBUG_NO_CONVERT_MD : REPLY_DEBUG_NO_CONVERT).Format(
-                        new { SourceUnit = sourceUnit, DestinationUnit = destinationUnit, }
+                        new { SourceUnit = sourceUnit, DestinationUnit = destinationUnit }
                     )
                 )
             );

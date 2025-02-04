@@ -61,11 +61,13 @@ public class ChannelCurrencyMaintainer : BackgroundService
     {
         return chatMessage.EventName switch
         {
-            TwitchEventTypes.USER_JOINED
-                => JsonSerializer.Deserialize<TwitchUserJoinedEvent>(chatMessage.Content)!,
-            TwitchEventTypes.USER_LEFT
-                => JsonSerializer.Deserialize<TwitchUserLeftEvent>(chatMessage.Content)!,
-            _ => throw new InvalidOperationException($"Unknown event type {chatMessage.EventName}")
+            TwitchEventTypes.USER_JOINED => JsonSerializer.Deserialize<TwitchUserJoinedEvent>(
+                chatMessage.Content
+            )!,
+            TwitchEventTypes.USER_LEFT => JsonSerializer.Deserialize<TwitchUserLeftEvent>(
+                chatMessage.Content
+            )!,
+            _ => throw new InvalidOperationException($"Unknown event type {chatMessage.EventName}"),
         };
     }
 

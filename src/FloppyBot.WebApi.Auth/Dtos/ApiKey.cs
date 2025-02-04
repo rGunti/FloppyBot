@@ -13,6 +13,6 @@ public record ApiKey(
 {
     public ApiKey WithId(string newId)
     {
-        return this with { Id = newId, };
+        return this with { Id = newId };
     }
 }
