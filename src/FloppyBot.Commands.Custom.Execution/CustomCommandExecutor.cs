@@ -5,6 +5,7 @@ using FloppyBot.Base.TextFormatting;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Core.Cooldown;
+using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Core.Exceptions;
 using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Communication.Entities;
@@ -19,7 +20,7 @@ namespace FloppyBot.Commands.Custom.Execution;
 
 public interface ICustomCommandExecutor
 {
-    IEnumerable<string?> Execute(
+    IEnumerable<CommandResult?> Execute(
         CommandInstruction instruction,
         CustomCommandDescription description
     );
@@ -54,7 +55,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         _auditor = auditor;
     }
 
-    public IEnumerable<string?> Execute(
+    public IEnumerable<CommandResult?> Execute(
         CommandInstruction instruction,
         CustomCommandDescription description
     )
@@ -166,7 +167,7 @@ public class CustomCommandExecutor : ICustomCommandExecutor
             .FirstOrDefault(DateTimeOffset.MinValue);
     }
 
-    private string? Execute(
+    private CommandResult? Execute(
         CommandInstruction instruction,
         CustomCommandDescription description,
         CommandResponse response
@@ -184,7 +185,10 @@ public class CustomCommandExecutor : ICustomCommandExecutor
         switch (response.Type)
         {
             case ResponseType.Text:
-                return response.Content.Format(placeholderContainer);
+                return CommandResult.SuccessWith(
+                    response.Content.Format(placeholderContainer),
+                    response.SendAsReply
+                );
             case ResponseType.Sound:
             case ResponseType.Visual:
             {
@@ -214,7 +218,15 @@ public class CustomCommandExecutor : ICustomCommandExecutor
                         _timeProvider.GetCurrentUtcTime()
                     )
                 );
-                return reply?.Format(placeholderContainer);
+                if (reply is null)
+                {
+                    return null;
+                }
+
+                return CommandResult.SuccessWith(
+                    reply.Format(placeholderContainer),
+                    response.SendAsReply
+                );
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete
