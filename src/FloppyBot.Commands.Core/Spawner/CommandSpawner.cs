@@ -140,7 +140,9 @@ public class CommandSpawner : ICommandSpawner
         }
 
         _logger.LogDebug("Command executed successfully, returning value");
-        return result.HasResponse ? instruction.CreateReply(result.ResponseContent!) : null;
+        return result.HasResponse
+            ? instruction.CreateReply(result.ResponseContent!, result.SendAsReply)
+            : null;
     }
 
     public bool CanExecuteVariableCommand(

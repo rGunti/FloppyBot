@@ -61,14 +61,19 @@ public record CustomCommandDto(
 public record CommandResponseDto(
     CommandResponseType Type,
     string Content,
-    string? AuxiliaryContent = null
+    string? AuxiliaryContent = null,
+    bool SendAsReply = true
 )
 {
     public static CommandResponseDto FromEntity(CommandResponse entity)
     {
         return entity.Type switch
         {
-            ResponseType.Text => new CommandResponseDto(CommandResponseType.Text, entity.Content),
+            ResponseType.Text => new CommandResponseDto(
+                CommandResponseType.Text,
+                entity.Content,
+                SendAsReply: entity.SendAsReply
+            ),
             ResponseType.Sound => ConvertInvocationCommand(entity, CommandResponseType.Sound),
             ResponseType.Visual => ConvertInvocationCommand(entity, CommandResponseType.Visual),
             _ => throw new ArgumentOutOfRangeException(nameof(entity.Type), entity.Type, null),
@@ -79,7 +84,11 @@ public record CommandResponseDto(
     {
         return Type switch
         {
-            CommandResponseType.Text => new CommandResponse(ResponseType.Text, Content),
+            CommandResponseType.Text => new CommandResponse(
+                ResponseType.Text,
+                Content,
+                SendAsReply
+            ),
             CommandResponseType.Sound => ConvertInvocationCommand(this, ResponseType.Sound),
             CommandResponseType.Visual => ConvertInvocationCommand(this, ResponseType.Visual),
             _ => throw new ArgumentOutOfRangeException(nameof(Type), Type, null),
@@ -95,7 +104,7 @@ public record CommandResponseDto(
         var soundFile = split[0];
         var replyMessage = split.Length > 1 ? split[1] : null;
 
-        return new CommandResponseDto(responseType, soundFile, replyMessage);
+        return new CommandResponseDto(responseType, soundFile, replyMessage, entity.SendAsReply);
     }
 
     private static CommandResponse ConvertInvocationCommand(
@@ -109,7 +118,7 @@ public record CommandResponseDto(
             content += CommandResponse.ReplySplitChar + dto.AuxiliaryContent;
         }
 
-        return new CommandResponse(responseType, content);
+        return new CommandResponse(responseType, content, dto.SendAsReply);
     }
 }
 

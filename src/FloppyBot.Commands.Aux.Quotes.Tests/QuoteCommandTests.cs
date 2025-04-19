@@ -8,7 +8,6 @@ using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
 namespace FloppyBot.Commands.Aux.Quotes.Tests;
 
-[TestClass]
 public class QuoteCommandTests
 {
     private readonly QuoteCommands _quoteCommands;
@@ -26,7 +25,7 @@ public class QuoteCommandTests
         );
     }
 
-    [TestMethod]
+    [Fact]
     public void AddQuote()
     {
         A.CallTo(() => _quoteService.AddQuote(A<string>._, A<string>._, A<string?>._, A<string>._))
@@ -49,10 +48,7 @@ public class QuoteCommandTests
             new ChatUser("Mock/UserName", "User Name", PrivilegeLevel.Viewer),
             "This is my quote"
         );
-        Assert.AreEqual(
-            "Created new Quote #1337: This is my quote [Cool Game @ 2022-10-12]",
-            reply
-        );
+        Assert.Equal("Created new Quote #1337: This is my quote [Cool Game @ 2022-10-12]", reply);
 
         A.CallTo(
                 () =>
@@ -82,7 +78,7 @@ public class QuoteCommandTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [TestMethod]
+    [Fact]
     public void EditQuote()
     {
         A.CallTo(() => _quoteService.EditQuote(A<string>._, An<int>._, A<string>._))
@@ -106,7 +102,7 @@ public class QuoteCommandTests
             new ChatUser("Mock/UserName", "User Name", PrivilegeLevel.Viewer)
         );
 
-        Assert.AreEqual("Updated Quote #1337: This is my new text [Cool Game @ 2022-10-12]", reply);
+        Assert.Equal("Updated Quote #1337: This is my new text [Cool Game @ 2022-10-12]", reply);
         A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1337, "This is my new text"))
             .MustHaveHappenedOnceExactly();
         A.CallTo(
@@ -127,7 +123,7 @@ public class QuoteCommandTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [TestMethod]
+    [Fact]
     public void EditQuoteContext()
     {
         A.CallTo(() => _quoteService.EditQuoteContext(A<string>._, An<int>._, A<string>._))
@@ -151,7 +147,7 @@ public class QuoteCommandTests
             new ChatUser("Mock/UserName", "User Name", PrivilegeLevel.Viewer)
         );
 
-        Assert.AreEqual("Updated Quote #1337: This is my quote [Uncool Game @ 2022-10-12]", reply);
+        Assert.Equal("Updated Quote #1337: This is my quote [Uncool Game @ 2022-10-12]", reply);
 
         A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1337, "Uncool Game"))
             .MustHaveHappenedOnceExactly();
@@ -173,7 +169,7 @@ public class QuoteCommandTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [TestMethod]
+    [Fact]
     public void DeleteQuote()
     {
         A.CallTo(() => _quoteService.DeleteQuote(A<string>._, An<int>._)).Returns(true);
@@ -183,7 +179,7 @@ public class QuoteCommandTests
             1337,
             new ChatUser("Mock/UserName", "User Name", PrivilegeLevel.Viewer)
         );
-        Assert.AreEqual("Deleted Quote #1337", reply);
+        Assert.Equal("Deleted Quote #1337", reply);
 
         A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1337))
             .MustHaveHappenedOnceExactly();
@@ -205,12 +201,12 @@ public class QuoteCommandTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [DataTestMethod]
-    [DataRow(PrivilegeLevel.Unknown, false)]
-    [DataRow(PrivilegeLevel.Viewer, false)]
-    [DataRow(PrivilegeLevel.Moderator, true)]
-    [DataRow(PrivilegeLevel.Administrator, true)]
-    [DataRow(PrivilegeLevel.Superuser, true)]
+    [Theory]
+    [InlineData(PrivilegeLevel.Unknown, false)]
+    [InlineData(PrivilegeLevel.Viewer, false)]
+    [InlineData(PrivilegeLevel.Moderator, true)]
+    [InlineData(PrivilegeLevel.Administrator, true)]
+    [InlineData(PrivilegeLevel.Superuser, true)]
     public void CanRunGenericDeleteQuoteCommandWithCorrectPermissions(
         PrivilegeLevel inputLevel,
         bool expectExecution
@@ -230,11 +226,11 @@ public class QuoteCommandTests
 
         if (expectExecution)
         {
-            Assert.AreEqual("Deleted Quote #1", reply);
+            Assert.Equal("Deleted Quote #1", reply);
         }
         else
         {
-            Assert.IsNull(reply);
+            Assert.Null(reply);
         }
 
         A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1))
@@ -257,12 +253,12 @@ public class QuoteCommandTests
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
 
-    [DataTestMethod]
-    [DataRow(PrivilegeLevel.Unknown, false)]
-    [DataRow(PrivilegeLevel.Viewer, false)]
-    [DataRow(PrivilegeLevel.Moderator, true)]
-    [DataRow(PrivilegeLevel.Administrator, true)]
-    [DataRow(PrivilegeLevel.Superuser, true)]
+    [Theory]
+    [InlineData(PrivilegeLevel.Unknown, false)]
+    [InlineData(PrivilegeLevel.Viewer, false)]
+    [InlineData(PrivilegeLevel.Moderator, true)]
+    [InlineData(PrivilegeLevel.Administrator, true)]
+    [InlineData(PrivilegeLevel.Superuser, true)]
     public void CanRunGenericEditQuoteCommandWithCorrectPermissions(
         PrivilegeLevel inputLevel,
         bool expectExecution
@@ -294,11 +290,11 @@ public class QuoteCommandTests
 
         if (expectExecution)
         {
-            Assert.AreEqual("Updated Quote #1: My new text [Some Game @ 2022-10-12]", reply);
+            Assert.Equal("Updated Quote #1: My new text [Some Game @ 2022-10-12]", reply);
         }
         else
         {
-            Assert.IsNull(reply);
+            Assert.Null(reply);
         }
 
         A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1, "My new text"))
@@ -321,12 +317,12 @@ public class QuoteCommandTests
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
 
-    [DataTestMethod]
-    [DataRow(PrivilegeLevel.Unknown, false)]
-    [DataRow(PrivilegeLevel.Viewer, false)]
-    [DataRow(PrivilegeLevel.Moderator, true)]
-    [DataRow(PrivilegeLevel.Administrator, true)]
-    [DataRow(PrivilegeLevel.Superuser, true)]
+    [Theory]
+    [InlineData(PrivilegeLevel.Unknown, false)]
+    [InlineData(PrivilegeLevel.Viewer, false)]
+    [InlineData(PrivilegeLevel.Moderator, true)]
+    [InlineData(PrivilegeLevel.Administrator, true)]
+    [InlineData(PrivilegeLevel.Superuser, true)]
     public void CanRunGenericEditQuoteContextCommandWithCorrectPermissions(
         PrivilegeLevel inputLevel,
         bool expectExecution
@@ -358,11 +354,11 @@ public class QuoteCommandTests
 
         if (expectExecution)
         {
-            Assert.AreEqual("Updated Quote #1: My text [My new text @ 2022-10-12]", reply);
+            Assert.Equal("Updated Quote #1: My text [My new text @ 2022-10-12]", reply);
         }
         else
         {
-            Assert.IsNull(reply);
+            Assert.Null(reply);
         }
 
         A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1, "My new text"))

@@ -23,6 +23,11 @@ public record ChatMessageIdentifier(string Interface, string Channel, string Mes
         return $"{channelId}/{NEW_MESSAGE_ID}";
     }
 
+    public static ChatMessageIdentifier NewFor(ChatMessageIdentifier channelId)
+    {
+        return channelId with { MessageId = NEW_MESSAGE_ID };
+    }
+
     public override string ToString()
     {
         return IdentifierUtils.GenerateId(Interface, Channel, MessageId);

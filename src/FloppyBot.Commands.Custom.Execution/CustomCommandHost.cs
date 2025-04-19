@@ -60,21 +60,29 @@ public class CustomCommandHost
 
     [VariableCommandHandler(nameof(CanHandleCommand), identifier: "Custom Commands")]
     // ReSharper disable once UnusedMember.Global
-    public CommandResult? RunCustomCommand(CommandInstruction instruction)
+    public CommandResult RunCustomCommand(CommandInstruction instruction)
     {
         CustomCommandDescription customCommand = GetCommand(instruction)
             .OrThrow(() => CreateCommandNotFoundException(instruction));
-        ImmutableList<string?> replies = _commandExecutor
+        ImmutableList<CommandResult?> replies = _commandExecutor
             .Execute(instruction, customCommand)
             .ToImmutableList();
 
-        if (!replies.Any())
+        if (replies.IsEmpty)
         {
             return new CommandResult(CommandOutcome.NoResponse);
         }
 
         // TODO: Supply multiple results
-        return new CommandResult(CommandOutcome.Success, replies.Join("\n\n"));
+        var responseMessage = replies
+            .Where(r => r is not null && r.HasResponse)
+            .Select(r => r!.ResponseContent)
+            .Join("\n\n");
+        var sendResponseAsReply = replies
+            .Where(r => r is not null && r.HasResponse)
+            .Select(r => r!.SendAsReply)
+            .FirstOrDefault(true);
+        return new CommandResult(CommandOutcome.Success, responseMessage, sendResponseAsReply);
     }
 
     private NullableObject<CustomCommandDescription> GetCommand(CommandInstruction instruction)

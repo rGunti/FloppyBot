@@ -8,6 +8,7 @@ using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Core.Cooldown;
+using FloppyBot.Commands.Core.Entities;
 using FloppyBot.Commands.Custom.Communication;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Execution.InternalEntities;
@@ -94,10 +95,10 @@ public class CustomCommandExecutorTests
             new NoopAuditor()
         );
 
-        string?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
+        CommandResult?[] reply = executor.Execute(CommandInstruction, CommandDescription).ToArray();
         if (expectResult)
         {
-            CollectionAssert.AreEqual(new[] { "Hello World" }, reply);
+            CollectionAssert.AreEqual(new[] { CommandResult.SuccessWith("Hello World") }, reply);
         }
         else
         {
@@ -130,7 +131,7 @@ public class CustomCommandExecutorTests
             new NoopAuditor()
         );
 
-        string?[] reply = executor
+        CommandResult?[] reply = executor
             .Execute(
                 CommandInstruction with
                 {
@@ -149,7 +150,7 @@ public class CustomCommandExecutorTests
             .ToArray();
         if (expectResult)
         {
-            CollectionAssert.AreEqual(new[] { "Hello World" }, reply);
+            CollectionAssert.AreEqual(new[] { CommandResult.SuccessWith("Hello World") }, reply);
         }
         else
         {
@@ -185,6 +186,7 @@ public class CustomCommandExecutorTests
                     }.ToImmutableListWithValueSemantics(),
                 }
             )
+            .Select(r => r?.ResponseContent)
             .ToArray();
 
         A.CallTo(() => _counterStorageService.Next(CommandDescription.Id))
@@ -203,6 +205,7 @@ public class CustomCommandExecutorTests
                     }.ToImmutableListWithValueSemantics(),
                 }
             )
+            .Select(r => r?.ResponseContent)
             .ToArray();
         Assert.AreEqual("I am at level 2 now!", reply.First());
     }
@@ -250,6 +253,7 @@ public class CustomCommandExecutorTests
                     },
                 }
             )
+            .Select(r => r?.ResponseContent)
             .ToArray();
         if (expectResult)
         {
@@ -350,6 +354,7 @@ public class CustomCommandExecutorTests
                 },
                 customizedCommandDescription
             )
+            .Select(r => r?.ResponseContent)
             .ToArray();
 
         Assert.AreEqual("I am at level 11 now!", reply.First());
@@ -372,6 +377,7 @@ public class CustomCommandExecutorTests
                 },
                 customizedCommandDescription
             )
+            .Select(r => r?.ResponseContent)
             .ToArray();
         Assert.AreEqual("I am at level 10 now!", reply.First());
     }
