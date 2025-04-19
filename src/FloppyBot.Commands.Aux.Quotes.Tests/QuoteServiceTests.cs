@@ -8,7 +8,6 @@ using FloppyBot.Commands.Aux.Quotes.Storage.Entities;
 
 namespace FloppyBot.Commands.Aux.Quotes.Tests;
 
-[TestClass]
 public class QuoteServiceTests
 {
     private const string CHANNEL_ID = "Mock/Channel";
@@ -37,7 +36,7 @@ public class QuoteServiceTests
             .Returns(MAPPING_ID);
     }
 
-    [TestMethod]
+    [Fact]
     public void AddQuote()
     {
         var newQuote = _quoteService.AddQuote(
@@ -47,7 +46,7 @@ public class QuoteServiceTests
             "My User Name"
         );
 
-        Assert.AreEqual(
+        Assert.Equal(
             new Quote(
                 newQuote.Id,
                 MAPPING_ID,
@@ -59,8 +58,9 @@ public class QuoteServiceTests
             ),
             newQuote
         );
-        Assert.IsTrue(
-            _quoteRepository.GetAll().Any(i => i.ChannelMappingId == MAPPING_ID && i.QuoteId == 1)
+        Assert.Contains(
+            _quoteRepository.GetAll(),
+            i => i.ChannelMappingId == MAPPING_ID && i.QuoteId == 1
         );
 
         var newQuote2 = _quoteService.AddQuote(
@@ -69,7 +69,7 @@ public class QuoteServiceTests
             "Cool Game",
             "Other User Name"
         );
-        Assert.AreEqual(
+        Assert.Equal(
             new Quote(
                 newQuote2.Id,
                 MAPPING_ID,
@@ -81,7 +81,7 @@ public class QuoteServiceTests
             ),
             newQuote2
         );
-        CollectionAssert.AreEquivalent(
+        Assert.Equivalent(
             new[] { 1, 2 },
             _quoteRepository
                 .GetAll()
@@ -91,7 +91,7 @@ public class QuoteServiceTests
         );
     }
 
-    [TestMethod]
+    [Fact]
     public void EditQuote()
     {
         _quoteRepository.Insert(
@@ -108,8 +108,8 @@ public class QuoteServiceTests
 
         var editQuote = _quoteService.EditQuote(CHANNEL_ID, 1337, "New quote text");
 
-        Assert.IsNotNull(editQuote);
-        Assert.AreEqual(
+        Assert.NotNull(editQuote);
+        Assert.Equal(
             new Quote(
                 "myId",
                 MAPPING_ID,
@@ -122,10 +122,10 @@ public class QuoteServiceTests
             editQuote
         );
 
-        Assert.IsNull(_quoteService.EditQuote("Mock/OtherChannel", 1337, "New Content"));
+        Assert.Null(_quoteService.EditQuote("Mock/OtherChannel", 1337, "New Content"));
     }
 
-    [TestMethod]
+    [Fact]
     public void DeleteQuote()
     {
         _quoteRepository.Insert(
@@ -140,11 +140,11 @@ public class QuoteServiceTests
             )
         );
 
-        Assert.IsTrue(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
-        Assert.IsFalse(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
+        Assert.True(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
+        Assert.False(_quoteService.DeleteQuote(CHANNEL_ID, 1337));
     }
 
-    [TestMethod]
+    [Fact]
     public void EditQuoteContext()
     {
         _quoteRepository.Insert(
@@ -161,7 +161,7 @@ public class QuoteServiceTests
 
         var editQuote = _quoteService.EditQuoteContext(CHANNEL_ID, 1337, "New Game");
 
-        Assert.AreEqual(
+        Assert.Equal<Quote>(
             new Quote(
                 "myId",
                 MAPPING_ID,
@@ -173,20 +173,18 @@ public class QuoteServiceTests
             ),
             editQuote
         );
-        Assert.IsTrue(
-            _quoteRepository
-                .GetAll()
-                .Any(q =>
-                    q.ChannelMappingId == MAPPING_ID
-                    && q.QuoteId == 1337
-                    && q.QuoteContext == "New Game"
-                )
+        Assert.Contains(
+            _quoteRepository.GetAll(),
+            q =>
+                q.ChannelMappingId == MAPPING_ID
+                && q.QuoteId == 1337
+                && q.QuoteContext == "New Game"
         );
 
-        Assert.IsNull(_quoteService.EditQuoteContext("Mock/OtherChannel", 1337, "New Game"));
+        Assert.Null(_quoteService.EditQuoteContext("Mock/OtherChannel", 1337, "New Game"));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetQuote()
     {
         _quoteRepository.Insert(
@@ -201,7 +199,7 @@ public class QuoteServiceTests
             )
         );
 
-        Assert.AreEqual(
+        Assert.Equal<Quote>(
             new Quote(
                 "myId",
                 MAPPING_ID,
@@ -213,14 +211,14 @@ public class QuoteServiceTests
             ),
             _quoteService.GetQuote(CHANNEL_ID, 1337)
         );
-        Assert.IsNull(_quoteService.GetQuote(CHANNEL_ID, 1338));
-        Assert.IsNull(_quoteService.GetQuote("Mock/OtherChannel", 1337));
+        Assert.Null(_quoteService.GetQuote(CHANNEL_ID, 1338));
+        Assert.Null(_quoteService.GetQuote("Mock/OtherChannel", 1337));
     }
 
-    [TestMethod]
+    [Fact]
     public void GetRandomQuote()
     {
-        Assert.IsNull(_quoteService.GetRandomQuote(CHANNEL_ID));
+        Assert.Null(_quoteService.GetRandomQuote(CHANNEL_ID));
 
         _quoteRepository.Insert(
             new Quote(
@@ -235,7 +233,7 @@ public class QuoteServiceTests
         );
 
         var quote = _quoteService.GetRandomQuote(CHANNEL_ID);
-        Assert.AreEqual(
+        Assert.Equal<Quote>(
             new Quote(
                 "myId",
                 MAPPING_ID,
@@ -248,10 +246,10 @@ public class QuoteServiceTests
             quote
         );
 
-        Assert.IsNull(_quoteService.GetRandomQuote("Mock/SomeOtherChannel"));
+        Assert.Null(_quoteService.GetRandomQuote("Mock/SomeOtherChannel"));
 
         // Test with changed rng
         _rng.SetNumbers(2);
-        Assert.IsNull(_quoteService.GetRandomQuote(CHANNEL_ID));
+        Assert.Null(_quoteService.GetRandomQuote(CHANNEL_ID));
     }
 }
