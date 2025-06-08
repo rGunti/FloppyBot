@@ -13,7 +13,7 @@ public class Base64EncodingShim : IEncryptionShim
 {
     public Task<string> Encrypt(string plainText)
     {
-        var bytes = Convert.FromBase64String(plainText);
+        var bytes = Encoding.UTF8.GetBytes(plainText);
         return Task.FromResult(Convert.ToBase64String(bytes));
     }
 

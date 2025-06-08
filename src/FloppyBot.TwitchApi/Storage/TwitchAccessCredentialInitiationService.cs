@@ -9,6 +9,7 @@ public interface ITwitchAccessCredentialInitiationService
 {
     TwitchAccessCredentialInitiation GetOrCreateFor(string user, string channel);
     NullableObject<TwitchAccessCredentialInitiation> GetFor(string user, string channel);
+    NullableObject<TwitchAccessCredentialInitiation> GetForSessionId(string sessionId);
     void DeleteFor(string user, string channel);
     void Delete(TwitchAccessCredentialInitiation initiation);
 }
@@ -48,6 +49,11 @@ public class TwitchAccessCredentialInitiationService : ITwitchAccessCredentialIn
         return _repository
             .GetAll()
             .FirstOrDefault(i => i.ByUser == user && i.ForChannel == channel);
+    }
+
+    public NullableObject<TwitchAccessCredentialInitiation> GetForSessionId(string sessionId)
+    {
+        return _repository.GetAll().FirstOrDefault(i => i.Id == sessionId).Wrap();
     }
 
     public void DeleteFor(string user, string channel)

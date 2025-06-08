@@ -7,8 +7,10 @@ namespace FloppyBot.TwitchApi.Storage;
 
 public interface ITwitchAccessCredentialsService
 {
+    bool HasAccessCredentialsFor(string channelName);
     NullableObject<TwitchAccessCredentials> GetAccessCredentialsFor(string channelName);
     TwitchAccessCredentials StoreAccessCredentials(TwitchAccessCredentials credentials);
+    void DeleteAccessCredentials(string channelName);
 }
 
 public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
@@ -25,11 +27,15 @@ public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
         _repository = repositoryFactory.GetRepository<TwitchAccessCredentials>();
     }
 
+    public bool HasAccessCredentialsFor(string channelName)
+    {
+        return _repository.GetById(channelName) is not null;
+    }
+
     public NullableObject<TwitchAccessCredentials> GetAccessCredentialsFor(string channelName)
     {
         return _repository
-            .GetAll()
-            .FirstOrDefault(c => c.ChannelName == channelName)
+            .GetById(channelName)
             .Wrap()
             .Select(c => _encryptionShim.DecryptSync(c))
             .Wrap();
@@ -38,5 +44,10 @@ public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
     public TwitchAccessCredentials StoreAccessCredentials(TwitchAccessCredentials credentials)
     {
         return _repository.Upsert(_encryptionShim.EncryptSync(credentials));
+    }
+
+    public void DeleteAccessCredentials(string channelName)
+    {
+        _repository.Delete(channelName);
     }
 }

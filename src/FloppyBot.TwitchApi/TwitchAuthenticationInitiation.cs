@@ -47,9 +47,23 @@ public class TwitchAuthenticator
             { "redirect_uri", _twitchConfiguration.RedirectUrl },
             { "scope", _twitchConfiguration.Scopes.Join(" ") },
             { "state", initSession.Id },
+            { "force_verify", "true" },
         };
 
         return $"https://id.twitch.tv/oauth2/authorize?{query.ToQueryString()}";
+    }
+
+    public string? GetChannelForSession(string sessionId)
+    {
+        return _initiationService
+            .GetForSessionId(sessionId)
+            .Select(i => i.ForChannel)
+            .FirstOrDefault();
+    }
+
+    public bool HasLinkForChannel(string channel)
+    {
+        return _credentialsService.GetAccessCredentialsFor(channel).HasValue;
     }
 
     public async Task ConfirmSession(string username, string channel, string sessionId, string code)
@@ -88,13 +102,18 @@ public class TwitchAuthenticator
 
         // Store the acquired credentials in the database
         var credentials = new TwitchAccessCredentials(
-            null!,
+            channel,
             channel,
             authCodeResponse.AccessToken,
             authCodeResponse.RefreshToken,
             _timeProvider.GetCurrentUtcTime().Add(TimeSpan.FromSeconds(authCodeResponse.ExpiresIn))
         );
         _credentialsService.StoreAccessCredentials(credentials);
+    }
+
+    public void RevokeCredentials(string channel)
+    {
+        _credentialsService.DeleteAccessCredentials(channel);
     }
 }
 
