@@ -20,7 +20,7 @@ public static class TwitchAuthExtensions
             .AddSingleton<TwitchAuthenticationConfiguration>(s =>
             {
                 var config = s.GetRequiredService<IConfiguration>();
-                return config.GetSection("Twitch").Get<TwitchAuthenticationConfiguration>()
+                return config.GetSection("TwitchApi").Get<TwitchAuthenticationConfiguration>()
                     ?? throw new Exception("Twitch configuration not found");
             });
     }

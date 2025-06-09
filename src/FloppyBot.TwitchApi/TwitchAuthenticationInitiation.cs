@@ -85,7 +85,7 @@ public class TwitchAuthenticator
             authCodeResponse = await _twitchApi.Auth.GetAccessTokenFromCodeAsync(
                 code: code,
                 clientId: _twitchConfiguration.ClientId,
-                clientSecret: _twitchConfiguration.ClientSecret,
+                clientSecret: _twitchConfiguration.Secret,
                 redirectUri: _twitchConfiguration.RedirectUrl
             );
         }
@@ -119,7 +119,7 @@ public class TwitchAuthenticator
 
 public record TwitchAuthenticationConfiguration(
     string ClientId,
-    string ClientSecret,
+    string Secret,
     string RedirectUrl,
     string[] Scopes
 )
