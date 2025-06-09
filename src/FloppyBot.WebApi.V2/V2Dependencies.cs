@@ -3,6 +3,7 @@ using FloppyBot.Commands.Aux.Twitch;
 using FloppyBot.Commands.Core.Config;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.FileStorage;
+using FloppyBot.TwitchApi;
 using FloppyBot.WebApi.V2.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
@@ -20,6 +21,7 @@ public static class V2Dependencies
         CustomCommandHost.WebDiSetup(services);
         return services
             .AddFileStorage()
+            .AddTwitchAuth()
             .AddSingleton<ICommandConfigurationService, CommandConfigurationService>();
     }
 

@@ -32,7 +32,7 @@ public abstract class ChannelScopedController : ControllerBase
         return channelId;
     }
 
-    private void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
+    protected void EnsureChannelAccess(ChannelIdentifier channelIdentifier)
     {
         if (
             !UserService
