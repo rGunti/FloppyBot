@@ -6,6 +6,10 @@
 /// </summary>
 public class NoopEncryptionShim : IEncryptionShim
 {
+    public static NoopEncryptionShim Instance { get; } = new();
+
+    private NoopEncryptionShim() { }
+
     public Task<string> Encrypt(string plainText)
     {
         return Task.FromResult(plainText);

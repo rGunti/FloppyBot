@@ -16,12 +16,29 @@ public static class TwitchAuthExtensions
                 TwitchAccessCredentialInitiationService
             >()
             .AddSingleton<ITwitchAccessCredentialsService, TwitchAccessCredentialsService>()
-            .AddSingleton<IEncryptionShim, Base64EncodingShim>()
+            .AddSingleton<IEncryptionShim>(s =>
+                GetEncryptionShim(s.GetRequiredService<IConfiguration>())
+            )
             .AddSingleton<TwitchAuthenticationConfiguration>(s =>
             {
                 var config = s.GetRequiredService<IConfiguration>();
                 return config.GetSection("TwitchApi").Get<TwitchAuthenticationConfiguration>()
                     ?? throw new Exception("Twitch configuration not found");
             });
+    }
+
+    private static IEncryptionShim GetEncryptionShim(IConfiguration configuration)
+    {
+        var configSection = configuration.GetSection("Encryption");
+        var type = configSection.GetValue<string>("Type", "Base64");
+
+        return type switch
+        {
+            "None" => NoopEncryptionShim.Instance,
+            "Noop" => NoopEncryptionShim.Instance,
+            "Base64" => Base64EncodingShim.Instance,
+            "Aes" => new AesEncryptionShim(new AesFactory(configSection)),
+            _ => throw new Exception($"Unknown encryption type {type}"),
+        };
     }
 }

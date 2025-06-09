@@ -1,3 +1,4 @@
+using System.Security;
 using System.Text;
 
 namespace FloppyBot.Base.Encryption;
@@ -11,6 +12,10 @@ namespace FloppyBot.Base.Encryption;
 /// </remarks>
 public class Base64EncodingShim : IEncryptionShim
 {
+    public static Base64EncodingShim Instance { get; } = new();
+
+    private Base64EncodingShim() { }
+
     public Task<string> Encrypt(string plainText)
     {
         var bytes = Encoding.UTF8.GetBytes(plainText);
