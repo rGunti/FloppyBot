@@ -43,5 +43,5 @@ public class NullableObject<T> : IEnumerable<T>
 
     public static implicit operator T(NullableObject<T> wrapper) => wrapper.Value;
 
-    public static implicit operator NullableObject<T>(T obj) => new(obj);
+    public static implicit operator NullableObject<T>(T? obj) => new(obj);
 }

@@ -51,6 +51,9 @@ services
         IConfigurationSection? configSection = builder.Configuration.GetSection("Jwt");
         o.Authority = configSection["Authority"];
         o.Audience = configSection["Audience"];
+#if DEBUG
+        o.RequireHttpsMetadata = false;
+#endif
         o.Events = new JwtBearerEvents
         {
             OnChallenge = context =>

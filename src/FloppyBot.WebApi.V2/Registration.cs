@@ -5,6 +5,7 @@ using FloppyBot.Commands.Aux.Twitch;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Registry;
 using FloppyBot.FileStorage;
+using FloppyBot.TwitchApi;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.WebApi.V2;
@@ -20,6 +21,7 @@ public static class Registration
         return services
             .AddFileStorage()
             .AddDistributedCommandRegistry()
+            .AddTwitchAuth()
             .AddAuditor<StorageAuditor>();
     }
 }

@@ -1,6 +1,6 @@
 # FloppyBot
 
-[![FloppyBot][img-floppybot]][floppybot]
+[![FloppyBot][img-floppybot]][gh-floppybot]
 [![FloppyBot][img-floppybot-ac]][floppybot-ac]
 [![FloppyBot][img-floppybot-ss]][floppybot-ss]
 
@@ -18,6 +18,8 @@
 
 FloppyBot is an open-source, multi-platform chat bot. It was originally designed for the Twitch
 streamer [pinsrlTrex](https://twitch.tv/pinsrltrex) but has since been extended to more users.
+
+> You can also find this project on Codeberg: [FloppyBot/FloppyBot][cb-floppybot] ([FloppyBot Organisation][cb-org])
 
 ---
 
@@ -52,7 +54,9 @@ FloppyBot consists of multiple components:
 
 ---
 
-[floppybot]: https://github.com/rgunti/floppybot
+[gh-floppybot]: https://github.com/rgunti/floppybot
+[cb-floppybot]: https://codeberg.org/FloppyBot/FloppyBot
+[cb-org]: https://codeberg.org/FloppyBot
 [floppybot-ac]: https://github.com/rGunti/FloppyBot-AdminConsole
 [floppybot-ss]: https://github.com/rGunti/FloppyBot-StreamSource
 [img-floppybot]: https://img.shields.io/badge/FloppyBot-blue?logo=.net
