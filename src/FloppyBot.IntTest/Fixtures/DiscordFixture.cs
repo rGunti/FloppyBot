@@ -1,3 +1,4 @@
+using AwesomeAssertions.Extensions;
 using Discord;
 using Discord.WebSocket;
 using FloppyBot.Chat.Discord;
@@ -5,7 +6,6 @@ using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Commands.Registry;
 using FloppyBot.IntTest.Config;
 using FloppyBot.IntTest.Utils;
-using FluentAssertions.Extensions;
 using Microsoft.Extensions.Logging;
 using LoggingUtils = FloppyBot.Base.Testing.LoggingUtils;
 

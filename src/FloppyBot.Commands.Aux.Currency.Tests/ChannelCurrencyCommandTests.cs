@@ -1,3 +1,4 @@
+using AwesomeAssertions;
 using FakeItEasy;
 using FloppyBot.Base.Auditing.Abstraction;
 using FloppyBot.Base.Storage;
@@ -5,7 +6,6 @@ using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Aux.Currency.Storage;
 using FloppyBot.Commands.Aux.Currency.Storage.Entities;
-using FluentAssertions;
 
 namespace FloppyBot.Commands.Aux.Currency.Tests;
 
