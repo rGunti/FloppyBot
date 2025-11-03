@@ -1,15 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Base.Auditing.Abstraction\FloppyBot.Base.Auditing.Abstraction.csproj" />
-      <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj" />
-      <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FloppyBot.Base.Auditing.Abstraction\FloppyBot.Base.Auditing.Abstraction.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Clock\FloppyBot.Base.Clock.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
+  </ItemGroup>
 </Project>

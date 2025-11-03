@@ -47,13 +47,12 @@ public class RedisNotificationInterfaceTests
     {
         Action<RedisChannel, RedisValue>? subFn = null;
 
-        A.CallTo(
-                () =>
-                    _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        A<Action<RedisChannel, RedisValue>>.Ignored,
-                        A<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Subscribe(
+                    A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    A<Action<RedisChannel, RedisValue>>.Ignored,
+                    A<CommandFlags>.Ignored
+                )
             )
             .Invokes(
                 (
@@ -74,13 +73,12 @@ public class RedisNotificationInterfaceTests
         Assert.IsTrue(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         // Verify subscription has happened
-        A.CallTo(
-                () =>
-                    _subscriber.Subscribe(
-                        An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        An<Action<RedisChannel, RedisValue>>.Ignored,
-                        An<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Subscribe(
+                    An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    An<Action<RedisChannel, RedisValue>>.Ignored,
+                    An<CommandFlags>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
 
@@ -105,13 +103,12 @@ public class RedisNotificationInterfaceTests
         receiver.StartListening();
         receiver.StartListening();
 
-        A.CallTo(
-                () =>
-                    _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        A<Action<RedisChannel, RedisValue>>.Ignored,
-                        A<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Subscribe(
+                    A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    A<Action<RedisChannel, RedisValue>>.Ignored,
+                    A<CommandFlags>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -126,13 +123,12 @@ public class RedisNotificationInterfaceTests
 
         receiver.StopListening();
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
-        A.CallTo(
-                () =>
-                    _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        A<Action<RedisChannel, RedisValue>>.Ignored,
-                        A<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Subscribe(
+                    A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    A<Action<RedisChannel, RedisValue>>.Ignored,
+                    A<CommandFlags>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -146,13 +142,12 @@ public class RedisNotificationInterfaceTests
         Assert.IsFalse(((RedisNotificationReceiver<int>)receiver).IsStarted);
 
         receiver.StopListening();
-        A.CallTo(
-                () =>
-                    _subscriber.Subscribe(
-                        A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        A<Action<RedisChannel, RedisValue>>.Ignored,
-                        A<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Subscribe(
+                    A<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    A<Action<RedisChannel, RedisValue>>.Ignored,
+                    A<CommandFlags>.Ignored
+                )
             )
             .MustNotHaveHappened();
     }
@@ -175,13 +170,12 @@ public class RedisNotificationInterfaceTests
         );
         sender.Send(new { Name = "Test", Value = 42 });
 
-        A.CallTo(
-                () =>
-                    _subscriber.Publish(
-                        An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
-                        An<RedisValue>.That.IsEqualTo("{\"Name\":\"Test\",\"Value\":42}"),
-                        An<CommandFlags>.Ignored
-                    )
+        A.CallTo(() =>
+                _subscriber.Publish(
+                    An<RedisChannel>.That.IsEqualTo(RedisChannel.Literal("SomeChannel")),
+                    An<RedisValue>.That.IsEqualTo("{\"Name\":\"Test\",\"Value\":42}"),
+                    An<CommandFlags>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
     }

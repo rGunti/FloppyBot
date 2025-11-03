@@ -27,7 +27,8 @@ public class PrivilegeGuard : BaseGuard<PrivilegeGuardAttribute>
             _commandConfigurationService
                 .GetCommandConfiguration(sourceMessage.Identifier.GetChannel(), command.CommandId)
                 .Select(config => config.RequiredPrivilegeLevel)
-                .FirstOrDefault() ?? settings.MinLevel;
+                .FirstOrDefault()
+            ?? settings.MinLevel;
 
         return instruction.Context!.SourceMessage.Author.PrivilegeLevel >= minRequiredLevel;
     }

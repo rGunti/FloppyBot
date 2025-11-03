@@ -8,8 +8,7 @@ public class CustomCommandStorageProfile : Profile
     public CustomCommandStorageProfile()
     {
         // basic type conversions
-        CreateMap<IImmutableSet<string>, string[]>()
-            .ConvertUsing<StringSetAndArrayConverter>();
+        CreateMap<IImmutableSet<string>, string[]>().ConvertUsing<StringSetAndArrayConverter>();
         CreateMap<string[], IImmutableSet<string>>().ConvertUsing<StringSetAndArrayConverter>();
 
         // dto -> eo

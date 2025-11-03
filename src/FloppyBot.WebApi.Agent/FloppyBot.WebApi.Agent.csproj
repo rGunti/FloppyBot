@@ -8,7 +8,10 @@
     <Company>FloppyBot</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference
+      Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
+      Version="12.0.1"
+    />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.10" />
   </ItemGroup>
@@ -25,7 +28,6 @@
     <ProjectReference Include="..\FloppyBot.WebApi.Base\FloppyBot.WebApi.Base.csproj" />
     <ProjectReference Include="..\FloppyBot.WebApi.V2\FloppyBot.WebApi.V2.csproj" />
   </ItemGroup>
-
   <!-- Exclude Web API V1 in debug builds by default -->
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <DefineConstants>EXCLUDE_WEB_API_V1</DefineConstants>

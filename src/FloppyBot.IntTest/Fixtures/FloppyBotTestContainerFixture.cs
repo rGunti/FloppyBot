@@ -32,8 +32,8 @@ public class FloppyBotTestContainerFixture : IAsyncDisposable
         _mongoClient = new Lazy<IMongoClient>(() => new MongoClient(GetMongoConnectionString()));
 
         _redis = new RedisBuilder().WithPortBinding(6379, true).Build();
-        _redisMultiplexer = new Lazy<IConnectionMultiplexer>(
-            () => ConnectionMultiplexer.Connect(GetRedisConnectionString())
+        _redisMultiplexer = new Lazy<IConnectionMultiplexer>(() =>
+            ConnectionMultiplexer.Connect(GetRedisConnectionString())
         );
     }
 

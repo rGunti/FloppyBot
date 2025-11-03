@@ -14,7 +14,8 @@ public static class RepositoryFactoryUtils
     {
         return type.GetCustomAttributes<CollectionNameAttribute>()
                 .Select(a => a.Name)
-                .FirstOrDefault() ?? type.Name;
+                .FirstOrDefault()
+            ?? type.Name;
     }
 
     public static IServiceCollection AddStorageImplementation<TRepositoryFactory, TIndexManager>(
