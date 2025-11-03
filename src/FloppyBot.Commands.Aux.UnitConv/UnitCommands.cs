@@ -133,8 +133,8 @@ public class UnitCommands
             );
         }
 
-        string destinationUnit = fillerWordOrDestinationUnitInput.OrThrow(
-            () => new ArgumentNullException(nameof(fillerWordOrDestinationUnitInput))
+        string destinationUnit = fillerWordOrDestinationUnitInput.OrThrow(() =>
+            new ArgumentNullException(nameof(fillerWordOrDestinationUnitInput))
         );
         if (AllowedFillerWords.Contains(destinationUnit))
         {

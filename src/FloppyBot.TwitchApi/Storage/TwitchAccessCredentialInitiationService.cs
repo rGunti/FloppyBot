@@ -31,16 +31,15 @@ public class TwitchAccessCredentialInitiationService : ITwitchAccessCredentialIn
     public TwitchAccessCredentialInitiation GetOrCreateFor(string user, string channel)
     {
         return GetFor(user, channel)
-            .Or(
-                () =>
-                    _repository.Insert(
-                        new TwitchAccessCredentialInitiation(
-                            Guid.NewGuid().ToString(),
-                            channel,
-                            user,
-                            _timeProvider.GetCurrentUtcTime()
-                        )
+            .Or(() =>
+                _repository.Insert(
+                    new TwitchAccessCredentialInitiation(
+                        Guid.NewGuid().ToString(),
+                        channel,
+                        user,
+                        _timeProvider.GetCurrentUtcTime()
                     )
+                )
             );
     }
 

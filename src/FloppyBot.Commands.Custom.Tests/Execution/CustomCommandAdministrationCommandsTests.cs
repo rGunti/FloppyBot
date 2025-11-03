@@ -34,13 +34,12 @@ public class CustomCommandAdministrationCommandsTests
     [TestMethod]
     public void CreateCommand()
     {
-        A.CallTo(
-                () =>
-                    _customCommandService.CreateSimpleCommand(
-                        A<string>.Ignored,
-                        A<string>.Ignored,
-                        A<string>.Ignored
-                    )
+        A.CallTo(() =>
+                _customCommandService.CreateSimpleCommand(
+                    A<string>.Ignored,
+                    A<string>.Ignored,
+                    A<string>.Ignored
+                )
             )
             .ReturnsLazily(() => true);
 
@@ -60,29 +59,27 @@ public class CustomCommandAdministrationCommandsTests
             ),
             result
         );
-        A.CallTo(
-                () =>
-                    _customCommandService.CreateSimpleCommand(
-                        "Mock/UnitTest",
-                        "mycommand",
-                        "This is my cool command"
-                    )
+        A.CallTo(() =>
+                _customCommandService.CreateSimpleCommand(
+                    "Mock/UnitTest",
+                    "mycommand",
+                    "This is my cool command"
+                )
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/UnitTest",
-                            CustomCommandAuditing.CustomCommandType,
-                            "mycommand",
-                            CommonActions.Created,
-                            "This is my cool command"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/UnitTest",
+                        CustomCommandAuditing.CustomCommandType,
+                        "mycommand",
+                        CommonActions.Created,
+                        "This is my cool command"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -90,13 +87,12 @@ public class CustomCommandAdministrationCommandsTests
     [TestMethod]
     public void CreateExisting()
     {
-        A.CallTo(
-                () =>
-                    _customCommandService.CreateSimpleCommand(
-                        A<string>.Ignored,
-                        A<string>.Ignored,
-                        A<string>.Ignored
-                    )
+        A.CallTo(() =>
+                _customCommandService.CreateSimpleCommand(
+                    A<string>.Ignored,
+                    A<string>.Ignored,
+                    A<string>.Ignored
+                )
             )
             .ReturnsLazily(() => false);
 
@@ -116,13 +112,12 @@ public class CustomCommandAdministrationCommandsTests
             ),
             result
         );
-        A.CallTo(
-                () =>
-                    _customCommandService.CreateSimpleCommand(
-                        "Mock/UnitTest",
-                        "mycommand",
-                        "This is my cool command"
-                    )
+        A.CallTo(() =>
+                _customCommandService.CreateSimpleCommand(
+                    "Mock/UnitTest",
+                    "mycommand",
+                    "This is my cool command"
+                )
             )
             .MustHaveHappenedOnceExactly();
         A.CallTo(() => _auditor.Record(An<AuditRecord>._)).MustNotHaveHappened();
@@ -149,20 +144,19 @@ public class CustomCommandAdministrationCommandsTests
             result
         );
 
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/UnitTest",
-                            CustomCommandAuditing.CustomCommandType,
-                            "mycommand",
-                            CommonActions.Deleted,
-                            null
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/UnitTest",
+                        CustomCommandAuditing.CustomCommandType,
+                        "mycommand",
+                        CommonActions.Deleted,
+                        null
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -213,20 +207,19 @@ public class CustomCommandAdministrationCommandsTests
             result
         );
         A.CallTo(() => _counterStorageService.Set("abc123", 5)).MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/UnitTest",
-                            CustomCommandAuditing.CustomCommandType,
-                            "mycommand",
-                            CustomCommandActions.CounterUpdated,
-                            "5"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/UnitTest",
+                        CustomCommandAuditing.CustomCommandType,
+                        "mycommand",
+                        CustomCommandActions.CounterUpdated,
+                        "5"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -260,22 +253,21 @@ public class CustomCommandAdministrationCommandsTests
         A.CallTo(() => _counterStorageService.Increase("abc123", expectedIncrement))
             .MustHaveHappenedOnceExactly();
         A.CallTo(() => _counterStorageService.Set("abc123", An<int>.Ignored)).MustNotHaveHappened();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/UnitTest",
-                            CustomCommandAuditing.CustomCommandType,
-                            "mycommand",
-                            CustomCommandActions.CounterUpdated,
-                            expectedIncrement > 0
-                                ? $"{10 + expectedIncrement} (+{expectedIncrement})"
-                                : $"{10 + expectedIncrement} ({expectedIncrement})"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/UnitTest",
+                        CustomCommandAuditing.CustomCommandType,
+                        "mycommand",
+                        CustomCommandActions.CounterUpdated,
+                        expectedIncrement > 0
+                            ? $"{10 + expectedIncrement} (+{expectedIncrement})"
+                            : $"{10 + expectedIncrement} ({expectedIncrement})"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -302,20 +294,19 @@ public class CustomCommandAdministrationCommandsTests
             result
         );
         A.CallTo(() => _counterStorageService.Set("abc123", 0)).MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/UnitTest",
-                            CustomCommandAuditing.CustomCommandType,
-                            "mycommand",
-                            CustomCommandActions.CounterUpdated,
-                            "0"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/UnitTest",
+                        CustomCommandAuditing.CustomCommandType,
+                        "mycommand",
+                        CustomCommandActions.CounterUpdated,
+                        "0"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }

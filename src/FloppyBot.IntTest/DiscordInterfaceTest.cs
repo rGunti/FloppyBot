@@ -1,9 +1,9 @@
+using AwesomeAssertions.Extensions;
 using FloppyBot.Chat;
 using FloppyBot.Chat.Discord;
 using FloppyBot.Chat.Entities;
 using FloppyBot.IntTest.Fixtures;
 using FloppyBot.IntTest.Utils;
-using FluentAssertions.Extensions;
 
 namespace FloppyBot.IntTest;
 

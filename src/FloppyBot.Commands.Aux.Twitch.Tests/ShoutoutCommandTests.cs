@@ -38,11 +38,10 @@ public class ShoutoutCommandTests
                         new TwitchUserLookupResult("somestreamer", "SomeStreamer", "Cool Game")
                     )
             );
-        A.CallTo(
-                () =>
-                    twitchApiService.LookupTeam(
-                        A<string>.That.Matches(s => s == "somestreamer" || s == "someteamuser")
-                    )
+        A.CallTo(() =>
+                twitchApiService.LookupTeam(
+                    A<string>.That.Matches(s => s == "somestreamer" || s == "someteamuser")
+                )
             )
             .ReturnsLazily(
                 (string accountName) =>
@@ -56,29 +55,26 @@ public class ShoutoutCommandTests
                     )
             );
         A.CallTo(() => _shoutoutMessageSettingService.GetSettings("Twitch/someuser"))
-            .ReturnsLazily(
-                () =>
-                    new ShoutoutMessageSetting(
-                        "Twitch/someuser",
-                        "Check out {DisplayName} at {Link}! They last played {LastGame}!",
-                        null
-                    )
+            .ReturnsLazily(() =>
+                new ShoutoutMessageSetting(
+                    "Twitch/someuser",
+                    "Check out {DisplayName} at {Link}! They last played {LastGame}!",
+                    null
+                )
             );
-        A.CallTo(
-                () =>
-                    _shoutoutMessageSettingService.GetSettings(
-                        A<string>.That.Matches(s =>
-                            s == "Twitch/someteamuser" || s == "Twitch/somestreamer"
-                        )
+        A.CallTo(() =>
+                _shoutoutMessageSettingService.GetSettings(
+                    A<string>.That.Matches(s =>
+                        s == "Twitch/someteamuser" || s == "Twitch/somestreamer"
                     )
+                )
             )
-            .ReturnsLazily(
-                () =>
-                    new ShoutoutMessageSetting(
-                        "Twitch/someteamuser",
-                        "Check out {DisplayName} at {Link}! They last played {LastGame}!",
-                        "Check out my team mate {DisplayName} at {Link}! They last played {LastGame}! Also go checkout {TeamName} at {TeamLink}!"
-                    )
+            .ReturnsLazily(() =>
+                new ShoutoutMessageSetting(
+                    "Twitch/someteamuser",
+                    "Check out {DisplayName} at {Link}! They last played {LastGame}!",
+                    "Check out my team mate {DisplayName} at {Link}! They last played {LastGame}! Also go checkout {TeamName} at {TeamLink}!"
+                )
             );
     }
 
@@ -124,28 +120,26 @@ public class ShoutoutCommandTests
         );
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
-        A.CallTo(
-                () =>
-                    _shoutoutMessageSettingService.SetShoutoutMessage(
-                        "Twitch/someuser",
-                        "My new template"
-                    )
+        A.CallTo(() =>
+                _shoutoutMessageSettingService.SetShoutoutMessage(
+                    "Twitch/someuser",
+                    "My new template"
+                )
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Twitch/someuser",
-                            "Twitch/someuser",
-                            TwitchAuditing.ShoutoutMessageType,
-                            "Message",
-                            CommonActions.Updated,
-                            "My new template"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Twitch/someuser",
+                        "Twitch/someuser",
+                        TwitchAuditing.ShoutoutMessageType,
+                        "Message",
+                        CommonActions.Updated,
+                        "My new template"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -160,30 +154,28 @@ public class ShoutoutCommandTests
         );
 
         Assert.AreEqual(ShoutoutCommand.REPLY_SAVE, reply);
-        A.CallTo(
-                () =>
-                    _shoutoutMessageSettingService.SetShoutoutMessage(
-                        A<ShoutoutMessageSetting>.That.Matches(setting =>
-                            setting.Id == "Twitch/someuser"
-                            && setting.TeamMessage == "My new team template"
-                        )
+        A.CallTo(() =>
+                _shoutoutMessageSettingService.SetShoutoutMessage(
+                    A<ShoutoutMessageSetting>.That.Matches(setting =>
+                        setting.Id == "Twitch/someuser"
+                        && setting.TeamMessage == "My new team template"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Twitch/someuser",
-                            "Twitch/someuser",
-                            TwitchAuditing.ShoutoutMessageType,
-                            "TeamMessage",
-                            CommonActions.Updated,
-                            "My new team template"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Twitch/someuser",
+                        "Twitch/someuser",
+                        TwitchAuditing.ShoutoutMessageType,
+                        "TeamMessage",
+                        CommonActions.Updated,
+                        "My new team template"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -199,20 +191,19 @@ public class ShoutoutCommandTests
         Assert.AreEqual(ShoutoutCommand.REPLY_CLEAR, reply);
         A.CallTo(() => _shoutoutMessageSettingService.ClearSettings("Twitch/someuser"))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Twitch/someuser",
-                            "Twitch/someuser",
-                            TwitchAuditing.ShoutoutMessageType,
-                            string.Empty,
-                            CommonActions.Deleted,
-                            null
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Twitch/someuser",
+                        "Twitch/someuser",
+                        TwitchAuditing.ShoutoutMessageType,
+                        string.Empty,
+                        CommonActions.Deleted,
+                        null
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }

@@ -52,8 +52,7 @@ public class FileService : IFileService
     public FileQuota GetQuotaFor(string owner)
     {
         _logger.LogDebug("Reading quota for {FileOwner}", owner);
-        return _fileQuota.GetById(owner).Wrap().FirstOrDefault()
-            ?? DefaultQuota with
+        return _fileQuota.GetById(owner).Wrap().FirstOrDefault() ?? DefaultQuota with
             {
                 Id = owner,
             };

@@ -39,30 +39,28 @@ public class TimerCommandsTests
             ),
             result
         );
-        A.CallTo(
-                () =>
-                    _timerService.CreateTimer(
-                        "Mock/Channel/Message",
-                        "Mock/User",
-                        TimeSpan.FromMinutes(12),
-                        "Hello World"
-                    )
+        A.CallTo(() =>
+                _timerService.CreateTimer(
+                    "Mock/Channel/Message",
+                    "Mock/User",
+                    TimeSpan.FromMinutes(12),
+                    "Hello World"
+                )
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/Channel",
-                            TimerAuditing.TimerType,
-                            "Mock/Channel/Message",
-                            CommonActions.Created,
-                            "[00:12:00]: Hello World"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/Channel",
+                        TimerAuditing.TimerType,
+                        "Mock/Channel/Message",
+                        CommonActions.Created,
+                        "[00:12:00]: Hello World"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }

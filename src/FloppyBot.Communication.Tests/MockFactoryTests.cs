@@ -1,5 +1,3 @@
-using FluentAssertions;
-
 namespace FloppyBot.Communication.Tests;
 
 public class MockFactoryTests

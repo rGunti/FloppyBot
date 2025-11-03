@@ -1,9 +1,9 @@
+using AwesomeAssertions.Extensions;
 using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Communication.Redis;
 using FloppyBot.FileStorage.Entities;
 using FloppyBot.IntTest.Fixtures;
 using FloppyBot.IntTest.Utils;
-using FluentAssertions.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.IntTest;

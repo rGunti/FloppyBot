@@ -16,7 +16,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
         with:
@@ -52,14 +52,14 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
       - name: Restore dependencies
         run: |
           dotnet restore src/FloppyBot.sln
           dotnet tool restore
       - name: Check Code Format
         run: |
-          dotnet csharpier --check src/
+          dotnet csharpier check src/
       - name: Check Code Style
         run: |
           dotnet format style --verify-no-changes src/

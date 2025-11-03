@@ -50,30 +50,23 @@ public class QuoteCommandTests
         );
         Assert.Equal("Created new Quote #1337: This is my quote [Cool Game @ 2022-10-12]", reply);
 
-        A.CallTo(
-                () =>
-                    _quoteService.AddQuote(
-                        "Mock/Channel",
-                        "This is my quote",
-                        "Cool Game",
-                        "User Name"
-                    )
+        A.CallTo(() =>
+                _quoteService.AddQuote("Mock/Channel", "This is my quote", "Cool Game", "User Name")
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/UserName",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1337",
-                            CommonActions.Created,
-                            "Quote #1337: This is my quote [Cool Game @ 2022-10-12]"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/UserName",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1337",
+                        CommonActions.Created,
+                        "Quote #1337: This is my quote [Cool Game @ 2022-10-12]"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -105,20 +98,19 @@ public class QuoteCommandTests
         Assert.Equal("Updated Quote #1337: This is my new text [Cool Game @ 2022-10-12]", reply);
         A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1337, "This is my new text"))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/UserName",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1337",
-                            CommonActions.Updated,
-                            "Quote #1337: This is my new text [Cool Game @ 2022-10-12]"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/UserName",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1337",
+                        CommonActions.Updated,
+                        "Quote #1337: This is my new text [Cool Game @ 2022-10-12]"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -151,20 +143,19 @@ public class QuoteCommandTests
 
         A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1337, "Uncool Game"))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/UserName",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1337",
-                            CommonActions.Updated,
-                            "Quote #1337: This is my quote [Uncool Game @ 2022-10-12]"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/UserName",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1337",
+                        CommonActions.Updated,
+                        "Quote #1337: This is my quote [Uncool Game @ 2022-10-12]"
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -183,20 +174,19 @@ public class QuoteCommandTests
 
         A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1337))
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/UserName",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1337",
-                            CommonActions.Deleted,
-                            null
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/UserName",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1337",
+                        CommonActions.Deleted,
+                        null
                     )
+                )
             )
             .MustHaveHappenedOnceExactly();
     }
@@ -235,20 +225,19 @@ public class QuoteCommandTests
 
         A.CallTo(() => _quoteService.DeleteQuote("Mock/Channel", 1))
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1",
-                            CommonActions.Deleted,
-                            null
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1",
+                        CommonActions.Deleted,
+                        null
                     )
+                )
             )
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
@@ -299,20 +288,19 @@ public class QuoteCommandTests
 
         A.CallTo(() => _quoteService.EditQuote("Mock/Channel", 1, "My new text"))
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1",
-                            CommonActions.Updated,
-                            "Quote #1: My new text [Some Game @ 2022-10-12]"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1",
+                        CommonActions.Updated,
+                        "Quote #1: My new text [Some Game @ 2022-10-12]"
                     )
+                )
             )
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }
@@ -363,20 +351,19 @@ public class QuoteCommandTests
 
         A.CallTo(() => _quoteService.EditQuoteContext("Mock/Channel", 1, "My new text"))
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
-        A.CallTo(
-                () =>
-                    _auditor.Record(
-                        new AuditRecord(
-                            null!,
-                            DateTimeOffset.MinValue,
-                            "Mock/User",
-                            "Mock/Channel",
-                            nameof(Quote),
-                            "1",
-                            CommonActions.Updated,
-                            "Quote #1: My text [My new text @ 2022-10-12]"
-                        )
+        A.CallTo(() =>
+                _auditor.Record(
+                    new AuditRecord(
+                        null!,
+                        DateTimeOffset.MinValue,
+                        "Mock/User",
+                        "Mock/Channel",
+                        nameof(Quote),
+                        "1",
+                        CommonActions.Updated,
+                        "Quote #1: My text [My new text @ 2022-10-12]"
                     )
+                )
             )
             .MustHaveHappened(expectExecution ? 1 : 0, Times.Exactly);
     }

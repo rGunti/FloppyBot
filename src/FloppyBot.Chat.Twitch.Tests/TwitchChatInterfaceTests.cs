@@ -103,22 +103,20 @@ public class TwitchChatInterfaceTests
 
         chatInterface.SendMessage("A message\n\nwith multiple lines");
 
-        A.CallTo(
-                () =>
-                    _client.SendMessage(
-                        A<string>.That.IsEqualTo(_configuration.Channel),
-                        A<string>.That.IsEqualTo("A message"),
-                        A<bool>.Ignored
-                    )
+        A.CallTo(() =>
+                _client.SendMessage(
+                    A<string>.That.IsEqualTo(_configuration.Channel),
+                    A<string>.That.IsEqualTo("A message"),
+                    A<bool>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
-        A.CallTo(
-                () =>
-                    _client.SendMessage(
-                        A<string>.That.IsEqualTo(_configuration.Channel),
-                        A<string>.That.IsEqualTo("with multiple lines"),
-                        A<bool>.Ignored
-                    )
+        A.CallTo(() =>
+                _client.SendMessage(
+                    A<string>.That.IsEqualTo(_configuration.Channel),
+                    A<string>.That.IsEqualTo("with multiple lines"),
+                    A<bool>.Ignored
+                )
             )
             .MustHaveHappenedOnceExactly();
     }

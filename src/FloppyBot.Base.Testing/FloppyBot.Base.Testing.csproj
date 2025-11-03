@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="AwesomeAssertions" Version="8.1.0" />
+    <PackageReference Include="AwesomeAssertions" Version="9.3.0" />
     <PackageReference Include="FakeItEasy" Version="8.3.0" />
     <PackageReference Include="FakeItEasy.Analyzer.CSharp" Version="6.1.1">
       <PrivateAssets>all</PrivateAssets>

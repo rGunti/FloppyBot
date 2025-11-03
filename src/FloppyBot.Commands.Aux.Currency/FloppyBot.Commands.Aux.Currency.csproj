@@ -1,20 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
-    </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj" />
-      <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
-      <ProjectReference Include="..\FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj" />
-      <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
-    </ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
+    <ProjectReference Include="..\FloppyBot.Chat.Twitch.Events\FloppyBot.Chat.Twitch.Events.csproj" />
+    <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.4" />
+  </ItemGroup>
 </Project>

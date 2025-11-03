@@ -94,7 +94,8 @@ public class MetadataExtractor : IMetadataExtractor
                     .ImplementingType.GetCustomAttributes<SourceInterfaceGuardAttribute>()
                     .Select(g => g.AllowedMessageInterfaces)
                     .FirstOrDefault()
-                    ?.ToArray() ?? Array.Empty<string>();
+                    ?.ToArray()
+                ?? Array.Empty<string>();
         }
 
         return methodLevel.ToArray();
