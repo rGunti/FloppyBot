@@ -119,7 +119,7 @@ public class CommandScannerTests
     [TestMethod]
     public void ThrowsExceptionWhenNotMarkedAsCommandHost()
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             _scanner.ScanTypeForCommandHandlers(typeof(NotACommandHost));
         });
@@ -128,7 +128,7 @@ public class CommandScannerTests
     [TestMethod]
     public void ThrowsExceptionWhenNotMarkedAsVariableCommandHost()
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             _scanner.ScanTypeForCommandHandlers(typeof(NotACommandHost));
         });
@@ -147,7 +147,7 @@ public class CommandScannerTests
     [TestMethod]
     public void ThrowsAtInvalidCommandNames()
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             var _ = _scanner.ScanTypeForCommandHandlers(typeof(InvalidCommandName)).ToArray();
         });
@@ -156,7 +156,7 @@ public class CommandScannerTests
     [TestMethod]
     public void ThrowsAtInvalidCommandSignatures()
     {
-        Assert.ThrowsException<InvalidCommandSignatureException>(() =>
+        Assert.Throws<InvalidCommandSignatureException>(() =>
         {
             var _ = _scanner.ScanTypeForCommandHandlers(typeof(InvalidCommandSignature)).ToArray();
         });
