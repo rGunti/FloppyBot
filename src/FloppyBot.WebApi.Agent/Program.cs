@@ -19,7 +19,6 @@ using FloppyBot.WebApi.V2;
 using FloppyBot.WebApi.V2.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi.Models;
 using Serilog;
 
 // *** BOOT *****************************************************************************
@@ -83,47 +82,7 @@ services
     .AddSingleton<IAuthorizationHandler, ApiKeyAuthHandler>();
 
 // - Swagger
-services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen(o =>
-    {
-        o.SwaggerDoc(
-            AboutThisApp.Info.Version,
-            new OpenApiInfo
-            {
-                Title = "FloppyBot Management API",
-                Version = AboutThisApp.Info.Version,
-            }
-        );
-        o.AddSecurityDefinition(
-            "Bearer",
-            new OpenApiSecurityScheme
-            {
-                Name = "Authorization",
-                Scheme = "Bearer",
-                BearerFormat = "JWT",
-                Type = SecuritySchemeType.Http,
-                In = ParameterLocation.Header,
-                Description = "JWT Token goes here",
-            }
-        );
-        o.AddSecurityRequirement(
-            new OpenApiSecurityRequirement
-            {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference
-                        {
-                            Id = "Bearer",
-                            Type = ReferenceType.SecurityScheme,
-                        },
-                    },
-                    Array.Empty<string>()
-                },
-            }
-        );
-    });
+services.AddEndpointsApiExplorer();
 
 // - SignalR
 services.AddSignalR();
@@ -166,15 +125,7 @@ app.UseRouting().UseRateLimiter();
 // - Swagger only in development
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(o =>
-    {
-        o.SwaggerEndpoint(
-            $"/swagger/{AboutThisApp.Info.Version}/swagger.json",
-            "FloppyBot Management API"
-        );
-        o.DocumentTitle = "FloppyBot Management API Explorer";
-    });
+    app.UseDeveloperExceptionPage();
 }
 
 // - CORS

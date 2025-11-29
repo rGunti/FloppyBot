@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>dotnet-FloppyBot.Aux.TwitchAlerts.Agent-FE25745F-A00C-4D5C-B500-BD5A61D5841B</UserSecretsId>
@@ -15,6 +15,6 @@
     <ProjectReference Include="..\FloppyBot.HealthCheck.KillSwitch\FloppyBot.HealthCheck.KillSwitch.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ public class IdentifierTests
     [DataRow("Twitch/pinsrltrex/1234")]
     public void ConvertStringToChannelIdThrowsException(string inputChannelId)
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             ChannelIdentifier _ = inputChannelId;
         });
@@ -56,7 +56,7 @@ public class IdentifierTests
     [DataRow("Twitch")]
     public void ConvertStringToExtendedChannelIdThrowsException(string inputChannelId)
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             ExtendedChannelIdentifier _ = inputChannelId;
         });
@@ -87,7 +87,7 @@ public class IdentifierTests
     [DataRow("Twitch/pinsrltrex")]
     public void ConvertStringToMessageIdThrowsException(string inputMessageId)
     {
-        Assert.ThrowsException<ArgumentException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             ChatMessageIdentifier _ = inputMessageId;
         });
