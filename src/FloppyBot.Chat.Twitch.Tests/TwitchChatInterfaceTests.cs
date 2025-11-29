@@ -187,7 +187,7 @@ public class TwitchChatInterfaceTests
             }
         );
 
-        Assert.AreEqual(1, receivedMessages.Count);
+        Assert.HasCount(1, receivedMessages);
         Assert.IsTrue(receivedMessages.All(m => m.EventName == TwitchEventTypes.SUBSCRIPTION));
 
         var message = receivedMessages.First();
@@ -293,7 +293,7 @@ public class TwitchChatInterfaceTests
 
         _client.OnMessageReceived += Raise.With(messageReceivedArgs);
 
-        Assert.AreEqual(1, messages.Count);
+        Assert.HasCount(1, messages);
         Assert.AreEqual(
             new ChatMessage(
                 messages[0].Identifier,

@@ -170,7 +170,7 @@ public class CommandSpawnerTests
         Assert.AreEqual("1 2 3 4 5", returnValue!.Content);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(SampleCommands.SampleEnum.A)]
     [DataRow(SampleCommands.SampleEnum.B)]
     [DataRow(SampleCommands.SampleEnum.C)]
@@ -186,7 +186,7 @@ public class CommandSpawnerTests
         Assert.AreEqual($"Enum value was: {sampleEnumValue}", returnValue!.Content);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("")]
     [DataRow("nope")]
     public void CanHandleInvalidEnumArgument(string input)
@@ -217,7 +217,7 @@ public class CommandSpawnerTests
         Assert.AreEqual("Your name is Mock User", returnValue!.Content);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(ChatInterfaceFeatures.None, "Your interface supports None")]
     [DataRow(ChatInterfaceFeatures.Newline, "Your interface supports Newline")]
     [DataRow(ChatInterfaceFeatures.MarkdownText, "Your interface supports MarkdownText")]

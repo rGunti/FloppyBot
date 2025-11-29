@@ -9,7 +9,7 @@ public class CommandParserTests
 {
     private readonly CommandParser _parser = new("!");
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("!ping", "ping")]
     [DataRow("!say Hello World", "say", "Hello", "World")]
     public void ParsesCommandsCorrectly(
@@ -26,7 +26,7 @@ public class CommandParserTests
         Assert.AreEqual(expected, _parser.ParseCommandFromString(input));
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("")]
     [DataRow("hello world")]
     [DataRow("?notacommand")]

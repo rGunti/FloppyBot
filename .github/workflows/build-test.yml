@@ -25,11 +25,11 @@ jobs:
           config-file: ./.github/codeql/codeql-config.yml
       - name: Restore dependencies
         run: |
-          dotnet restore src/FloppyBot.sln
+          dotnet restore src/FloppyBot.slnx
       - name: Build
-        run: dotnet build --no-restore src/FloppyBot.sln
+        run: dotnet build --no-restore src/FloppyBot.slnx
       - name: Test
-        run: dotnet test --no-restore --no-build src/FloppyBot.sln
+        run: dotnet test --no-restore --no-build src/FloppyBot.slnx
         env:
           FLOPPYTEST_DiscordBot1__ClientId: ${{ secrets.DISCORD_1_CLIENT_ID }}
           FLOPPYTEST_DiscordBot1__ClientSecret: ${{ secrets.DISCORD_1_CLIENT_SECRET }}
@@ -55,7 +55,7 @@ jobs:
           dotnet-version: 10.0.x
       - name: Restore dependencies
         run: |
-          dotnet restore src/FloppyBot.sln
+          dotnet restore src/FloppyBot.slnx
           dotnet tool restore
       - name: Check Code Format
         run: |

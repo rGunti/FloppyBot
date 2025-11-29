@@ -68,7 +68,7 @@ public class CustomCommandExecutorTests
         );
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(0, false)]
     [DataRow(5, false)]
     [DataRow(10, false)]
@@ -102,11 +102,11 @@ public class CustomCommandExecutorTests
         }
         else
         {
-            Assert.AreEqual(0, reply.Length);
+            Assert.IsEmpty(reply);
         }
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PrivilegeLevel.Administrator, true)]
     [DataRow(PrivilegeLevel.Moderator, true)]
     [DataRow(PrivilegeLevel.Viewer, false)]
@@ -154,7 +154,7 @@ public class CustomCommandExecutorTests
         }
         else
         {
-            Assert.AreEqual(0, reply.Length);
+            Assert.IsEmpty(reply);
         }
     }
 
@@ -210,7 +210,7 @@ public class CustomCommandExecutorTests
         Assert.AreEqual("I am at level 2 now!", reply.First());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Mock/CoolUser", true)]
     [DataRow("Mock/UncoolUser", false)]
     [DataRow("Mock/SomeOtherUser", false)]
@@ -261,7 +261,7 @@ public class CustomCommandExecutorTests
         }
         else
         {
-            Assert.AreEqual(0, reply.Length);
+            Assert.IsEmpty(reply);
         }
     }
 

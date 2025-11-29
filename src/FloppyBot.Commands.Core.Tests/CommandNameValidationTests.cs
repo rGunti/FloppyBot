@@ -3,7 +3,7 @@ namespace FloppyBot.Commands.Core.Tests;
 [TestClass]
 public class CommandNameValidationTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, false)]
     [DataRow("", false)]
     [DataRow("ping", true)]

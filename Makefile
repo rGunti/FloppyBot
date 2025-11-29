@@ -1,5 +1,5 @@
 restore:
-	dotnet restore src/FloppyBot.sln
+	dotnet restore src/FloppyBot.slnx
 	dotnet tool restore
 
 check: restore
@@ -18,7 +18,7 @@ format: restore
 	dotnet format analyzers src/
 
 build: restore
-	dotnet build --no-restore src/FloppyBot.sln
+	dotnet build --no-restore src/FloppyBot.slnx
 
 test: build
-	dotnet test --no-restore --no-build src/FloppyBot.sln
+	dotnet test --no-restore --no-build src/FloppyBot.slnx

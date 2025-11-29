@@ -8,7 +8,7 @@ public class TranslatorTests
 {
     private readonly Translator _translator = new(A.Fake<ITranslator>());
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("en>de Hello World", "en", "de", "Hello World")]
     [DataRow("Hello World from en to de", "en", "de", "Hello World")]
     [DataRow("Hello World from english to german", "en", "de", "Hello World")]
