@@ -17,7 +17,7 @@ public class MathCommandTest
         _command = new MathCommand(LoggingUtils.GetLogger<MathCommand>());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1+2", "3")]
     public void CalculatesExpressionCorrectly(string inputStr, string expectedOutput)
     {
@@ -28,7 +28,7 @@ public class MathCommandTest
         Assert.AreEqual(MathCommand.REPLY_DEFAULT.Format(new { Answer = expectedOutput }), reply);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1+2", "3")]
     public void RepliesWithMarkdownWhenSupported(string inputStr, string expectedOutput)
     {
@@ -48,7 +48,7 @@ public class MathCommandTest
         Assert.AreEqual(MathCommand.REPLY_MD.FormatSmart(new { Answer = expectedOutput }), reply);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1+5*(7", DisplayName = "Open Bracket")]
     public void RepliesWithErrorOnInvalidInput(string input)
     {
@@ -59,7 +59,7 @@ public class MathCommandTest
         Assert.AreEqual(MathCommand.REPLY_ERR_PARSE, reply);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("1/zerp", DisplayName = "Cannot resolve symbol")]
     public void RepliesWithErrorOnErroneousInput(string input)
     {

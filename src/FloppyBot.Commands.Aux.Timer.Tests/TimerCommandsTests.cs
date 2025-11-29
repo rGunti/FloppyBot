@@ -65,7 +65,7 @@ public class TimerCommandsTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("25", DisplayName = "No units")]
     [DataRow("25m12d4h", DisplayName = "Wrong order of units")]
     public void RepliesWithErrorWhenParsingFails(string input)

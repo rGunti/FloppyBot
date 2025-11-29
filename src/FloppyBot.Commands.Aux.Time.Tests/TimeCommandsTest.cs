@@ -33,7 +33,7 @@ public class TimeCommandsTest
             .Returns(NullableObject.Empty<UserTimeZoneSetting>());
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "The current time is 12:34 in Coordinated Universal Time")]
     [DataRow("Europe/Berlin", "The current time is 13:34 in Central European Standard Time")]
     [DataRow("America/New_York", "The current time is 07:34 in Eastern Standard Time")]
@@ -60,7 +60,7 @@ public class TimeCommandsTest
         );
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, "The current time is 05:24 DEC in Coordinated Universal Time")]
     [DataRow("Europe/Berlin", "The current time is 05:65 DEC in Central European Standard Time")]
     [DataRow("America/New_York", "The current time is 03:15 DEC in Eastern Standard Time")]

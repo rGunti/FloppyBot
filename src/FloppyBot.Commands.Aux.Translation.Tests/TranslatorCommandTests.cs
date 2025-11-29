@@ -22,7 +22,7 @@ public class TranslatorCommandTests
             .Returns(new[] { "zh", "en", "de", "fr", "sv" });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(null, DisplayName = "null")]
     [DataRow("", DisplayName = "empty string")]
     [DataRow("     ", DisplayName = "empty string with whitespaces")]

@@ -224,7 +224,7 @@ public class CustomCommandAdministrationCommandsTests
             .MustHaveHappenedOnceExactly();
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("+5", 5)]
     [DataRow("-10", -10)]
     public void SetCounterRelative(string input, int expectedIncrement)

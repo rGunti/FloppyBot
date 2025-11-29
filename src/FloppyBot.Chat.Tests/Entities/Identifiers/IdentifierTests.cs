@@ -7,7 +7,7 @@ namespace FloppyBot.Chat.Tests.Entities.Identifiers;
 [TestClass]
 public class IdentifierTests
 {
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch/pinsrltrex", "Twitch", "pinsrltrex")]
     public void ConvertStringToChannelId(
         string inputChannelId,
@@ -22,7 +22,7 @@ public class IdentifierTests
         Assert.AreEqual(inputChannelId, (string)channelId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch")]
     [DataRow("Twitch/pinsrltrex/1234")]
     public void ConvertStringToChannelIdThrowsException(string inputChannelId)
@@ -33,7 +33,7 @@ public class IdentifierTests
         });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch/pinsrltrex/1234", "Twitch", "pinsrltrex", "1234")]
     public void ConvertStringToExtendedChannelId(
         string inputChannelId,
@@ -52,7 +52,7 @@ public class IdentifierTests
         Assert.AreEqual(inputChannelId, (string)channelId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch")]
     public void ConvertStringToExtendedChannelIdThrowsException(string inputChannelId)
     {
@@ -62,7 +62,7 @@ public class IdentifierTests
         });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch/pinsrltrex/1234", "Twitch", "pinsrltrex", "1234")]
     public void ConvertStringToMessageId(
         string inputMessageId,
@@ -82,7 +82,7 @@ public class IdentifierTests
         Assert.AreEqual(inputMessageId, (string)messageId);
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch")]
     [DataRow("Twitch/pinsrltrex")]
     public void ConvertStringToMessageIdThrowsException(string inputMessageId)
@@ -93,7 +93,7 @@ public class IdentifierTests
         });
     }
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow("Twitch/pinsrltrex/1234", "Twitch/pinsrltrex")]
     public void GetChannelOfMessageIdentifier(string inputMessageId, string expectedChannelId)
     {

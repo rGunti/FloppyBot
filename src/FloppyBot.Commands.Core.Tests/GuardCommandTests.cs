@@ -53,7 +53,7 @@ public class GuardCommandTests
     private ICommandConfigurationService CommandConfigurationService =>
         _serviceProvider.GetRequiredService<ICommandConfigurationService>();
 
-    [DataTestMethod]
+    [TestMethod]
     [DataRow(PrivilegeLevel.Unknown, false)]
     [DataRow(PrivilegeLevel.Viewer, false)]
     [DataRow(PrivilegeLevel.Moderator, false)]
@@ -80,7 +80,7 @@ public class GuardCommandTests
         }
     }
 
-    [DataTestMethod]
+    [TestMethod]
     // No config
     [DataRow(PrivilegeLevel.Unknown, null, false)]
     [DataRow(PrivilegeLevel.Viewer, null, false)]
