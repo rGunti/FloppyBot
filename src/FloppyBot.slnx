@@ -1,0 +1,142 @@
+<Solution>
+  <Folder Name="/Auxilary/" />
+  <Folder Name="/Auxilary/MessageCounter/">
+    <Project Path="FloppyBot.Aux.MessageCounter.Agent/FloppyBot.Aux.MessageCounter.Agent.csproj" />
+    <Project Path="FloppyBot.Aux.MessageCounter.Core/FloppyBot.Aux.MessageCounter.Core.csproj" />
+  </Folder>
+  <Folder Name="/Auxilary/TwitchAlerts/">
+    <Project Path="FloppyBot.Aux.TwitchAlerts.Agent/FloppyBot.Aux.TwitchAlerts.Agent.csproj" />
+    <Project Path="FloppyBot.Aux.TwitchAlerts.Core/FloppyBot.Aux.TwitchAlerts.Core.csproj" />
+  </Folder>
+  <Folder Name="/Base/">
+    <Project Path="FloppyBot.Base.BinLoader/FloppyBot.Base.BinLoader.csproj" />
+    <Project Path="FloppyBot.Base.Clock/FloppyBot.Base.Clock.csproj" />
+    <Project Path="FloppyBot.Base.Configuration.Tests/FloppyBot.Base.Configuration.Tests.csproj" />
+    <Project Path="FloppyBot.Base.Configuration/FloppyBot.Base.Configuration.csproj" />
+    <Project Path="FloppyBot.Base.Encryption/FloppyBot.Base.Encryption.csproj" />
+    <Project Path="FloppyBot.Base.EquatableCollections/FloppyBot.Base.EquatableCollections.csproj" />
+    <Project Path="FloppyBot.Base.Extensions/FloppyBot.Base.Extensions.csproj" />
+    <Project Path="FloppyBot.Base.Rng/FloppyBot.Base.Rng.csproj" />
+    <Project Path="FloppyBot.Base.Testing/FloppyBot.Base.Testing.csproj" />
+    <Project Path="FloppyBot.Base.Tests/FloppyBot.Base.Tests.csproj" />
+    <Project Path="FloppyBot.Base.TextFormatting/FloppyBot.Base.TextFormatting.csproj" />
+  </Folder>
+  <Folder Name="/Base/Auditing/">
+    <Project Path="FloppyBot.Base.Auditing.Abstraction/FloppyBot.Base.Auditing.Abstraction.csproj" />
+    <Project Path="FloppyBot.Base.Auditing.Storage/FloppyBot.Base.Auditing.Storage.csproj" />
+  </Folder>
+  <Folder Name="/Base/Cron/">
+    <Project Path="FloppyBot.Base.Cron/FloppyBot.Base.Cron.csproj" />
+  </Folder>
+  <Folder Name="/Base/Logging/">
+    <Project Path="FloppyBot.Base.Logging.MongoDb/FloppyBot.Base.Logging.MongoDb.csproj" />
+    <Project Path="FloppyBot.Base.Logging/FloppyBot.Base.Logging.csproj" />
+  </Folder>
+  <Folder Name="/Base/Storage/">
+    <Project Path="FloppyBot.Base.Storage.LiteDb/FloppyBot.Base.Storage.LiteDb.csproj" />
+    <Project Path="FloppyBot.Base.Storage.MongoDb/FloppyBot.Base.Storage.MongoDb.csproj" />
+    <Project Path="FloppyBot.Base.Storage/FloppyBot.Base.Storage.csproj" />
+  </Folder>
+  <Folder Name="/Chat/">
+    <Project Path="FloppyBot.Chat.Agent/FloppyBot.Chat.Agent.csproj" />
+    <Project Path="FloppyBot.Chat.Tests/FloppyBot.Chat.Tests.csproj" />
+    <Project Path="FloppyBot.Chat/FloppyBot.Chat.csproj" />
+  </Folder>
+  <Folder Name="/Chat/Console/">
+    <Project Path="FloppyBot.Chat.Console.Agent/FloppyBot.Chat.Console.Agent.csproj" />
+  </Folder>
+  <Folder Name="/Chat/Discord/">
+    <Project Path="FloppyBot.Chat.Discord.Tests/FloppyBot.Chat.Discord.Tests.csproj" />
+    <Project Path="FloppyBot.Chat.Discord/FloppyBot.Chat.Discord.csproj" />
+  </Folder>
+  <Folder Name="/Chat/Twitch/">
+    <Project Path="FloppyBot.Chat.Twitch.Events/FloppyBot.Chat.Twitch.Events.csproj" />
+    <Project Path="FloppyBot.Chat.Twitch.Tests/FloppyBot.Chat.Twitch.Tests.csproj" />
+    <Project Path="FloppyBot.Chat.Twitch/FloppyBot.Chat.Twitch.csproj" />
+  </Folder>
+  <Folder Name="/Commands/" />
+  <Folder Name="/Commands/Auxilary/" />
+  <Folder Name="/Commands/Auxilary/Currency/">
+    <Project Path="FloppyBot.Commands.Aux.Currency.Tests/FloppyBot.Commands.Aux.Currency.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Currency/FloppyBot.Commands.Aux.Currency.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/DeepL/">
+    <Project Path="FloppyBot.Commands.Aux.Translation.Tests/FloppyBot.Commands.Aux.Translation.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Translation/FloppyBot.Commands.Aux.Translation.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/Quotes/">
+    <Project Path="FloppyBot.Commands.Aux.Quotes.Tests/FloppyBot.Commands.Aux.Quotes.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Quotes/FloppyBot.Commands.Aux.Quotes.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/Time/">
+    <Project Path="FloppyBot.Commands.Aux.Time.Tests/FloppyBot.Commands.Aux.Time.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Time/FloppyBot.Commands.Aux.Time.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/Timer/">
+    <Project Path="FloppyBot.Commands.Aux.Timer.Tests/FloppyBot.Commands.Aux.Timer.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Timer/FloppyBot.Commands.Aux.Timer.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/Twitch/">
+    <Project Path="FloppyBot.Commands.Aux.Twitch.Tests/FloppyBot.Commands.Aux.Twitch.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.Twitch/FloppyBot.Commands.Aux.Twitch.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/Unit/">
+    <Project Path="FloppyBot.Commands.Aux.UnitConv.Tests/FloppyBot.Commands.Aux.UnitConv.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Aux.UnitConv/FloppyBot.Commands.Aux.UnitConv.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Auxilary/UrbanDictionary/">
+    <Project Path="FloppyBot.Commands.Aux.UrbanDictionary/FloppyBot.Commands.Aux.UrbanDictionary.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Core/">
+    <Project Path="FloppyBot.Commands.Core.Tests/FloppyBot.Commands.Core.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Core/FloppyBot.Commands.Core.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Custom/">
+    <Project Path="FloppyBot.Commands.Custom.Communication/FloppyBot.Commands.Custom.Communication.csproj" />
+    <Project Path="FloppyBot.Commands.Custom.Execution/FloppyBot.Commands.Custom.Execution.csproj" />
+    <Project Path="FloppyBot.Commands.Custom.Storage/FloppyBot.Commands.Custom.Storage.csproj" />
+    <Project Path="FloppyBot.Commands.Custom.Tests/FloppyBot.Commands.Custom.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Executor/">
+    <Project Path="FloppyBot.Commands.Executor.Agent.Tests/FloppyBot.Commands.Executor.Agent.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Executor.Agent/FloppyBot.Commands.Executor.Agent.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Parser/">
+    <Project Path="FloppyBot.Commands.Parser.Agent/FloppyBot.Commands.Parser.Agent.csproj" />
+    <Project Path="FloppyBot.Commands.Parser.Entities/FloppyBot.Commands.Parser.Entities.csproj" />
+    <Project Path="FloppyBot.Commands.Parser.Tests/FloppyBot.Commands.Parser.Tests.csproj" />
+    <Project Path="FloppyBot.Commands.Parser/FloppyBot.Commands.Parser.csproj" />
+  </Folder>
+  <Folder Name="/Commands/Registry/">
+    <Project Path="FloppyBot.Commands.Registry/FloppyBot.Commands.Registry.csproj" />
+  </Folder>
+  <Folder Name="/Communication/">
+    <Project Path="FloppyBot.Communication.Redis.Tests/FloppyBot.Communication.Redis.Tests.csproj" />
+    <Project Path="FloppyBot.Communication.Redis/FloppyBot.Communication.Redis.csproj" />
+    <Project Path="FloppyBot.Communication.Tests/FloppyBot.Communication.Tests.csproj" />
+    <Project Path="FloppyBot.Communication/FloppyBot.Communication.csproj" />
+  </Folder>
+  <Folder Name="/FIleStorage/">
+    <Project Path="FloppyBot.FileStorage/FloppyBot.FileStorage.csproj" />
+  </Folder>
+  <Folder Name="/HealthCheck/">
+    <Project Path="FloppyBot.HealthCheck.Core/FloppyBot.HealthCheck.Core.csproj" />
+    <Project Path="FloppyBot.HealthCheck.KillSwitch/FloppyBot.HealthCheck.KillSwitch.csproj" />
+    <Project Path="FloppyBot.HealthCheck.Receiver/FloppyBot.HealthCheck.Receiver.csproj" />
+  </Folder>
+  <Folder Name="/TwitchApi/">
+    <Project Path="FloppyBot.TwitchApi/FloppyBot.TwitchApi.csproj" />
+  </Folder>
+  <Folder Name="/Version/">
+    <Project Path="FloppyBot.Version/FloppyBot.Version.csproj" />
+  </Folder>
+  <Folder Name="/Web API/">
+    <Project Path="FloppyBot.WebApi.Agent/FloppyBot.WebApi.Agent.csproj" />
+    <Project Path="FloppyBot.WebApi.Auth/FloppyBot.WebApi.Auth.csproj" />
+    <Project Path="FloppyBot.WebApi.Base/FloppyBot.WebApi.Base.csproj" />
+    <Project Path="FloppyBot.WebApi.V2/FloppyBot.WebApi.V2.csproj" />
+  </Folder>
+  <Folder Name="/_Testing/">
+    <Project Path="FloppyBot.IntTest/FloppyBot.IntTest.csproj" />
+  </Folder>
+</Solution>
