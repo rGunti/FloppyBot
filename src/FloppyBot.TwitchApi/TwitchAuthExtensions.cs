@@ -34,8 +34,7 @@ public static class TwitchAuthExtensions
 
         return type switch
         {
-            "None" => NoopEncryptionShim.Instance,
-            "Noop" => NoopEncryptionShim.Instance,
+            "None" or "Noop" => NoopEncryptionShim.Instance,
             "Base64" => Base64EncodingShim.Instance,
             "Aes" => new AesEncryptionShim(new AesFactory(configSection)),
             _ => throw new Exception($"Unknown encryption type {type}"),
