@@ -9,6 +9,10 @@ public interface ITwitchAccessCredentialsService
 {
     bool HasAccessCredentialsFor(string channelName);
     NullableObject<TwitchAccessCredentials> GetAccessCredentialsFor(string channelName);
+    NullableObject<TwitchAccessCredentials> GetAccessCredentialsFor(
+        string channelName,
+        params string[] withScopes
+    );
     TwitchAccessCredentials StoreAccessCredentials(TwitchAccessCredentials credentials);
     void DeleteAccessCredentials(string channelName);
 }
@@ -37,6 +41,33 @@ public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
         return _repository
             .GetById(channelName)
             .Wrap()
+            .Select(c => _encryptionShim.DecryptSync(c))
+            .Wrap();
+    }
+
+    public NullableObject<TwitchAccessCredentials> GetAccessCredentialsFor(
+        string channelName,
+        params string[] withScopes
+    )
+    {
+        return _repository
+            .GetById(channelName)
+            .Wrap()
+            .Where(c =>
+            {
+                if (withScopes.Length == 0)
+                {
+                    return true;
+                }
+
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
+                if (c.WithScopes is null)
+                {
+                    return false;
+                }
+
+                return withScopes.All(s => c.WithScopes.Contains(s));
+            })
             .Select(c => _encryptionShim.DecryptSync(c))
             .Wrap();
     }
