@@ -39,7 +39,11 @@ public class TwitchAuthenticator
     public string InitiateNewSession(string username, string channel)
     {
         _logger.LogDebug("Initiating new session for {Username} and {Channel}", username, channel);
-        var initSession = _initiationService.GetOrCreateFor(username, channel);
+        var initSession = _initiationService.GetOrCreateFor(
+            username,
+            channel,
+            _twitchConfiguration.Scopes
+        );
         var query = new Dictionary<string, string>
         {
             { "client_id", _twitchConfiguration.ClientId },
@@ -70,7 +74,7 @@ public class TwitchAuthenticator
     {
         // Check if we have a session open (throw otherwise)
         var initSession = _initiationService
-            .GetFor(username, channel)
+            .GetFor(username, channel, _twitchConfiguration.Scopes)
             .Where(session => session.Id == sessionId)
             .OrThrow(TwitchAuthenticationException.NoSession);
 
@@ -106,6 +110,7 @@ public class TwitchAuthenticator
             channel,
             authCodeResponse.AccessToken,
             authCodeResponse.RefreshToken,
+            initSession.WithScopes,
             _timeProvider.GetCurrentUtcTime().Add(TimeSpan.FromSeconds(authCodeResponse.ExpiresIn))
         );
         _credentialsService.StoreAccessCredentials(credentials);

@@ -5,9 +5,9 @@ namespace FloppyBot.TwitchApi.Storage.Entities;
 public record TwitchAccessCredentials(
     string Id,
     string ChannelName,
-    // TODO: Encryption
     string AccessToken,
     string RefreshToken,
+    string[] WithScopes,
     DateTimeOffset ExpiresOn
 ) : IEntity<TwitchAccessCredentials>
 {
@@ -21,6 +21,7 @@ public record TwitchAccessCredentialInitiation(
     string Id,
     string ForChannel,
     string ByUser,
+    string[] WithScopes,
     DateTimeOffset CreatedAt
 ) : IEntity<TwitchAccessCredentialInitiation>
 {
