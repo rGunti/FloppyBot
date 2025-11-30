@@ -36,6 +36,7 @@
     "AccessToken": "",
     "DisableWhenChannelIsOffline": true,
     "MonitorInterface": 30,
-    "AnnounceChannelOnlineStatus": true
+    "AnnounceChannelOnlineStatus": true,
+    "EnableTwitchEventSource": false
   }
 }
