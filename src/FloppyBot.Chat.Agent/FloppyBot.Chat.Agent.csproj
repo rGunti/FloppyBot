@@ -10,6 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FloppyBot.Base.Configuration\FloppyBot.Base.Configuration.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Logging\FloppyBot.Base.Logging.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Storage.MongoDb\FloppyBot.Base.Storage.MongoDb.csproj" />
     <ProjectReference Include="..\FloppyBot.Chat.Discord\FloppyBot.Chat.Discord.csproj" />
     <ProjectReference Include="..\FloppyBot.Chat.Twitch\FloppyBot.Chat.Twitch.csproj" />
     <ProjectReference Include="..\FloppyBot.Commands.Registry\FloppyBot.Commands.Registry.csproj" />

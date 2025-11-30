@@ -1,6 +1,7 @@
 using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.EventSources;
 using FloppyBot.Chat.Twitch.Monitor;
+using FloppyBot.TwitchApi;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using TwitchLib.Api;
@@ -66,6 +67,7 @@ public static class Registration
             .AddSingleton<ITwitchApiService, TwitchApiService>()
             // - Event Source
             .AddTwitchLibEventSubWebsockets()
+            .AddTwitchAuth()
             .AddSingleton<NoopTwitchEventSource>()
             .AddSingleton<TwitchEventSource>()
             .AddSingleton<ITwitchEventSource>(p =>

@@ -1,6 +1,7 @@
 using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
+using FloppyBot.Base.Storage.MongoDb;
 using FloppyBot.Chat.Agent;
 using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
@@ -20,6 +21,7 @@ IHost host = builder
     {
         services
             .RegisterChatInterface(config.GetValue<string>("InterfaceType")!)
+            .AddMongoDbStorage()
             .AddRedisCommunication()
             .AddCronJobSupport()
             .AddHealthCheck()

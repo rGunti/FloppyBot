@@ -1,5 +1,8 @@
 using System.Collections.Concurrent;
+using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Api.Dtos;
+using FloppyBot.TwitchApi.Storage;
+using FloppyBot.TwitchApi.Storage.Entities;
 using Microsoft.Extensions.Logging;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.EventSub;
@@ -21,11 +24,17 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
     private readonly ITwitchAPI _twitchApi;
     private readonly ILogger<TwitchApiService> _logger;
     private readonly ConcurrentDictionary<string, EventSubSubscription> _knownSubscriptions = new();
+    private readonly ITwitchAccessCredentialsService _twitchAccessCredentials;
 
-    public TwitchApiService(ITwitchAPI twitchApi, ILogger<TwitchApiService> logger)
+    public TwitchApiService(
+        ITwitchAPI twitchApi,
+        ILogger<TwitchApiService> logger,
+        ITwitchAccessCredentialsService twitchAccessCredentials
+    )
     {
         _twitchApi = twitchApi;
         _logger = logger;
+        _twitchAccessCredentials = twitchAccessCredentials;
     }
 
     public IEnumerable<StreamTeam> GetStreamTeamsOfChannel(string channel)
@@ -40,6 +49,18 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
 
     public async Task CreateChatMessageSubscriptionAsync(string channelName, string sessionId)
     {
+        var credentials = _twitchAccessCredentials.GetAccessCredentialsFor(
+            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName)
+        );
+
+        if (!credentials.HasValue)
+        {
+            _logger.LogError(
+                "Failed to create channel points redemption subscription, no credential found for this channel"
+            );
+            return;
+        }
+
         var channelId = await DoGetBroadcasterId(channelName);
         if (channelId is null)
         {
@@ -54,7 +75,8 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
                 { "broadcaster_user_id", channelId },
                 { "user_id", channelId },
             },
-            sessionId
+            sessionId,
+            credentials
         );
     }
 
@@ -63,17 +85,30 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
         string sessionId
     )
     {
+        var credentials = _twitchAccessCredentials.GetAccessCredentialsFor(
+            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName)
+        );
+
+        if (!credentials.HasValue)
+        {
+            _logger.LogError(
+                "Failed to create channel points redemption subscription, no credential found for this channel"
+            );
+            return;
+        }
+
         var channelId = await DoGetBroadcasterId(channelName);
         if (channelId is null)
         {
             return;
         }
 
-        var result = await CreateEventSubSubscription(
+        await CreateEventSubSubscription(
             "channel.channel_points_custom_reward_redemption.add",
             "1",
             new Dictionary<string, string> { { "broadcaster_user_id", channelId } },
-            sessionId
+            sessionId,
+            credentials
         );
     }
 
@@ -125,7 +160,8 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
         string eventType,
         string version,
         Dictionary<string, string> condition,
-        string sessionId
+        string sessionId,
+        TwitchAccessCredentials credentials
     )
     {
         _logger.LogDebug(
@@ -138,7 +174,9 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
             version,
             condition,
             EventSubTransportMethod.Websocket,
-            sessionId
+            sessionId,
+            clientId: _twitchApi.Settings.ClientId,
+            accessToken: credentials.AccessToken
         );
 
         if (result is null)
