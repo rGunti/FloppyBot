@@ -50,7 +50,8 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
     public async Task CreateChatMessageSubscriptionAsync(string channelName, string sessionId)
     {
         var credentials = _twitchAccessCredentials.GetAccessCredentialsFor(
-            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName)
+            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName),
+            "user:bot"
         );
 
         if (!credentials.HasValue)
@@ -86,7 +87,8 @@ public class TwitchApiService : ITwitchApiService, IAsyncDisposable
     )
     {
         var credentials = _twitchAccessCredentials.GetAccessCredentialsFor(
-            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName)
+            new ChannelIdentifier(TwitchChatInterface.IF_NAME, channelName),
+            "channel:read:redemptions"
         );
 
         if (!credentials.HasValue)
