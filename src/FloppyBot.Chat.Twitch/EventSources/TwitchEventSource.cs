@@ -1,46 +1,12 @@
 using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
-using FloppyBot.Chat.Twitch.Extensions;
 using Microsoft.Extensions.Logging;
 using TwitchLib.EventSub.Core.EventArgs.Channel;
-using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 
 namespace FloppyBot.Chat.Twitch.EventSources;
-
-public interface ITwitchEventSource
-{
-    event EventHandler<TwitchChannelPointsRewardRedeemedEvent> ChannelPointsCustomRewardRedemptionAdd;
-
-    Task ConnectAsync();
-    Task DisconnectAsync();
-}
-
-public class NoopTwitchEventSource : ITwitchEventSource
-{
-    private readonly ILogger<NoopTwitchEventSource> _logger;
-    public event EventHandler<TwitchChannelPointsRewardRedeemedEvent>? ChannelPointsCustomRewardRedemptionAdd;
-
-    public NoopTwitchEventSource(ILogger<NoopTwitchEventSource> logger)
-    {
-        _logger = logger;
-    }
-
-    public Task ConnectAsync()
-    {
-        _logger.LogInformation(
-            "Trying to connect a Noop Twitch Event Source. You will not get any events from Twitch."
-        );
-        return Task.CompletedTask;
-    }
-
-    public Task DisconnectAsync()
-    {
-        return Task.CompletedTask;
-    }
-}
 
 public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
 {
@@ -145,24 +111,5 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
         var eventData = sourceEvent.ConvertToInternalEvent();
         _logger.LogInformation("Channel Point Reward Redemption added: {@Event}", eventData);
         ChannelPointsCustomRewardRedemptionAdd?.Invoke(sender, eventData);
-    }
-}
-
-internal static class InternalEventConverters
-{
-    internal static TwitchChannelPointsRewardRedeemedEvent ConvertToInternalEvent(
-        this ChannelPointsCustomRewardRedemption redemption
-    )
-    {
-        return new TwitchChannelPointsRewardRedeemedEvent(
-            redemption.Id,
-            TwitchEntityExtensions.ConvertToChatUser(redemption.UserLogin, redemption.UserName),
-            new TwitchChannelPointsReward(
-                redemption.Reward.Id,
-                redemption.Reward.Title,
-                redemption.Reward.Prompt,
-                redemption.Reward.Cost
-            )
-        );
     }
 }
