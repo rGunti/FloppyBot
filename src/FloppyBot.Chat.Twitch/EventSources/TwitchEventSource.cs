@@ -3,10 +3,10 @@ using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Chat.Twitch.Extensions;
 using Microsoft.Extensions.Logging;
+using TwitchLib.EventSub.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
-using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
 namespace FloppyBot.Chat.Twitch.EventSources;
 
@@ -63,17 +63,7 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
         _configuration = configuration;
         _twitchApi = twitchApi;
 
-        _client.WebsocketConnected += (source, args) =>
-        {
-            try
-            {
-                ClientOnWebsocketConnected(source, args).GetAwaiter().GetResult();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unhandled error in event handler ClientOnWebsocketConnected");
-            }
-        };
+        _client.WebsocketConnected += ClientOnWebsocketConnected;
         _client.WebsocketDisconnected += ClientOnWebsocketDisconnected;
         _client.WebsocketReconnected += ClientOnWebsocketReconnected;
         _client.ErrorOccurred += ClientOnErrorOccurred;
@@ -104,7 +94,7 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
         GC.SuppressFinalize(this);
     }
 
-    private void ClientOnErrorOccurred(object? sender, ErrorOccuredArgs e)
+    private async Task ClientOnErrorOccurred(object? sender, ErrorOccuredArgs e)
     {
         _logger.LogError(e.Exception, "Twitch Event error: {ErrorMessage}", e.Message);
     }
@@ -134,31 +124,23 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
         }
     }
 
-    private void ClientOnWebsocketDisconnected(object? sender, EventArgs e)
+    private async Task ClientOnWebsocketDisconnected(object? sender, EventArgs e)
     {
         _logger.LogWarning("Disconnected from Twitch");
     }
 
-    private void ClientOnWebsocketReconnected(object? sender, EventArgs e)
+    private async Task ClientOnWebsocketReconnected(object? sender, EventArgs e)
     {
         _logger.LogInformation("Reconnected to Twitch");
     }
 
-    private void ClientOnChannelPointsCustomRewardRedemptionAdd(
+    private async Task ClientOnChannelPointsCustomRewardRedemptionAdd(
         object? sender,
         ChannelPointsCustomRewardRedemptionArgs e
     )
     {
         // https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/#channelchannel_points_custom_reward_redemptionadd
-        var sourceEvent = e.Notification.Payload.Event;
-        if (sourceEvent is null)
-        {
-            _logger.LogWarning(
-                "No notification payload found for {Event}",
-                e.Notification.Metadata.MessageId
-            );
-            return;
-        }
+        var sourceEvent = e.Payload.Event;
 
         var eventData = sourceEvent.ConvertToInternalEvent();
         _logger.LogInformation("Channel Point Reward Redemption added: {@Event}", eventData);
