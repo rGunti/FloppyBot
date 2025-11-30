@@ -1,4 +1,5 @@
 using FloppyBot.Chat.Twitch.Api;
+using FloppyBot.Chat.Twitch.EventSources;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ using TwitchLib.Client.Models;
 using TwitchLib.Communication.Clients;
 using TwitchLib.Communication.Interfaces;
 using TwitchLib.Communication.Models;
+using TwitchLib.EventSub.Websockets.Extensions;
 
 namespace FloppyBot.Chat.Twitch.Config;
 
@@ -62,6 +64,17 @@ public static class Registration
             })
             .AddSingleton<ITwitchChannelOnlineMonitor, TwitchChannelOnlineMonitor>()
             .AddSingleton<ITwitchApiService, TwitchApiService>()
+            // - Event Source
+            .AddTwitchLibEventSubWebsockets()
+            .AddSingleton<NoopTwitchEventSource>()
+            .AddSingleton<TwitchEventSource>()
+            .AddSingleton<ITwitchEventSource>(p =>
+            {
+                var config = p.GetRequiredService<TwitchConfiguration>();
+                return config.EnableTwitchEventSource
+                    ? p.GetRequiredService<TwitchEventSource>()
+                    : p.GetRequiredService<NoopTwitchEventSource>();
+            })
             // - Chat Interface
             .AddSingleton<IChatInterface, TwitchChatInterface>();
     }

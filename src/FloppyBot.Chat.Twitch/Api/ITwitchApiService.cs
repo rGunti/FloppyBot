@@ -1,4 +1,8 @@
+using System.Collections.Concurrent;
 using FloppyBot.Chat.Twitch.Api.Dtos;
+using Microsoft.Extensions.Logging;
+using TwitchLib.Api.Core.Enums;
+using TwitchLib.Api.Helix.Models.EventSub;
 using TwitchLib.Api.Helix.Models.Teams;
 using TwitchLib.Api.Interfaces;
 
@@ -8,15 +12,20 @@ public interface ITwitchApiService
 {
     IEnumerable<StreamTeam> GetStreamTeamsOfChannel(string channel);
     string? GetBroadcasterId(string channel);
+    Task CreateChatMessageSubscriptionAsync(string channelName, string sessionId);
+    Task CreateChannelPointsRedemptionSubscriptionAsync(string channelName, string sessionId);
 }
 
-public class TwitchApiService : ITwitchApiService
+public class TwitchApiService : ITwitchApiService, IAsyncDisposable
 {
     private readonly ITwitchAPI _twitchApi;
+    private readonly ILogger<TwitchApiService> _logger;
+    private readonly ConcurrentDictionary<string, EventSubSubscription> _knownSubscriptions = new();
 
-    public TwitchApiService(ITwitchAPI twitchApi)
+    public TwitchApiService(ITwitchAPI twitchApi, ILogger<TwitchApiService> logger)
     {
         _twitchApi = twitchApi;
+        _logger = logger;
     }
 
     public IEnumerable<StreamTeam> GetStreamTeamsOfChannel(string channel)
@@ -27,6 +36,66 @@ public class TwitchApiService : ITwitchApiService
     public string? GetBroadcasterId(string channel)
     {
         return DoGetBroadcasterId(channel).GetAwaiter().GetResult();
+    }
+
+    public async Task CreateChatMessageSubscriptionAsync(string channelName, string sessionId)
+    {
+        var channelId = await DoGetBroadcasterId(channelName);
+        if (channelId is null)
+        {
+            return;
+        }
+
+        await CreateEventSubSubscription(
+            "channel.chat.message",
+            "1",
+            new Dictionary<string, string>
+            {
+                { "broadcaster_user_id", channelId },
+                { "user_id", channelId },
+            },
+            sessionId
+        );
+    }
+
+    public async Task CreateChannelPointsRedemptionSubscriptionAsync(
+        string channelName,
+        string sessionId
+    )
+    {
+        var channelId = await DoGetBroadcasterId(channelName);
+        if (channelId is null)
+        {
+            return;
+        }
+
+        var result = await CreateEventSubSubscription(
+            "channel.channel_points_custom_reward_redemption.add",
+            "1",
+            new Dictionary<string, string> { { "broadcaster_user_id", channelId } },
+            sessionId
+        );
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        foreach (var subscription in _knownSubscriptions.Values.ToList())
+        {
+            try
+            {
+                await DoUnsubscribe(subscription.Id);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(
+                    e,
+                    "Failed to unsubscribe from event subscription {SubscriptionId}",
+                    subscription.Id
+                );
+            }
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     private static StreamTeam ConvertToStreamTeam(Team team)
@@ -50,5 +119,66 @@ public class TwitchApiService : ITwitchApiService
     {
         var program = await _twitchApi.Helix.Users.GetUsersAsync(logins: [channel]);
         return program.Users.Select(u => u.Id).FirstOrDefault();
+    }
+
+    private async Task<CreateEventSubSubscriptionResponse?> CreateEventSubSubscription(
+        string eventType,
+        string version,
+        Dictionary<string, string> condition,
+        string sessionId
+    )
+    {
+        _logger.LogDebug(
+            "Subscribing to {SubscriptionEventType} with {SubscriptionSessionId}",
+            eventType,
+            sessionId
+        );
+        var result = await _twitchApi.Helix.EventSub.CreateEventSubSubscriptionAsync(
+            eventType,
+            version,
+            condition,
+            EventSubTransportMethod.Websocket,
+            sessionId
+        );
+
+        if (result is null)
+        {
+            _logger.LogWarning(
+                "Failed to subscribe to event {SubscriptionEventType} with {SubscriptionSessionId}, result was empty",
+                eventType,
+                sessionId
+            );
+            return null;
+        }
+
+        foreach (var subscription in result.Subscriptions)
+        {
+            _logger.LogDebug(
+                "Registering / updating subscription {SubscriptionId}",
+                subscription.Id
+            );
+            _knownSubscriptions.AddOrUpdate(
+                subscription.Id,
+                (_) => subscription,
+                (_, _) => subscription
+            );
+        }
+
+        return result;
+    }
+
+    private async Task<bool> DoUnsubscribe(string subscriptionId)
+    {
+        _logger.LogInformation("Unsubscribing {SubscriptionId}", subscriptionId);
+        var result = await _twitchApi.Helix.EventSub.DeleteEventSubSubscriptionAsync(
+            subscriptionId
+        );
+
+        if (result)
+        {
+            _knownSubscriptions.TryRemove(subscriptionId, out _);
+        }
+
+        return result;
     }
 }

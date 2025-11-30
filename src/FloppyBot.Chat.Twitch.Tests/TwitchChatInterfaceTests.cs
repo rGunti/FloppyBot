@@ -9,6 +9,7 @@ using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
+using FloppyBot.Chat.Twitch.EventSources;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TwitchLib.Client;
@@ -35,6 +36,7 @@ public class TwitchChatInterfaceTests
         "anaccesstoken",
         false,
         0,
+        false,
         false
     );
 
@@ -229,7 +231,8 @@ public class TwitchChatInterfaceTests
             _client,
             _configuration,
             _onlineMonitor,
-            A.Fake<ITwitchApiService>()
+            A.Fake<ITwitchApiService>(),
+            A.Fake<ITwitchEventSource>()
         );
     }
 

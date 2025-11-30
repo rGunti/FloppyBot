@@ -5,6 +5,7 @@ using FloppyBot.Chat.Entities.Identifiers;
 using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
+using FloppyBot.Chat.Twitch.EventSources;
 using FloppyBot.Chat.Twitch.Extensions;
 using FloppyBot.Chat.Twitch.Monitor;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ public class TwitchChatInterface : IChatInterface
     private readonly ILogger<TwitchChatInterface> _logger;
     private readonly ITwitchChannelOnlineMonitor _onlineMonitor;
     private readonly ITwitchApiService _twitchApiService;
+    private readonly ITwitchEventSource _twitchEventSource;
 
     public TwitchChatInterface(
         ILogger<TwitchChatInterface> logger,
@@ -34,16 +36,21 @@ public class TwitchChatInterface : IChatInterface
         ITwitchClient client,
         TwitchConfiguration configuration,
         ITwitchChannelOnlineMonitor onlineMonitor,
-        ITwitchApiService twitchApiService
+        ITwitchApiService twitchApiService,
+        ITwitchEventSource twitchEventSource
     )
     {
         _logger = logger;
         _clientLogger = clientLogger;
         _configuration = configuration;
         _twitchApiService = twitchApiService;
+        _twitchEventSource = twitchEventSource;
 
         _onlineMonitor = onlineMonitor;
         _onlineMonitor.OnlineStatusChanged += OnlineMonitor_OnlineStatusChanged;
+
+        _twitchEventSource.ChannelPointsCustomRewardRedemptionAdd +=
+            TwitchEventSourceOnChannelPointsCustomRewardRedemptionAdd;
 
         _channelIdentifier = new ChannelIdentifier(IF_NAME, _configuration.Channel);
 
@@ -74,7 +81,10 @@ public class TwitchChatInterface : IChatInterface
         if (!_client.Connect())
         {
             _logger.LogCritical("Failed to connect Twitch client!");
+            return;
         }
+
+        _twitchEventSource.ConnectAsync().RunSynchronously();
     }
 
     public void Disconnect()
@@ -84,6 +94,8 @@ public class TwitchChatInterface : IChatInterface
             _logger.LogInformation("Disconnecting from Twitch ...");
             _client.Disconnect();
         }
+
+        _twitchEventSource.DisconnectAsync().RunSynchronously();
     }
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
@@ -225,6 +237,8 @@ public class TwitchChatInterface : IChatInterface
             e.BotUsername,
             e.AutoJoinChannel
         );
+
+        _twitchEventSource.ConnectAsync();
     }
 
     private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
@@ -519,6 +533,24 @@ public class TwitchChatInterface : IChatInterface
         SendMessage(
             channelId,
             e.IsOnline ? Resources.ChannelOnlineMessage : Resources.ChannelOfflineMessage
+        );
+    }
+
+    private void TwitchEventSourceOnChannelPointsCustomRewardRedemptionAdd(
+        object? sender,
+        TwitchChannelPointsRewardRedeemedEvent e
+    )
+    {
+        MessageReceived?.Invoke(
+            this,
+            new ChatMessage(
+                NewChatMessageIdentifier($"reward-{e.EventId}"),
+                e.User,
+                TwitchEventTypes.CHANNEL_POINTS_REWARD_REDEEMED,
+                JsonSerializer.Serialize(e),
+                null,
+                SupportedFeatures
+            )
         );
     }
 }
