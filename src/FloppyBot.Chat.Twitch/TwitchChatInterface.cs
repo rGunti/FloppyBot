@@ -84,7 +84,7 @@ public class TwitchChatInterface : IChatInterface
             return;
         }
 
-        _twitchEventSource.ConnectAsync().RunSynchronously();
+        _twitchEventSource.ConnectAsync().GetAwaiter().GetResult();
     }
 
     public void Disconnect()
@@ -95,7 +95,7 @@ public class TwitchChatInterface : IChatInterface
             _client.Disconnect();
         }
 
-        _twitchEventSource.DisconnectAsync().RunSynchronously();
+        _twitchEventSource.DisconnectAsync().GetAwaiter().GetResult();
     }
 
     public void SendMessage(ChatMessageIdentifier referenceMessage, string message)
