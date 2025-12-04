@@ -29,7 +29,7 @@ public class TwitchRedemptionController : ChannelScopedController
     )
     {
         var channelId = EnsureChannelAccess(IF_TWITCH, channel);
-        var results = await _twitchApiService.GetChannelRewards(channelId.Channel);
+        var results = await _twitchApiService.GetChannelRewards(channelId);
         return Ok(results);
     }
 }
