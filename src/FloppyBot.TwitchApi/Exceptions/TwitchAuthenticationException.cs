@@ -18,4 +18,18 @@ public class TwitchAuthenticationException : Exception
     {
         return new TwitchAuthenticationException("Failed to acquire access token", innerException);
     }
+
+    public static TwitchAuthenticationException NoCredentialsForChannel(string channel)
+    {
+        return new TwitchAuthenticationException(
+            $"No access credentials found for channel {channel}"
+        );
+    }
+
+    public static TwitchAuthenticationException FailedToRefreshAccessToken(
+        Exception? innerException = null
+    )
+    {
+        return new TwitchAuthenticationException("Failed to refresh access token", innerException);
+    }
 }

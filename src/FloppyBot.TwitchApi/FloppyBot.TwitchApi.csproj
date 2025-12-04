@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\FloppyBot.Base.Auditing.Storage\FloppyBot.Base.Auditing.Storage.csproj" />
+    <ProjectReference Include="..\FloppyBot.Base.Cron\FloppyBot.Base.Cron.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Encryption\FloppyBot.Base.Encryption.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />

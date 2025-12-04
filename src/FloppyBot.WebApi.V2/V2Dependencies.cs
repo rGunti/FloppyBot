@@ -22,6 +22,7 @@ public static class V2Dependencies
         return services
             .AddFileStorage()
             .AddTwitchAuth()
+            .AddTwitchCredentialMonitor()
             .AddSingleton<ICommandConfigurationService, CommandConfigurationService>();
     }
 

@@ -15,6 +15,7 @@ public interface ITwitchAccessCredentialsService
     );
     TwitchAccessCredentials StoreAccessCredentials(TwitchAccessCredentials credentials);
     void DeleteAccessCredentials(string channelName);
+    IEnumerable<string> GetAllKnownCredentials();
 }
 
 public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
@@ -80,5 +81,10 @@ public class TwitchAccessCredentialsService : ITwitchAccessCredentialsService
     public void DeleteAccessCredentials(string channelName)
     {
         _repository.Delete(channelName);
+    }
+
+    public IEnumerable<string> GetAllKnownCredentials()
+    {
+        return _repository.GetAll().Select(cred => cred.ChannelName).ToList();
     }
 }

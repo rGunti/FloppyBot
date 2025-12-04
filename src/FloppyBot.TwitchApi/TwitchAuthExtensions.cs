@@ -1,3 +1,4 @@
+using FloppyBot.Base.Cron;
 using FloppyBot.Base.Encryption;
 using FloppyBot.TwitchApi.Storage;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,11 @@ public static class TwitchAuthExtensions
                 return config.GetSection("TwitchApi").Get<TwitchAuthenticationConfiguration>()
                     ?? throw new Exception("Twitch configuration not found");
             });
+    }
+
+    public static IServiceCollection AddTwitchCredentialMonitor(this IServiceCollection services)
+    {
+        return services.AddCronJob<TwitchCredentialMonitor>();
     }
 
     private static IEncryptionShim GetEncryptionShim(IConfiguration configuration)
