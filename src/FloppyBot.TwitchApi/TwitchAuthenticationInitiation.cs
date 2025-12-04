@@ -116,8 +116,76 @@ public class TwitchAuthenticator
         _credentialsService.StoreAccessCredentials(credentials);
     }
 
+    public async Task<TwitchCredentialValidation> ValidateCredentials(string channel)
+    {
+        _logger.LogDebug("Validating credentials for channel {Channel}", channel);
+
+        var credentials = _credentialsService.GetAccessCredentialsFor(channel);
+        if (!credentials.HasValue)
+        {
+            _logger.LogInformation("No credentials found for channel {Channel}", channel);
+            return TwitchCredentialValidation.Missing;
+        }
+
+        var fullCredentials = credentials.Value;
+        if (fullCredentials.ExpiresOn <= _timeProvider.GetCurrentUtcTime())
+        {
+            _logger.LogWarning("Credentials expired for channel {Channel}", channel);
+            return TwitchCredentialValidation.Expired;
+        }
+
+        var result = await _twitchApi.Auth.ValidateAccessTokenAsync(fullCredentials.AccessToken);
+        if (result is null)
+        {
+            _logger.LogInformation("Credentials invalid for channel {Channel}", channel);
+            return TwitchCredentialValidation.Invalid;
+        }
+
+        _logger.LogInformation(
+            "Credentials verified for channel {Channel}: {@ValidationResult}",
+            channel,
+            result
+        );
+        return TwitchCredentialValidation.Valid;
+    }
+
+    public async Task RefreshCredentials(string channel)
+    {
+        _logger.LogDebug("Refreshing credentials for channel {Channel}", channel);
+        var credentials = _credentialsService
+            .GetAccessCredentialsFor(channel)
+            .OrThrow(() => TwitchAuthenticationException.NoCredentialsForChannel(channel));
+
+        RefreshResponse refreshResponse;
+        try
+        {
+            refreshResponse = await _twitchApi.Auth.RefreshAuthTokenAsync(
+                refreshToken: credentials.RefreshToken,
+                clientId: _twitchConfiguration.ClientId,
+                clientSecret: _twitchConfiguration.Secret
+            );
+        }
+        catch (BadRequestException ex)
+        {
+            _logger.LogWarning(ex, "Refreshing credentials for channel {Channel} failed", channel);
+            throw TwitchAuthenticationException.FailedToRefreshAccessToken(ex);
+        }
+
+        _logger.LogDebug("Updated credentials for channel {Channel}", channel);
+        var updatedCredentials = credentials with
+        {
+            AccessToken = refreshResponse.AccessToken,
+            RefreshToken = refreshResponse.RefreshToken,
+            ExpiresOn = _timeProvider
+                .GetCurrentUtcTime()
+                .Add(TimeSpan.FromSeconds(refreshResponse.ExpiresIn)),
+        };
+        _credentialsService.StoreAccessCredentials(updatedCredentials);
+    }
+
     public void RevokeCredentials(string channel)
     {
+        _logger.LogInformation("Revoking credentials for channel {Channel}", channel);
         _credentialsService.DeleteAccessCredentials(channel);
     }
 }
