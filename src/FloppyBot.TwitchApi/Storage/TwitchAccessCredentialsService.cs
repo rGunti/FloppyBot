@@ -15,7 +15,6 @@ public interface ITwitchAccessCredentialsService
     );
     TwitchAccessCredentials StoreAccessCredentials(TwitchAccessCredentials credentials);
     void DeleteAccessCredentials(string channelName);
-
     IEnumerable<string> GetAllKnownCredentials();
 }
 

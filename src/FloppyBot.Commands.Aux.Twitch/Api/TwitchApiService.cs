@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using FloppyBot.Commands.Aux.Twitch.Entities;
+using FloppyBot.TwitchApi.Storage;
+using Microsoft.Extensions.Caching.Memory;
+using TwitchLib.Api.Helix.Models.ChannelPoints.GetCustomReward;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 using TwitchLib.Api.Helix.Models.Teams;
 using TwitchLib.Api.Helix.Models.Users.GetUsers;
@@ -15,11 +18,17 @@ public class TwitchApiService : ITwitchApiService
 
     private readonly ITwitchAPI _twitchApi;
     private readonly IMemoryCache _memoryCache;
+    private readonly ITwitchAccessCredentialsService _credentialsService;
 
-    public TwitchApiService(ITwitchAPI twitchApi, IMemoryCache memoryCache)
+    public TwitchApiService(
+        ITwitchAPI twitchApi,
+        IMemoryCache memoryCache,
+        ITwitchAccessCredentialsService credentialsService
+    )
     {
         _twitchApi = twitchApi;
         _memoryCache = memoryCache;
+        _credentialsService = credentialsService;
     }
 
     public async Task<TwitchUserLookupResult?> LookupUser(string userId)
@@ -64,6 +73,31 @@ public class TwitchApiService : ITwitchApiService
         );
     }
 
+    public async Task<IEnumerable<ChannelReward>> GetChannelRewards(string userId)
+    {
+        var userResponse = await GetUsersAsync(userId);
+        if (userResponse is null || userResponse.Users.Length == 0)
+        {
+            return [];
+        }
+
+        var user = userResponse.Users.First();
+        var accessCredentials = _credentialsService.GetAccessCredentialsFor(
+            user.Login,
+            "channel:read:redemptions"
+        );
+        if (!accessCredentials.HasValue)
+        {
+            return [];
+        }
+
+        var rewardsResponse = await GetCustomRewardsAsync(
+            user.Id,
+            accessCredentials.Value.AccessToken
+        );
+        return rewardsResponse?.Data.Select(ChannelReward.FromApiModel) ?? [];
+    }
+
     private Task<GetUsersResponse?> GetUsersAsync(string loginName)
     {
         return _memoryCache.GetOrCreateAsync(
@@ -96,6 +130,21 @@ public class TwitchApiService : ITwitchApiService
             {
                 entry.AbsoluteExpirationRelativeToNow = CacheDuration;
                 return await _twitchApi.Helix.Teams.GetChannelTeamsAsync(userId);
+            }
+        );
+    }
+
+    private Task<GetCustomRewardsResponse?> GetCustomRewardsAsync(string userId, string accessToken)
+    {
+        return _memoryCache.GetOrCreateAsync(
+            $"twitch-rewards-{userId}",
+            async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = CacheDuration;
+                return await _twitchApi.Helix.ChannelPoints.GetCustomRewardAsync(
+                    broadcasterId: userId,
+                    accessToken: accessToken
+                );
             }
         );
     }
