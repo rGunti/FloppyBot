@@ -60,6 +60,7 @@ public class TwitchCredentialMonitor : ICronJob
                         channel
                     );
                 }
+
                 break;
         }
     }
