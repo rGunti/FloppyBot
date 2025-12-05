@@ -116,7 +116,7 @@ public class TwitchAuthenticator
         _credentialsService.StoreAccessCredentials(credentials);
     }
 
-    public async Task<TwitchCredentialValidation> ValidateCredentials(string channel)
+    public async Task<TwitchCredentialValidationResult> ValidateCredentials(string channel)
     {
         _logger.LogDebug("Validating credentials for channel {Channel}", channel);
 
@@ -124,21 +124,21 @@ public class TwitchAuthenticator
         if (!credentials.HasValue)
         {
             _logger.LogInformation("No credentials found for channel {Channel}", channel);
-            return TwitchCredentialValidation.Missing;
+            return TwitchCredentialValidationResult.Missing;
         }
 
         var fullCredentials = credentials.Value;
         if (fullCredentials.ExpiresOn <= _timeProvider.GetCurrentUtcTime())
         {
             _logger.LogWarning("Credentials expired for channel {Channel}", channel);
-            return TwitchCredentialValidation.Expired;
+            return TwitchCredentialValidationResult.Expired(fullCredentials.ExpiresOn);
         }
 
         var result = await _twitchApi.Auth.ValidateAccessTokenAsync(fullCredentials.AccessToken);
         if (result is null)
         {
             _logger.LogInformation("Credentials invalid for channel {Channel}", channel);
-            return TwitchCredentialValidation.Invalid;
+            return TwitchCredentialValidationResult.Invalid;
         }
 
         _logger.LogInformation(
@@ -146,7 +146,9 @@ public class TwitchAuthenticator
             channel,
             result
         );
-        return TwitchCredentialValidation.Valid;
+        return TwitchCredentialValidationResult.Valid(
+            _timeProvider.GetCurrentUtcTime() + TimeSpan.FromSeconds(result.ExpiresIn)
+        );
     }
 
     public async Task RefreshCredentials(string channel)
