@@ -1,4 +1,5 @@
-﻿using FloppyBot.Commands.Aux.Twitch.Entities;
+﻿using FloppyBot.Chat.Entities.Identifiers;
+using FloppyBot.Commands.Aux.Twitch.Entities;
 using FloppyBot.TwitchApi.Storage;
 using Microsoft.Extensions.Caching.Memory;
 using TwitchLib.Api.Helix.Models.ChannelPoints.GetCustomReward;
@@ -73,9 +74,11 @@ public class TwitchApiService : ITwitchApiService
         );
     }
 
-    public async Task<IEnumerable<ChannelReward>> GetChannelRewards(string userId)
+    public async Task<IEnumerable<ChannelReward>> GetChannelRewards(
+        ChannelIdentifier channelIdentifier
+    )
     {
-        var userResponse = await GetUsersAsync(userId);
+        var userResponse = await GetUsersAsync(channelIdentifier.Channel);
         if (userResponse is null || userResponse.Users.Length == 0)
         {
             return [];
@@ -83,7 +86,7 @@ public class TwitchApiService : ITwitchApiService
 
         var user = userResponse.Users.First();
         var accessCredentials = _credentialsService.GetAccessCredentialsFor(
-            user.Login,
+            channelIdentifier,
             "channel:read:redemptions"
         );
         if (!accessCredentials.HasValue)
