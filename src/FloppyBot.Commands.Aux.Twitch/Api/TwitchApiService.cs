@@ -143,7 +143,7 @@ public class TwitchApiService : ITwitchApiService
             $"twitch-rewards-{userId}",
             async entry =>
             {
-                entry.AbsoluteExpirationRelativeToNow = CacheDuration;
+                entry.AbsoluteExpirationRelativeToNow = CacheDurationShort;
                 return await _twitchApi.Helix.ChannelPoints.GetCustomRewardAsync(
                     broadcasterId: userId,
                     accessToken: accessToken
