@@ -5,7 +5,7 @@ namespace FloppyBot.Base.Extensions;
 public static class NullableObject
 {
     public static NullableObject<T> Empty<T>()
-        where T : class => new(default);
+        where T : class => new(null);
 }
 
 public class NullableObject<T> : IEnumerable<T>

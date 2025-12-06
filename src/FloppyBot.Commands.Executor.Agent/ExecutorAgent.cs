@@ -1,6 +1,10 @@
-﻿using FloppyBot.Base.Configuration;
+﻿using System.Text.Json;
+using FloppyBot.Base.Configuration;
+using FloppyBot.Base.Extensions;
 using FloppyBot.Base.Storage.Indexing;
 using FloppyBot.Chat.Entities;
+using FloppyBot.Chat.Twitch.Events;
+using FloppyBot.Commands.Aux.Twitch.Helpers;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Replier;
 using FloppyBot.Commands.Parser.Entities;
@@ -17,7 +21,9 @@ public class ExecutorAgent : BackgroundService
 
     private readonly IndexInitializer _indexInitializer;
     private readonly INotificationReceiver<CommandInstruction> _instructionReceiver;
+    private readonly INotificationReceiver<ChatMessage> _notificationReceiver;
     private readonly ILogger<ExecutorAgent> _logger;
+    private readonly ITwitchRewardConverter _twitchRewardConverter;
 
     private readonly IMessageReplier _replier;
 
@@ -27,20 +33,26 @@ public class ExecutorAgent : BackgroundService
         INotificationReceiverFactory receiverFactory,
         ICommandExecutor commandExecutor,
         IndexInitializer indexInitializer,
-        IMessageReplier replier
+        IMessageReplier replier,
+        ITwitchRewardConverter twitchRewardConverter
     )
     {
         _logger = logger;
         _instructionReceiver = receiverFactory.GetNewReceiver<CommandInstruction>(
             configuration.GetParsedConnectionString("CommandInput")
         );
+        _notificationReceiver = receiverFactory.GetNewReceiver<ChatMessage>(
+            configuration.GetParsedConnectionString("MessageInput")
+        );
 
         _instructionReceiver.NotificationReceived += OnCommandReceived;
+        _notificationReceiver.NotificationReceived += OnMessageReceived;
 
         _commandExecutor = commandExecutor;
         _indexInitializer = indexInitializer;
 
         _replier = replier;
+        _twitchRewardConverter = twitchRewardConverter;
     }
 
     public override Task StartAsync(CancellationToken cancellationToken)
@@ -49,6 +61,7 @@ public class ExecutorAgent : BackgroundService
 
         _logger.LogInformation("Starting Command Executor Agent ...");
         _instructionReceiver.StartListening();
+        _notificationReceiver.StartListening();
         return base.StartAsync(cancellationToken);
     }
 
@@ -56,6 +69,7 @@ public class ExecutorAgent : BackgroundService
     {
         _logger.LogInformation("Shutting down Command Executor Agent ...");
         _instructionReceiver.StopListening();
+        _notificationReceiver.StopListening();
         return base.StopAsync(cancellationToken);
     }
 
@@ -78,5 +92,24 @@ public class ExecutorAgent : BackgroundService
         }
 
         _replier.SendMessage(reply);
+    }
+
+    private void OnMessageReceived(ChatMessage notification)
+    {
+        if (notification.EventName != TwitchEventTypes.CHANNEL_POINTS_REWARD_REDEEMED)
+        {
+            return;
+        }
+
+#if DEBUG
+        _logger.LogDebug("Received message notification {@ChatMessage}", notification);
+#endif
+
+        JsonSerializer
+            .Deserialize<TwitchChannelPointsRewardRedeemedEvent>(notification.Content)
+            .Wrap()
+            .Select(_twitchRewardConverter.ConvertToCommandInstruction)
+            .Select(x => x with { Context = new CommandContext(notification) })
+            .Complete(OnCommandReceived);
     }
 }
