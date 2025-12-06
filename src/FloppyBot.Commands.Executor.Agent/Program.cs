@@ -3,6 +3,7 @@ using FloppyBot.Base.Configuration;
 using FloppyBot.Base.Cron;
 using FloppyBot.Base.Logging;
 using FloppyBot.Base.Storage.MongoDb;
+using FloppyBot.Commands.Aux.Twitch.Helpers;
 using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Executor.Agent;
 using FloppyBot.Commands.Executor.Agent.DistRegistry;
@@ -30,6 +31,7 @@ IHost host = builder
             .AddHealthCheck()
             .AddKillSwitch()
             .AddSingleton<DistributedCommandRegistryAdapter>()
+            .AddSingleton<ITwitchRewardConverter, TwitchRewardConverter>()
             .AddCronJob<DistributedCommandRegistryCronJob>()
             .AddHostedService<ExecutorAgent>();
     })
