@@ -80,7 +80,7 @@ public class MongoDbRepository<TEntity> : IRepository<TEntity>
             throw new Exception($"Could not upsert entity {typeof(TEntity).Name} {entity}");
         }
 
-        return GetById(result.UpsertedId.AsString)!;
+        return GetById(entity.Id)!;
     }
 
     public TEntity? IncrementField(string id, Expression<Func<TEntity, int>> field, int increment)

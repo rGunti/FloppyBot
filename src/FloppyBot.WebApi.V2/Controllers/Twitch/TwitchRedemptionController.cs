@@ -23,7 +23,7 @@ public class TwitchRedemptionController : ChannelScopedController
         _twitchApiService = twitchApiService;
     }
 
-    [HttpGet("{channel}/redemptions")]
+    [HttpGet("{channel}/rewards")]
     public async Task<ActionResult<ChannelReward[]>> GetChannelRedemptions(
         [FromRoute] string channel
     )
