@@ -58,4 +58,62 @@ public static class NullableExtensions
 
         return NullableObject.Empty<T>();
     }
+
+    public static NullableObject<TOutput> Select<TInput, TOutput>(
+        this NullableObject<TInput> obj,
+        Func<TInput, TOutput> func
+    )
+        where TInput : class
+        where TOutput : class
+    {
+        return obj.HasValue ? func(obj.Value).Wrap() : NullableObject.Empty<TOutput>();
+    }
+
+    public static NullableObject<TOutput> Select<TInput, TOutput>(
+        this NullableObject<TInput> obj,
+        Func<TInput, NullableObject<TOutput>> func
+    )
+        where TInput : class
+        where TOutput : class
+    {
+        return obj.HasValue ? func(obj.Value) : NullableObject.Empty<TOutput>();
+    }
+
+    public static NullableObject<T> Tap<T>(this NullableObject<T> obj, Action<T> action)
+        where T : class
+    {
+        if (obj.HasValue)
+        {
+            action(obj.Value);
+        }
+
+        return obj;
+    }
+
+    public static IEnumerable<T> Tap<T>(this IEnumerable<T> enumerable, Action<T> action)
+    {
+        foreach (var item in enumerable)
+        {
+            action(item);
+            yield return item;
+        }
+    }
+
+    public static void Complete<T>(this NullableObject<T> obj, Action<T> action)
+        where T : class
+    {
+        if (obj.HasValue)
+        {
+            action(obj.Value);
+        }
+    }
+
+    public static void Complete<T>(this IEnumerable<T> enumerable, Action<T>? action = null)
+        where T : class
+    {
+        foreach (var item in enumerable)
+        {
+            action?.Invoke(item);
+        }
+    }
 }

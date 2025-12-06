@@ -11,6 +11,7 @@
     <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.TextFormatting\FloppyBot.Base.TextFormatting.csproj" />
     <ProjectReference Include="..\FloppyBot.Commands.Core\FloppyBot.Commands.Core.csproj" />
+    <ProjectReference Include="..\FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj" />
     <ProjectReference Include="..\FloppyBot.TwitchApi\FloppyBot.TwitchApi.csproj" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using FloppyBot.Commands.Aux.Twitch.Entities;
 using FloppyBot.TwitchApi.Storage;
 using Microsoft.Extensions.Caching.Memory;
+using TwitchLib.Api.Core.Exceptions;
 using TwitchLib.Api.Helix.Models.ChannelPoints.GetCustomReward;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 using TwitchLib.Api.Helix.Models.Teams;
@@ -144,10 +145,18 @@ public class TwitchApiService : ITwitchApiService
             async entry =>
             {
                 entry.AbsoluteExpirationRelativeToNow = CacheDurationShort;
-                return await _twitchApi.Helix.ChannelPoints.GetCustomRewardAsync(
-                    broadcasterId: userId,
-                    accessToken: accessToken
-                );
+                try
+                {
+                    return await _twitchApi.Helix.ChannelPoints.GetCustomRewardAsync(
+                        broadcasterId: userId,
+                        accessToken: accessToken
+                    );
+                }
+                catch (BadTokenException)
+                {
+                    // Probably: "Forbidden - The broadcaster must have partner or affiliate status."
+                    return null;
+                }
             }
         );
     }

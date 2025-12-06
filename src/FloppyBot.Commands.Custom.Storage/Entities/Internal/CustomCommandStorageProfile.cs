@@ -24,6 +24,8 @@ public class CustomCommandStorageProfile : Profile
         CreateMap<CommandResponse, CommandResponseEo>();
         CreateMap<CommandLimitation, CommandLimitationEo>();
         CreateMap<CooldownDescription, CooldownDescriptionEo>();
+        CreateMap<TwitchRewardCommandLink, TwitchRewardCommandLinkEo>()
+            .ForMember(e => e.CommandId, o => o.MapFrom(e => e.Command.Id));
 
         // eo -> dto
         CreateMap<CustomCommandDescriptionEo, CustomCommandDescription>()
@@ -59,5 +61,7 @@ public class CustomCommandStorageProfile : Profile
                     }
             );
         CreateMap<CooldownDescriptionEo, CooldownDescription>();
+        CreateMap<TwitchRewardCommandLinkEo, TwitchRewardCommandLink>()
+            .ConvertUsing((eo, _, _) => new TwitchRewardCommandLink(eo.Id, null!));
     }
 }

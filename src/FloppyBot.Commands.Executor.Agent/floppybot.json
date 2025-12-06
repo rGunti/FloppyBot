@@ -11,6 +11,7 @@
     "HealthCheck": "{Redis}|HealthCheck",
     "KillSwitch": "{Redis}|KillSwitch",
     "CommandInput": "{Redis}|Command.Received",
+    "MessageInput": "{Redis}|Message.Received",
     "ResponseOutput": "{Redis}|Message.Responded.\\{Interface\\}",
     "DistributedCommandRegistry": "{Redis}|FloppyBot.CommandRegistry",
     "SoundCommandInvocation": "{Redis}|FloppyBot.SoundCommandInvocation",
