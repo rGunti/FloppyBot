@@ -105,6 +105,8 @@ public class TwitchAlertListener : IDisposable
             TwitchEventTypes.SUBSCRIPTION_GIFT_COMMUNITY =>
                 JsonSerializer.Deserialize<TwitchSubscriptionCommunityGiftEvent>(content),
             TwitchEventTypes.RAID => JsonSerializer.Deserialize<TwitchRaidEvent>(content),
+            TwitchEventTypes.CHANNEL_POINTS_REWARD_REDEEMED =>
+                JsonSerializer.Deserialize<TwitchChannelPointsRewardRedeemedEvent>(content),
             _ => throw new ArgumentOutOfRangeException(nameof(type)),
         };
     }

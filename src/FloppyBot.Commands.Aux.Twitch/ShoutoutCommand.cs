@@ -75,6 +75,7 @@ public class ShoutoutCommand
             })
             .AddScoped<ITwitchApiService, TwitchApiService>()
             .AddScoped<IShoutoutMessageSettingService, ShoutoutMessageSettingService>()
+            .AddSingleton<ITwitchRewardConverter, TwitchRewardConverter>()
             .AddMemoryCache();
     }
 

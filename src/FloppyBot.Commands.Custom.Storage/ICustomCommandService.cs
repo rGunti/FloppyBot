@@ -15,16 +15,21 @@ public interface ICustomCommandService
     bool CreateCommand(CustomCommandDescription commandDescription);
     bool DeleteCommand(string channelId, string commandName);
     void UpdateCommand(CustomCommandDescription commandDescription);
+    bool LinkTwitchReward(string rewardId, string channelId, string commandName);
+    void UnlinkTwitchReward(string rewardId, string channelId);
+    NullableObject<CustomCommandDescription> GetCommandForReward(string rewardId, string channelId);
 }
 
 public class CustomCommandService : ICustomCommandService
 {
     private readonly IMapper _mapper;
     private readonly IRepository<CustomCommandDescriptionEo> _repository;
+    private readonly IRepository<TwitchRewardCommandLinkEo> _rewardLinkRepository;
 
     public CustomCommandService(IRepositoryFactory repositoryFactory, IMapper mapper)
     {
         _repository = repositoryFactory.GetRepository<CustomCommandDescriptionEo>();
+        _rewardLinkRepository = repositoryFactory.GetRepository<TwitchRewardCommandLinkEo>();
         _mapper = mapper;
     }
 
@@ -106,6 +111,66 @@ public class CustomCommandService : ICustomCommandService
     public void UpdateCommand(CustomCommandDescription commandDescription)
     {
         _repository.Update(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
+    }
+
+    public bool LinkTwitchReward(string rewardId, string channelId, string commandName)
+    {
+        var command = GetCommand(channelId, commandName);
+        if (command is null)
+        {
+            return false;
+        }
+
+        var existingLink = _rewardLinkRepository.GetById(rewardId);
+        if (existingLink is null)
+        {
+            var linkEo = new TwitchRewardCommandLinkEo(rewardId, channelId, command.Id);
+            _rewardLinkRepository.Insert(linkEo);
+            return true;
+        }
+
+        if (existingLink.ChannelId != channelId)
+        {
+            return false;
+        }
+
+        if (existingLink.CommandId == command.Id)
+        {
+            return true;
+        }
+
+        existingLink = existingLink with { CommandId = command.Id };
+        _rewardLinkRepository.Update(existingLink);
+        return true;
+    }
+
+    public void UnlinkTwitchReward(string rewardId, string channelId)
+    {
+        var existingLink = _rewardLinkRepository.GetById(rewardId);
+        if (existingLink?.ChannelId == channelId)
+        {
+            _rewardLinkRepository.Delete(rewardId);
+        }
+    }
+
+    public NullableObject<CustomCommandDescription> GetCommandForReward(
+        string rewardId,
+        string channelId
+    )
+    {
+        var link = _rewardLinkRepository.GetById(rewardId);
+        if (link is null || link.ChannelId != channelId)
+        {
+            return NullableObject.Empty<CustomCommandDescription>();
+        }
+
+        var commandEo = _repository.GetById(link.CommandId);
+        if (commandEo is null)
+        {
+            return NullableObject.Empty<CustomCommandDescription>();
+        }
+
+        return _mapper.Map<CustomCommandDescription>(commandEo);
     }
 
     private NullableObject<CustomCommandDescriptionEo> GetCommandEo(
