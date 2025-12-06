@@ -52,6 +52,7 @@ public class CommandScanner : ICommandScanner
                     CommandInfo = commandInfo,
                 })
             )
+            .DistinctBy(x => x.Name)
             .ToImmutableDictionary(i => i.Name, i => i.CommandInfo);
     }
 
