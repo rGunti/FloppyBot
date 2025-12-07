@@ -28,6 +28,11 @@ public record ChatMessageIdentifier(string Interface, string Channel, string Mes
         return channelId with { MessageId = NEW_MESSAGE_ID };
     }
 
+    public ChannelIdentifier ToChannelIdentifier()
+    {
+        return new ChannelIdentifier(Interface, Channel);
+    }
+
     public override string ToString()
     {
         return IdentifierUtils.GenerateId(Interface, Channel, MessageId);

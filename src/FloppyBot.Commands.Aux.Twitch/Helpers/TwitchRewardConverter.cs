@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using FloppyBot.Base.Extensions;
+using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
@@ -11,7 +12,8 @@ namespace FloppyBot.Commands.Aux.Twitch.Helpers;
 public interface ITwitchRewardConverter
 {
     NullableObject<CommandInstruction> ConvertToCommandInstruction(
-        TwitchChannelPointsRewardRedeemedEvent rewardRedeemedEvent
+        TwitchChannelPointsRewardRedeemedEvent rewardRedeemedEvent,
+        ChatMessage sourceMessage
     );
 }
 
@@ -30,10 +32,11 @@ public class TwitchRewardConverter : ITwitchRewardConverter
     }
 
     public NullableObject<CommandInstruction> ConvertToCommandInstruction(
-        TwitchChannelPointsRewardRedeemedEvent rewardRedeemedEvent
+        TwitchChannelPointsRewardRedeemedEvent rewardRedeemedEvent,
+        ChatMessage sourceMessage
     )
     {
-        string channelId = rewardRedeemedEvent.User.Identifier;
+        string channelId = sourceMessage.Identifier.ToChannelIdentifier();
         return _commandService
             .GetCommandForReward(rewardRedeemedEvent.Reward.RewardId, channelId)
             .Tap(
