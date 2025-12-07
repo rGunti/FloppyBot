@@ -4,6 +4,7 @@ using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
 using FloppyBot.Commands.Parser.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace FloppyBot.Commands.Aux.Twitch.Helpers;
 
@@ -16,10 +17,15 @@ public interface ITwitchRewardConverter
 
 public class TwitchRewardConverter : ITwitchRewardConverter
 {
+    private readonly ILogger<TwitchRewardConverter> _logger;
     private readonly ICustomCommandService _commandService;
 
-    public TwitchRewardConverter(ICustomCommandService commandService)
+    public TwitchRewardConverter(
+        ILogger<TwitchRewardConverter> logger,
+        ICustomCommandService commandService
+    )
     {
+        _logger = logger;
         _commandService = commandService;
     }
 
@@ -31,6 +37,19 @@ public class TwitchRewardConverter : ITwitchRewardConverter
             .GetCommandForReward(
                 rewardRedeemedEvent.Reward.RewardId,
                 rewardRedeemedEvent.User.Identifier
+            )
+            .Tap(
+                command =>
+                    _logger.LogDebug(
+                        "Found command {CommandName} for reward {RewardId}",
+                        command.Name,
+                        rewardRedeemedEvent.Reward.RewardId
+                    ),
+                () =>
+                    _logger.LogDebug(
+                        "No command found for reward {RewardId}",
+                        rewardRedeemedEvent.Reward.RewardId
+                    )
             )
             .Select(ConvertToCommandInstruction);
     }

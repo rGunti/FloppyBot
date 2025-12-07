@@ -79,41 +79,79 @@ public static class NullableExtensions
         return obj.HasValue ? func(obj.Value) : NullableObject.Empty<TOutput>();
     }
 
-    public static NullableObject<T> Tap<T>(this NullableObject<T> obj, Action<T> action)
+    public static NullableObject<T> Tap<T>(
+        this NullableObject<T> obj,
+        Action<T> action,
+        Action? elseAction = null
+    )
         where T : class
     {
         if (obj.HasValue)
         {
             action(obj.Value);
+        }
+        else
+        {
+            elseAction?.Invoke();
         }
 
         return obj;
     }
 
-    public static IEnumerable<T> Tap<T>(this IEnumerable<T> enumerable, Action<T> action)
+    public static IEnumerable<T> Tap<T>(
+        this IEnumerable<T> enumerable,
+        Action<T> action,
+        Action? elseAction = null
+    )
     {
+        var hasElements = false;
         foreach (var item in enumerable)
         {
+            hasElements = true;
             action(item);
             yield return item;
         }
+
+        if (!hasElements)
+        {
+            elseAction?.Invoke();
+        }
     }
 
-    public static void Complete<T>(this NullableObject<T> obj, Action<T> action)
+    public static void Complete<T>(
+        this NullableObject<T> obj,
+        Action<T> action,
+        Action? elseAction = null
+    )
         where T : class
     {
         if (obj.HasValue)
         {
             action(obj.Value);
         }
+        else
+        {
+            elseAction?.Invoke();
+        }
     }
 
-    public static void Complete<T>(this IEnumerable<T> enumerable, Action<T>? action = null)
+    public static void Complete<T>(
+        this IEnumerable<T> enumerable,
+        Action<T>? action = null,
+        Action? elseAction = null
+    )
         where T : class
     {
+        var hasElements = false;
         foreach (var item in enumerable)
         {
+            hasElements = true;
             action?.Invoke(item);
+        }
+
+        if (!hasElements)
+        {
+            elseAction?.Invoke();
         }
     }
 }
