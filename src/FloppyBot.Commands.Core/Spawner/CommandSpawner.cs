@@ -78,7 +78,7 @@ public class CommandSpawner : ICommandSpawner
             () => scope.RunPreExecutionTasks(commandInfo, instruction),
             e =>
             {
-                _logger.LogWarning(e, "Post-execution tasks failed due to an exception");
+                _logger.LogWarning(e, "Pre-execution tasks failed due to an exception");
             }
         );
         if (failedPreExecutionTask != null)

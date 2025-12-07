@@ -123,7 +123,6 @@ public class ExecutorAgent : BackgroundService
             .Select(rewardEvent =>
                 _twitchRewardConverter.ConvertToCommandInstruction(rewardEvent, notification)
             )
-            .Select(instruction => instruction with { Context = new CommandContext(notification) })
             .Complete(OnCommandReceived);
     }
 }

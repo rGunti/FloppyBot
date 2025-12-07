@@ -99,7 +99,7 @@ public class TwitchRedemptionTests
         );
 
         var input =
-            "{\"Identifier\":{\"Interface\":\"Twitch\",\"Channel\":\"pinsrltrex\",\"MessageId\":\"reward-09cd234d-c64f-423f-8f99-e04d0ed18184\",\"IsNewMessage\":false},\"Author\":{\"Identifier\":{\"Interface\":\"Twitch\",\"Channel\":\"floppypandach\"},\"DisplayName\":\"FloppyPandaCH\",\"PrivilegeLevel\":4},\"EventName\":\"Twitch.ChannelPointRewardRedeemed\",\"Content\":\"{\\u0022EventId\\u0022:\\u002209cd234d-c64f-423f-8f99-e04d0ed18184\\u0022,\\u0022User\\u0022:{\\u0022Identifier\\u0022:{\\u0022Interface\\u0022:\\u0022Twitch\\u0022,\\u0022Channel\\u0022:\\u0022floppypandach\\u0022},\\u0022DisplayName\\u0022:\\u0022FloppyPandaCH\\u0022,\\u0022PrivilegeLevel\\u0022:0},\\u0022Reward\\u0022:{\\u0022RewardId\\u0022:\\u00220314bae9-dd69-4664-b3f8-81a688f51d1a\\u0022,\\u0022Title\\u0022:\\u0022Hello from Lurk\\u0022,\\u0022Prompt\\u0022:\\u0022if you don\\\\u0027t feel like chatting, or got stuffs to do, but want to let me know you\\\\u0027re there. As long as you don\\\\u0027t chat, T-rexes cannot see you, so you\\\\u0027re safe. \\u0022,\\u0022PointCost\\u0022:7},\\u0022EventName\\u0022:\\u0022Twitch.ChannelPointRewardRedeemed\\u0022}\",\"Context\":null,\"SupportedFeatures\":0}";
+            "{\"Identifier\":{\"Interface\":\"Twitch\",\"Channel\":\"pinsrltrex\",\"MessageId\":\"reward-09cd234d-c64f-423f-8f99-e04d0ed18184\",\"IsNewMessage\":false},\"Author\":{\"Identifier\":{\"Interface\":\"Twitch\",\"Channel\":\"floppypandach\"},\"DisplayName\":\"FloppyPandaCH\",\"PrivilegeLevel\":0},\"EventName\":\"Twitch.ChannelPointRewardRedeemed\",\"Content\":\"{\\u0022EventId\\u0022:\\u002209cd234d-c64f-423f-8f99-e04d0ed18184\\u0022,\\u0022User\\u0022:{\\u0022Identifier\\u0022:{\\u0022Interface\\u0022:\\u0022Twitch\\u0022,\\u0022Channel\\u0022:\\u0022floppypandach\\u0022},\\u0022DisplayName\\u0022:\\u0022FloppyPandaCH\\u0022,\\u0022PrivilegeLevel\\u0022:0},\\u0022Reward\\u0022:{\\u0022RewardId\\u0022:\\u00220314bae9-dd69-4664-b3f8-81a688f51d1a\\u0022,\\u0022Title\\u0022:\\u0022Hello from Lurk\\u0022,\\u0022Prompt\\u0022:\\u0022if you don\\\\u0027t feel like chatting, or got stuffs to do, but want to let me know you\\\\u0027re there. As long as you don\\\\u0027t chat, T-rexes cannot see you, so you\\\\u0027re safe. \\u0022,\\u0022PointCost\\u0022:7},\\u0022EventName\\u0022:\\u0022Twitch.ChannelPointRewardRedeemed\\u0022}\",\"Context\":null,\"SupportedFeatures\":0}";
         var chatMessage = JsonSerializer.Deserialize<ChatMessage>(input);
 
         Assert.IsNotNull(chatMessage);
@@ -116,12 +116,7 @@ public class TwitchRedemptionTests
         Assert.IsNotNull(result);
         Assert.AreEqual("lurk", result.CommandName);
 
-        var commandResult = _commandExecutor.ExecuteCommand(
-            result with
-            {
-                Context = new CommandContext(chatMessage),
-            }
-        );
+        var commandResult = _commandExecutor.ExecuteCommand(result);
         Assert.IsNotNull(commandResult);
         Assert.AreEqual("Hello from Lurk", commandResult.Content);
     }
