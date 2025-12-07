@@ -5,6 +5,7 @@ using FloppyBot.Base.Storage.Indexing;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Chat.Twitch.Events;
 using FloppyBot.Commands.Aux.Twitch.Helpers;
+using FloppyBot.Commands.Core.Exceptions;
 using FloppyBot.Commands.Core.Executor;
 using FloppyBot.Commands.Core.Replier;
 using FloppyBot.Commands.Parser.Entities;
@@ -88,6 +89,14 @@ public class ExecutorAgent : BackgroundService
         try
         {
             reply = _commandExecutor.ExecuteCommand(commandInstruction);
+        }
+        catch (MissingPrivilegeException e)
+        {
+            _logger.LogInformation(
+                "Attempted to execute command with unsuitable privilege level: {ErrorMessage}",
+                e.Message
+            );
+            return;
         }
         catch (Exception e)
         {

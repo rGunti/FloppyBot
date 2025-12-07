@@ -25,5 +25,12 @@ public class MissingPrivilegeException : Exception
         "Required privilege level not met; expected at least {Expected}, was {Actual}";
 
     public MissingPrivilegeException(PrivilegeLevel expectedLevel, PrivilegeLevel actualLevel)
-        : base(EXCEPTION_MESSAGE.Format(new { Expected = expectedLevel, Actual = actualLevel })) { }
+        : base(EXCEPTION_MESSAGE.Format(new { Expected = expectedLevel, Actual = actualLevel }))
+    {
+        Expected = expectedLevel;
+        Actual = actualLevel;
+    }
+
+    public PrivilegeLevel Expected { get; }
+    public PrivilegeLevel Actual { get; }
 }
