@@ -33,22 +33,22 @@ public class TwitchRewardConverter : ITwitchRewardConverter
         TwitchChannelPointsRewardRedeemedEvent rewardRedeemedEvent
     )
     {
+        string channelId = rewardRedeemedEvent.User.Identifier;
         return _commandService
-            .GetCommandForReward(
-                rewardRedeemedEvent.Reward.RewardId,
-                rewardRedeemedEvent.User.Identifier
-            )
+            .GetCommandForReward(rewardRedeemedEvent.Reward.RewardId, channelId)
             .Tap(
                 command =>
                     _logger.LogDebug(
-                        "Found command {CommandName} for reward {RewardId}",
+                        "Found command {CommandName} for reward {RewardId} and channel {ChannelId}",
                         command.Name,
-                        rewardRedeemedEvent.Reward.RewardId
+                        rewardRedeemedEvent.Reward.RewardId,
+                        channelId
                     ),
                 () =>
                     _logger.LogDebug(
-                        "No command found for reward {RewardId}",
-                        rewardRedeemedEvent.Reward.RewardId
+                        "No command found for reward {RewardId} and {ChannelId}",
+                        rewardRedeemedEvent.Reward.RewardId,
+                        channelId
                     )
             )
             .Select(ConvertToCommandInstruction);
