@@ -54,13 +54,26 @@ public class TwitchRewardConverter : ITwitchRewardConverter
                         channelId
                     )
             )
-            .Select(ConvertToCommandInstruction);
+            .Select(x => ConvertToCommandInstruction(x, sourceMessage));
     }
 
     private static CommandInstruction ConvertToCommandInstruction(
-        CustomCommandDescription commandDescription
+        CustomCommandDescription commandDescription,
+        ChatMessage sourceMessage
     )
     {
-        return new CommandInstruction(commandDescription.Name, ImmutableArray<string>.Empty);
+        return new CommandInstruction(
+            commandDescription.Name,
+            ImmutableArray<string>.Empty,
+            new CommandContext(
+                sourceMessage with
+                {
+                    Author = sourceMessage.Author with
+                    {
+                        PrivilegeLevel = PrivilegeLevel.Superuser,
+                    },
+                }
+            )
+        );
     }
 }

@@ -106,8 +106,10 @@ public class ExecutorAgent : BackgroundService
         JsonSerializer
             .Deserialize<TwitchChannelPointsRewardRedeemedEvent>(notification.Content)
             .Wrap()
-            .Select(x => _twitchRewardConverter.ConvertToCommandInstruction(x, notification))
-            .Select(x => x with { Context = new CommandContext(notification) })
+            .Select(rewardEvent =>
+                _twitchRewardConverter.ConvertToCommandInstruction(rewardEvent, notification)
+            )
+            .Select(instruction => instruction with { Context = new CommandContext(notification) })
             .Complete(OnCommandReceived);
     }
 }
