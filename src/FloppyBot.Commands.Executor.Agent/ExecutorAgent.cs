@@ -84,7 +84,21 @@ public class ExecutorAgent : BackgroundService
         _logger.LogDebug("Received command instruction {@CommandInstruction}", commandInstruction);
 #endif
 
-        ChatMessage? reply = _commandExecutor.ExecuteCommand(commandInstruction);
+        ChatMessage? reply;
+        try
+        {
+            reply = _commandExecutor.ExecuteCommand(commandInstruction);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(
+                e,
+                "Command execution failed! {@CommandInstruction}",
+                commandInstruction
+            );
+            return;
+        }
+
         if (reply == null || string.IsNullOrWhiteSpace(reply.Content))
         {
             _logger.LogDebug("Reply was empty (null or whitespace), discarding");
