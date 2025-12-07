@@ -1,7 +1,6 @@
 using FloppyBot.Chat.Twitch.Api;
 using FloppyBot.Chat.Twitch.Config;
 using FloppyBot.Chat.Twitch.Events;
-using FloppyBot.TwitchApi.Storage;
 using Microsoft.Extensions.Logging;
 using TwitchLib.EventSub.Core.EventArgs.Channel;
 using TwitchLib.EventSub.Websockets;
@@ -15,7 +14,6 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
     private readonly ITwitchApiService _twitchApi;
     private readonly EventSubWebsocketClient _client;
     private readonly TwitchConfiguration _configuration;
-    private readonly ITwitchAccessCredentialsService _twitchCredentialsService;
 
     public event EventHandler<TwitchChannelPointsRewardRedeemedEvent> ChannelPointsCustomRewardRedemptionAdd;
 
@@ -23,14 +21,12 @@ public class TwitchEventSource : ITwitchEventSource, IAsyncDisposable
         ILogger<TwitchEventSource> logger,
         ITwitchApiService twitchApi,
         EventSubWebsocketClient client,
-        TwitchConfiguration configuration,
-        ITwitchAccessCredentialsService twitchCredentialsService
+        TwitchConfiguration configuration
     )
     {
         _logger = logger;
         _client = client;
         _configuration = configuration;
-        _twitchCredentialsService = twitchCredentialsService;
         _twitchApi = twitchApi;
 
         _client.WebsocketConnected += ClientOnWebsocketConnected;

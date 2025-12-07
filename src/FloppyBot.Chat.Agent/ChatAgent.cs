@@ -43,7 +43,7 @@ public class ChatAgent : BackgroundService
     public override Task StopAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Shutting down Chat Agent ...");
-        _replyReceiver.StartListening();
+        _replyReceiver.StopListening();
         _chatInterface.MessageReceived -= OnMessageReceived;
         _chatInterface.Disconnect();
         return base.StopAsync(cancellationToken);

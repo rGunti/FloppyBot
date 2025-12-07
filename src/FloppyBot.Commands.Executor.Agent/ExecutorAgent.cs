@@ -101,9 +101,7 @@ public class ExecutorAgent : BackgroundService
             return;
         }
 
-#if DEBUG
         _logger.LogDebug("Received message notification {@ChatMessage}", notification);
-#endif
 
         JsonSerializer
             .Deserialize<TwitchChannelPointsRewardRedeemedEvent>(notification.Content)
