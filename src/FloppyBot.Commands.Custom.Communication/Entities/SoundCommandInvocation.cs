@@ -20,6 +20,7 @@ public record SoundCommandInvocation(
 
 public enum PayloadType
 {
-    Sound,
-    Visual,
+    Sound = 0x0,
+    Visual = 0x1,
+    Command = 0xFF,
 }
