@@ -11,6 +11,7 @@ using FloppyBot.Commands.Registry;
 using FloppyBot.Communication.Redis.Config;
 using FloppyBot.HealthCheck.Core;
 using FloppyBot.HealthCheck.KillSwitch;
+using FloppyBot.TwitchApi;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -25,6 +26,7 @@ IHost host = builder
         services
             .AddRedisCommunication()
             .AddMongoDbStorage()
+            .AddTwitchAuth()
             .ScanAndAddCommandDependencies()
             .AddDistributedCommandRegistry()
             .AddCronJobSupport()
