@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using AutoMapper;
+using System.Collections.Immutable;
 using FloppyBot.Base.Storage;
 using FloppyBot.Base.Storage.LiteDb;
 using FloppyBot.Chat.Entities;
@@ -9,17 +8,12 @@ using FloppyBot.Commands.Custom.Storage.Entities.Internal;
 namespace FloppyBot.Commands.Custom.Tests.Storage.Mapping;
 
 [TestClass]
-[Ignore("Tests are currently broken")]
 public class EoDtoMappingTests
 {
-    private readonly IMapper _mapper;
     private readonly IRepositoryFactory _repositoryFactory;
 
     public EoDtoMappingTests()
     {
-        _mapper = new MapperConfiguration(c =>
-            c.AddProfile<CustomCommandStorageProfile>()
-        ).CreateMapper();
         _repositoryFactory = LiteDbRepositoryFactory.CreateMemoryInstance();
     }
 
@@ -92,34 +86,49 @@ public class EoDtoMappingTests
         );
     }
 
-    private bool TestConversion<TDto, TEo>(TDto dto)
+    private static bool TestConversion<TDto, TEo>(TDto dto)
+        where TDto : notnull
+        where TEo : notnull
     {
-        // convert dto -> eo -> dto
-        var eo = _mapper.Map<TEo>(dto);
-        var backDto = _mapper.Map<TDto>(eo);
+        var eo = ConvertToEo<TDto, TEo>(dto);
+        var backDto = ConvertToDto<TEo, TDto>(eo);
 
-        // conversion is successful when both DTOs are equal
         Assert.AreEqual(dto, backDto);
-
         return true;
     }
 
     private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
+        where TDto : notnull
         where TEo : class, IEntity<TEo>
     {
         var repo = _repositoryFactory.GetRepository<TEo>();
 
-        // convert dto -> eo -> dto
-        var eo = _mapper.Map<TEo>(dto);
-
+        var eo = ConvertToEo<TDto, TEo>(dto);
         var insertedEo = repo.Insert(eo);
         var fetchedEo = repo.GetById(insertedEo.Id);
 
-        var backDto = _mapper.Map<TDto>(fetchedEo);
-
-        // conversion is successful when both DTOs are equal
+        var backDto = ConvertToDto<TEo, TDto>(fetchedEo!);
         Assert.AreEqual(dto, backDto);
-
         return true;
     }
+
+    private static TEo ConvertToEo<TDto, TEo>(TDto dto) =>
+        dto switch
+        {
+            CustomCommandDescription d => (TEo)(object)d.ToEo(),
+            CommandResponse d => (TEo)(object)d.ToEo(),
+            CommandLimitation d => (TEo)(object)d.ToEo(),
+            CooldownDescription d => (TEo)(object)d.ToEo(),
+            _ => throw new NotSupportedException($"No ToEo mapping for {typeof(TDto).Name}"),
+        };
+
+    private static TDto ConvertToDto<TEo, TDto>(TEo eo) =>
+        eo switch
+        {
+            CustomCommandDescriptionEo e => (TDto)(object)e.ToDto(),
+            CommandResponseEo e => (TDto)(object)e.ToDto(),
+            CommandLimitationEo e => (TDto)(object)e.ToDto(),
+            CooldownDescriptionEo e => (TDto)(object)e.ToDto(),
+            _ => throw new NotSupportedException($"No ToDto mapping for {typeof(TEo).Name}"),
+        };
 }

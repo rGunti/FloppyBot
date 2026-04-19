@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using FloppyBot.Base.Extensions;
+﻿using FloppyBot.Base.Extensions;
 using FloppyBot.Base.Storage;
 using FloppyBot.Chat.Entities;
 using FloppyBot.Commands.Custom.Storage.Entities;
@@ -22,22 +21,18 @@ public interface ICustomCommandService
 
 public class CustomCommandService : ICustomCommandService
 {
-    private readonly IMapper _mapper;
     private readonly IRepository<CustomCommandDescriptionEo> _repository;
     private readonly IRepository<TwitchRewardCommandLinkEo> _rewardLinkRepository;
 
-    public CustomCommandService(IRepositoryFactory repositoryFactory, IMapper mapper)
+    public CustomCommandService(IRepositoryFactory repositoryFactory)
     {
         _repository = repositoryFactory.GetRepository<CustomCommandDescriptionEo>();
         _rewardLinkRepository = repositoryFactory.GetRepository<TwitchRewardCommandLinkEo>();
-        _mapper = mapper;
     }
 
     public CustomCommandDescription? GetCommand(string channelId, string commandName)
     {
-        return GetCommandEo(channelId, commandName)
-            .Select(eo => _mapper.Map<CustomCommandDescription>(eo))
-            .FirstOrDefault();
+        return GetCommandEo(channelId, commandName).Select(eo => eo.ToDto()).FirstOrDefault();
     }
 
     public IEnumerable<CustomCommandDescription> GetCommandsOfChannel(string channelId)
@@ -45,7 +40,7 @@ public class CustomCommandService : ICustomCommandService
         return _repository
             .GetAll()
             .Where(c => c.Owners.Contains(channelId))
-            .Select(eo => _mapper.Map<CustomCommandDescription>(eo));
+            .Select(eo => eo.ToDto());
     }
 
     public bool CreateSimpleCommand(string channelId, string commandName, string response)
@@ -92,7 +87,7 @@ public class CustomCommandService : ICustomCommandService
             return false;
         }
 
-        _repository.Insert(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
+        _repository.Insert(commandDescription.ToEo());
         return true;
     }
 
@@ -110,7 +105,7 @@ public class CustomCommandService : ICustomCommandService
 
     public void UpdateCommand(CustomCommandDescription commandDescription)
     {
-        _repository.Update(_mapper.Map<CustomCommandDescriptionEo>(commandDescription));
+        _repository.Update(commandDescription.ToEo());
     }
 
     public bool LinkTwitchReward(string rewardId, string channelId, string commandName)
@@ -170,7 +165,7 @@ public class CustomCommandService : ICustomCommandService
             return NullableObject.Empty<CustomCommandDescription>();
         }
 
-        return _mapper.Map<CustomCommandDescription>(commandEo);
+        return commandEo.ToDto();
     }
 
     private NullableObject<CustomCommandDescriptionEo> GetCommandEo(
