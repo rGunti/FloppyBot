@@ -97,21 +97,6 @@ public class EoDtoMappingTests
         return true;
     }
 
-    private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
-        where TDto : notnull
-        where TEo : class, IEntity<TEo>
-    {
-        var repo = _repositoryFactory.GetRepository<TEo>();
-
-        var eo = ConvertToEo<TDto, TEo>(dto);
-        var insertedEo = repo.Insert(eo);
-        var fetchedEo = repo.GetById(insertedEo.Id);
-
-        var backDto = ConvertToDto<TEo, TDto>(fetchedEo!);
-        Assert.AreEqual(dto, backDto);
-        return true;
-    }
-
     private static TEo ConvertToEo<TDto, TEo>(TDto dto) =>
         dto switch
         {
@@ -131,4 +116,19 @@ public class EoDtoMappingTests
             CooldownDescriptionEo e => (TDto)(object)e.ToDto(),
             _ => throw new NotSupportedException($"No ToDto mapping for {typeof(TEo).Name}"),
         };
+
+    private bool TestConversionAndStorage<TDto, TEo>(TDto dto)
+        where TDto : notnull
+        where TEo : class, IEntity<TEo>
+    {
+        var repo = _repositoryFactory.GetRepository<TEo>();
+
+        var eo = ConvertToEo<TDto, TEo>(dto);
+        var insertedEo = repo.Insert(eo);
+        var fetchedEo = repo.GetById(insertedEo.Id);
+
+        var backDto = ConvertToDto<TEo, TDto>(fetchedEo!);
+        Assert.AreEqual(dto, backDto);
+        return true;
+    }
 }
