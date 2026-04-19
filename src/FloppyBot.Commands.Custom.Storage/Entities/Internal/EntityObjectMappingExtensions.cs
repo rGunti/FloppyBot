@@ -1,8 +1,5 @@
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 using FloppyBot.Commands.Custom.Storage.Entities;
-
-[assembly: InternalsVisibleTo("FloppyBot.Commands.Custom.Tests")]
 
 namespace FloppyBot.Commands.Custom.Storage.Entities.Internal;
 
