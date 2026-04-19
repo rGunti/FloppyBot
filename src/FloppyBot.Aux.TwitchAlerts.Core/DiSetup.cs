@@ -1,5 +1,4 @@
 using FloppyBot.Aux.TwitchAlerts.Core.Entities;
-using FloppyBot.Aux.TwitchAlerts.Core.Entities.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace FloppyBot.Aux.TwitchAlerts.Core;
@@ -13,8 +12,6 @@ public static class DiSetup
 
     public static IServiceCollection AddTwitchAlertService(this IServiceCollection services)
     {
-        return services
-            .AddTransient<ITwitchAlertService, TwitchAlertService>()
-            .AddAutoMapper(typeof(TwitchAlertStorageProfile));
+        return services.AddTransient<ITwitchAlertService, TwitchAlertService>();
     }
 }

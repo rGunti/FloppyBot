@@ -13,7 +13,6 @@ using FloppyBot.Commands.Core.Scan;
 using FloppyBot.Commands.Custom.Execution;
 using FloppyBot.Commands.Custom.Storage;
 using FloppyBot.Commands.Custom.Storage.Entities;
-using FloppyBot.Commands.Custom.Storage.Entities.Internal;
 using FloppyBot.Commands.Parser.Entities;
 using FloppyBot.Communication;
 using FloppyBot.Communication.Mock;
@@ -69,7 +68,6 @@ public class TwitchRedemptionTests
             .AddLogging()
             .AddInMemoryStorage()
             .ScanAndAddCommandDependencies()
-            .AddAutoMapper(typeof(CustomCommandStorageProfile))
             .AddSingleton<ICustomCommandService, CustomCommandService>()
             .AddSingleton<ITwitchRewardConverter, TwitchRewardConverter>()
             .AddSingleton<ITimeProvider>(new FixedTimeProvider())

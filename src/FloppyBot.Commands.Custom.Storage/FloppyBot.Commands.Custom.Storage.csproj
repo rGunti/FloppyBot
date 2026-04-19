@@ -5,13 +5,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="FloppyBot.Commands.Custom.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\FloppyBot.Base.Auditing.Abstraction\FloppyBot.Base.Auditing.Abstraction.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.EquatableCollections\FloppyBot.Base.EquatableCollections.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Extensions\FloppyBot.Base.Extensions.csproj" />
     <ProjectReference Include="..\FloppyBot.Base.Storage\FloppyBot.Base.Storage.csproj" />
     <ProjectReference Include="..\FloppyBot.Chat\FloppyBot.Chat.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 </Project>

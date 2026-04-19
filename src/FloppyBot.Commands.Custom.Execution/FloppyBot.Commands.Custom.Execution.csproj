@@ -13,10 +13,4 @@
     <ProjectReference Include="..\FloppyBot.Commands.Custom.Storage\FloppyBot.Commands.Custom.Storage.csproj" />
     <ProjectReference Include="..\FloppyBot.Commands.Parser.Entities\FloppyBot.Commands.Parser.Entities.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference
-      Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-      Version="12.0.1"
-    />
-  </ItemGroup>
 </Project>

@@ -8,10 +8,6 @@
     <Company>FloppyBot</Company>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference
-      Include="AutoMapper.Extensions.Microsoft.DependencyInjection"
-      Version="12.0.1"
-    />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
   </ItemGroup>
   <ItemGroup>
