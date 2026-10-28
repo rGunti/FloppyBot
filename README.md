@@ -1,5 +1,8 @@
 # FloppyBot
 
+> Effective 2026-10-28, this project enters sunset mode. No new features will be added. The project will be archived by end of 2026.
+> Thank you for using FloppyBot! 💙💾
+
 [![FloppyBot][img-floppybot]][gh-floppybot]
 [![FloppyBot][img-floppybot-ac]][floppybot-ac]
 [![FloppyBot][img-floppybot-ss]][floppybot-ss]
